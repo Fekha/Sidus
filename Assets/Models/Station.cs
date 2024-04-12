@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Station : Structure
 {
+    internal List<Action> actions = new List<Action>();
     internal List<Ship> ships = new List<Ship>();
     internal int stationId;
     //internal List<Outpost> outposts = new List<Outpost>();

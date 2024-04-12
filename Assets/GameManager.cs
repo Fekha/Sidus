@@ -6,6 +6,7 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -25,6 +26,10 @@ public class GameManager : MonoBehaviour
     private List<GameObject> currentPath = new List<GameObject>();
     private Transform characterParent;
     private Transform highlightParent;
+    public Transform ActionBar;
+    public Sprite movementIcon;
+
+
     private PathNode selectedNode;
     private Ship selectedShip;
     private Vector2 gridSize = new Vector2(8, 8);
@@ -86,9 +91,12 @@ public class GameManager : MonoBehaviour
                     {
                         if (targetNode == selectedNode)
                         {
+
+                            ActionBar.Find("Slot1/Image").GetComponent<Image>().sprite = movementIcon;
+                            ActionBar.Find("Slot1/Remove").gameObject.SetActive(true);
+                            stations[currentStationTurn].actions.Add(new Action("Move",path,selectedShip));
                             ClearMovementPath();
                             selectedNode = null;
-                            StartCoroutine(MovePlayer(path));
                         }
                         else
                         {
@@ -135,7 +143,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator MovePlayer(List<PathNode> path)
+    private IEnumerator MovePlayer(List<PathNode> path, Ship selectedShip)
     {
         isMoving = true;
         if (path.Count > 0 && path.Count <= selectedShip.movementRange)
@@ -246,6 +254,11 @@ public class GameManager : MonoBehaviour
         {
             foreach (var station in stations)
             {
+                foreach (var action in station.actions)
+                {
+                    if(action.ActionType == "Move")
+                        StartCoroutine(MovePlayer(action.movement,action.selectedShip));
+                }
                 foreach (var ship in station.ships)
                 {
                     ship.resetMovementRange();
