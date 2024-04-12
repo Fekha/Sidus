@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     internal PathNode[,] grid;
     private bool isMoving = false;
     private bool isEndingTurn = false;
-    private List<PathNode> path;
+    
     internal int currentStationTurn = 0;
     void Start()
     {
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
                         {
                             ActionBar.Find("Slot0/Image").GetComponent<Image>().sprite = movementIcon;
                             ActionBar.Find("Slot0/Remove").gameObject.SetActive(true);
-                            stations[currentStationTurn].actions.Add(new Action("Move",path,selectedShip));
+                            stations[currentStationTurn].actions.Add(new Action("Move",selectedShip));
                             selectedShip.clearMovementRange();
                             ClearMovementPath();
                             ClearMovementRange();
@@ -104,15 +104,15 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            path = FindPath(selectedShip.currentPathNode, targetNode);
+                            selectedShip.path = FindPath(selectedShip.currentPathNode, targetNode);
                             if (targetNode != selectedNode)
                             {
                                 ClearMovementPath();
                             }
                             selectedNode = targetNode;
-                            foreach (var node in path)
+                            foreach (var node in selectedShip.path)
                             {
-                                if (node == path.Last())
+                                if (node == selectedShip.path.Last())
                                     currentPath.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
                                 else
                                     currentPath.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
@@ -161,17 +161,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator MovePlayer(List<PathNode> path, Ship selectedShip)
+    private IEnumerator MoveShip(Ship selectedShip)
     {
         isMoving = true;
-        if (path.Count > 0 && path.Count <= selectedShip.getMaxMovementRange())
+        if (selectedShip.path.Count > 0 && selectedShip.path.Count <= selectedShip.getMaxMovementRange())
         {
             Debug.Log("Moving to position: " + selectedShip.currentPathNode.transform.position);
-            yield return StartCoroutine(MoveOnPath(selectedShip, path));
+            yield return StartCoroutine(MoveOnPath(selectedShip, selectedShip.path));
         }
         else
         {
-            Debug.Log("Cannot move to position: " + path.Last().transform.position + ". Out of range.");
+            Debug.Log("Cannot move to position: " + selectedShip.path.Last().transform.position + ". Out of range.");
         }
         yield return new WaitForSeconds(.1f);
         isMoving = false;
@@ -310,7 +310,7 @@ public class GameManager : MonoBehaviour
         {
             if (action.actionType == "Move")
             {
-                yield return StartCoroutine(MovePlayer(action.movement, action.selectedShip));
+                yield return StartCoroutine(MoveShip(action.selectedShip));
                 action.selectedShip.resetMovementRange();
             }
         }

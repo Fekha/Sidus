@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ public class Ship : Structure
 {
     internal int maxMovementRange;
     private int movementRange;
+    internal List<PathNode> path;
     public void InitializeShip(int _x, int _y, int _movementRange, int _hp, Station _station)
     {
         InitializeStructure(_x, _y, _hp);
