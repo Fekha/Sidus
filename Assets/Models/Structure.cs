@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Structure : Node
 {
+    internal int stationId;
     internal int maxHp;
     internal int hp;
     public void InitializeStructure(int _x, int _y, int _hp)
@@ -12,8 +13,8 @@ public class Structure : Node
         maxHp = _hp;
         hp = _hp;
         SetHPText();
-        currentNode.OnPathNode = this;
-        transform.position = currentNode.transform.position;
+        currentPathNode.nodeOnPath = this;
+        transform.position = currentPathNode.transform.position;
     }
     public void SetHPText()
     {

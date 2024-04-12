@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEditor;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -39,6 +37,7 @@ public class GameManager : MonoBehaviour
     private Vector3 cellPrefabSize;
     internal PathNode[,] grid;
     private bool isMoving = false;
+    private bool isEndingTurn = false;
     private List<PathNode> path;
     internal int currentStationTurn = 0;
     void Start()
@@ -78,7 +77,12 @@ public class GameManager : MonoBehaviour
 
             if (hit.collider != null && !isMoving)
             {
-                Ship targetShip = hit.collider.GetComponent<Ship>();
+                PathNode targetNode = hit.collider.GetComponent<PathNode>();
+                Ship targetShip = null;
+                if (targetNode != null)
+                {
+                    targetShip = targetNode.nodeOnPath as Ship;
+                }
                 if (targetShip != null && targetShip.stationId == currentStationTurn)
                 {
                     selectedShip = targetShip;
@@ -86,21 +90,21 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                    if (targetNode != null && !targetNode.isTaken && currentMovementRange.Select(x => x.currentNode).Contains(targetNode))
+                    if (targetNode != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
                     {
                         if (targetNode == selectedNode)
                         {
-
-                            ActionBar.Find("Slot1/Image").GetComponent<Image>().sprite = movementIcon;
-                            ActionBar.Find("Slot1/Remove").gameObject.SetActive(true);
+                            ActionBar.Find("Slot0/Image").GetComponent<Image>().sprite = movementIcon;
+                            ActionBar.Find("Slot0/Remove").gameObject.SetActive(true);
                             stations[currentStationTurn].actions.Add(new Action("Move",path,selectedShip));
+                            selectedShip.clearMovementRange();
                             ClearMovementPath();
+                            ClearMovementRange();
                             selectedNode = null;
                         }
                         else
                         {
-                            path = FindPath(selectedShip.currentNode, targetNode);
+                            path = FindPath(selectedShip.currentPathNode, targetNode);
                             if (targetNode != selectedNode)
                             {
                                 ClearMovementPath();
@@ -120,6 +124,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void cancelAction(int i)
+    {
+        var action = stations[currentStationTurn].actions[i];
+        if (action is object)
+        {
+            if (action.actionType == "Move")
+            {
+                action.selectedShip.resetMovementRange();
+            }
+            ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = null;
+            ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(false);
+            stations[currentStationTurn].actions.RemoveAt(i);
+        }
+    }
     void CreateGrid()
     {
         var nodeParent = GameObject.Find("Nodes").transform;
@@ -146,10 +164,9 @@ public class GameManager : MonoBehaviour
     private IEnumerator MovePlayer(List<PathNode> path, Ship selectedShip)
     {
         isMoving = true;
-        if (path.Count > 0 && path.Count <= selectedShip.movementRange)
+        if (path.Count > 0 && path.Count <= selectedShip.getMaxMovementRange())
         {
-            Debug.Log("Moving to position: " + selectedShip.currentNode.transform.position);
-
+            Debug.Log("Moving to position: " + selectedShip.currentPathNode.transform.position);
             yield return StartCoroutine(MoveOnPath(selectedShip, path));
         }
         else
@@ -160,33 +177,49 @@ public class GameManager : MonoBehaviour
         isMoving = false;
     }
 
-    private IEnumerator MoveOnPath(Ship character, List<PathNode> path)
+    private IEnumerator MoveOnPath(Ship ship, List<PathNode> path)
     {
         int i = 0;
-        character.currentNode.OnPathNode = null;
+        ship.currentPathNode.nodeOnPath = null;
         ClearMovementRange();
         foreach (var node in path)
         {
             i++;
-            if (i > character.movementRange)
+            if (node.nodeOnPath is Structure)
             {
-                break;
+                var nodeOnPath = node.nodeOnPath as Structure;
+                //if last don't end your turn on another structure
+                if (node == path.Last())
+                {
+                    //attack if enemy structure
+                    //end turn otherwise
+                    break;
+                }
+                else
+                {
+                    //attack if enemy structure, stop moving if stalemate
+                    //move through allied structure
+                    if (nodeOnPath.stationId != ship.stationId)
+                    {
+                        break;
+                    }
+                }
             }
             float elapsedTime = 0f;
             float totalTime = .25f;
             while (elapsedTime <= totalTime)
             {
-                character.transform.position = Vector3.Lerp(character.currentNode.transform.position, node.transform.position, elapsedTime / totalTime);
+                ship.transform.position = Vector3.Lerp(ship.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            character.currentNode = node;
+            ship.currentPathNode = node;
             yield return new WaitForSeconds(.25f);
         }
-        character.movementRange -= path.Count();
-        HighlightRangeOfMovement(character);
-        character.transform.position = character.currentNode.transform.position;
-        character.currentNode.OnPathNode = character;
+        //character.movementRange -= path.Count();
+        HighlightRangeOfMovement(ship);
+        ship.transform.position = ship.currentPathNode.transform.position;
+        ship.currentPathNode.nodeOnPath = ship;
     }
 
     List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
@@ -216,7 +249,7 @@ public class GameManager : MonoBehaviour
 
             foreach (PathNode neighbor in GetNeighbors(currentNode))
             {
-                if (neighbor != targetNode && (neighbor.isTaken || closedSet.Contains(neighbor)))
+                if (neighbor != targetNode && (neighbor.isObstacle || closedSet.Contains(neighbor)))
                     continue;
 
                 int newCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
@@ -237,36 +270,68 @@ public class GameManager : MonoBehaviour
     public void HighlightRangeOfMovement(Ship ship)
     {
         ClearMovementRange();
-        List<PathNode> nodesWithinRange = GetNodesWithinRange(ship.currentNode, ship.movementRange);
+        List<PathNode> nodesWithinRange = GetNodesWithinRange(ship.currentPathNode, ship.getMovementRange());
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(movementRangePrefab, node.transform.position, Quaternion.identity);
             range.transform.parent = highlightParent;
             var rangeComponent = range.AddComponent<Node>();
             rangeComponent.Initialize(node);
-            GameManager.i.currentMovementRange.Add(rangeComponent);
+            currentMovementRange.Add(rangeComponent);
         }
     }
     public void EndTurn()
     {
-        currentStationTurn++;
+        if (!isEndingTurn)
+        {
+            isEndingTurn = true;
+            currentStationTurn++;
+            ResetUI();
+            StartCoroutine(TakeTurns());
+        }
+    }
+
+    private IEnumerator TakeTurns()
+    {
         if (currentStationTurn >= stations.Count)
         {
             foreach (var station in stations)
             {
-                foreach (var action in station.actions)
-                {
-                    if(action.ActionType == "Move")
-                        StartCoroutine(MovePlayer(action.movement,action.selectedShip));
-                }
-                foreach (var ship in station.ships)
-                {
-                    ship.resetMovementRange();
-                }
+                yield return StartCoroutine(PerformActions(station.actions));
             }
             currentStationTurn = 0;
         }
-        //StartCoroutine(AITurn());
+        isEndingTurn = false;
+    }
+    
+    private IEnumerator PerformActions(List<Action> actions)
+    {
+        foreach (var action in actions)
+        {
+            if (action.actionType == "Move")
+            {
+                yield return StartCoroutine(MovePlayer(action.movement, action.selectedShip));
+                action.selectedShip.resetMovementRange();
+            }
+        }
+        actions.Clear();
+    }
+
+    private void ResetUI()
+    {
+        foreach (var station in stations)
+        {
+            int i = 0;
+            foreach (var action in station.actions)
+            {
+                ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = null;
+                ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(false);
+                i++;
+            }
+        }
+        ClearMovementPath();
+        ClearMovementRange();
+        selectedNode = null;
     }
 
     //private IEnumerator AITurn()
@@ -289,7 +354,7 @@ public class GameManager : MonoBehaviour
         while (currentPath.Count > 0) { Destroy(currentPath[0].gameObject); currentPath.RemoveAt(0); }
     }
 
-    List<PathNode> GetNodesWithinRange(PathNode clickedNode, int range, bool ignoreTaken = false)
+    List<PathNode> GetNodesWithinRange(PathNode clickedNode, int range)
     {
         List<PathNode> nodesWithinRange = new List<PathNode>();
 
@@ -312,7 +377,7 @@ public class GameManager : MonoBehaviour
 
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
-                    if (!visited.Contains(neighbor) && (ignoreTaken || !neighbor.isTaken))
+                    if (!visited.Contains(neighbor) && !neighbor.isObstacle)
                     {
                         queue.Enqueue(neighbor);
                         visited.Add(neighbor);
@@ -330,7 +395,7 @@ public class GameManager : MonoBehaviour
         PathNode currentNode = endNode;
         while (currentNode != startNode)
         {
-            if (!currentNode.isTaken)
+            if (!currentNode.isObstacle)
                 path.Add(currentNode);
             currentNode = currentNode.parent;
         }

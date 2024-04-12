@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    public PathNode currentNode {
+    public PathNode currentPathNode {
         get { return GameManager.i.grid[x, y]; }
         set
         {

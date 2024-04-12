@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Structure
   - 
   - 
   - 
@@ -44,7 +44,7 @@ TagManager:
   - name: Highlight
     uniqueID: 468869673
     locked: 0
-  - name: Character
+  - name: Structure
     uniqueID: 1828054375
     locked: 0
   - name: Text
