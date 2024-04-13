@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -36,5 +37,10 @@ public class Ship : Structure
     internal int getMaxMovementRange()
     {
         return maxMovementRange;
+    }
+
+    internal void subtractMovement(int i)
+    {
+        movementRange -= i;
     }
 }

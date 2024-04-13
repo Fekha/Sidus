@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         ship.transform.parent = characterParent;
         var shipNode = ship.AddComponent<Ship>();
         spawnX = Random.Range(0, 2) == 0 ? spawnX - 1 : spawnX + 1;
-        shipNode.InitializeShip(spawnX, spawnY, 3, 5, stationNode);
+        shipNode.InitializeShip(spawnX, spawnY, 4, 5, stationNode);
     }
 
     void Update()
@@ -86,29 +86,39 @@ public class GameManager : MonoBehaviour
                 if (targetShip != null && targetShip.stationId == currentStationTurn)
                 {
                     selectedShip = targetShip;
-                    HighlightRangeOfMovement(targetShip);
+                    HighlightRangeOfMovement(targetShip.currentPathNode, targetShip.getMovementRange());
                 }
                 else
                 {
-                    if (targetNode != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
+                    if (targetNode != null && selectedShip != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
                     {
                         if (targetNode == selectedNode)
                         {
-                            ActionBar.Find("Slot0/Image").GetComponent<Image>().sprite = movementIcon;
-                            ActionBar.Find("Slot0/Remove").gameObject.SetActive(true);
-                            stations[currentStationTurn].actions.Add(new Action("Move",selectedShip));
+                            ActionBar.Find($"Slot{stations[currentStationTurn].actions.Count}/Image").GetComponent<Image>().sprite = movementIcon;
+                            ActionBar.Find($"Slot{stations[currentStationTurn].actions.Count}/Remove").gameObject.SetActive(true);
+                            stations[currentStationTurn].actions.Add(new Action("Move", selectedShip));
                             selectedShip.clearMovementRange();
                             ClearMovementPath();
                             ClearMovementRange();
                             selectedNode = null;
+                            selectedShip = null;
                         }
                         else
                         {
-                            selectedShip.path = FindPath(selectedShip.currentPathNode, targetNode);
-                            if (targetNode != selectedNode)
+                            int oldPathCount = selectedShip.path?.Count ?? 0;
+                            var currentNode = selectedShip.currentPathNode;
+                            if (selectedShip.path == null)
                             {
-                                ClearMovementPath();
+                                selectedShip.path = FindPath(currentNode, targetNode);
                             }
+                            else
+                            {
+                                currentNode = selectedShip.path.Last();
+                                selectedShip.path.AddRange(FindPath(currentNode, targetNode));
+                            }
+                            selectedShip.subtractMovement(selectedShip.path.Count - oldPathCount);
+                            HighlightRangeOfMovement(targetNode, selectedShip.getMovementRange());
+                            ClearMovementPath();
                             selectedNode = targetNode;
                             foreach (var node in selectedShip.path)
                             {
@@ -118,6 +128,18 @@ public class GameManager : MonoBehaviour
                                     currentPath.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
                             }
                         }
+                    }
+                    else
+                    {
+                        if (selectedShip != null)
+                        {
+                            selectedShip.resetMovementRange();
+                            selectedShip.path = null;
+                        }
+                        ClearMovementPath();
+                        ClearMovementRange();
+                        selectedNode = null;
+                        selectedShip = null;
                     }
                 }
             }
@@ -187,20 +209,23 @@ public class GameManager : MonoBehaviour
             i++;
             if (node.nodeOnPath is Structure)
             {
-                var nodeOnPath = node.nodeOnPath as Structure;
-                //if last don't end your turn on another structure
-                if (node == path.Last())
+                var structureOnPath = node.nodeOnPath as Structure;
+                //if last movement
+                if (i == path.Count())
                 {
                     //attack if enemy structure
-                    //end turn otherwise
                     break;
                 }
                 else
                 {
-                    //attack if enemy structure, stop moving if stalemate
-                    //move through allied structure
-                    if (nodeOnPath.stationId != ship.stationId)
+                    //if allied
+                    if (structureOnPath.stationId == ship.stationId)
                     {
+                        //move through
+                    }
+                    else
+                    {
+                        //attack enemy
                         break;
                     }
                 }
@@ -217,7 +242,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(.25f);
         }
         //character.movementRange -= path.Count();
-        HighlightRangeOfMovement(ship);
+        //HighlightRangeOfMovement(ship.currentPathNode, ship.getMovementRange());
         ship.transform.position = ship.currentPathNode.transform.position;
         ship.currentPathNode.nodeOnPath = ship;
     }
@@ -267,10 +292,10 @@ public class GameManager : MonoBehaviour
         return new List<PathNode>();
     }
 
-    public void HighlightRangeOfMovement(Ship ship)
+    public void HighlightRangeOfMovement(PathNode currentNode, int shipRange)
     {
         ClearMovementRange();
-        List<PathNode> nodesWithinRange = GetNodesWithinRange(ship.currentPathNode, ship.getMovementRange());
+        List<PathNode> nodesWithinRange = GetNodesWithinRange(currentNode, shipRange);
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(movementRangePrefab, node.transform.position, Quaternion.identity);
@@ -312,6 +337,7 @@ public class GameManager : MonoBehaviour
             {
                 yield return StartCoroutine(MoveShip(action.selectedShip));
                 action.selectedShip.resetMovementRange();
+                action.selectedShip.path = null;
             }
         }
         actions.Clear();
@@ -372,8 +398,7 @@ public class GameManager : MonoBehaviour
             {
                 PathNode currentNode = queue.Dequeue();
 
-                if(currentNode != clickedNode)
-                    nodesWithinRange.Add(currentNode);
+                nodesWithinRange.Add(currentNode);
 
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
