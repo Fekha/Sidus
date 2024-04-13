@@ -11,8 +11,8 @@ public class Station : Structure
 
     public void InitializeStation(int _x, int _y, int _hp)
     {
-        InitializeStructure(_x, _y, _hp);
         stationId = GameManager.i.stations.Count;
         GameManager.i.stations.Add(this);
+        InitializeStructure(_x, _y, _hp);
     }
 }

@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     private Transform highlightParent;
     public Transform ActionBar;
     public Sprite movementIcon;
-
+    public Sprite moduleIcon;
 
     private PathNode selectedNode;
     private Ship selectedShip;
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
                 {
                     targetShip = targetNode.nodeOnPath as Ship;
                 }
-                if (targetShip != null && targetShip.stationId == currentStationTurn)
+                if (targetShip != null && selectedShip == null && targetShip.stationId == currentStationTurn)
                 {
                     selectedShip = targetShip;
                     HighlightRangeOfMovement(targetShip.currentPathNode, targetShip.getMovementRange());
@@ -94,9 +94,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (targetNode == selectedNode)
                         {
-                            ActionBar.Find($"Slot{stations[currentStationTurn].actions.Count}/Image").GetComponent<Image>().sprite = movementIcon;
-                            ActionBar.Find($"Slot{stations[currentStationTurn].actions.Count}/Remove").gameObject.SetActive(true);
-                            stations[currentStationTurn].actions.Add(new Action("Move", selectedShip));
+                            QueueAction(ActionTypes.Movement);
                             selectedShip.clearMovementRange();
                             ClearMovementPath();
                             ClearMovementRange();
@@ -134,7 +132,6 @@ public class GameManager : MonoBehaviour
                         if (selectedShip != null)
                         {
                             selectedShip.resetMovementRange();
-                            selectedShip.path = null;
                         }
                         ClearMovementPath();
                         ClearMovementRange();
@@ -146,18 +143,45 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void cancelAction(int i)
+    private void AddActionBarImage(ActionTypes actionType, int i)
     {
-        var action = stations[currentStationTurn].actions[i];
+        var icon = moduleIcon;
+        if (actionType == ActionTypes.Movement)
+            icon = movementIcon;
+        ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = icon;
+        ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(true);
+    }
+
+    public void generateModule()
+    {
+        QueueAction(ActionTypes.Module);
+    }
+
+    private void QueueAction(ActionTypes actionType)
+    {
+        AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
+        Ship selShip = selectedShip;
+        if (actionType == ActionTypes.Module)
+            selShip = null;
+        stations[currentStationTurn].actions.Add(new Action(actionType, selShip));
+    }
+
+   
+    public void cancelAction(int slot)
+    {
+        var action = stations[currentStationTurn].actions[slot];
         if (action is object)
         {
-            if (action.actionType == "Move")
+            if (action.actionType == ActionTypes.Movement)
             {
                 action.selectedShip.resetMovementRange();
             }
-            ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = null;
-            ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(false);
-            stations[currentStationTurn].actions.RemoveAt(i);
+            ClearActionBar();
+            stations[currentStationTurn].actions.RemoveAt(slot);
+            for (int i = 0; i < stations[currentStationTurn].actions.Count; i++)
+            {
+                AddActionBarImage(stations[currentStationTurn].actions[i].actionType, i);
+            }
         }
     }
     void CreateGrid()
@@ -239,6 +263,7 @@ public class GameManager : MonoBehaviour
                 yield return null;
             }
             ship.currentPathNode = node;
+            ship.SetNodeColor();
             yield return new WaitForSeconds(.25f);
         }
         //character.movementRange -= path.Count();
@@ -333,11 +358,10 @@ public class GameManager : MonoBehaviour
     {
         foreach (var action in actions)
         {
-            if (action.actionType == "Move")
+            if (action.actionType == ActionTypes.Movement)
             {
                 yield return StartCoroutine(MoveShip(action.selectedShip));
                 action.selectedShip.resetMovementRange();
-                action.selectedShip.path = null;
             }
         }
         actions.Clear();
@@ -345,16 +369,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetUI()
     {
-        foreach (var station in stations)
-        {
-            int i = 0;
-            foreach (var action in station.actions)
-            {
-                ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = null;
-                ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(false);
-                i++;
-            }
-        }
+        ClearActionBar();
         ClearMovementPath();
         ClearMovementRange();
         selectedNode = null;
@@ -380,7 +395,21 @@ public class GameManager : MonoBehaviour
         while (currentPath.Count > 0) { Destroy(currentPath[0].gameObject); currentPath.RemoveAt(0); }
     }
 
-    List<PathNode> GetNodesWithinRange(PathNode clickedNode, int range)
+    private void ClearActionBar()
+    {
+        foreach (var station in stations)
+        {
+            int i = 0;
+            foreach (var action in station.actions)
+            {
+                ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = null;
+                ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(false);
+                i++;
+            }
+        }
+    }
+
+        List<PathNode> GetNodesWithinRange(PathNode clickedNode, int range)
     {
         List<PathNode> nodesWithinRange = new List<PathNode>();
 

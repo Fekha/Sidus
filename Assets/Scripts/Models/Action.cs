@@ -4,9 +4,9 @@ using static GameManager;
 
 public class Action : MonoBehaviour
 {
-    public string actionType;
+    public ActionTypes actionType;
     public Ship selectedShip;
-    public Action(string actionType, Ship selectedShip)
+    public Action(ActionTypes actionType, Ship selectedShip = null)
     {
         this.actionType = actionType;
         this.selectedShip = selectedShip;

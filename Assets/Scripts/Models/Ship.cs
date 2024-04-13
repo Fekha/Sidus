@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class Ship : Structure
@@ -10,18 +11,17 @@ public class Ship : Structure
     internal List<PathNode> path;
     public void InitializeShip(int _x, int _y, int _movementRange, int _hp, Station _station)
     {
-        InitializeStructure(_x, _y, _hp);
-
+        stationId = _station.stationId;
         maxMovementRange = _movementRange;
         movementRange = _movementRange;
         resetMovementRange();
-
-        stationId = _station.stationId;
         _station.ships.Add(this);
+        InitializeStructure(_x, _y, _hp);
     }
     internal void resetMovementRange()
     {
         movementRange = maxMovementRange;
+        path = null;
     }
 
     internal void clearMovementRange()
