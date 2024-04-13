@@ -1,4 +1,4 @@
-public enum ActionTypes
+public enum ActionType
 {
     Module,
     Movement

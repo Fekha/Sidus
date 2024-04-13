@@ -9,10 +9,10 @@ public class Station : Structure
     
     //internal List<Outpost> outposts = new List<Outpost>();
 
-    public void InitializeStation(int _x, int _y, int _hp)
+    public void InitializeStation(int _x, int _y, string name, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack)
     {
         stationId = GameManager.i.stations.Count;
         GameManager.i.stations.Add(this);
-        InitializeStructure(_x, _y, _hp);
+        InitializeStructure(_x, _y, name, _hp, _range, _shield, _electricAttack, _thermalAttack, _voidAttack);
     }
 }

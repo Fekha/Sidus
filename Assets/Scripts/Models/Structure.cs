@@ -3,28 +3,37 @@ using UnityEngine;
 
 public class Structure : Node
 {
+    internal string structureName;
     internal int stationId;
     internal int maxHp;
     internal int hp;
-    public void InitializeStructure(int _x, int _y, int _hp)
+    internal int maxRange;
+    internal int range;
+    internal AttackType shield;
+    internal int electricAttack;
+    internal int thermalAttack;
+    internal int voidAttack;
+    public void InitializeStructure(int _x, int _y, string _structureName, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack)
     {
         x = _x;
         y = _y;
         maxHp = _hp;
         hp = _hp;
-        SetHPText();
+        maxRange = _range;
+        range = _range;
+        shield = (AttackType)_shield;
+        electricAttack = _electricAttack;
+        thermalAttack = _thermalAttack;
+        voidAttack = _voidAttack;
+        structureName = _structureName;
         currentPathNode.nodeOnPath = this;
         transform.position = currentPathNode.transform.position;
         SetNodeColor();
     }
-    public void SetHPText()
-    {
-        //hpBar.text = hp + "/" + maxHp; 
-    }
+
     public void TakeDamage(int damage)
     {
         hp -= damage;
-        SetHPText();
     }
     public void SetNodeColor()
     {

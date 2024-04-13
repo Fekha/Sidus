@@ -6,41 +6,38 @@ using UnityEngine;
 
 public class Ship : Structure
 {
-    internal int maxMovementRange;
-    private int movementRange;
+    
     internal List<PathNode> path;
-    public void InitializeShip(int _x, int _y, int _movementRange, int _hp, Station _station)
+    public void InitializeShip(int _x, int _y, Station _station, string name, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack)
     {
         stationId = _station.stationId;
-        maxMovementRange = _movementRange;
-        movementRange = _movementRange;
         resetMovementRange();
         _station.ships.Add(this);
-        InitializeStructure(_x, _y, _hp);
+        InitializeStructure(_x, _y, name, _hp, _range,_shield,_electricAttack,_thermalAttack,_voidAttack);
     }
     internal void resetMovementRange()
     {
-        movementRange = maxMovementRange;
+        range = maxRange;
         path = null;
     }
 
     internal void clearMovementRange()
     {
-        movementRange = 0;
+        range = 0;
     }
 
     internal int getMovementRange()
     {
-        return movementRange;
+        return range;
     }
 
     internal int getMaxMovementRange()
     {
-        return maxMovementRange;
+        return maxRange;
     }
 
     internal void subtractMovement(int i)
     {
-        movementRange -= i;
+        range -= i;
     }
 }

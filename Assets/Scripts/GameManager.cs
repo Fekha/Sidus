@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour
     public GameObject pathPrefab;
     public GameObject playerPrefab;
     public GameObject playerStationPrefab;
+    public GameObject infoPanel;
 
     private List<GameObject> currentPath = new List<GameObject>();
     private Transform characterParent;
@@ -40,32 +43,55 @@ public class GameManager : MonoBehaviour
     private bool isEndingTurn = false;
     
     internal int currentStationTurn = 0;
+
+    private TextMeshProUGUI nameValue;
+    private TextMeshProUGUI hpValue;
+    private TextMeshProUGUI rangeValue;
+    private TextMeshProUGUI shieldValue;
+    private TextMeshProUGUI electricValue;
+    private TextMeshProUGUI thermalValue;
+    private TextMeshProUGUI voidValue;
     void Start()
     {
         i = this;
         cellPrefabSize = cellPrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
-
+        FindUI();
         characterParent = GameObject.Find("Characters").transform;
         highlightParent = GameObject.Find("Highlights").transform;
 
-        CreateStation(enemyStationPrefab, enemyPrefab, (int)gridSize.y - 1);
-        CreateStation(playerStationPrefab, playerPrefab, 0);
+        CreateStation(enemyStationPrefab, enemyPrefab, "Red");
+        CreateStation(playerStationPrefab, playerPrefab, "Green");
     }
 
-    private void CreateStation(GameObject stationPrefab, GameObject shipPrefab, int spawnY)
+    private void FindUI()
     {
+        nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
+        hpValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
+        rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
+        shieldValue = infoPanel.transform.Find("ShieldValue").GetComponent<TextMeshProUGUI>();
+        electricValue = infoPanel.transform.Find("ElectricValue").GetComponent<TextMeshProUGUI>();
+        thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
+        voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
+    }
+
+    private void CreateStation(GameObject stationPrefab, GameObject shipPrefab, string team)
+    {
+        var spawnY = 0;
+        if (team == "Red") {
+            spawnY = (int)gridSize.y - 1;
+        }
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, 5);
+        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 10, 0, Random.Range(0, 3), Random.Range(5, 10), Random.Range(5, 10), Random.Range(5, 10));
 
         var ship = Instantiate(shipPrefab);
         ship.transform.parent = characterParent;
         var shipNode = ship.AddComponent<Ship>();
         spawnX = Random.Range(0, 2) == 0 ? spawnX - 1 : spawnX + 1;
-        shipNode.InitializeShip(spawnX, spawnY, 4, 5, stationNode);
+        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 5, 3, Random.Range(0, 3), Random.Range(1, 5), Random.Range(1, 5), Random.Range(1, 5));
     }
 
     void Update()
@@ -79,10 +105,13 @@ public class GameManager : MonoBehaviour
             {
                 PathNode targetNode = hit.collider.GetComponent<PathNode>();
                 Ship targetShip = null;
-                if (targetNode != null)
+                if (targetNode != null && targetNode.nodeOnPath is Structure)
                 {
-                    targetShip = targetNode.nodeOnPath as Ship;
+                    SetTextValues(targetNode.nodeOnPath as Structure);
+                    if (targetNode.nodeOnPath is Ship)
+                        targetShip = targetNode.nodeOnPath as Ship;
                 }
+                //original click on ship
                 if (targetShip != null && selectedShip == null && targetShip.stationId == currentStationTurn)
                 {
                     selectedShip = targetShip;
@@ -90,17 +119,21 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    //clicked on valid move
                     if (targetNode != null && selectedShip != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
                     {
+                        //double click confirm
                         if (targetNode == selectedNode)
                         {
-                            QueueAction(ActionTypes.Movement);
+                            QueueAction(ActionType.Movement);
                             selectedShip.clearMovementRange();
                             ClearMovementPath();
                             ClearMovementRange();
                             selectedNode = null;
                             selectedShip = null;
+                            infoPanel.SetActive(false);
                         }
+                        //create movement
                         else
                         {
                             int oldPathCount = selectedShip.path?.Count ?? 0;
@@ -127,11 +160,16 @@ public class GameManager : MonoBehaviour
                             }
                         }
                     }
+                    //clicked on invalid tile
                     else
                     {
                         if (selectedShip != null)
                         {
                             selectedShip.resetMovementRange();
+                        }
+                        if (targetNode?.nodeOnPath is not Structure)
+                        {
+                            infoPanel.gameObject.SetActive(false);
                         }
                         ClearMovementPath();
                         ClearMovementRange();
@@ -142,11 +180,21 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
-    private void AddActionBarImage(ActionTypes actionType, int i)
+    public void SetTextValues(Structure structure)
+    {
+        infoPanel.gameObject.SetActive(true);
+        nameValue.text = structure.structureName;
+        hpValue.text = structure.hp + "/" + structure.maxHp;
+        rangeValue.text = structure.maxRange.ToString();
+        shieldValue.text = structure.shield.ToString();
+        electricValue.text = structure.electricAttack.ToString();
+        thermalValue.text = structure.thermalAttack.ToString();
+        voidValue.text = structure.voidAttack.ToString();
+    }
+    private void AddActionBarImage(ActionType actionType, int i)
     {
         var icon = moduleIcon;
-        if (actionType == ActionTypes.Movement)
+        if (actionType == ActionType.Movement)
             icon = movementIcon;
         ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = icon;
         ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(true);
@@ -154,14 +202,14 @@ public class GameManager : MonoBehaviour
 
     public void generateModule()
     {
-        QueueAction(ActionTypes.Module);
+        QueueAction(ActionType.Module);
     }
 
-    private void QueueAction(ActionTypes actionType)
+    private void QueueAction(ActionType actionType)
     {
         AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
         Ship selShip = selectedShip;
-        if (actionType == ActionTypes.Module)
+        if (actionType == ActionType.Module)
             selShip = null;
         stations[currentStationTurn].actions.Add(new Action(actionType, selShip));
     }
@@ -172,7 +220,7 @@ public class GameManager : MonoBehaviour
         var action = stations[currentStationTurn].actions[slot];
         if (action is object)
         {
-            if (action.actionType == ActionTypes.Movement)
+            if (action.actionType == ActionType.Movement)
             {
                 action.selectedShip.resetMovementRange();
             }
@@ -358,7 +406,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (var action in actions)
         {
-            if (action.actionType == ActionTypes.Movement)
+            if (action.actionType == ActionType.Movement)
             {
                 yield return StartCoroutine(MoveShip(action.selectedShip));
                 action.selectedShip.resetMovementRange();
@@ -372,6 +420,7 @@ public class GameManager : MonoBehaviour
         ClearActionBar();
         ClearMovementPath();
         ClearMovementRange();
+        infoPanel.SetActive(false);
         selectedNode = null;
     }
 
