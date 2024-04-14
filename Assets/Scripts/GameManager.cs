@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -59,7 +60,6 @@ public class GameManager : MonoBehaviour
         FindUI();
         characterParent = GameObject.Find("Characters").transform;
         highlightParent = GameObject.Find("Highlights").transform;
-
         CreateStation(enemyStationPrefab, enemyPrefab, "Red");
         CreateStation(playerStationPrefab, playerPrefab, "Green");
     }
@@ -85,13 +85,13 @@ public class GameManager : MonoBehaviour
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 10, 0, Random.Range(0, 3), Random.Range(5, 10), Random.Range(5, 10), Random.Range(5, 10));
+        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 5, 0, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10),1);
 
         var ship = Instantiate(shipPrefab);
         ship.transform.parent = characterParent;
         var shipNode = ship.AddComponent<Ship>();
         spawnX = Random.Range(0, 2) == 0 ? spawnX - 1 : spawnX + 1;
-        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 5, 3, Random.Range(0, 3), Random.Range(1, 5), Random.Range(1, 5), Random.Range(1, 5));
+        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 3, 3, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
     }
 
     void Update()
@@ -114,6 +114,7 @@ public class GameManager : MonoBehaviour
                 //original click on ship
                 if (targetShip != null && selectedShip == null && targetShip.stationId == currentStationTurn)
                 {
+                    Debug.Log($"{targetShip.structureName} Selected");
                     selectedShip = targetShip;
                     HighlightRangeOfMovement(targetShip.currentPathNode, targetShip.getMovementRange());
                 }
@@ -136,16 +137,19 @@ public class GameManager : MonoBehaviour
                         //create movement
                         else
                         {
+                           
                             int oldPathCount = selectedShip.path?.Count ?? 0;
                             var currentNode = selectedShip.currentPathNode;
-                            if (selectedShip.path == null)
+                            if (selectedShip.path == null || selectedShip.path.Count == 0)
                             {
                                 selectedShip.path = FindPath(currentNode, targetNode);
+                                Debug.Log($"Path created for {selectedShip.structureName}");
                             }
                             else
                             {
                                 currentNode = selectedShip.path.Last();
                                 selectedShip.path.AddRange(FindPath(currentNode, targetNode));
+                                Debug.Log($"Path edited for {selectedShip.structureName}");
                             }
                             selectedShip.subtractMovement(selectedShip.path.Count - oldPathCount);
                             HighlightRangeOfMovement(targetNode, selectedShip.getMovementRange());
@@ -165,6 +169,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (selectedShip != null)
                         {
+                            Debug.Log($"Invalid tile selected, reseting path and selection.");
                             selectedShip.resetMovementRange();
                         }
                         if (targetNode?.nodeOnPath is not Structure)
@@ -186,7 +191,7 @@ public class GameManager : MonoBehaviour
         nameValue.text = structure.structureName;
         hpValue.text = structure.hp + "/" + structure.maxHp;
         rangeValue.text = structure.maxRange.ToString();
-        shieldValue.text = structure.shield.ToString();
+        shieldValue.text = structure.stationId == stations[currentStationTurn].stationId ? structure.shield.ToString() : "?";
         electricValue.text = structure.electricAttack.ToString();
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
@@ -207,6 +212,7 @@ public class GameManager : MonoBehaviour
 
     private void QueueAction(ActionType actionType)
     {
+        Debug.Log($"{stations[currentStationTurn].structureName} queuing up action {actionType}");
         AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
         Ship selShip = selectedShip;
         if (actionType == ActionType.Module)
@@ -218,6 +224,7 @@ public class GameManager : MonoBehaviour
     public void cancelAction(int slot)
     {
         var action = stations[currentStationTurn].actions[slot];
+        Debug.Log($"{stations[currentStationTurn].structureName} removed action ${action} from queue");
         if (action is object)
         {
             if (action.actionType == ActionType.Movement)
@@ -258,14 +265,14 @@ public class GameManager : MonoBehaviour
     private IEnumerator MoveShip(Ship selectedShip)
     {
         isMoving = true;
-        if (selectedShip.path.Count > 0 && selectedShip.path.Count <= selectedShip.getMaxMovementRange())
+        if (selectedShip != null && selectedShip.path.Count > 0 && selectedShip.path.Count <= selectedShip.getMaxMovementRange())
         {
             Debug.Log("Moving to position: " + selectedShip.currentPathNode.transform.position);
             yield return StartCoroutine(MoveOnPath(selectedShip, selectedShip.path));
         }
         else
         {
-            Debug.Log("Cannot move to position: " + selectedShip.path.Last().transform.position + ". Out of range.");
+            Debug.Log("Cannot move to position: " + selectedShip.path.Last().transform.position + ". Out of range or no longer exists.");
         }
         yield return new WaitForSeconds(.1f);
         isMoving = false;
@@ -282,24 +289,43 @@ public class GameManager : MonoBehaviour
             if (node.nodeOnPath is Structure)
             {
                 var structureOnPath = node.nodeOnPath as Structure;
-                //if last movement
-                if (i == path.Count())
+                //if not ally, attack instead of move
+                if (structureOnPath.stationId != ship.stationId)
                 {
-                    //attack if enemy structure
+                    Debug.Log($"{ship.structureName} is attacking {structureOnPath.structureName}");
+                    if (ship.shield != AttackType.Electric && structureOnPath.shield != AttackType.Electric)
+                    {
+                        ship.hp -= Math.Max(structureOnPath.electricAttack - ship.electricAttack, 0);
+                        structureOnPath.hp -= Math.Max(ship.electricAttack - structureOnPath.electricAttack, 0);
+                    }
+                    if (ship.hp > 0 && structureOnPath.hp > 0 && ship.shield != AttackType.Thermal && structureOnPath.shield != AttackType.Thermal)
+                    {
+                        ship.hp -= Math.Max(structureOnPath.thermalAttack - ship.thermalAttack, 0);
+                        structureOnPath.hp -= Math.Max(ship.thermalAttack - structureOnPath.thermalAttack, 0);
+                    }
+                    if (ship.hp > 0 && structureOnPath.hp > 0 && ship.shield != AttackType.Void && structureOnPath.shield != AttackType.Void)
+                    {
+                        ship.hp -= Math.Max(structureOnPath.voidAttack - ship.voidAttack, 0);
+                        structureOnPath.hp -= Math.Max(ship.voidAttack - structureOnPath.voidAttack, 0);
+                    }
+                }
+                if (structureOnPath.hp > 0)
+                {
+                    //even if allied don't move through, don't feel like doing recursive checks right now
+                    Debug.Log($"{ship.structureName} movement was blocked by {structureOnPath.structureName}");
                     break;
                 }
                 else
                 {
-                    //if allied
-                    if (structureOnPath.stationId == ship.stationId)
-                    {
-                        //move through
-                    }
-                    else
-                    {
-                        //attack enemy
-                        break;
-                    }
+                    Debug.Log($"{ship.structureName} destroyed {structureOnPath.structureName}");
+                    Destroy(structureOnPath.gameObject);
+                    break;
+                }
+                if (ship.hp <= 0)
+                {
+                    Debug.Log($"{structureOnPath.structureName} destroyed {ship.structureName}");
+                    Destroy(ship.gameObject);
+                    break;
                 }
             }
             float elapsedTime = 0f;
@@ -383,6 +409,7 @@ public class GameManager : MonoBehaviour
         if (!isEndingTurn)
         {
             isEndingTurn = true;
+            Debug.Log($"Turn Ending, Starting Simultanous Turns");
             currentStationTurn++;
             ResetUI();
             StartCoroutine(TakeTurns());
@@ -395,17 +422,21 @@ public class GameManager : MonoBehaviour
         {
             foreach (var station in stations)
             {
+                Debug.Log($"{station.structureName} turn");
                 yield return StartCoroutine(PerformActions(station.actions));
             }
             currentStationTurn = 0;
         }
         isEndingTurn = false;
+        Debug.Log($"New Turn Starting");
+
     }
-    
+
     private IEnumerator PerformActions(List<Action> actions)
     {
         foreach (var action in actions)
         {
+            Debug.Log($"Performing action: {action}");
             if (action.actionType == ActionType.Movement)
             {
                 yield return StartCoroutine(MoveShip(action.selectedShip));

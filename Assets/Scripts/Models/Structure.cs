@@ -13,7 +13,8 @@ public class Structure : Node
     internal int electricAttack;
     internal int thermalAttack;
     internal int voidAttack;
-    public void InitializeStructure(int _x, int _y, string _structureName, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack)
+    internal int level;
+    public void InitializeStructure(int _x, int _y, string _structureName, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
     {
         x = _x;
         y = _y;
@@ -21,6 +22,7 @@ public class Structure : Node
         hp = _hp;
         maxRange = _range;
         range = _range;
+        level = _level;
         shield = (AttackType)_shield;
         electricAttack = _electricAttack;
         thermalAttack = _thermalAttack;
