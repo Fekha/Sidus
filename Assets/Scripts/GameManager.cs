@@ -114,9 +114,17 @@ public class GameManager : MonoBehaviour
                 //original click on ship
                 if (targetShip != null && selectedShip == null && targetShip.stationId == currentStationTurn)
                 {
-                    Debug.Log($"{targetShip.structureName} Selected");
-                    selectedShip = targetShip;
-                    HighlightRangeOfMovement(targetShip.currentPathNode, targetShip.getMovementRange());
+                    if (stations[currentStationTurn].actions.Any(x => x.selectedShip.stationId == targetShip.stationId))
+                    {
+                        Debug.Log($"{targetShip.structureName} already has a pending action.");
+                    }
+                    else
+                    {
+                        Debug.Log($"{targetShip.structureName} Selected.");
+                        selectedShip = targetShip;
+                        HighlightRangeOfMovement(targetShip.currentPathNode, targetShip.getMovementRange());
+                    }
+                   
                 }
                 else
                 {
@@ -224,7 +232,7 @@ public class GameManager : MonoBehaviour
     public void cancelAction(int slot)
     {
         var action = stations[currentStationTurn].actions[slot];
-        Debug.Log($"{stations[currentStationTurn].structureName} removed action ${action} from queue");
+        Debug.Log($"{stations[currentStationTurn].structureName} removed action ${action.actionType} from queue");
         if (action is object)
         {
             if (action.actionType == ActionType.Movement)
@@ -265,7 +273,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator MoveShip(Ship selectedShip)
     {
         isMoving = true;
-        if (selectedShip != null && selectedShip.path.Count > 0 && selectedShip.path.Count <= selectedShip.getMaxMovementRange())
+        if (selectedShip != null && selectedShip.path != null && selectedShip.path.Count > 0 && selectedShip.path.Count <= selectedShip.getMaxMovementRange())
         {
             Debug.Log("Moving to position: " + selectedShip.currentPathNode.transform.position);
             yield return StartCoroutine(MoveOnPath(selectedShip, selectedShip.path));
@@ -420,11 +428,22 @@ public class GameManager : MonoBehaviour
     {
         if (currentStationTurn >= stations.Count)
         {
-            foreach (var station in stations)
+            for (int i = 0; i < 6; i++)
             {
-                Debug.Log($"{station.structureName} turn");
-                yield return StartCoroutine(PerformActions(station.actions));
+                foreach (var station in stations)
+                {
+                    if (i < station.actions.Count)
+                    {
+                        var action = station.actions[i];
+                        if (action is object)
+                        {
+                            Debug.Log($"Perfoming {station.structureName}'s action {i + 1}: {action.actionType}");
+                            yield return StartCoroutine(PerformAction(action));
+                        }
+                    }
+                }
             }
+            stations.ForEach(x => x.actions.Clear());
             currentStationTurn = 0;
         }
         isEndingTurn = false;
@@ -432,18 +451,13 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private IEnumerator PerformActions(List<Action> actions)
+    private IEnumerator PerformAction(Action action)
     {
-        foreach (var action in actions)
+        if (action.actionType == ActionType.Movement)
         {
-            Debug.Log($"Performing action: {action}");
-            if (action.actionType == ActionType.Movement)
-            {
-                yield return StartCoroutine(MoveShip(action.selectedShip));
-                action.selectedShip.resetMovementRange();
-            }
+            yield return StartCoroutine(MoveShip(action.selectedShip));
+            action.selectedShip.resetMovementRange();
         }
-        actions.Clear();
     }
 
     private void ResetUI()
