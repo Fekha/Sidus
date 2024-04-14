@@ -6,7 +6,6 @@ public class Station : Structure
 {
     internal List<Action> actions = new List<Action>();
     internal List<Ship> ships = new List<Ship>();
-    
     //internal List<Outpost> outposts = new List<Outpost>();
 
     public void InitializeStation(int _x, int _y, string name, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)

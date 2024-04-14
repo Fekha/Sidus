@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     public Sprite moduleIcon;
 
     private PathNode selectedNode;
-    private Ship selectedShip;
+    private Structure selectedStructure;
     private Vector2 gridSize = new Vector2(8, 8);
     private List<Node> currentMovementRange = new List<Node>();
     internal List<Station> stations = new List<Station>();
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 5, 0, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10),1);
+        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10),1);
 
         var ship = Instantiate(shipPrefab);
         ship.transform.parent = characterParent;
@@ -104,68 +104,66 @@ public class GameManager : MonoBehaviour
             if (hit.collider != null && !isMoving)
             {
                 PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                Ship targetShip = null;
+                Structure targetStructure = null;
                 if (targetNode != null && targetNode.nodeOnPath is Structure)
                 {
-                    SetTextValues(targetNode.nodeOnPath as Structure);
-                    if (targetNode.nodeOnPath is Ship)
-                        targetShip = targetNode.nodeOnPath as Ship;
+                    targetStructure = targetNode.nodeOnPath as Structure;
+                    SetTextValues(targetStructure);
                 }
                 //original click on ship
-                if (targetShip != null && selectedShip == null && targetShip.stationId == currentStationTurn)
+                if (targetStructure != null && selectedStructure == null && targetStructure.stationId == currentStationTurn)
                 {
-                    if (stations[currentStationTurn].actions.Any(x => x.selectedShip.stationId == targetShip.stationId))
+                    if (stations[currentStationTurn].actions.Any(x => x.selectedStructure.structureId == targetStructure.structureId))
                     {
-                        Debug.Log($"{targetShip.structureName} already has a pending action.");
+                        Debug.Log($"{targetStructure.structureName} already has a pending action.");
                     }
                     else
                     {
-                        Debug.Log($"{targetShip.structureName} Selected.");
-                        selectedShip = targetShip;
-                        HighlightRangeOfMovement(targetShip.currentPathNode, targetShip.getMovementRange());
+                        Debug.Log($"{targetStructure.structureName} Selected.");
+                        selectedStructure = targetStructure;
+                        HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
                     }
-                   
                 }
                 else
                 {
                     //clicked on valid move
-                    if (targetNode != null && selectedShip != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
+                    if (targetNode != null && selectedStructure != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
                     {
                         //double click confirm
                         if (targetNode == selectedNode)
                         {
                             QueueAction(ActionType.Movement);
-                            selectedShip.clearMovementRange();
+                            selectedStructure.clearMovementRange();
                             ClearMovementPath();
                             ClearMovementRange();
                             selectedNode = null;
-                            selectedShip = null;
+                            selectedStructure = null;
                             infoPanel.SetActive(false);
                         }
                         //create movement
                         else
                         {
                            
-                            int oldPathCount = selectedShip.path?.Count ?? 0;
-                            var currentNode = selectedShip.currentPathNode;
-                            if (selectedShip.path == null || selectedShip.path.Count == 0)
+                            int oldPathCount = selectedStructure.path?.Count ?? 0;
+                            var currentNode = selectedStructure.currentPathNode;
+                            if (selectedStructure.path == null || selectedStructure.path.Count == 0)
                             {
-                                selectedShip.path = FindPath(currentNode, targetNode);
-                                Debug.Log($"Path created for {selectedShip.structureName}");
+                                selectedStructure.path = FindPath(currentNode, targetNode);
+                                Debug.Log($"Path created for {selectedStructure.structureName}");
                             }
                             else
                             {
-                                currentNode = selectedShip.path.Last();
-                                selectedShip.path.AddRange(FindPath(currentNode, targetNode));
-                                Debug.Log($"Path edited for {selectedShip.structureName}");
+                                currentNode = selectedStructure.path.Last();
+                                selectedStructure.path.AddRange(FindPath(currentNode, targetNode));
+                                Debug.Log($"Path edited for {selectedStructure.structureName}");
                             }
-                            selectedShip.subtractMovement(selectedShip.path.Count - oldPathCount);
-                            HighlightRangeOfMovement(targetNode, selectedShip.getMovementRange());
+                            selectedStructure.subtractMovement(selectedStructure.path.Count - oldPathCount);
+                            HighlightRangeOfMovement(targetNode, selectedStructure.getMovementRange());
                             ClearMovementPath();
                             selectedNode = targetNode;
-                            foreach (var node in selectedShip.path)
+                            foreach (var node in selectedStructure.path)
                             {
-                                if (node == selectedShip.path.Last())
+                                if (node == selectedStructure.path.Last())
                                     currentPath.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
                                 else
                                     currentPath.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
@@ -175,10 +173,10 @@ public class GameManager : MonoBehaviour
                     //clicked on invalid tile
                     else
                     {
-                        if (selectedShip != null)
+                        if (selectedStructure != null)
                         {
                             Debug.Log($"Invalid tile selected, reseting path and selection.");
-                            selectedShip.resetMovementRange();
+                            selectedStructure.resetMovementRange();
                         }
                         if (targetNode?.nodeOnPath is not Structure)
                         {
@@ -187,7 +185,7 @@ public class GameManager : MonoBehaviour
                         ClearMovementPath();
                         ClearMovementRange();
                         selectedNode = null;
-                        selectedShip = null;
+                        selectedStructure = null;
                     }
                 }
             }
@@ -222,13 +220,12 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"{stations[currentStationTurn].structureName} queuing up action {actionType}");
         AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
-        Ship selShip = selectedShip;
+        Structure selShip = selectedStructure;
         if (actionType == ActionType.Module)
             selShip = null;
         stations[currentStationTurn].actions.Add(new Action(actionType, selShip));
     }
 
-   
     public void cancelAction(int slot)
     {
         var action = stations[currentStationTurn].actions[slot];
@@ -237,7 +234,7 @@ public class GameManager : MonoBehaviour
         {
             if (action.actionType == ActionType.Movement)
             {
-                action.selectedShip.resetMovementRange();
+                action.selectedStructure.resetMovementRange();
             }
             ClearActionBar();
             stations[currentStationTurn].actions.RemoveAt(slot);
@@ -270,26 +267,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator MoveShip(Ship selectedShip)
+    private IEnumerator MoveStructure(Structure selectedStructure)
     {
         isMoving = true;
-        if (selectedShip != null && selectedShip.path != null && selectedShip.path.Count > 0 && selectedShip.path.Count <= selectedShip.getMaxMovementRange())
+        if (selectedStructure != null && selectedStructure.path != null && selectedStructure.path.Count > 0 && selectedStructure.path.Count <= selectedStructure.getMaxMovementRange())
         {
-            Debug.Log("Moving to position: " + selectedShip.currentPathNode.transform.position);
-            yield return StartCoroutine(MoveOnPath(selectedShip, selectedShip.path));
+            Debug.Log("Moving to position: " + selectedStructure.currentPathNode.transform.position);
+            yield return StartCoroutine(MoveOnPath(selectedStructure, selectedStructure.path));
         }
         else
         {
-            Debug.Log("Cannot move to position: " + selectedShip.path.Last().transform.position + ". Out of range or no longer exists.");
+            Debug.Log("Cannot move to position: " + selectedStructure.path.Last().transform.position + ". Out of range or no longer exists.");
         }
         yield return new WaitForSeconds(.1f);
         isMoving = false;
     }
 
-    private IEnumerator MoveOnPath(Ship ship, List<PathNode> path)
+    private IEnumerator MoveOnPath(Structure structure, List<PathNode> path)
     {
         int i = 0;
-        ship.currentPathNode.nodeOnPath = null;
+        structure.currentPathNode.nodeOnPath = null;
         ClearMovementRange();
         foreach (var node in path)
         {
@@ -298,41 +295,40 @@ public class GameManager : MonoBehaviour
             {
                 var structureOnPath = node.nodeOnPath as Structure;
                 //if not ally, attack instead of move
-                if (structureOnPath.stationId != ship.stationId)
+                if (structureOnPath.stationId != structure.stationId)
                 {
-                    Debug.Log($"{ship.structureName} is attacking {structureOnPath.structureName}");
-                    if (ship.shield != AttackType.Electric && structureOnPath.shield != AttackType.Electric)
+                    Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
+                    if (structure.shield != AttackType.Electric && structureOnPath.shield != AttackType.Electric)
                     {
-                        ship.hp -= Math.Max(structureOnPath.electricAttack - ship.electricAttack, 0);
-                        structureOnPath.hp -= Math.Max(ship.electricAttack - structureOnPath.electricAttack, 0);
+                        structure.hp -= Math.Max(structureOnPath.electricAttack - structure.electricAttack, 0);
+                        structureOnPath.hp -= Math.Max(structure.electricAttack - structureOnPath.electricAttack, 0);
                     }
-                    if (ship.hp > 0 && structureOnPath.hp > 0 && ship.shield != AttackType.Thermal && structureOnPath.shield != AttackType.Thermal)
+                    if (structure.hp > 0 && structureOnPath.hp > 0 && structure.shield != AttackType.Thermal && structureOnPath.shield != AttackType.Thermal)
                     {
-                        ship.hp -= Math.Max(structureOnPath.thermalAttack - ship.thermalAttack, 0);
-                        structureOnPath.hp -= Math.Max(ship.thermalAttack - structureOnPath.thermalAttack, 0);
+                        structure.hp -= Math.Max(structureOnPath.thermalAttack - structure.thermalAttack, 0);
+                        structureOnPath.hp -= Math.Max(structure.thermalAttack - structureOnPath.thermalAttack, 0);
                     }
-                    if (ship.hp > 0 && structureOnPath.hp > 0 && ship.shield != AttackType.Void && structureOnPath.shield != AttackType.Void)
+                    if (structure.hp > 0 && structureOnPath.hp > 0 && structure.shield != AttackType.Void && structureOnPath.shield != AttackType.Void)
                     {
-                        ship.hp -= Math.Max(structureOnPath.voidAttack - ship.voidAttack, 0);
-                        structureOnPath.hp -= Math.Max(ship.voidAttack - structureOnPath.voidAttack, 0);
+                        structure.hp -= Math.Max(structureOnPath.voidAttack - structure.voidAttack, 0);
+                        structureOnPath.hp -= Math.Max(structure.voidAttack - structureOnPath.voidAttack, 0);
                     }
                 }
                 if (structureOnPath.hp > 0)
                 {
                     //even if allied don't move through, don't feel like doing recursive checks right now
-                    Debug.Log($"{ship.structureName} movement was blocked by {structureOnPath.structureName}");
+                    Debug.Log($"{structure.structureName} movement was blocked by {structureOnPath.structureName}");
                     break;
                 }
                 else
                 {
-                    Debug.Log($"{ship.structureName} destroyed {structureOnPath.structureName}");
+                    Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
                     Destroy(structureOnPath.gameObject);
-                    break;
                 }
-                if (ship.hp <= 0)
+                if (structure.hp <= 0)
                 {
-                    Debug.Log($"{structureOnPath.structureName} destroyed {ship.structureName}");
-                    Destroy(ship.gameObject);
+                    Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
+                    Destroy(structure.gameObject);
                     break;
                 }
             }
@@ -340,18 +336,21 @@ public class GameManager : MonoBehaviour
             float totalTime = .25f;
             while (elapsedTime <= totalTime)
             {
-                ship.transform.position = Vector3.Lerp(ship.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
+                structure.transform.position = Vector3.Lerp(structure.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            ship.currentPathNode = node;
-            ship.SetNodeColor();
+            structure.currentPathNode = node;
+            if (path.Count == i || node.ownedById == -1)
+            {
+                structure.SetNodeColor();
+            }
             yield return new WaitForSeconds(.25f);
         }
         //character.movementRange -= path.Count();
         //HighlightRangeOfMovement(ship.currentPathNode, ship.getMovementRange());
-        ship.transform.position = ship.currentPathNode.transform.position;
-        ship.currentPathNode.nodeOnPath = ship;
+        structure.transform.position = structure.currentPathNode.transform.position;
+        structure.currentPathNode.nodeOnPath = structure;
     }
 
     List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
@@ -455,8 +454,8 @@ public class GameManager : MonoBehaviour
     {
         if (action.actionType == ActionType.Movement)
         {
-            yield return StartCoroutine(MoveShip(action.selectedShip));
-            action.selectedShip.resetMovementRange();
+            yield return StartCoroutine(MoveStructure(action.selectedStructure));
+            action.selectedStructure.resetMovementRange();
         }
     }
 
