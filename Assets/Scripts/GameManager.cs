@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     private bool isEndingTurn = false;
     
     internal int currentStationTurn = 0;
+    internal int scoreToWin = 0;
 
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI hpValue;
@@ -211,7 +212,7 @@ public class GameManager : MonoBehaviour
         ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(true);
     }
 
-    public void generateModule()
+    public void GenerateModule()
     {
         QueueAction(ActionType.Module);
     }
@@ -226,7 +227,7 @@ public class GameManager : MonoBehaviour
         stations[currentStationTurn].actions.Add(new Action(actionType, selShip));
     }
 
-    public void cancelAction(int slot)
+    public void CancelAction(int slot)
     {
         var action = stations[currentStationTurn].actions[slot];
         Debug.Log($"{stations[currentStationTurn].structureName} removed action ${action.actionType} from queue");
@@ -246,6 +247,7 @@ public class GameManager : MonoBehaviour
     }
     void CreateGrid()
     {
+        var obstacleCount = 0;
         var nodeParent = GameObject.Find("Nodes").transform;
         grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
@@ -257,14 +259,16 @@ public class GameManager : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * cellPrefabSize.x) + Vector3.up * (y * cellPrefabSize.y);
                 var isObstacle = false;
                 if (y != 0 && y != gridSize.y-1 && x != 0 && x != gridSize.x - 1)
-                    isObstacle = Random.Range(0, 6) == 0; 
-
+                    isObstacle = Random.Range(0, 6) == 0;
+                if(isObstacle)
+                    obstacleCount++;
                 var cell = Instantiate(isObstacle ? obsticalPrefab : cellPrefab, worldPoint, Quaternion.identity);
                 cell.transform.parent = nodeParent;
                 grid[x, y] = cell.AddComponent<PathNode>();
                 grid[x, y].InitializeNode(x, y, isObstacle);
             }
         }
+        scoreToWin = (int)(((gridSize.x * gridSize.y) - obstacleCount)*.66);
     }
 
     private IEnumerator MoveStructure(Structure selectedStructure)
@@ -298,20 +302,23 @@ public class GameManager : MonoBehaviour
                 if (structureOnPath.stationId != structure.stationId)
                 {
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
-                    if (structure.shield != AttackType.Electric && structureOnPath.shield != AttackType.Electric)
-                    {
+                    if (structure.shield != AttackType.Electric)
                         structure.hp -= Math.Max(structureOnPath.electricAttack - structure.electricAttack, 0);
+                    if(structureOnPath.shield != AttackType.Electric)
                         structureOnPath.hp -= Math.Max(structure.electricAttack - structureOnPath.electricAttack, 0);
-                    }
-                    if (structure.hp > 0 && structureOnPath.hp > 0 && structure.shield != AttackType.Thermal && structureOnPath.shield != AttackType.Thermal)
+                    if (structure.hp > 0 && structureOnPath.hp > 0)
                     {
-                        structure.hp -= Math.Max(structureOnPath.thermalAttack - structure.thermalAttack, 0);
-                        structureOnPath.hp -= Math.Max(structure.thermalAttack - structureOnPath.thermalAttack, 0);
+                        if (structure.shield != AttackType.Thermal)
+                            structure.hp -= Math.Max(structureOnPath.thermalAttack - structure.thermalAttack, 0);
+                        if(structureOnPath.shield != AttackType.Thermal)
+                            structureOnPath.hp -= Math.Max(structure.thermalAttack - structureOnPath.thermalAttack, 0);
                     }
-                    if (structure.hp > 0 && structureOnPath.hp > 0 && structure.shield != AttackType.Void && structureOnPath.shield != AttackType.Void)
+                    if (structure.hp > 0 && structureOnPath.hp > 0)
                     {
-                        structure.hp -= Math.Max(structureOnPath.voidAttack - structure.voidAttack, 0);
-                        structureOnPath.hp -= Math.Max(structure.voidAttack - structureOnPath.voidAttack, 0);
+                        if(structure.shield != AttackType.Void)
+                            structure.hp -= Math.Max(structureOnPath.voidAttack - structure.voidAttack, 0);
+                        if(structureOnPath.shield != AttackType.Void)
+                            structureOnPath.hp -= Math.Max(structure.voidAttack - structureOnPath.voidAttack, 0);
                     }
                 }
                 if (structureOnPath.hp > 0)
@@ -419,8 +426,28 @@ public class GameManager : MonoBehaviour
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
             currentStationTurn++;
             ResetUI();
-            StartCoroutine(TakeTurns());
+            StartCoroutine(TakeTurns()); 
         }
+    }
+
+    private int CheckForWin()
+    {
+        Dictionary<int,int> scores = new Dictionary<int,int>();
+        scores.Add(-1, 0);
+        scores.Add(0, 0);
+        scores.Add(1, 0);
+        for (int i = 0; i < gridSize.x; i++) {
+            for (int j = 0; j < gridSize.y; j++) {
+                scores[grid[i, j].ownedById]++;
+            }
+        }
+        for (int i = -1; i <= 1; i++) {
+            if (scores[i] >= scoreToWin)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private IEnumerator TakeTurns()
@@ -444,10 +471,14 @@ public class GameManager : MonoBehaviour
             }
             stations.ForEach(x => x.actions.Clear());
             currentStationTurn = 0;
+            var winner = CheckForWin();
+            if (winner != -1)
+            {
+                Debug.Log($"Player {winner} won");
+            }
         }
         isEndingTurn = false;
         Debug.Log($"New Turn Starting");
-
     }
 
     private IEnumerator PerformAction(Action action)
