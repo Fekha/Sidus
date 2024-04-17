@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -34,6 +32,7 @@ public class GameManager : MonoBehaviour
     private bool isEndingTurn = false;
     internal int currentStationTurn = 0;
 
+    private Button upgradeButton;
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI hpValue;
     private TextMeshProUGUI rangeValue;
@@ -52,7 +51,6 @@ public class GameManager : MonoBehaviour
         FindUI();
         highlightParent = GameObject.Find("Highlights").transform;
     }
-
     private void FindUI()
     {
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
@@ -62,6 +60,7 @@ public class GameManager : MonoBehaviour
         electricValue = infoPanel.transform.Find("ElectricValue").GetComponent<TextMeshProUGUI>();
         thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
+        upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
     }
 
     void Update()
@@ -163,14 +162,24 @@ public class GameManager : MonoBehaviour
     }
     public void SetTextValues(Structure structure)
     {
-        infoPanel.gameObject.SetActive(true);
+        infoPanel.gameObject.SetActive(true); 
         nameValue.text = structure.structureName;
         hpValue.text = structure.hp + "/" + structure.maxHp;
         rangeValue.text = structure.maxRange.ToString();
-        shieldValue.text = structure.stationId == stations[currentStationTurn].stationId ? structure.shield.ToString() : "?";
         electricValue.text = structure.electricAttack.ToString();
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
+        if (structure.stationId == stations[currentStationTurn].stationId)
+        {
+            upgradeButton.gameObject.SetActive(true);
+            upgradeButton.interactable = stations[currentStationTurn].modules.Count > 0; //Add scaling upgrade system
+            shieldValue.text = structure.shield.ToString();
+        }
+        else
+        {
+            upgradeButton.gameObject.SetActive(false);
+            shieldValue.text = "?";
+        }
     }
     
     private void AddActionBarImage(ActionType actionType, int i)

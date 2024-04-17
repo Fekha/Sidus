@@ -46,7 +46,7 @@ public class GridManager : MonoBehaviour
         ship.transform.parent = characterParent;
         var shipNode = ship.AddComponent<Ship>();
         spawnX = Random.Range(0, 2) == 0 ? spawnX - 1 : spawnX + 1;
-        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 3, 3, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
+        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
     }
     void CreateGrid()
     {
