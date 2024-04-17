@@ -14,37 +14,25 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager i;
     //prefabs
-    public GameObject cellPrefab;
-    public GameObject enemyPrefab;
-    public GameObject enemyStationPrefab;
-    public GameObject obsticalPrefab;
-    public GameObject movementRangePrefab;
+    private Transform highlightParent;
     public GameObject selectPrefab;
     public GameObject pathPrefab;
-    public GameObject playerPrefab;
-    public GameObject playerStationPrefab;
-    public GameObject infoPanel;
+    public GameObject movementRangePrefab;
 
     private List<GameObject> currentPath = new List<GameObject>();
-    private Transform characterParent;
-    private Transform highlightParent;
+
     public Transform ActionBar;
     public Sprite movementIcon;
     public Sprite moduleIcon;
 
     private PathNode selectedNode;
     private Structure selectedStructure;
-    private Vector2 gridSize = new Vector2(8, 8);
     private List<Node> currentMovementRange = new List<Node>();
     internal List<Station> stations = new List<Station>();
 
-    private Vector3 cellPrefabSize;
-    internal PathNode[,] grid;
     private bool isMoving = false;
     private bool isEndingTurn = false;
-    
     internal int currentStationTurn = 0;
-    internal int scoreToWin = 0;
 
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI hpValue;
@@ -53,16 +41,16 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI electricValue;
     private TextMeshProUGUI thermalValue;
     private TextMeshProUGUI voidValue;
-    void Start()
+    public GameObject infoPanel;
+
+    private void Awake()
     {
         i = this;
-        cellPrefabSize = cellPrefab.GetComponent<Renderer>().bounds.size;
-        CreateGrid();
+    }
+    void Start()
+    {
         FindUI();
-        characterParent = GameObject.Find("Characters").transform;
         highlightParent = GameObject.Find("Highlights").transform;
-        CreateStation(enemyStationPrefab, enemyPrefab, "Red");
-        CreateStation(playerStationPrefab, playerPrefab, "Green");
     }
 
     private void FindUI()
@@ -74,25 +62,6 @@ public class GameManager : MonoBehaviour
         electricValue = infoPanel.transform.Find("ElectricValue").GetComponent<TextMeshProUGUI>();
         thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
-    }
-
-    private void CreateStation(GameObject stationPrefab, GameObject shipPrefab, string team)
-    {
-        var spawnY = 0;
-        if (team == "Red") {
-            spawnY = (int)gridSize.y - 1;
-        }
-        var station = Instantiate(stationPrefab);
-        station.transform.parent = characterParent;
-        var stationNode = station.AddComponent<Station>();
-        var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10),1);
-
-        var ship = Instantiate(shipPrefab);
-        ship.transform.parent = characterParent;
-        var shipNode = ship.AddComponent<Ship>();
-        spawnX = Random.Range(0, 2) == 0 ? spawnX - 1 : spawnX + 1;
-        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 3, 3, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
     }
 
     void Update()
@@ -149,13 +118,13 @@ public class GameManager : MonoBehaviour
                             var currentNode = selectedStructure.currentPathNode;
                             if (selectedStructure.path == null || selectedStructure.path.Count == 0)
                             {
-                                selectedStructure.path = FindPath(currentNode, targetNode);
+                                selectedStructure.path = GridManager.i.FindPath(currentNode, targetNode);
                                 Debug.Log($"Path created for {selectedStructure.structureName}");
                             }
                             else
                             {
                                 currentNode = selectedStructure.path.Last();
-                                selectedStructure.path.AddRange(FindPath(currentNode, targetNode));
+                                selectedStructure.path.AddRange(GridManager.i.FindPath(currentNode, targetNode));
                                 Debug.Log($"Path edited for {selectedStructure.structureName}");
                             }
                             selectedStructure.subtractMovement(selectedStructure.path.Count - oldPathCount);
@@ -203,6 +172,7 @@ public class GameManager : MonoBehaviour
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
     }
+    
     private void AddActionBarImage(ActionType actionType, int i)
     {
         var icon = moduleIcon;
@@ -244,31 +214,6 @@ public class GameManager : MonoBehaviour
                 AddActionBarImage(stations[currentStationTurn].actions[i].actionType, i);
             }
         }
-    }
-    void CreateGrid()
-    {
-        var obstacleCount = 0;
-        var nodeParent = GameObject.Find("Nodes").transform;
-        grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
-        Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
-        for (int x = 0; x < gridSize.x; x++)
-        {
-            for (int y = 0; y < gridSize.y; y++)
-            {
-                // Calculate the world position based on the size of the cellPrefab
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * cellPrefabSize.x) + Vector3.up * (y * cellPrefabSize.y);
-                var isObstacle = false;
-                if (y != 0 && y != gridSize.y-1 && x != 0 && x != gridSize.x - 1)
-                    isObstacle = Random.Range(0, 6) == 0;
-                if(isObstacle)
-                    obstacleCount++;
-                var cell = Instantiate(isObstacle ? obsticalPrefab : cellPrefab, worldPoint, Quaternion.identity);
-                cell.transform.parent = nodeParent;
-                grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, isObstacle);
-            }
-        }
-        scoreToWin = (int)(((gridSize.x * gridSize.y) - obstacleCount)*.66);
     }
 
     private IEnumerator MoveStructure(Structure selectedStructure)
@@ -359,56 +304,11 @@ public class GameManager : MonoBehaviour
         structure.transform.position = structure.currentPathNode.transform.position;
         structure.currentPathNode.nodeOnPath = structure;
     }
-
-    List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
-    {
-        List<PathNode> openSet = new List<PathNode>();
-        HashSet<PathNode> closedSet = new HashSet<PathNode>();
-        openSet.Add(startNode);
-
-        while (openSet.Count > 0)
-        {
-            PathNode currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].fCost < currentNode.fCost || (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost))
-                {
-                    currentNode = openSet[i];
-                }
-            }
-
-            openSet.Remove(currentNode);
-            closedSet.Add(currentNode);
-
-            if (currentNode == targetNode)
-            {
-                return RetracePath(startNode, targetNode);
-            }
-
-            foreach (PathNode neighbor in GetNeighbors(currentNode))
-            {
-                if (neighbor != targetNode && (neighbor.isObstacle || closedSet.Contains(neighbor)))
-                    continue;
-
-                int newCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
-                if (newCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
-                {
-                    neighbor.gCost = newCostToNeighbor;
-                    neighbor.hCost = GetDistance(neighbor, targetNode);
-                    neighbor.parent = currentNode;
-
-                    if (!openSet.Contains(neighbor))
-                        openSet.Add(neighbor);
-                }
-            }
-        }
-        return new List<PathNode>();
-    }
-
+    
     public void HighlightRangeOfMovement(PathNode currentNode, int shipRange)
     {
         ClearMovementRange();
-        List<PathNode> nodesWithinRange = GetNodesWithinRange(currentNode, shipRange);
+        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, shipRange);
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(movementRangePrefab, node.transform.position, Quaternion.identity);
@@ -418,6 +318,7 @@ public class GameManager : MonoBehaviour
             currentMovementRange.Add(rangeComponent);
         }
     }
+    
     public void EndTurn()
     {
         if (!isEndingTurn)
@@ -429,27 +330,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(TakeTurns()); 
         }
     }
-
-    private int CheckForWin()
-    {
-        Dictionary<int,int> scores = new Dictionary<int,int>();
-        scores.Add(-1, 0);
-        scores.Add(0, 0);
-        scores.Add(1, 0);
-        for (int i = 0; i < gridSize.x; i++) {
-            for (int j = 0; j < gridSize.y; j++) {
-                scores[grid[i, j].ownedById]++;
-            }
-        }
-        for (int i = -1; i <= 1; i++) {
-            if (scores[i] >= scoreToWin)
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
+    
     private IEnumerator TakeTurns()
     {
         if (currentStationTurn >= stations.Count)
@@ -471,7 +352,7 @@ public class GameManager : MonoBehaviour
             }
             stations.ForEach(x => x.actions.Clear());
             currentStationTurn = 0;
-            var winner = CheckForWin();
+            var winner = GridManager.i.CheckForWin();
             if (winner != -1)
             {
                 Debug.Log($"Player {winner} won");
@@ -480,7 +361,7 @@ public class GameManager : MonoBehaviour
         isEndingTurn = false;
         Debug.Log($"New Turn Starting");
     }
-
+    
     private IEnumerator PerformAction(Action action)
     {
         if (action.actionType == ActionType.Movement)
@@ -489,7 +370,7 @@ public class GameManager : MonoBehaviour
             action.selectedStructure.resetMovementRange();
         }
     }
-
+    
     private void ResetUI()
     {
         ClearActionBar();
@@ -531,82 +412,5 @@ public class GameManager : MonoBehaviour
                 i++;
             }
         }
-    }
-
-        List<PathNode> GetNodesWithinRange(PathNode clickedNode, int range)
-    {
-        List<PathNode> nodesWithinRange = new List<PathNode>();
-
-        Queue<PathNode> queue = new Queue<PathNode>();
-        HashSet<PathNode> visited = new HashSet<PathNode>();
-
-        queue.Enqueue(clickedNode);
-        visited.Add(clickedNode);
-
-        while (queue.Count > 0 && range >= 0)
-        {
-            int levelSize = queue.Count;
-
-            for (int i = 0; i < levelSize; i++)
-            {
-                PathNode currentNode = queue.Dequeue();
-
-                nodesWithinRange.Add(currentNode);
-
-                foreach (PathNode neighbor in GetNeighbors(currentNode))
-                {
-                    if (!visited.Contains(neighbor) && !neighbor.isObstacle)
-                    {
-                        queue.Enqueue(neighbor);
-                        visited.Add(neighbor);
-                    }
-                }
-            }
-            range--;
-        }
-        return nodesWithinRange;
-    }
-
-    List<PathNode> RetracePath(PathNode startNode, PathNode endNode)
-    {
-        List<PathNode> path = new List<PathNode>();
-        PathNode currentNode = endNode;
-        while (currentNode != startNode)
-        {
-            if (!currentNode.isObstacle)
-                path.Add(currentNode);
-            currentNode = currentNode.parent;
-        }
-        path.Reverse();
-        return path;
-    }
-
-    int GetDistance(PathNode nodeA, PathNode nodeB)
-    {
-        int dstX = Mathf.Abs(nodeA.x - nodeB.x);
-        int dstY = Mathf.Abs(nodeA.y - nodeB.y);
-
-        return dstX + dstY;
-    }
-
-    List<PathNode> GetNeighbors(PathNode node)
-    {
-        List<PathNode> neighbors = new List<PathNode>();
-
-        int[] xOffsets = { 0, 1, 0, -1 }; // Right, Up, Left, Down
-        int[] yOffsets = { 1, 0, -1, 0 }; // Right, Up, Left, Down
-
-        for (int i = 0; i < xOffsets.Length; i++)
-        {
-            int checkX = node.x + xOffsets[i];
-            int checkY = node.y + yOffsets[i];
-
-            if (checkX >= 0 && checkX < gridSize.x && checkY >= 0 && checkY < gridSize.y)
-            {
-                neighbors.Add(grid[checkX, checkY]);
-            }
-        }
-
-        return neighbors;
     }
 }

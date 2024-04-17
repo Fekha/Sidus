@@ -3,12 +3,12 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     public PathNode currentPathNode {
-        get { return GameManager.i.grid[x, y]; }
+        get { return GridManager.i.grid[x, y]; }
         set
         {
             x = value.x;
             y = value.y;
-            GameManager.i.grid[x, y] = value;
+            GridManager.i.grid[x, y] = value;
         }
     }
     internal int x;
