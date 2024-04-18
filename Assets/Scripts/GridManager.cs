@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -26,28 +25,85 @@ public class GridManager : MonoBehaviour
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
         characterParent = GameObject.Find("Characters").transform;
-        CreateStation(enemyStationPrefab, enemyPrefab, "Red");
-        CreateStation(playerStationPrefab, playerPrefab, "Green");
+        CreateStation(enemyStationPrefab, 0);
+        CreateStation(playerStationPrefab, 1);
     }
-    private void CreateStation(GameObject stationPrefab, GameObject shipPrefab, string team)
+    private void CreateStation(GameObject stationPrefab,int team)
     {
-        var spawnY = 0;
-        if (team == "Red")
+        int spawnY;
+        string teamColor;
+        if (team == 0)
         {
             spawnY = (int)gridSize.y - 1;
+            teamColor = "Red";
+        }
+        else
+        {
+            spawnY = 0;
+            teamColor = "Green";
         }
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, team + " Station", 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10), 1);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor + " Station", 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10), 1);
+        CreateShip(stationNode);
+    }
 
+    public void CreateShip(Station stationNode)
+    {
+        GameObject shipPrefab;
+        string teamColor;
+        if (stationNode.stationId == 0)
+        {
+            teamColor = "Red";
+            shipPrefab = enemyPrefab;
+        }
+        else
+        {
+            teamColor = "Green";
+            shipPrefab = playerPrefab;
+        }
+       
         var ship = Instantiate(shipPrefab);
         ship.transform.parent = characterParent;
         var shipNode = ship.AddComponent<Ship>();
-        spawnX = Random.Range(0, 2) == 0 ? spawnX - 1 : spawnX + 1;
-        shipNode.InitializeShip(spawnX, spawnY, stationNode, team + " Ship", 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
+        var spawnX = stationNode.x;
+        var spawnY = stationNode.y;
+        if (CanSpawnShip(spawnX, spawnY -1) || CanSpawnShip(spawnX, spawnY +1) || CanSpawnShip(spawnX - 1, spawnY) || CanSpawnShip(spawnX +1, spawnY))
+        {
+            do {
+                spawnX = stationNode.x;
+                spawnY = stationNode.y;
+                if (Random.Range(0, 2) == 0)
+                {
+                    spawnX += Random.Range(0, 2) == 0 ? -1 : 1;
+                }
+                else
+                {
+                    spawnY += Random.Range(0, 2) == 0 ? -1 : 1;
+                }
+            } while (IsInTheBox(spawnX, spawnY) && grid[spawnX, spawnY].nodeOnPath != null);
+            shipNode.InitializeShip(spawnX, spawnY, stationNode, teamColor + " Ship", 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
+        }
     }
+    bool CanSpawnShip(int x, int y)
+    {
+        if (IsInTheBox(x, y)) {
+            return grid[x, y].nodeOnPath == null && !grid[x, y].isObstacle;
+        }
+        return false;
+        
+    }
+    bool IsInTheBox(int x, int y)
+    {
+        if (x >= 0 && y >= 0 && x < gridSize.x && y < gridSize.y)
+        {
+            return true;
+        }
+        return false;
+    }
+
     void CreateGrid()
     {
         var obstacleCount = 0;

@@ -160,6 +160,10 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    public void CreateFleet()
+    {
+        GridManager.i.CreateShip(stations[currentStationTurn]);
+    }
     public void SetTextValues(Structure structure)
     {
         infoPanel.gameObject.SetActive(true); 
