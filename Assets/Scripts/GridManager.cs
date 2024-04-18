@@ -64,10 +64,6 @@ public class GridManager : MonoBehaviour
             teamColor = "Green";
             shipPrefab = playerPrefab;
         }
-       
-        var ship = Instantiate(shipPrefab);
-        ship.transform.parent = characterParent;
-        var shipNode = ship.AddComponent<Ship>();
         var spawnX = stationNode.x;
         var spawnY = stationNode.y;
         if (CanSpawnShip(spawnX, spawnY -1) || CanSpawnShip(spawnX, spawnY +1) || CanSpawnShip(spawnX - 1, spawnY) || CanSpawnShip(spawnX +1, spawnY))
@@ -83,15 +79,29 @@ public class GridManager : MonoBehaviour
                 {
                     spawnY += Random.Range(0, 2) == 0 ? -1 : 1;
                 }
-            } while (IsInTheBox(spawnX, spawnY) && grid[spawnX, spawnY].nodeOnPath != null);
+            } while (!CanSpawnShip(spawnX, spawnY));
+            var ship = Instantiate(shipPrefab);
+            ship.transform.parent = characterParent;
+            var shipNode = ship.AddComponent<Ship>();
             shipNode.InitializeShip(spawnX, spawnY, stationNode, teamColor + " Ship", 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
         }
     }
     bool CanSpawnShip(int x, int y)
     {
         if (IsInTheBox(x, y)) {
-            return grid[x, y].nodeOnPath == null && !grid[x, y].isObstacle;
+
+            if (grid[x, y].nodeOnPath == null && !grid[x, y].isObstacle)
+            {
+                Debug.Log($"Can Spawn at {x},{y}");
+                return true;
+            }
+            else
+            {
+                Debug.Log($"{x},{y} is blocked");
+                return false;
+            }
         }
+        Debug.Log($"{x},{y} is out of bounds");
         return false;
         
     }
