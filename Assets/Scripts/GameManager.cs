@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -160,13 +161,19 @@ public class GameManager : MonoBehaviour
                         //clicked on invalid tile
                         else
                         {
-                            if (selectedStructure != null)
+                            if (targetNode?.nodeOnPath is Structure)
                             {
-                                Debug.Log($"Invalid tile selected, reseting path and selection.");
-                                selectedStructure.resetMovementRange();
+                                infoPanel.SetActive(true);
                             }
-                            ClearSelection();
-                            infoPanel.SetActive(targetNode?.nodeOnPath is Structure);
+                            else
+                            {
+                                if (selectedStructure != null)
+                                {
+                                    Debug.Log($"Invalid tile selected, reseting path and selection.");
+                                    selectedStructure.resetMovementRange();
+                                }
+                                ClearSelection();
+                            }
                         }
                     }
                 }
@@ -185,7 +192,6 @@ public class GameManager : MonoBehaviour
 
     public void SetTextValues(Structure structure)
     {
-        infoPanel.gameObject.SetActive(true); 
         nameValue.text = structure.structureName;
         levelValue.text = structure.level.ToString();
         hpValue.text = structure.hp + "/" + structure.maxHp;
@@ -206,8 +212,9 @@ public class GameManager : MonoBehaviour
             shieldValue.text = "?";
         }
         SetModuleBar(structure);
+        infoPanel.gameObject.SetActive(true);
     }
-    
+
     private void AddActionBarImage(ActionType actionType, int i)
     {
         var icon = moduleIcon;
@@ -248,9 +255,9 @@ public class GameManager : MonoBehaviour
     private bool CanUpgrade(Structure structure)
     {
         if (structure is Ship)
-            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeFleet, selectedStructure);
+            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeFleet, structure);
         else
-            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeStation, selectedStructure);
+            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeStation, structure);
     }
     private bool CanBuildFleet(Station station)
     {
@@ -259,17 +266,20 @@ public class GameManager : MonoBehaviour
 
     private int GetCostOfAction(ActionType actionType, Structure structure)
     {
-        if (actionType == ActionType.CreateFleet)
+        if (structure != null)
         {
-            return stations[structure.stationId].ships.Count * 2; //2,4,6
-        }
-        else if (actionType == ActionType.UpgradeFleet)
-        {
-            return (structure.level * 2) - 1; //1,3,5
-        }
-        else if (actionType == ActionType.UpgradeStation)
-        {
-            return structure.level * 3; //3,6,9
+            if (actionType == ActionType.CreateFleet)
+            {
+                return stations[structure.stationId].ships.Count * 2; //2,4,6
+            }
+            else if (actionType == ActionType.UpgradeFleet)
+            {
+                return (structure.level * 2) - 1; //1,3,5
+            }
+            else if (actionType == ActionType.UpgradeStation)
+            {
+                return structure.level * 3; //3,6,9
+            }   
         }
         return int.MaxValue;
     }
@@ -475,6 +485,7 @@ public class GameManager : MonoBehaviour
     
     private IEnumerator PerformAction(Action action)
     {
+        var currentStation = stations[action.selectedStructure.stationId];
         if (action.actionType == ActionType.MoveStructure)
         {
             yield return StartCoroutine(MoveStructure(action.selectedStructure));
@@ -482,33 +493,66 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.CreateFleet)
         {
-            yield return StartCoroutine(GridManager.i.CreateFleet(stations[action.selectedStructure.stationId]));
+            if (CanUpgrade(action.selectedStructure))
+            {
+                ChargeModules(action);
+                yield return StartCoroutine(GridManager.i.CreateFleet(currentStation));
+            }
+            else
+            {
+                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+            }
         }
         else if (action.actionType == ActionType.UpgradeFleet)
         {
-            var ship = action.selectedStructure as Ship;
-            
-            ship.level++;
-            ship.maxAttachedModules++;
-            ship.maxHp++;
-            ship.electricAttack++;
-            ship.voidAttack++;
-            ship.thermalAttack++;
+            if (CanUpgrade(action.selectedStructure))
+            {
+                ChargeModules(action);
+                var ship = action.selectedStructure as Ship;
+                ship.level++;
+                ship.maxAttachedModules++;
+                ship.maxHp++;
+                ship.electricAttack++;
+                ship.voidAttack++;
+                ship.thermalAttack++;
+            }
+            else
+            {
+                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+            }
         }
         else if (action.actionType == ActionType.UpgradeStation)
         {
-            var station = action.selectedStructure as Station;
-            station.level++;
-            station.maxAttachedModules++;
-            station.maxShips++;
-            station.maxActions++;
+            if (CanUpgrade(action.selectedStructure))
+            {
+                ChargeModules(action);
+                var station = action.selectedStructure as Station;
+                station.level++;
+                station.maxAttachedModules++;
+                station.maxShips++;
+                station.maxActions++;
+            }
+            else
+            {
+                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+            }
         }
         else if (action.actionType == ActionType.GenerateModule)
         {
-            stations[action.selectedStructure.stationId].modules.Add(new Module(Random.Range(0,6)));
+            currentStation.modules.Add(new Module(Random.Range(0,6)));
         }
     }
-    
+
+    private void ChargeModules(Action action)
+    {
+        var cost = GetCostOfAction(action.actionType, action.selectedStructure);
+        //will need massive overhaul here and a better method name
+        for (int i = 0; i < cost; i++)
+        {
+            stations[action.selectedStructure.stationId].modules.RemoveAt(0);
+        }
+    }
+
     private void ResetUI()
     {
         ClearActionBar();
