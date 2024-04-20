@@ -6,6 +6,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -20,12 +21,16 @@ public class GameManager : MonoBehaviour
     private List<GameObject> currentPath = new List<GameObject>();
 
     public Transform ActionBar;
+    public Transform ModuleBar;
     public Sprite movementIcon;
     public Sprite moduleIcon;
     public Sprite createFleetIcon;
     public Sprite upgradeFleetIcon;
     public Sprite upgradeStationIcon;
     public Sprite changeShieldIcon;
+    public Sprite lockActionIcon;
+    public Sprite lockModuleIcon;
+    public Sprite addModuleIcon;
 
     private PathNode selectedNode;
     private Structure selectedStructure;
@@ -45,8 +50,10 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI electricValue;
     private TextMeshProUGUI thermalValue;
     private TextMeshProUGUI voidValue;
+    private TextMeshProUGUI turnValue;
     public GameObject infoPanel;
-
+    public GameObject turnLabel;
+    internal int winner = -1;
     private void Awake()
     {
         i = this;
@@ -66,6 +73,7 @@ public class GameManager : MonoBehaviour
         electricValue = infoPanel.transform.Find("ElectricValue").GetComponent<TextMeshProUGUI>();
         thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
+        turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
     }
 
@@ -217,6 +225,7 @@ public class GameManager : MonoBehaviour
             upgradeButton.interactable = false;
             shieldValue.text = "?";
         }
+        SetModuleBar(structure);
     }
     
     private void AddActionBarImage(ActionType actionType, int i)
@@ -227,8 +236,8 @@ public class GameManager : MonoBehaviour
         else if (actionType == ActionType.UpgradeFleet) icon = upgradeFleetIcon;
         else if (actionType == ActionType.ChangeShield) icon = changeShieldIcon;
         else if (actionType == ActionType.UpgradeStation) icon = upgradeStationIcon;
-        ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = icon;
-        ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(true);
+        ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = icon;
+        ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
     }
 
     public void GenerateModule()
@@ -238,7 +247,7 @@ public class GameManager : MonoBehaviour
 
     private void QueueAction(ActionType actionType)
     {
-        if (stations[currentStationTurn].actions.Count < stations[currentStationTurn].maxModules)
+        if (stations[currentStationTurn].actions.Count < stations[currentStationTurn].maxActions)
         {
             Debug.Log($"{stations[currentStationTurn].structureName} queuing up action {actionType}");
             AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
@@ -376,7 +385,6 @@ public class GameManager : MonoBehaviour
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
             currentStationTurn++;
-            ResetUI();
             StartCoroutine(TakeTurns()); 
         }
     }
@@ -385,6 +393,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentStationTurn >= stations.Count)
         {
+            currentStationTurn = 0;
             for (int i = 0; i < 6; i++)
             {
                 foreach (var station in stations)
@@ -394,22 +403,34 @@ public class GameManager : MonoBehaviour
                         var action = station.actions[i];
                         if (action is object)
                         {
-                            Debug.Log($"Perfoming {station.structureName}'s action {i + 1}: {action.actionType}");
-                            yield return StartCoroutine(PerformAction(action));
+                            turnValue.text = $"{station.color} action {i + 1}: {action.actionType}";
+                            turnLabel.SetActive(true);
+                            Debug.Log($"Perfoming {station.color}'s action {i + 1}: {action.actionType}");
+                            yield return StartCoroutine(PerformAction(action));     
                         }
+                        else
+                        {
+                            turnValue.text = $"{station.color} action {i + 1}: No Action";
+                        }
+                        yield return new WaitForSeconds(.5f);
                     }
                 }
             }
             stations.ForEach(x => x.actions.Clear());
-            currentStationTurn = 0;
-            var winner = GridManager.i.CheckForWin();
+            winner = GridManager.i.CheckForWin();
             if (winner != -1)
             {
+                turnValue.text = $"Player {winner} won";
                 Debug.Log($"Player {winner} won");
             }
         }
-        isEndingTurn = false;
-        Debug.Log($"New Turn Starting");
+        if (winner == -1)
+        {
+            ResetUI();        
+            turnLabel.SetActive(false);
+            isEndingTurn = false;
+            Debug.Log($"New Turn Starting");
+        }
     }
     
     private IEnumerator PerformAction(Action action)
@@ -421,12 +442,13 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.CreateFleet)
         {
-            GridManager.i.CreateShip(stations[action.selectedStructure.stationId]);
+            yield return StartCoroutine(GridManager.i.CreateFleet(stations[action.selectedStructure.stationId]));
         }
         else if (action.actionType == ActionType.UpgradeFleet)
         {
             var ship = action.selectedStructure as Ship;
             ship.level++;
+            ship.maxAttachedModules++;
             ship.maxHp++;
             ship.electricAttack++;
             ship.voidAttack++;
@@ -436,8 +458,9 @@ public class GameManager : MonoBehaviour
         {
             var station = action.selectedStructure as Station;
             station.level++;
-            station.maxModules++;
+            station.maxAttachedModules++;
             station.maxShips++;
+            station.maxActions++;
         }
     }
     
@@ -472,15 +495,36 @@ public class GameManager : MonoBehaviour
 
     private void ClearActionBar()
     {
-        foreach (var station in stations)
+        for (int i = 0; i < 5; i++)
         {
-            int i = 0;
-            foreach (var action in station.actions)
+            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < stations[currentStationTurn].maxActions ? null : lockActionIcon;
+            ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
+        }
+    }
+    
+    private void SetModuleBar(Structure structure)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if (i < structure.maxAttachedModules)
             {
-                ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = null;
-                ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(false);
-                i++;
+                if (i < structure.attachedModules.Count)
+                {
+                    ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
+                    ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(true);
+                }
+                else
+                {
+                    ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = addModuleIcon;
+                    ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+                }
             }
+            else
+            {
+                ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleIcon;
+                ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+            }
+
         }
     }
 }

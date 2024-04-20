@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,10 +48,10 @@ public class GridManager : MonoBehaviour
         var stationNode = station.AddComponent<Station>();
         var spawnX = (int)Random.Range(1, gridSize.x - 1);
         stationNode.InitializeStation(spawnX, spawnY, teamColor + " Station", 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10), 1);
-        CreateShip(stationNode);
+        StartCoroutine(CreateFleet(stationNode));
     }
 
-    public void CreateShip(Station stationNode)
+    public IEnumerator CreateFleet(Station stationNode)
     {
         GameObject shipPrefab;
         string teamColor;
@@ -85,6 +86,7 @@ public class GridManager : MonoBehaviour
             var shipNode = ship.AddComponent<Ship>();
             shipNode.InitializeShip(spawnX, spawnY, stationNode, teamColor + " Ship", 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
         }
+        yield return new WaitForSeconds(.1f);
     }
     bool CanSpawnShip(int x, int y)
     {
