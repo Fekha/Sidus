@@ -1,5 +1,9 @@
 public enum ActionType
 {
     Module,
-    Movement
+    Movement,
+    CreateFleet,
+    UpgradeFleet,
+    ChangeShield,
+    UpgradeStation
 }

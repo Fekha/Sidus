@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour
     public Transform ActionBar;
     public Sprite movementIcon;
     public Sprite moduleIcon;
+    public Sprite createFleetIcon;
+    public Sprite upgradeFleetIcon;
+    public Sprite upgradeStationIcon;
+    public Sprite changeShieldIcon;
 
     private PathNode selectedNode;
     private Structure selectedStructure;
@@ -34,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     private Button upgradeButton;
     private TextMeshProUGUI nameValue;
+    private TextMeshProUGUI levelValue;
     private TextMeshProUGUI hpValue;
     private TextMeshProUGUI rangeValue;
     private TextMeshProUGUI shieldValue;
@@ -54,6 +59,7 @@ public class GameManager : MonoBehaviour
     private void FindUI()
     {
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
+        levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
         hpValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
         shieldValue = infoPanel.transform.Find("ShieldValue").GetComponent<TextMeshProUGUI>();
@@ -82,14 +88,14 @@ public class GameManager : MonoBehaviour
                 //original click on ship
                 if (targetStructure != null && selectedStructure == null && targetStructure.stationId == currentStationTurn)
                 {
-                    if (stations[currentStationTurn].actions.Any(x => x.selectedStructure.structureId == targetStructure.structureId))
+                    selectedStructure = targetStructure;
+                    if (stations[currentStationTurn].actions.Any(x => x.actionType == ActionType.Movement && x.selectedStructure?.structureId == targetStructure.structureId))
                     {
-                        Debug.Log($"{targetStructure.structureName} already has a pending action.");
+                        Debug.Log($"{targetStructure.structureName} already has a pending movement action.");
                     }
                     else
                     {
                         Debug.Log($"{targetStructure.structureName} Selected.");
-                        selectedStructure = targetStructure;
                         HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
                     }
                 }
@@ -102,12 +108,7 @@ public class GameManager : MonoBehaviour
                         if (targetNode == selectedNode)
                         {
                             QueueAction(ActionType.Movement);
-                            selectedStructure.clearMovementRange();
-                            ClearMovementPath();
-                            ClearMovementRange();
-                            selectedNode = null;
-                            selectedStructure = null;
-                            infoPanel.SetActive(false);
+                            ClearSelection();
                         }
                         //create movement
                         else
@@ -147,27 +148,53 @@ public class GameManager : MonoBehaviour
                             Debug.Log($"Invalid tile selected, reseting path and selection.");
                             selectedStructure.resetMovementRange();
                         }
-                        if (targetNode?.nodeOnPath is not Structure)
-                        {
-                            infoPanel.gameObject.SetActive(false);
-                        }
-                        ClearMovementPath();
-                        ClearMovementRange();
-                        selectedNode = null;
-                        selectedStructure = null;
+                        ClearSelection();
+                        infoPanel.SetActive(targetNode?.nodeOnPath is Structure);
                     }
                 }
             }
         }
     }
+
+    private void ClearSelection()
+    {
+        ClearMovementPath();
+        ClearMovementRange();
+        selectedNode = null;
+        selectedStructure = null;
+        infoPanel.SetActive(false);
+    }
+
     public void CreateFleet()
     {
-        GridManager.i.CreateShip(stations[currentStationTurn]);
+        if (stations[currentStationTurn].ships.Count + stations[currentStationTurn].actions.Count(x => x.actionType == ActionType.CreateFleet) < stations[currentStationTurn].maxShips)
+        {
+            QueueAction(ActionType.CreateFleet);
+        }
+        else
+        {
+            Debug.Log("Can not create new fleet, you will hit max fleets for your station level");
+        }
+    }
+    
+    public void UpgradeStructure()
+    {
+        if(selectedStructure is Ship)
+            QueueAction(ActionType.UpgradeFleet);
+        if(selectedStructure is Station)
+            QueueAction(ActionType.UpgradeStation);
+        ClearSelection();
+    }
+
+    public void ChangeShield()
+    {
+        QueueAction(ActionType.ChangeShield);
     }
     public void SetTextValues(Structure structure)
     {
         infoPanel.gameObject.SetActive(true); 
         nameValue.text = structure.structureName;
+        levelValue.text = structure.level.ToString();
         hpValue.text = structure.hp + "/" + structure.maxHp;
         rangeValue.text = structure.maxRange.ToString();
         electricValue.text = structure.electricAttack.ToString();
@@ -176,12 +203,18 @@ public class GameManager : MonoBehaviour
         if (structure.stationId == stations[currentStationTurn].stationId)
         {
             upgradeButton.gameObject.SetActive(true);
-            upgradeButton.interactable = stations[currentStationTurn].modules.Count > 0; //Add scaling upgrade system
+            upgradeButton.interactable = true;
+            if (structure is Ship)
+            {
+                //upgradeButton.interactable = stations[currentStationTurn].ships.Count + stations[currentStationTurn].actions.Count(x => x.actionType == ActionType.CreateFleet) < stations[currentStationTurn].maxShips;
+            }
+            //upgradeButton.interactable = stations[currentStationTurn].modules.Count > 0; //Add scaling upgrade system for ships and stations
             shieldValue.text = structure.shield.ToString();
         }
         else
         {
             upgradeButton.gameObject.SetActive(false);
+            upgradeButton.interactable = false;
             shieldValue.text = "?";
         }
     }
@@ -189,8 +222,11 @@ public class GameManager : MonoBehaviour
     private void AddActionBarImage(ActionType actionType, int i)
     {
         var icon = moduleIcon;
-        if (actionType == ActionType.Movement)
-            icon = movementIcon;
+        if (actionType == ActionType.Movement) icon = movementIcon;
+        else if (actionType == ActionType.CreateFleet) icon = createFleetIcon;
+        else if (actionType == ActionType.UpgradeFleet) icon = upgradeFleetIcon;
+        else if (actionType == ActionType.ChangeShield) icon = changeShieldIcon;
+        else if (actionType == ActionType.UpgradeStation) icon = upgradeStationIcon;
         ActionBar.Find($"Slot{i}/Image").GetComponent<Image>().sprite = icon;
         ActionBar.Find($"Slot{i}/Remove").gameObject.SetActive(true);
     }
@@ -202,12 +238,13 @@ public class GameManager : MonoBehaviour
 
     private void QueueAction(ActionType actionType)
     {
-        Debug.Log($"{stations[currentStationTurn].structureName} queuing up action {actionType}");
-        AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
-        Structure selShip = selectedStructure;
-        if (actionType == ActionType.Module)
-            selShip = null;
-        stations[currentStationTurn].actions.Add(new Action(actionType, selShip));
+        if (stations[currentStationTurn].actions.Count < stations[currentStationTurn].maxModules)
+        {
+            Debug.Log($"{stations[currentStationTurn].structureName} queuing up action {actionType}");
+            AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
+            var selected = selectedStructure ?? stations[currentStationTurn];
+            stations[currentStationTurn].actions.Add(new Action(actionType, selected));
+        }
     }
 
     public void CancelAction(int slot)
@@ -239,7 +276,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Cannot move to position: " + selectedStructure.path.Last().transform.position + ". Out of range or no longer exists.");
+            Debug.Log("Cannot move to position: " + selectedStructure.path?.Last()?.transform?.position + ". Out of range or no longer exists.");
         }
         yield return new WaitForSeconds(.1f);
         isMoving = false;
@@ -381,6 +418,26 @@ public class GameManager : MonoBehaviour
         {
             yield return StartCoroutine(MoveStructure(action.selectedStructure));
             action.selectedStructure.resetMovementRange();
+        }
+        else if (action.actionType == ActionType.CreateFleet)
+        {
+            GridManager.i.CreateShip(stations[action.selectedStructure.stationId]);
+        }
+        else if (action.actionType == ActionType.UpgradeFleet)
+        {
+            var ship = action.selectedStructure as Ship;
+            ship.level++;
+            ship.maxHp++;
+            ship.electricAttack++;
+            ship.voidAttack++;
+            ship.thermalAttack++;
+        }
+        else if (action.actionType == ActionType.UpgradeStation)
+        {
+            var station = action.selectedStructure as Station;
+            station.level++;
+            station.maxModules++;
+            station.maxShips++;
         }
     }
     

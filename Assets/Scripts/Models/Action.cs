@@ -6,7 +6,7 @@ public class Action : MonoBehaviour
 {
     public ActionType actionType;
     public Structure selectedStructure;
-    public Action(ActionType actionType, Structure selectedShip = null)
+    public Action(ActionType actionType, Structure selectedShip)
     {
         this.actionType = actionType;
         this.selectedStructure = selectedShip;
