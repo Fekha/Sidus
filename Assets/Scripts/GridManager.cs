@@ -47,22 +47,19 @@ public class GridManager : MonoBehaviour
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor + " Station", 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10), 1);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10), 1);
         StartCoroutine(CreateFleet(stationNode));
     }
 
     public IEnumerator CreateFleet(Station stationNode)
     {
         GameObject shipPrefab;
-        string teamColor;
-        if (stationNode.stationId == 0)
+        if (stationNode.color == "Red")
         {
-            teamColor = "Red";
             shipPrefab = enemyPrefab;
         }
         else
         {
-            teamColor = "Green";
             shipPrefab = playerPrefab;
         }
         var spawnX = stationNode.x;
@@ -84,7 +81,7 @@ public class GridManager : MonoBehaviour
             var ship = Instantiate(shipPrefab);
             ship.transform.parent = characterParent;
             var shipNode = ship.AddComponent<Ship>();
-            shipNode.InitializeShip(spawnX, spawnY, stationNode, teamColor + " Ship", 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
+            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
         }
         yield return new WaitForSeconds(.1f);
     }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: af85d0104b9ef4b43acb05b70eae50cf
+guid: 5f2bb2bb85002c34e9757317f23cc6c9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6783247397999815164
-    second: locked-fortress_0
+      213: -5040724766035019745
+    second: apollo-capsule_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: locked-fortress_0
+      name: apollo-capsule_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf92f5db19fe22e50800000000000000
-      internalID: 6783247397999815164
+      spriteID: f18f7fd388fbb0ab0800000000000000
+      internalID: -5040724766035019745
       vertices: []
       indices: 
       edges: []

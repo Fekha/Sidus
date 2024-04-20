@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 487cff17f86c03b458b23f51ac5282f8
+guid: 835856ca6cb034d4a8467a9bc78c9861
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4068402043440746820
-    second: circuitry_0
+      213: -8493983013080071167
+    second: attached-shield_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: circuitry_0
+      name: attached-shield_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cbead3595e12a87c0800000000000000
-      internalID: -4068402043440746820
+      spriteID: 1040921e37f4f1a80800000000000000
+      internalID: -8493983013080071167
       vertices: []
       indices: 
       edges: []

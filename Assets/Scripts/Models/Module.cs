@@ -8,4 +8,8 @@ public class Module
 {
     internal int id;
     internal Sprite icon;
+    public Module(int id)
+    {
+        this.id = id;
+    }
 }

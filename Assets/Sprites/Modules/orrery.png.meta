@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e34da85617f51ad4f80847280a1b0ecb
+guid: 7c07bd6ac21dd8746b269a1809b8086b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2088875961786424620
-    second: armor-upgrade_0
+      213: -5343533267496870947
+    second: orrery_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: armor-upgrade_0
+      name: orrery_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4d22edd4162d203e0800000000000000
-      internalID: -2088875961786424620
+      spriteID: ddbdd51fdc4f7d5b0800000000000000
+      internalID: -5343533267496870947
       vertices: []
       indices: 
       edges: []

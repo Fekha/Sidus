@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 83810b272bb10db43b9aa76104455584
+guid: e34da85617f51ad4f80847280a1b0ecb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6308130136188556575
-    second: move (1)_0
+      213: -2088875961786424620
+    second: armor-upgrade_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: move (1)_0
+      name: armor-upgrade_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1ea6b8320150578a0800000000000000
-      internalID: -6308130136188556575
+      spriteID: 4d22edd4162d203e0800000000000000
+      internalID: -2088875961786424620
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      armor-upgrade_0: -2088875961786424620
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

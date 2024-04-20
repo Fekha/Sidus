@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f6f3924c7b16f0046b466c099622ed10
+guid: 83810b272bb10db43b9aa76104455584
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7702428470181183365
-    second: locked-heart_0
+      213: -6308130136188556575
+    second: move (1)_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: locked-heart_0
+      name: move (1)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b70cef69d1a7b1590800000000000000
-      internalID: -7702428470181183365
+      spriteID: 1ea6b8320150578a0800000000000000
+      internalID: -6308130136188556575
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      move (1)_0: -6308130136188556575
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

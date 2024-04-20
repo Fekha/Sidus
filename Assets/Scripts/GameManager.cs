@@ -28,9 +28,11 @@ public class GameManager : MonoBehaviour
     public Sprite upgradeFleetIcon;
     public Sprite upgradeStationIcon;
     public Sprite changeShieldIcon;
-    public Sprite lockActionIcon;
-    public Sprite lockModuleIcon;
-    public Sprite addModuleIcon;
+    public Sprite attachModuleIcon;
+
+    public Sprite lockActionBar;
+    public Sprite lockModuleBar;
+    public Sprite attachModuleBar;
 
     private PathNode selectedNode;
     private Structure selectedStructure;
@@ -42,6 +44,7 @@ public class GameManager : MonoBehaviour
     internal int currentStationTurn = 0;
 
     private Button upgradeButton;
+    public Button createFleetButton;
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI levelValue;
     private TextMeshProUGUI hpValue;
@@ -52,8 +55,13 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI voidValue;
     private TextMeshProUGUI turnValue;
     public GameObject infoPanel;
-    public GameObject turnLabel;
+
     internal int winner = -1;
+    internal Station CurrentStation {get {return stations[currentStationTurn];}}
+    //temp, not for real game
+    public GameObject turnLabel;
+    public TextMeshProUGUI playerText;
+
     private void Awake()
     {
         i = this;
@@ -79,85 +87,87 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
-
-            if (hit.collider != null && !isMoving)
+        if(stations.Count > 1) {
+            if (Input.GetMouseButtonDown(0))
             {
-                PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                Structure targetStructure = null;
-                if (targetNode != null && targetNode.nodeOnPath is Structure)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
+
+                if (hit.collider != null && !isMoving)
                 {
-                    targetStructure = targetNode.nodeOnPath as Structure;
-                    SetTextValues(targetStructure);
-                }
-                //original click on ship
-                if (targetStructure != null && selectedStructure == null && targetStructure.stationId == currentStationTurn)
-                {
-                    selectedStructure = targetStructure;
-                    if (stations[currentStationTurn].actions.Any(x => x.actionType == ActionType.Movement && x.selectedStructure?.structureId == targetStructure.structureId))
+                    PathNode targetNode = hit.collider.GetComponent<PathNode>();
+                    Structure targetStructure = null;
+                    if (targetNode != null && targetNode.nodeOnPath is Structure)
                     {
-                        Debug.Log($"{targetStructure.structureName} already has a pending movement action.");
+                        targetStructure = targetNode.nodeOnPath as Structure;
+                        SetTextValues(targetStructure);
                     }
-                    else
+                    //original click on ship
+                    if (targetStructure != null && selectedStructure == null && targetStructure.stationId == currentStationTurn)
                     {
-                        Debug.Log($"{targetStructure.structureName} Selected.");
-                        HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
-                    }
-                }
-                else
-                {
-                    //clicked on valid move
-                    if (targetNode != null && selectedStructure != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
-                    {
-                        //double click confirm
-                        if (targetNode == selectedNode)
+                        selectedStructure = targetStructure;
+                        if (CurrentStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureId == targetStructure.structureId))
                         {
-                            QueueAction(ActionType.Movement);
-                            ClearSelection();
+                            Debug.Log($"{targetStructure.structureName} already has a pending movement action.");
                         }
-                        //create movement
                         else
                         {
-                           
-                            int oldPathCount = selectedStructure.path?.Count ?? 0;
-                            var currentNode = selectedStructure.currentPathNode;
-                            if (selectedStructure.path == null || selectedStructure.path.Count == 0)
-                            {
-                                selectedStructure.path = GridManager.i.FindPath(currentNode, targetNode);
-                                Debug.Log($"Path created for {selectedStructure.structureName}");
-                            }
-                            else
-                            {
-                                currentNode = selectedStructure.path.Last();
-                                selectedStructure.path.AddRange(GridManager.i.FindPath(currentNode, targetNode));
-                                Debug.Log($"Path edited for {selectedStructure.structureName}");
-                            }
-                            selectedStructure.subtractMovement(selectedStructure.path.Count - oldPathCount);
-                            HighlightRangeOfMovement(targetNode, selectedStructure.getMovementRange());
-                            ClearMovementPath();
-                            selectedNode = targetNode;
-                            foreach (var node in selectedStructure.path)
-                            {
-                                if (node == selectedStructure.path.Last())
-                                    currentPath.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
-                                else
-                                    currentPath.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
-                            }
+                            Debug.Log($"{targetStructure.structureName} Selected.");
+                            HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
                         }
                     }
-                    //clicked on invalid tile
                     else
                     {
-                        if (selectedStructure != null)
+                        //clicked on valid move
+                        if (targetNode != null && selectedStructure != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
                         {
-                            Debug.Log($"Invalid tile selected, reseting path and selection.");
-                            selectedStructure.resetMovementRange();
+                            //double click confirm
+                            if (targetNode == selectedNode)
+                            {
+                                QueueAction(ActionType.MoveStructure);
+                                ClearSelection();
+                            }
+                            //create movement
+                            else
+                            {
+
+                                int oldPathCount = selectedStructure.path?.Count ?? 0;
+                                var currentNode = selectedStructure.currentPathNode;
+                                if (selectedStructure.path == null || selectedStructure.path.Count == 0)
+                                {
+                                    selectedStructure.path = GridManager.i.FindPath(currentNode, targetNode);
+                                    Debug.Log($"Path created for {selectedStructure.structureName}");
+                                }
+                                else
+                                {
+                                    currentNode = selectedStructure.path.Last();
+                                    selectedStructure.path.AddRange(GridManager.i.FindPath(currentNode, targetNode));
+                                    Debug.Log($"Path edited for {selectedStructure.structureName}");
+                                }
+                                selectedStructure.subtractMovement(selectedStructure.path.Count - oldPathCount);
+                                HighlightRangeOfMovement(targetNode, selectedStructure.getMovementRange());
+                                ClearMovementPath();
+                                selectedNode = targetNode;
+                                foreach (var node in selectedStructure.path)
+                                {
+                                    if (node == selectedStructure.path.Last())
+                                        currentPath.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
+                                    else
+                                        currentPath.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
+                                }
+                            }
                         }
-                        ClearSelection();
-                        infoPanel.SetActive(targetNode?.nodeOnPath is Structure);
+                        //clicked on invalid tile
+                        else
+                        {
+                            if (selectedStructure != null)
+                            {
+                                Debug.Log($"Invalid tile selected, reseting path and selection.");
+                                selectedStructure.resetMovementRange();
+                            }
+                            ClearSelection();
+                            infoPanel.SetActive(targetNode?.nodeOnPath is Structure);
+                        }
                     }
                 }
             }
@@ -173,31 +183,6 @@ public class GameManager : MonoBehaviour
         infoPanel.SetActive(false);
     }
 
-    public void CreateFleet()
-    {
-        if (stations[currentStationTurn].ships.Count + stations[currentStationTurn].actions.Count(x => x.actionType == ActionType.CreateFleet) < stations[currentStationTurn].maxShips)
-        {
-            QueueAction(ActionType.CreateFleet);
-        }
-        else
-        {
-            Debug.Log("Can not create new fleet, you will hit max fleets for your station level");
-        }
-    }
-    
-    public void UpgradeStructure()
-    {
-        if(selectedStructure is Ship)
-            QueueAction(ActionType.UpgradeFleet);
-        if(selectedStructure is Station)
-            QueueAction(ActionType.UpgradeStation);
-        ClearSelection();
-    }
-
-    public void ChangeShield()
-    {
-        QueueAction(ActionType.ChangeShield);
-    }
     public void SetTextValues(Structure structure)
     {
         infoPanel.gameObject.SetActive(true); 
@@ -208,15 +193,10 @@ public class GameManager : MonoBehaviour
         electricValue.text = structure.electricAttack.ToString();
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
-        if (structure.stationId == stations[currentStationTurn].stationId)
+        if (structure.stationId == CurrentStation.stationId)
         {
             upgradeButton.gameObject.SetActive(true);
-            upgradeButton.interactable = true;
-            if (structure is Ship)
-            {
-                //upgradeButton.interactable = stations[currentStationTurn].ships.Count + stations[currentStationTurn].actions.Count(x => x.actionType == ActionType.CreateFleet) < stations[currentStationTurn].maxShips;
-            }
-            //upgradeButton.interactable = stations[currentStationTurn].modules.Count > 0; //Add scaling upgrade system for ships and stations
+            upgradeButton.interactable = CanUpgrade(structure);
             shieldValue.text = structure.shield.ToString();
         }
         else
@@ -231,46 +211,105 @@ public class GameManager : MonoBehaviour
     private void AddActionBarImage(ActionType actionType, int i)
     {
         var icon = moduleIcon;
-        if (actionType == ActionType.Movement) icon = movementIcon;
+        if (actionType == ActionType.MoveStructure) icon = movementIcon;
         else if (actionType == ActionType.CreateFleet) icon = createFleetIcon;
         else if (actionType == ActionType.UpgradeFleet) icon = upgradeFleetIcon;
-        else if (actionType == ActionType.ChangeShield) icon = changeShieldIcon;
         else if (actionType == ActionType.UpgradeStation) icon = upgradeStationIcon;
+        else if (actionType == ActionType.AttachModule) icon = attachModuleIcon;
         ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = icon;
         ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
+    }
+    public void CreateFleet()
+    {
+        if (CanBuildFleet(CurrentStation))
+        {
+            if (CurrentStation.ships.Count + CurrentStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < CurrentStation.maxShips)
+            {
+                QueueAction(ActionType.CreateFleet);
+            }
+            else
+            {
+                Debug.Log("Can not create new fleet, you will hit max fleets for your station level");
+            }
+        }
+    }
+
+    public void UpgradeStructure()
+    {
+        if (CanUpgrade(selectedStructure)){
+            if (selectedStructure is Ship)
+                QueueAction(ActionType.UpgradeFleet);
+            if (selectedStructure is Station)
+                QueueAction(ActionType.UpgradeStation);
+        }
+        ClearSelection();
+    }
+
+    private bool CanUpgrade(Structure structure)
+    {
+        if (structure is Ship)
+            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeFleet, selectedStructure);
+        else
+            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeStation, selectedStructure);
+    }
+    private bool CanBuildFleet(Station station)
+    {
+        return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station);
+    }
+
+    private int GetCostOfAction(ActionType actionType, Structure structure)
+    {
+        if (actionType == ActionType.CreateFleet)
+        {
+            return stations[structure.stationId].ships.Count * 2; //2,4,6
+        }
+        else if (actionType == ActionType.UpgradeFleet)
+        {
+            return (structure.level * 2) - 1; //1,3,5
+        }
+        else if (actionType == ActionType.UpgradeStation)
+        {
+            return structure.level * 3; //3,6,9
+        }
+        return int.MaxValue;
     }
 
     public void GenerateModule()
     {
-        QueueAction(ActionType.Module);
+        QueueAction(ActionType.GenerateModule);
+    }
+    
+    public void AttachModule()
+    {
+        QueueAction(ActionType.AttachModule);
     }
 
-    private void QueueAction(ActionType actionType)
+    private void QueueAction(ActionType actionType, List<Module> cost = null)
     {
-        if (stations[currentStationTurn].actions.Count < stations[currentStationTurn].maxActions)
+        if (CurrentStation.actions.Count < CurrentStation.maxActions)
         {
-            Debug.Log($"{stations[currentStationTurn].structureName} queuing up action {actionType}");
-            AddActionBarImage(actionType, stations[currentStationTurn].actions.Count());
-            var selected = selectedStructure ?? stations[currentStationTurn];
-            stations[currentStationTurn].actions.Add(new Action(actionType, selected));
+            Debug.Log($"{CurrentStation.structureName} queuing up action {actionType}");
+            AddActionBarImage(actionType, CurrentStation.actions.Count());
+            var selected = selectedStructure ?? CurrentStation;
+            CurrentStation.actions.Add(new Action(actionType, selected, cost));
         }
     }
 
     public void CancelAction(int slot)
     {
-        var action = stations[currentStationTurn].actions[slot];
-        Debug.Log($"{stations[currentStationTurn].structureName} removed action ${action.actionType} from queue");
+        var action = CurrentStation.actions[slot];
+        Debug.Log($"{CurrentStation.structureName} removed action ${action.actionType} from queue");
         if (action is object)
         {
-            if (action.actionType == ActionType.Movement)
+            if (action.actionType == ActionType.MoveStructure)
             {
                 action.selectedStructure.resetMovementRange();
             }
             ClearActionBar();
-            stations[currentStationTurn].actions.RemoveAt(slot);
-            for (int i = 0; i < stations[currentStationTurn].actions.Count; i++)
+            CurrentStation.actions.RemoveAt(slot);
+            for (int i = 0; i < CurrentStation.actions.Count; i++)
             {
-                AddActionBarImage(stations[currentStationTurn].actions[i].actionType, i);
+                AddActionBarImage(CurrentStation.actions[i].actionType, i);
             }
         }
     }
@@ -393,6 +432,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentStationTurn >= stations.Count)
         {
+            playerText.text = "Automating Simultanous Turns";
             currentStationTurn = 0;
             for (int i = 0; i < 6; i++)
             {
@@ -435,7 +475,7 @@ public class GameManager : MonoBehaviour
     
     private IEnumerator PerformAction(Action action)
     {
-        if (action.actionType == ActionType.Movement)
+        if (action.actionType == ActionType.MoveStructure)
         {
             yield return StartCoroutine(MoveStructure(action.selectedStructure));
             action.selectedStructure.resetMovementRange();
@@ -447,6 +487,7 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.UpgradeFleet)
         {
             var ship = action.selectedStructure as Ship;
+            
             ship.level++;
             ship.maxAttachedModules++;
             ship.maxHp++;
@@ -462,6 +503,10 @@ public class GameManager : MonoBehaviour
             station.maxShips++;
             station.maxActions++;
         }
+        else if (action.actionType == ActionType.GenerateModule)
+        {
+            stations[action.selectedStructure.stationId].modules.Add(new Module(Random.Range(0,6)));
+        }
     }
     
     private void ResetUI()
@@ -471,6 +516,8 @@ public class GameManager : MonoBehaviour
         ClearMovementRange();
         infoPanel.SetActive(false);
         selectedNode = null;
+        playerText.text = $"{CurrentStation.color} player selecting actions";
+        createFleetButton.interactable = CanBuildFleet(CurrentStation);
     }
 
     //private IEnumerator AITurn()
@@ -497,7 +544,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
-            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < stations[currentStationTurn].maxActions ? null : lockActionIcon;
+            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < CurrentStation.maxActions ? null : lockActionBar;
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
         }
     }
@@ -515,13 +562,13 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = addModuleIcon;
+                    ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
                     ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
                 }
             }
             else
             {
-                ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleIcon;
+                ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
                 ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
             }
 

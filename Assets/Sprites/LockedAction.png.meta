@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4859cac581885944eb099c5e641e9abf
+guid: af85d0104b9ef4b43acb05b70eae50cf
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8847773858092745476
-    second: heart-plus_0
+      213: 6783247397999815164
+    second: locked-fortress_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: heart-plus_0
+      name: locked-fortress_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4030b98427b99ca70800000000000000
-      internalID: 8847773858092745476
+      spriteID: cf92f5db19fe22e50800000000000000
+      internalID: 6783247397999815164
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      locked-fortress_0: 6783247397999815164
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

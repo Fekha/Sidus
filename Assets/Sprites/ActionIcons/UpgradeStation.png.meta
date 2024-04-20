@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      defense-satellite (1)_0: -3499557890854844965
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

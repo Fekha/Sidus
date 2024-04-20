@@ -6,14 +6,14 @@ public class Station : Structure
 {
     internal List<Action> actions = new List<Action>();
     internal List<Ship> ships = new List<Ship>();
-    internal List<bool> modules = new List<bool>();
+    internal List<Module> modules = new List<Module>();
     internal int maxActions = 2; // 1+ station.level
     internal int maxShips = 2; // 1+ station.level
 
-    public void InitializeStation(int _x, int _y, string name, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
+    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
     {
         stationId = GameManager.i.stations.Count;
         GameManager.i.stations.Add(this);
-        InitializeStructure(_x, _y, name, _hp, _range, _shield, _electricAttack, _thermalAttack, _voidAttack, _level);
+        InitializeStructure(_x, _y, _color + " Station", _color, _hp, _range, _shield, _electricAttack, _thermalAttack, _voidAttack, _level);
     }
 }

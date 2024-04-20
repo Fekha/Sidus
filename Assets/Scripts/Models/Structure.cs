@@ -21,12 +21,12 @@ public class Structure : Node
     internal List<PathNode> path;
     internal List<Module> attachedModules = new List<Module>();
     internal int maxAttachedModules = 0; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
+    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
     {
         structureId = Guid.NewGuid();
         x = _x;
         y = _y;
-        color = stationId == 0 ? "Red" : "Green";
+        color = _color;
         maxHp = _hp;
         hp = _hp;
         maxRange = _range;
