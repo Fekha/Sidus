@@ -158,13 +158,6 @@ MonoBehaviour:
   ActionBar: {fileID: 1538388384}
   StructureModuleBar: {fileID: 2084846243}
   ModuleBar: {fileID: 1330887038}
-  movementIcon: {fileID: -6308130136188556575, guid: 83810b272bb10db43b9aa76104455584, type: 3}
-  moduleIcon: {fileID: -4068402043440746820, guid: 487cff17f86c03b458b23f51ac5282f8, type: 3}
-  createFleetIcon: {fileID: 7691294901476699688, guid: 49b27ae51fa442b4e9db577181af7de1, type: 3}
-  upgradeFleetIcon: {fileID: -2088875961786424620, guid: e34da85617f51ad4f80847280a1b0ecb, type: 3}
-  upgradeStationIcon: {fileID: -3499557890854844965, guid: 8c01c0abbf48a29449efb81df1b33e47, type: 3}
-  changeShieldIcon: {fileID: -4297800806661164347, guid: ef5a760a9f975cc43b7c851021b6c196, type: 3}
-  attachModuleIcon: {fileID: -3554284739610303338, guid: 25e41c3b0c9a58646bc66ed83835daa2, type: 3}
   lockActionBar: {fileID: 6783247397999815164, guid: af85d0104b9ef4b43acb05b70eae50cf, type: 3}
   lockModuleBar: {fileID: -7702428470181183365, guid: f6f3924c7b16f0046b466c099622ed10, type: 3}
   attachModuleBar: {fileID: 8847773858092745476, guid: 4859cac581885944eb099c5e641e9abf, type: 3}
@@ -1372,7 +1365,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: cancelAction
+        m_MethodName: DetachModule
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3617,7 +3610,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: cancelAction
+        m_MethodName: DetachModule
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5262,12 +5255,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: cancelAction
+        m_MethodName: DetachModule
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -5394,12 +5387,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: cancelAction
+        m_MethodName: DetachModule
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
+          m_IntArgument: 5
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -5526,7 +5519,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: cancelAction
+        m_MethodName: DetachModule
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8002,12 +7995,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: cancelAction
+        m_MethodName: DetachModule
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
+          m_IntArgument: 3
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

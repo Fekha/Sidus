@@ -5,5 +5,6 @@ public enum ActionType
     CreateFleet,
     UpgradeFleet,
     UpgradeStation,
-    AttachModule
+    AttachModule,
+    DetachModule
 }

@@ -16,25 +16,25 @@ public class Module : MonoBehaviour
         switch (id)
         {
             case 0:
-                effectText = "Ahoy";
+                effectText = "+3 Electric Attack";
                 break;
             case 1:
-                effectText = "Matey";
+                effectText = "+3 Thermal Attack";
                 break;
             case 2:
-                effectText = "Test";
+                effectText = "+3 Void Attack";
                 break;
             case 3:
-                effectText = "Wack";
+                effectText = "+1 Movement";
                 break;
             case 4:
-                effectText = "Baby";
+                effectText = "+2 Max HP";
                 break;
             case 5:
-                effectText = "Shark";
+                effectText = "On Attach: Change Shield to Electric";
                 break;
             case 6:
-                effectText = "Brooklyn";
+                effectText = "On Attach: Change Shield to Thermal";
                 break;
             default:
                 break;

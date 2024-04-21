@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 25e41c3b0c9a58646bc66ed83835daa2
+guid: d7b5a12c2cdd5cb43ac6fbaca102aeef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3554284739610303338
-    second: shiny-purse_0
+      213: 2217823064159445074
+    second: expense_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shiny-purse_0
+      name: expense_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 694afe85cd4acaec0800000000000000
-      internalID: -3554284739610303338
+      spriteID: 25064e9835a47ce10800000000000000
+      internalID: 2217823064159445074
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      shiny-purse_0: -3554284739610303338
+      expense_0: 2217823064159445074
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
