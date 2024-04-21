@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public GameObject movementRangePrefab;
     public GameObject modulePrefab;
     public GameObject modulePanel;
+    public GameObject moduleInfoPanel;
 
     private List<GameObject> currentPath = new List<GameObject>();
 
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI thermalValue;
     private TextMeshProUGUI voidValue;
     private TextMeshProUGUI turnValue;
+    private TextMeshProUGUI moduleInfoValue;
     public GameObject infoPanel;
 
     internal int winner = -1;
@@ -86,6 +88,7 @@ public class GameManager : MonoBehaviour
         thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
+        moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
     }
 
@@ -187,6 +190,8 @@ public class GameManager : MonoBehaviour
     public void ViewModules(bool active)
     {
         modulePanel.SetActive(active);
+        if(active == false)
+            moduleInfoPanel.SetActive(false);
     }
     public void ViewStructureInformation(bool active)
     {
@@ -194,7 +199,7 @@ public class GameManager : MonoBehaviour
     }
     public void AttachModule()
     {
-        if (CurrentStation.modules.Count > 0 && selectedStructure.attachedModules.Count < selectedStructure.maxAttachedModules && CurrentStation.stationId == selectedStructure.stationId)
+        if (selectedStructure != null && CurrentStation.modules.Count > 0 && selectedStructure.attachedModules.Count < selectedStructure.maxAttachedModules && CurrentStation.stationId == selectedStructure.stationId)
         {
             QueueAction(ActionType.AttachModule);
             ViewStructureInformation(false);
@@ -599,10 +604,21 @@ public class GameManager : MonoBehaviour
         foreach (var module in CurrentStation.modules)
         {
             var moduleObject = Instantiate(modulePrefab, ModuleBar);
-            //moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => AttachModule());
+            moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
             currentModules.Add(moduleObject.GetComponent<Module>());
         }
+    }
+
+    private void SetModuleInfo(Module module)
+    {
+        moduleInfoValue.text = module.effectText;
+        ViewModuleInfo(true);
+    }
+
+    public void ViewModuleInfo(bool active)
+    {
+        moduleInfoPanel.SetActive(active);
     }
 
     //private IEnumerator AITurn()
@@ -647,7 +663,7 @@ public class GameManager : MonoBehaviour
                 if (i < structure.attachedModules.Count)
                 {
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
-                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(true);
+                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == CurrentStation.stationId);
                 }
                 else
                 {
@@ -658,7 +674,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
+                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = null;
                     }
                 }
             }
