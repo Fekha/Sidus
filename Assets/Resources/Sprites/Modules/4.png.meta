@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: de8b2c0c9b8347f4dafc9a334b5cdfbf
+guid: ef5a760a9f975cc43b7c851021b6c196
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6436088931984259319
-    second: plane-pilot_0
+      213: -4297800806661164347
+    second: bubble-field (1)_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: plane-pilot_0
+      name: bubble-field (1)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 907414a573b6ea6a0800000000000000
-      internalID: -6436088931984259319
+      spriteID: 5c2f293efe42b54c0800000000000000
+      internalID: -4297800806661164347
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      plane-pilot_0: -6436088931984259319
+      bubble-field (1)_0: -4297800806661164347
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

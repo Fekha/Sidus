@@ -16,25 +16,37 @@ public class Module : MonoBehaviour
         switch (id)
         {
             case 0:
-                effectText = "+3 Electric Attack";
+                effectText = "+4 Electric Attack \n On Attach: Change Shield to Thermal";
                 break;
             case 1:
-                effectText = "+3 Thermal Attack";
+                effectText = "+4 Thermal Attack \n On Attach: Change Shield to Void";
                 break;
             case 2:
-                effectText = "+3 Void Attack";
+                effectText = "+4 Void Attack \n On Attach: Change Shield to Electric";
                 break;
             case 3:
-                effectText = "+1 Movement";
+                effectText = "+1 Movement \n On Attach: Change Shield to Thermal";
                 break;
             case 4:
-                effectText = "+2 Max HP";
+                effectText = "+3 Max HP \n On Attach: Change Shield to Electric";
                 break;
             case 5:
-                effectText = "On Attach: Change Shield to Electric";
+                effectText = "+2 Void Attack \n +2 Thermal Attack \n +1 Electric Attack \n On Attach: Change Shield to Electric";
                 break;
             case 6:
-                effectText = "On Attach: Change Shield to Thermal";
+                effectText = "+2 Electric Attack \n +2 Void Attack \n +1 Thermal Attack \n On Attach: Change Shield to Thermal";
+                break;
+            case 7:
+                effectText = "+2 Thermal Attack \n +2 Electric Attack \n +1 Void Attack \n On Attach: Change Shield to Void";
+                break;
+            case 8:
+                effectText = "+3 Void Attack \n +1 Electric Attack \n +1 Thermal Attack \n On Attach: Change Shield to Thermal";
+                break;
+            case 9:
+                effectText = "+3 Electric Attack \n +1 Thermal Attack \n +1 Void Attack \n On Attach: Change Shield to Void";
+                break;
+            case 10:
+                effectText = "+3 Thermal Attack \n +1 Electric Attack \n +1 Void Attack \n On Attach: Change Shield to Electric";
                 break;
             default:
                 break;

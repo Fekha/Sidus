@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7c07bd6ac21dd8746b269a1809b8086b
+guid: 835856ca6cb034d4a8467a9bc78c9861
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5343533267496870947
-    second: orrery_0
+      213: -8493983013080071167
+    second: attached-shield_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: orrery_0
+      name: attached-shield_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ddbdd51fdc4f7d5b0800000000000000
-      internalID: -5343533267496870947
+      spriteID: 1040921e37f4f1a80800000000000000
+      internalID: -8493983013080071167
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      orrery_0: -5343533267496870947
+      attached-shield_0: -8493983013080071167
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

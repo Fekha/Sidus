@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
     public GameObject pathPrefab;
     public GameObject movementRangePrefab;
     public GameObject modulePrefab;
-    public GameObject modulePanel;
     public GameObject moduleInfoPanel;
 
     private List<GameObject> currentPath = new List<GameObject>();
@@ -174,18 +173,11 @@ public class GameManager : MonoBehaviour
                                 }
                                 ClearSelection();
                             }
-                            ViewModules(false);
                         }
                     }
                 }
             }
         }
-    }
-    public void ViewModules(bool active)
-    {
-        modulePanel.SetActive(active);
-        if(active == false)
-            moduleInfoPanel.SetActive(false);
     }
     public void ViewStructureInformation(bool active)
     {
@@ -221,7 +213,6 @@ public class GameManager : MonoBehaviour
         SelectedNode = null;
         SelectedStructure = null;
         ViewStructureInformation(false);
-        ViewModules(false);
     }
 
     public void SetTextValues(Structure structure)
@@ -247,7 +238,6 @@ public class GameManager : MonoBehaviour
         }
         SetModuleBar(structure);
         infoPanel.gameObject.SetActive(true);
-        ViewModules(false);
     }
 
     private void AddActionBarImage(ActionType actionType, int i)
@@ -333,7 +323,7 @@ public class GameManager : MonoBehaviour
     public void CancelAction(int slot)
     {
         var action = CurrentStation.actions[slot];
-        Debug.Log($"{CurrentStation.structureName} removed action ${action.actionType} from queue");
+        Debug.Log($"{CurrentStation.structureName} removed action {action.actionType} from queue");
         if (action is object)
         {
             if (action.actionType == ActionType.MoveStructure)
@@ -526,7 +516,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
+                Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
             }
         }
         else if (action.actionType == ActionType.UpgradeFleet)
@@ -545,7 +535,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
+                Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
             }
         }
         else if (action.actionType == ActionType.UpgradeStation)
@@ -561,7 +551,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+                Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
             }
         }
         else if (action.actionType == ActionType.GenerateModule)
@@ -603,7 +593,6 @@ public class GameManager : MonoBehaviour
         ClearMovementPath();
         ClearMovementRange();
         SetModuleBar();
-        ViewModules(false);
         ViewStructureInformation(false);
         SelectedNode = null;
         playerText.text = $"{CurrentStation.color} player selecting actions";
