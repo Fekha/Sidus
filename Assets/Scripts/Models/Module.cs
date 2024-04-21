@@ -4,12 +4,13 @@ using TMPro;
 using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
-public class Module 
+public class Module : MonoBehaviour
 {
     internal int id;
     internal Sprite icon;
-    public Module(int id)
+    public Module(int _id)
     {
-        this.id = id;
+        id = _id;
+        icon = Resources.Load<Sprite>($"Sprites/Modules/{_id}");
     }
 }

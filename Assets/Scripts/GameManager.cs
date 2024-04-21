@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -18,11 +16,15 @@ public class GameManager : MonoBehaviour
     public GameObject selectPrefab;
     public GameObject pathPrefab;
     public GameObject movementRangePrefab;
+    public GameObject modulePrefab;
+    public GameObject modulePanel;
 
     private List<GameObject> currentPath = new List<GameObject>();
 
     public Transform ActionBar;
+    public Transform StructureModuleBar;
     public Transform ModuleBar;
+
     public Sprite movementIcon;
     public Sprite moduleIcon;
     public Sprite createFleetIcon;
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
     private PathNode selectedNode;
     private Structure selectedStructure;
     private List<Node> currentMovementRange = new List<Node>();
+    private List<Module> currentModules = new List<Module>();
     internal List<Station> stations = new List<Station>();
 
     private bool isMoving = false;
@@ -163,7 +166,7 @@ public class GameManager : MonoBehaviour
                         {
                             if (targetNode?.nodeOnPath is Structure)
                             {
-                                infoPanel.SetActive(true);
+                                ViewStructureInformation(true);
                             }
                             else
                             {
@@ -174,20 +177,37 @@ public class GameManager : MonoBehaviour
                                 }
                                 ClearSelection();
                             }
+                            ViewModules(false);
                         }
                     }
                 }
             }
         }
     }
-
+    public void ViewModules(bool active)
+    {
+        modulePanel.SetActive(active);
+    }
+    public void ViewStructureInformation(bool active)
+    {
+        infoPanel.SetActive(active);
+    }
+    public void AttachModule()
+    {
+        if (CurrentStation.modules.Count > 0 && selectedStructure.attachedModules.Count < selectedStructure.maxAttachedModules && CurrentStation.stationId == selectedStructure.stationId)
+        {
+            QueueAction(ActionType.AttachModule);
+            ViewStructureInformation(false);
+        }
+    }
     private void ClearSelection()
     {
         ClearMovementPath();
         ClearMovementRange();
         selectedNode = null;
         selectedStructure = null;
-        infoPanel.SetActive(false);
+        ViewStructureInformation(false);
+        ViewModules(false);
     }
 
     public void SetTextValues(Structure structure)
@@ -213,6 +233,7 @@ public class GameManager : MonoBehaviour
         }
         SetModuleBar(structure);
         infoPanel.gameObject.SetActive(true);
+        ViewModules(false);
     }
 
     private void AddActionBarImage(ActionType actionType, int i)
@@ -233,6 +254,7 @@ public class GameManager : MonoBehaviour
             if (CurrentStation.ships.Count + CurrentStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < CurrentStation.maxShips)
             {
                 QueueAction(ActionType.CreateFleet);
+                createFleetButton.interactable = false; //Only allow 1 fleet build per turn?
             }
             else
             {
@@ -287,11 +309,6 @@ public class GameManager : MonoBehaviour
     public void GenerateModule()
     {
         QueueAction(ActionType.GenerateModule);
-    }
-    
-    public void AttachModule()
-    {
-        QueueAction(ActionType.AttachModule);
     }
 
     private void QueueAction(ActionType actionType, List<Module> cost = null)
@@ -444,6 +461,7 @@ public class GameManager : MonoBehaviour
         {
             playerText.text = "Automating Simultanous Turns";
             currentStationTurn = 0;
+            ClearModules();
             for (int i = 0; i < 6; i++)
             {
                 foreach (var station in stations)
@@ -493,14 +511,14 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.CreateFleet)
         {
-            if (CanUpgrade(action.selectedStructure))
+            if (CanBuildFleet(stations[action.selectedStructure.stationId]))
             {
                 ChargeModules(action);
                 yield return StartCoroutine(GridManager.i.CreateFleet(currentStation));
             }
             else
             {
-                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
             }
         }
         else if (action.actionType == ActionType.UpgradeFleet)
@@ -510,7 +528,7 @@ public class GameManager : MonoBehaviour
                 ChargeModules(action);
                 var ship = action.selectedStructure as Ship;
                 ship.level++;
-                ship.maxAttachedModules++;
+                ship.maxAttachedModules += 2;
                 ship.maxHp++;
                 ship.electricAttack++;
                 ship.voidAttack++;
@@ -518,7 +536,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+                Debug.Log($"Broke ass ${action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
             }
         }
         else if (action.actionType == ActionType.UpgradeStation)
@@ -528,7 +546,7 @@ public class GameManager : MonoBehaviour
                 ChargeModules(action);
                 var station = action.selectedStructure as Station;
                 station.level++;
-                station.maxAttachedModules++;
+                station.maxAttachedModules += 2;
                 station.maxShips++;
                 station.maxActions++;
             }
@@ -539,7 +557,16 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.GenerateModule)
         {
-            currentStation.modules.Add(new Module(Random.Range(0,6)));
+            currentStation.modules.Add(new Module(Random.Range(0,7)));
+        } 
+        else if (action.actionType == ActionType.AttachModule)
+        {
+            if (currentStation.modules.Count > 0)
+            {
+                var moduleToAttach = Random.Range(0, currentStation.modules.Count);
+                action.selectedStructure.attachedModules.Add(currentStation.modules[moduleToAttach]);
+                currentStation.modules.RemoveAt(moduleToAttach);
+            }
         }
     }
 
@@ -558,10 +585,24 @@ public class GameManager : MonoBehaviour
         ClearActionBar();
         ClearMovementPath();
         ClearMovementRange();
-        infoPanel.SetActive(false);
+        SetModuleBar();
+        ViewModules(false);
+        ViewStructureInformation(false);
         selectedNode = null;
         playerText.text = $"{CurrentStation.color} player selecting actions";
         createFleetButton.interactable = CanBuildFleet(CurrentStation);
+    }
+
+    private void SetModuleBar()
+    {
+        ClearModules();
+        foreach (var module in CurrentStation.modules)
+        {
+            var moduleObject = Instantiate(modulePrefab, ModuleBar);
+            //moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => AttachModule());
+            moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
+            currentModules.Add(moduleObject.GetComponent<Module>());
+        }
     }
 
     //private IEnumerator AITurn()
@@ -583,6 +624,10 @@ public class GameManager : MonoBehaviour
     {
         while (currentPath.Count > 0) { Destroy(currentPath[0].gameObject); currentPath.RemoveAt(0); }
     }
+    private void ClearModules()
+    {
+        while (currentModules.Count > 0) { Destroy(currentModules[0].gameObject); currentModules.RemoveAt(0); }
+    }
 
     private void ClearActionBar()
     {
@@ -595,25 +640,32 @@ public class GameManager : MonoBehaviour
     
     private void SetModuleBar(Structure structure)
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (i < structure.maxAttachedModules)
             {
                 if (i < structure.attachedModules.Count)
                 {
-                    ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
-                    ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(true);
+                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
+                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(true);
                 }
                 else
                 {
-                    ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
-                    ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+                    if (structure.stationId == CurrentStation.stationId)
+                    {
+                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
+                    }
+                    else
+                    {
+                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
+                    }
                 }
             }
             else
             {
-                ModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
-                ModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+                StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
+                StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
             }
 
         }

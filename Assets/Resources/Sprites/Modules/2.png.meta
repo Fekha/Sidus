@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7c07bd6ac21dd8746b269a1809b8086b
+guid: ef5a760a9f975cc43b7c851021b6c196
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5343533267496870947
-    second: orrery_0
+      213: -4297800806661164347
+    second: bubble-field (1)_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: orrery_0
+      name: bubble-field (1)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ddbdd51fdc4f7d5b0800000000000000
-      internalID: -5343533267496870947
+      spriteID: 5c2f293efe42b54c0800000000000000
+      internalID: -4297800806661164347
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bubble-field (1)_0: -4297800806661164347
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

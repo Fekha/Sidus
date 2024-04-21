@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5f2bb2bb85002c34e9757317f23cc6c9
+guid: 98add22734925964c844c42015c6ce61
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5040724766035019745
-    second: apollo-capsule_0
+      213: -3967031153180063815
+    second: planet-conquest_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: apollo-capsule_0
+      name: planet-conquest_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f18f7fd388fbb0ab0800000000000000
-      internalID: -5040724766035019745
+      spriteID: 9b74bc53f2642f8c0800000000000000
+      internalID: -3967031153180063815
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      planet-conquest_0: -3967031153180063815
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
