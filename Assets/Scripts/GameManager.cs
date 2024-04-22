@@ -193,7 +193,7 @@ public class GameManager : MonoBehaviour
         if (SelectedStructure != null && CurrentStation.modules.Count > 0 && SelectedStructure.attachedModules.Count < SelectedStructure.maxAttachedModules && CurrentStation.stationId == SelectedStructure.stationId)
         {
             QueueAction(ActionType.AttachModule);
-            ViewStructureInformation(false);
+            ClearSelection();
         }
     }
     public void DetachModule(int i)
@@ -207,7 +207,7 @@ public class GameManager : MonoBehaviour
             }
             else{
                 QueueAction(ActionType.DetachModule, new List<Module>() { SelectedStructure.attachedModules[i] });
-                ViewStructureInformation(false);
+                ClearSelection();
             }
         }
     }
@@ -600,12 +600,9 @@ public class GameManager : MonoBehaviour
     private void ResetUI()
     {
         ClearActionBar();
-        ClearMovementPath();
-        ClearMovementRange();
         SetModuleBar();
-        ViewStructureInformation(false);
+        ClearSelection();
         GridManager.i.GetScores();
-        SelectedNode = null;
         playerText.text = $"{CurrentStation.color} player's turn.";
         ScoreToWinText.text = $"Tiles to win: {CurrentStation.score}/{GridManager.i.scoreToWin}";
         createFleetButton.interactable = CanBuildFleet(CurrentStation);
@@ -667,6 +664,11 @@ public class GameManager : MonoBehaviour
                 {
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
                     StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == CurrentStation.stationId);
+                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
+                    var module = structure.attachedModules[i];
+                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() =>
+                        SetModuleInfo(module)
+                    );
                 }
                 else
                 {
@@ -674,6 +676,8 @@ public class GameManager : MonoBehaviour
                     if (structure.stationId == CurrentStation.stationId)
                     {
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
+                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
+                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => AttachModule());
                     }
                     else
                     {
