@@ -413,6 +413,12 @@ public class GameManager : MonoBehaviour
                     Destroy(structure.gameObject);
                     break;
                 }
+                if (structureOnPath.hp <= 0)
+                {
+                    Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
+                    Destroy(structureOnPath.gameObject);
+                    break;
+                }
             }
             float elapsedTime = 0f;
             float totalTime = .25f;
