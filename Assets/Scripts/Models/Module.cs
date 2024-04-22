@@ -28,7 +28,7 @@ public class Module : MonoBehaviour
                 effectText = "+1 Movement \n On Attach: Change Shield to Thermal";
                 break;
             case 4:
-                effectText = "+3 Max HP \n On Attach: Change Shield to Electric";
+                effectText = "+5 Max HP \n On Attach: Change Shield to Electric";
                 break;
             case 5:
                 effectText = "+2 Void Attack \n +2 Thermal Attack \n +1 Electric Attack \n On Attach: Change Shield to Electric";
@@ -51,5 +51,11 @@ public class Module : MonoBehaviour
             default:
                 break;
         }
+        //other ideas
+        //shield piercer, ignores shield of specifc type
+        //Meteor hopper, ignores obsticles
+        //Move through structures
+        //reorder attacks, void first etc
+        //double attacks, void round twice etc
     }
 }

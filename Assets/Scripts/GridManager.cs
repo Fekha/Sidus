@@ -25,6 +25,7 @@ public class GridManager : MonoBehaviour
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
+        GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
         characterParent = GameObject.Find("Characters").transform;
         CreateStation(enemyStationPrefab, 0);
         CreateStation(playerStationPrefab, 1);
@@ -263,6 +264,19 @@ public class GridManager : MonoBehaviour
 
     internal int CheckForWin()
     {
+        GetScores();
+        for (int i = 0; i < 2; i++)
+        {
+            if (GameManager.i.stations[i].score >= scoreToWin)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    internal void GetScores()
+    {
         Dictionary<int, int> scores = new Dictionary<int, int>();
         scores.Add(-1, 0);
         scores.Add(0, 0);
@@ -274,13 +288,7 @@ public class GridManager : MonoBehaviour
                 scores[grid[i, j].ownedById]++;
             }
         }
-        for (int i = -1; i <= 1; i++)
-        {
-            if (scores[i] >= scoreToWin)
-            {
-                return i;
-            }
-        }
-        return -1;
+        GameManager.i.stations[0].score = scores[0];
+        GameManager.i.stations[1].score = scores[1];
     }
 }

@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI voidValue;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI moduleInfoValue;
+    public TextMeshProUGUI ScoreToWinText;
     public GameObject infoPanel;
 
     internal int winner = -1;
@@ -88,7 +89,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if(stations.Count > 1) {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !isEndingTurn)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
@@ -100,11 +101,11 @@ public class GameManager : MonoBehaviour
                     if (targetNode != null && targetNode.nodeOnPath is Structure)
                     {
                         targetStructure = targetNode.nodeOnPath as Structure;
-                        SetTextValues(targetStructure);
                     }
                     //original click on ship
                     if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == currentStationTurn)
                     {
+                        SetTextValues(targetStructure);
                         SelectedStructure = targetStructure;
                         if (CurrentStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureId == targetStructure.structureId))
                         {
@@ -160,9 +161,13 @@ public class GameManager : MonoBehaviour
                         //clicked on invalid tile
                         else
                         {
-                            if (targetNode?.nodeOnPath is Structure)
+                            if (targetStructure != null)
                             {
-                                ViewStructureInformation(true);
+                                if (SelectedStructure == null)
+                                {
+                                    SetTextValues(targetStructure);
+                                    ViewStructureInformation(true);
+                                }
                             }
                             else
                             {
@@ -224,17 +229,16 @@ public class GameManager : MonoBehaviour
         electricValue.text = structure.electricAttack.ToString();
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
+        shieldValue.text = structure.shield.ToString();
         if (structure.stationId == CurrentStation.stationId)
         {
             upgradeButton.gameObject.SetActive(true);
             upgradeButton.interactable = CanUpgrade(structure);
-            shieldValue.text = structure.shield.ToString();
         }
         else
         {
             upgradeButton.gameObject.SetActive(false);
             upgradeButton.interactable = false;
-            shieldValue.text = "?";
         }
         SetModuleBar(structure);
         infoPanel.gameObject.SetActive(true);
@@ -370,10 +374,13 @@ public class GameManager : MonoBehaviour
                 if (structureOnPath.stationId != structure.stationId)
                 {
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
-                    if (structure.shield != AttackType.Electric)
-                        structure.hp -= Math.Max(structureOnPath.electricAttack - structure.electricAttack, 0);
-                    if(structureOnPath.shield != AttackType.Electric)
-                        structureOnPath.hp -= Math.Max(structure.electricAttack - structureOnPath.electricAttack, 0);
+                    if (structure.hp > 0 && structureOnPath.hp > 0)
+                    {
+                        if (structure.shield != AttackType.Electric)
+                            structure.hp -= Math.Max(structureOnPath.electricAttack - structure.electricAttack, 0);
+                        if (structureOnPath.shield != AttackType.Electric)
+                            structureOnPath.hp -= Math.Max(structure.electricAttack - structureOnPath.electricAttack, 0);
+                    }
                     if (structure.hp > 0 && structureOnPath.hp > 0)
                     {
                         if (structure.shield != AttackType.Thermal)
@@ -560,18 +567,21 @@ public class GameManager : MonoBehaviour
         } 
         else if (action.actionType == ActionType.AttachModule)
         {
-            if (currentStation.modules.Count > 0)
+            if (currentStation.modules.Count > 0 && action.selectedStructure.attachedModules.Count < action.selectedStructure.maxAttachedModules)
             {
-                var moduleToAttach = Random.Range(0, currentStation.modules.Count);
-                action.selectedStructure.attachedModules.Add(currentStation.modules[moduleToAttach]);
-                currentStation.modules.RemoveAt(moduleToAttach);
+                var moduleToAttachIndex = Random.Range(0, currentStation.modules.Count);
+                var moduleToAttach = currentStation.modules[moduleToAttachIndex];
+                action.selectedStructure.attachedModules.Add(moduleToAttach);
+                action.selectedStructure.EditModule(moduleToAttach.id);
+                currentStation.modules.RemoveAt(moduleToAttachIndex);
             }
         }
         else if (action.actionType == ActionType.DetachModule)
         {
-            if (action.selectedStructure.attachedModules.Count > 0)
+            if (action.selectedStructure.attachedModules.Count > 0 && action.cost != null && action.cost.Count > 0)
             {
                 currentStation.modules.Add(action.cost[0]);
+                action.selectedStructure.EditModule(action.cost[0].id, -1);
                 action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x=>x.id == action.cost[0].id));
             }
         }
@@ -594,8 +604,10 @@ public class GameManager : MonoBehaviour
         ClearMovementRange();
         SetModuleBar();
         ViewStructureInformation(false);
+        GridManager.i.GetScores();
         SelectedNode = null;
-        playerText.text = $"{CurrentStation.color} player selecting actions";
+        playerText.text = $"{CurrentStation.color} player's turn.";
+        ScoreToWinText.text = $"Tiles to win: {CurrentStation.score}/{GridManager.i.scoreToWin}";
         createFleetButton.interactable = CanBuildFleet(CurrentStation);
     }
 

@@ -77,4 +77,70 @@ public class Structure : Node
     {
         range -= i;
     }
+
+    internal void EditModule(int id, int modifer = 1)
+    {
+        switch (id)
+        {
+            case 0:
+                electricAttack += (4 * modifer);
+                if(modifer == 1) shield = AttackType.Thermal; 
+                break;
+            case 1:
+                thermalAttack += (4 * modifer);
+                if (modifer == 1) shield = AttackType.Void;
+                break;
+            case 2:
+                voidAttack += (4 * modifer);
+                if (modifer == 1) shield = AttackType.Electric;
+                break;
+            case 3:
+                range += (1 * modifer);
+                shield = AttackType.Thermal;
+                break;
+            case 4:
+                maxHp += (5 * modifer);
+                hp += (5 * modifer);
+                if (modifer == 1) shield = AttackType.Electric;
+                break;
+            case 5:
+                electricAttack += (1 * modifer);
+                thermalAttack += (2 * modifer);
+                voidAttack += (2 * modifer);
+                if (modifer == 1) shield = AttackType.Electric;
+                break;
+            case 6:
+                electricAttack += (2 * modifer);
+                thermalAttack += (1 * modifer); 
+                voidAttack += (2 * modifer);
+                if (modifer == 1) shield = AttackType.Thermal;
+                break;
+            case 7:
+                electricAttack += (2 * modifer);
+                thermalAttack += (2 * modifer); 
+                voidAttack += (1 * modifer);
+                if (modifer == 1) shield = AttackType.Void;
+                break;
+            case 8:
+                electricAttack += (1 * modifer);
+                thermalAttack += (1 * modifer);
+                voidAttack += (3 * modifer);
+                if (modifer == 1) shield = AttackType.Thermal;
+                break;
+            case 9:
+                electricAttack += (3 * modifer);
+                thermalAttack += (1 * modifer);
+                voidAttack += (1 * modifer);
+                if (modifer == 1) shield = AttackType.Void;
+                break;
+            case 10:
+                electricAttack += (1 * modifer);
+                thermalAttack += (3 * modifer);
+                voidAttack += (1 * modifer);
+                if (modifer == 1) shield = AttackType.Electric;
+                break;
+            default:
+                break;
+        }
+    }
 }
