@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour
        
         if (SelectedStructure != null && CurrentStation.stationId == SelectedStructure.stationId)
         {
-            if (CurrentStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.cost.Any(y => y.id == SelectedStructure.attachedModules[i].id)))
+            if (CurrentStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModules.Any(y => y.id == SelectedStructure.attachedModules[i].id)))
             {
                 Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedStructure.attachedModules[i].id} has already been queued up");
             }
@@ -584,11 +584,11 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.DetachModule)
         {
-            if (action.selectedStructure.attachedModules.Count > 0 && action.cost != null && action.cost.Count > 0)
+            if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModules != null && action.selectedModules.Count > 0)
             {
-                currentStation.modules.Add(action.cost[0]);
-                action.selectedStructure.EditModule(action.cost[0].id, -1);
-                action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x=>x.id == action.cost[0].id));
+                currentStation.modules.Add(action.selectedModules[0]);
+                action.selectedStructure.EditModule(action.selectedModules[0].id, -1);
+                action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x=>x.id == action.selectedModules[0].id));
             }
         }
     }

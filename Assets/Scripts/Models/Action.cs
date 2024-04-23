@@ -6,11 +6,11 @@ public class Action : MonoBehaviour
 {
     public ActionType actionType;
     public Structure selectedStructure;
-    public List<Module> cost;
+    public List<Module> selectedModules;
     public Action(ActionType _actionType, Structure _selectedShip, List<Module> _cost = null)
     {
         actionType = _actionType;
         selectedStructure = _selectedShip;
-        cost = _cost ?? new List<Module>();
+        selectedModules = _cost ?? new List<Module>();
     }
 }
