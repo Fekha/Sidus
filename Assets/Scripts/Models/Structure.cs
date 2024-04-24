@@ -41,6 +41,7 @@ public class Structure : Node
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
         SetNodeColor();
+        GameManager.i.AllStructures.Add(this);
     }
 
     public void TakeDamage(int damage)

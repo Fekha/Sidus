@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -27,7 +29,6 @@ public class SqlController
     }
     public IEnumerator PostRoutine<T>(string url, string ToPost, Action<T> callback = null)
     {
-        WWWForm form = new WWWForm();
         using (UnityWebRequest request = UnityWebRequest.Post(apiUrl + url, ToPost, "application/json"))
         {
             yield return request.SendWebRequest();

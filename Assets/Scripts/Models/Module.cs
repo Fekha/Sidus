@@ -6,14 +6,16 @@ using UnityEngine;
 
 public class Module : MonoBehaviour
 {
-    internal int id;
+    internal Guid id;
+    internal int type;
     internal Sprite icon;
     internal String effectText;
-    public Module(int _id)
+    public Module(int _type)
     {
-        id = _id;
-        icon = Resources.Load<Sprite>($"Sprites/Modules/{_id}");
-        switch (id)
+        id = Guid.NewGuid();
+        type = _type;
+        icon = Resources.Load<Sprite>($"Sprites/Modules/{_type}");
+        switch (type)
         {
             case 0:
                 effectText = "+4 Electric Attack \n On Attach: Change Shield to Thermal";
@@ -57,5 +59,7 @@ public class Module : MonoBehaviour
         //Move through structures
         //reorder attacks, void first etc
         //double attacks, void round twice etc
+
+        GameManager.i.AllModules.Add(this);
     }
 }

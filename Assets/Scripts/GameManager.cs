@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using StartaneousAPI.Models;
 using System;
 using System.Collections;
@@ -6,13 +8,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
-using UnityEngine.WSA;
 using Random = UnityEngine.Random;
+using static System.Collections.Specialized.BitVector32;
+using Unity.Android.Gradle.Manifest;
 
 public class GameManager : MonoBehaviour
 {
@@ -59,27 +60,33 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI moduleInfoValue;
     public TextMeshProUGUI ScoreToWinText;
     public GameObject infoPanel;
-
+    internal List<Structure> AllStructures = new List<Structure>();
+    internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
     internal Station CurrentStation {get {return stations[currentStationTurn];}}
     //temp, not for real game
     public GameObject turnLabel;
     public TextMeshProUGUI playerText;
     private SqlController sql;
-    private Guid ClientId;
+    private Guid ClientId1;
+    private Guid ClientId2;
     private Guid GameId;
     private int TurnNumber = 0;
+    private Turn[]? TurnsFromServer;
+    private int maxPlayers = 2;
     private void Awake()
     {
         i = this;
         sql = new SqlController();
-        ClientId = Guid.NewGuid();
+        ClientId1 = Guid.NewGuid();
+        ClientId2 = Guid.NewGuid();
     }
     void Start()
     {
         FindUI();
         highlightParent = GameObject.Find("Highlights").transform;
-        var value = StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={ClientId}",SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={ClientId1}",SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={ClientId2}",SetMatchGuid));
     }
 
     private void SetMatchGuid(Guid gameId)
@@ -217,9 +224,9 @@ public class GameManager : MonoBehaviour
        
         if (SelectedStructure != null && CurrentStation.stationId == SelectedStructure.stationId)
         {
-            if (CurrentStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModules.Any(y => y.id == SelectedStructure.attachedModules[i].id)))
+            if (CurrentStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModules.Any(y => y.type == SelectedStructure.attachedModules[i].type)))
             {
-                Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedStructure.attachedModules[i].id} has already been queued up");
+                Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedStructure.attachedModules[i].type} has already been queued up");
             }
             else{
                 QueueAction(ActionType.DetachModule, new List<Module>() { SelectedStructure.attachedModules[i] });
@@ -477,11 +484,11 @@ public class GameManager : MonoBehaviour
         {
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
-            currentStationTurn++;
-            var actionToPost = stations[0].actions.Select(x => new ActionIds(x)).ToList();
-            var turnToPost = new Turn(GameId,ClientId,TurnNumber,actionToPost);
+            var actionToPost = stations[currentStationTurn].actions.Select(x => new ActionIds(x)).ToList();
+            var turnToPost = new Turn(GameId, currentStationTurn == 0 ? ClientId1:ClientId2,TurnNumber,actionToPost);
             var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
             StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
+            currentStationTurn++;
             StartCoroutine(TakeTurns()); 
         }
     }
@@ -490,39 +497,15 @@ public class GameManager : MonoBehaviour
     {
         if (currentStationTurn >= stations.Count)
         {
-            playerText.text = "Automating Simultanous Turns";
-            currentStationTurn = 0;
-            ClearModules();
-            for (int i = 0; i < 6; i++)
+            playerText.text = "Automating";
+            turnValue.text = "Automating Simultanous Turns";
+            turnLabel.SetActive(true);
+            TurnsFromServer = null;
+            while (TurnsFromServer == null)
             {
-                foreach (var station in stations)
-                {
-                    if (i < station.actions.Count)
-                    {
-                        var action = station.actions[i];
-                        if (action is object)
-                        {
-                            turnValue.text = $"{station.color} action {i + 1}: {action.actionType}";
-                            turnLabel.SetActive(true);
-                            Debug.Log($"Perfoming {station.color}'s action {i + 1}: {action.actionType}");
-                            yield return StartCoroutine(PerformAction(action));     
-                        }
-                        else
-                        {
-                            turnValue.text = $"{station.color} action {i + 1}: No Action";
-                        }
-                        yield return new WaitForSeconds(.5f);
-                    }
-                }
+                yield return StartCoroutine(sql.GetRoutine<Turn[]?>($"Game/GetTurn?gameId={GameId}&turnNumber={TurnNumber}", CheckForTurns));
             }
-            stations.ForEach(x => x.actions.Clear());
-            winner = GridManager.i.CheckForWin();
-            if (winner != -1)
-            {
-                turnValue.text = $"Player {winner} won";
-                Debug.Log($"Player {winner} won");
-            }
-            TurnNumber++;
+            yield return StartCoroutine(AutomateTurns(TurnsFromServer));
         }
         if (winner == -1)
         {
@@ -532,7 +515,47 @@ public class GameManager : MonoBehaviour
             Debug.Log($"New Turn Starting");
         }
     }
-    
+
+    private void CheckForTurns(Turn[]? turns)
+    {
+        TurnsFromServer = turns;
+    }
+
+    private IEnumerator AutomateTurns(Turn[] turns)
+    {
+        currentStationTurn = 0;
+        ClearModules();
+        for (int i = 0; i < 6; i++)
+        {
+            for(int j = 0; j < maxPlayers; j++)
+            {
+                if (i < turns[j].Actions.Count)
+                {
+                    if (turns[j].Actions[i] is object)
+                    {
+                        var action = new Action(turns[j].Actions[i]);
+                        turnValue.text = $"{stations[j].color} action {i + 1}: {action.actionType}";
+                        Debug.Log($"Perfoming {stations[j].color}'s action {i + 1}: {action.actionType}");
+                        yield return StartCoroutine(PerformAction(action));
+                    }
+                    else
+                    {
+                        turnValue.text = $"{stations[j].color} action {i + 1}: No Action";
+                    }
+                    yield return new WaitForSeconds(.5f);
+                }
+            }
+        }
+        stations.ForEach(x => x.actions.Clear());
+        winner = GridManager.i.CheckForWin();
+        if (winner != -1)
+        {
+            turnValue.text = $"Player {winner} won";
+            Debug.Log($"Player {winner} won");
+        }
+        TurnNumber++;
+    }
+
     private IEnumerator PerformAction(Action action)
     {
         var currentStation = stations[action.selectedStructure.stationId];
@@ -599,7 +622,7 @@ public class GameManager : MonoBehaviour
                 var moduleToAttachIndex = Random.Range(0, currentStation.modules.Count);
                 var moduleToAttach = currentStation.modules[moduleToAttachIndex];
                 action.selectedStructure.attachedModules.Add(moduleToAttach);
-                action.selectedStructure.EditModule(moduleToAttach.id);
+                action.selectedStructure.EditModule(moduleToAttach.type);
                 currentStation.modules.RemoveAt(moduleToAttachIndex);
             }
         }
@@ -608,8 +631,8 @@ public class GameManager : MonoBehaviour
             if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModules != null && action.selectedModules.Count > 0)
             {
                 currentStation.modules.Add(action.selectedModules[0]);
-                action.selectedStructure.EditModule(action.selectedModules[0].id, -1);
-                action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x=>x.id == action.selectedModules[0].id));
+                action.selectedStructure.EditModule(action.selectedModules[0].type, -1);
+                action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x=>x.type == action.selectedModules[0].type));
             }
         }
     }

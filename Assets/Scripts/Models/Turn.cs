@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace StartaneousAPI.Models
 {
+    [Serializable]
     public class Turn
     {
         public Guid GameId { get; set; }
