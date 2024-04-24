@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
     private SqlController sql;
     private Guid ClientId;
     private Guid GameId;
+    private int TurnNumber = 0;
     private void Awake()
     {
         i = this;
@@ -515,6 +516,7 @@ public class GameManager : MonoBehaviour
                 turnValue.text = $"Player {winner} won";
                 Debug.Log($"Player {winner} won");
             }
+            TurnNumber++;
         }
         if (winner == -1)
         {
