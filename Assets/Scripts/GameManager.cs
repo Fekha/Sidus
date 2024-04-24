@@ -44,7 +44,6 @@ public class GameManager : MonoBehaviour
 
     private bool isMoving = false;
     private bool isEndingTurn = false;
-    internal int currentStationTurn = 0;
 
     private Button upgradeButton;
     public Button createFleetButton;
@@ -63,14 +62,13 @@ public class GameManager : MonoBehaviour
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
-    internal Station CurrentStation {get {return stations[currentStationTurn];}}
+    internal int myStationIndex = 0;
+    internal Station MyStation {get {return stations[myStationIndex];}}
     //temp, not for real game
     public GameObject turnLabel;
-    public TextMeshProUGUI playerText;
     private SqlController sql;
-    private Guid ClientId1;
-    private Guid ClientId2;
-    private Guid GameId;
+    private Guid ClientId;
+    private Guid GameId = Guid.Empty;
     private int TurnNumber = 0;
     private Turn[]? TurnsFromServer;
     private int maxPlayers = 2;
@@ -78,20 +76,22 @@ public class GameManager : MonoBehaviour
     {
         i = this;
         sql = new SqlController();
-        ClientId1 = Guid.NewGuid();
-        ClientId2 = Guid.NewGuid();
+        ClientId = Guid.NewGuid();
     }
     void Start()
     {
         FindUI();
         highlightParent = GameObject.Find("Highlights").transform;
-        StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={ClientId1}",SetMatchGuid));
-        StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={ClientId2}",SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Tuple<Guid,int>>($"Game/Join?ClientId={ClientId}",SetMatchGuid));
     }
-
-    private void SetMatchGuid(Guid gameId)
+    public bool HasGameStarted()
     {
-        GameId = gameId;
+        return stations.Count > 1 && GameId != Guid.Empty;
+    }
+    private void SetMatchGuid(Tuple<Guid, int> gameStats)
+    {
+        GameId = gameStats.Item1;
+        myStationIndex = gameStats.Item2;
     }
 
     private void FindUI()
@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if(stations.Count > 1) {
+        if(HasGameStarted()) {
             if (Input.GetMouseButtonDown(0) && !isEndingTurn)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -126,11 +126,11 @@ public class GameManager : MonoBehaviour
                         targetStructure = targetNode.nodeOnPath as Structure;
                     }
                     //original click on ship
-                    if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == currentStationTurn)
+                    if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId)
                     {
                         SetTextValues(targetStructure);
                         SelectedStructure = targetStructure;
-                        if (CurrentStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureId == targetStructure.structureId))
+                        if (MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureId == targetStructure.structureId))
                         {
                             Debug.Log($"{targetStructure.structureName} already has a pending movement action.");
                         }
@@ -209,11 +209,12 @@ public class GameManager : MonoBehaviour
     }
     public void ViewStructureInformation(bool active)
     {
-        infoPanel.SetActive(active);
+        if(HasGameStarted())
+            infoPanel.SetActive(active);
     }
     public void AttachModule()
     {
-        if (SelectedStructure != null && CurrentStation.modules.Count > 0 && SelectedStructure.attachedModules.Count < SelectedStructure.maxAttachedModules && CurrentStation.stationId == SelectedStructure.stationId)
+        if (SelectedStructure != null && MyStation.modules.Count > 0 && SelectedStructure.attachedModules.Count < SelectedStructure.maxAttachedModules && MyStation.stationId == SelectedStructure.stationId)
         {
             QueueAction(ActionType.AttachModule);
             ClearSelection();
@@ -222,9 +223,9 @@ public class GameManager : MonoBehaviour
     public void DetachModule(int i)
     {
        
-        if (SelectedStructure != null && CurrentStation.stationId == SelectedStructure.stationId)
+        if (SelectedStructure != null && MyStation.stationId == SelectedStructure.stationId)
         {
-            if (CurrentStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModules.Any(y => y.type == SelectedStructure.attachedModules[i].type)))
+            if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModules.Any(y => y.type == SelectedStructure.attachedModules[i].type)))
             {
                 Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedStructure.attachedModules[i].type} has already been queued up");
             }
@@ -253,7 +254,7 @@ public class GameManager : MonoBehaviour
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
         shieldValue.text = structure.shield.ToString();
-        if (structure.stationId == CurrentStation.stationId)
+        if (structure.stationId == MyStation.stationId)
         {
             upgradeButton.gameObject.SetActive(true);
             upgradeButton.interactable = CanUpgrade(structure);
@@ -274,9 +275,9 @@ public class GameManager : MonoBehaviour
     }
     public void CreateFleet()
     {
-        if (CanBuildFleet(CurrentStation))
+        if (CanBuildFleet(MyStation) && HasGameStarted())
         {
-            if (CurrentStation.ships.Count + CurrentStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < CurrentStation.maxShips)
+            if (MyStation.ships.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
             {
                 QueueAction(ActionType.CreateFleet);
                 createFleetButton.interactable = false; //Only allow 1 fleet build per turn?
@@ -290,7 +291,7 @@ public class GameManager : MonoBehaviour
 
     public void UpgradeStructure()
     {
-        if (CanUpgrade(SelectedStructure)){
+        if (CanUpgrade(SelectedStructure) && HasGameStarted()){
             if (SelectedStructure is Ship)
                 QueueAction(ActionType.UpgradeFleet);
             if (SelectedStructure is Station)
@@ -333,24 +334,27 @@ public class GameManager : MonoBehaviour
 
     public void GenerateModule()
     {
-        QueueAction(ActionType.GenerateModule);
+        if (HasGameStarted())
+        {
+            QueueAction(ActionType.GenerateModule);
+        }
     }
 
     private void QueueAction(ActionType actionType, List<Module> cost = null)
     {
-        if (CurrentStation.actions.Count < CurrentStation.maxActions)
+        if (MyStation.actions.Count < MyStation.maxActions)
         {
-            Debug.Log($"{CurrentStation.structureName} queuing up action {actionType}");
-            AddActionBarImage(actionType, CurrentStation.actions.Count());
-            var selected = SelectedStructure ?? CurrentStation;
-            CurrentStation.actions.Add(new Action(actionType, selected, cost));
+            Debug.Log($"{MyStation.structureName} queuing up action {actionType}");
+            AddActionBarImage(actionType, MyStation.actions.Count());
+            var selected = SelectedStructure ?? MyStation;
+            MyStation.actions.Add(new Action(actionType, selected, cost));
         }
     }
 
     public void CancelAction(int slot)
     {
-        var action = CurrentStation.actions[slot];
-        Debug.Log($"{CurrentStation.structureName} removed action {action.actionType} from queue");
+        var action = MyStation.actions[slot];
+        Debug.Log($"{MyStation.structureName} removed action {action.actionType} from queue");
         if (action is object)
         {
             if (action.actionType == ActionType.MoveStructure)
@@ -358,10 +362,10 @@ public class GameManager : MonoBehaviour
                 action.selectedStructure.resetMovementRange();
             }
             ClearActionBar();
-            CurrentStation.actions.RemoveAt(slot);
-            for (int i = 0; i < CurrentStation.actions.Count; i++)
+            MyStation.actions.RemoveAt(slot);
+            for (int i = 0; i < MyStation.actions.Count; i++)
             {
-                AddActionBarImage(CurrentStation.actions[i].actionType, i);
+                AddActionBarImage(MyStation.actions[i].actionType, i);
             }
         }
     }
@@ -480,33 +484,28 @@ public class GameManager : MonoBehaviour
     
     public void EndTurn()
     {
-        if (!isEndingTurn)
+        if (!isEndingTurn && HasGameStarted())
         {
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
-            var actionToPost = stations[currentStationTurn].actions.Select(x => new ActionIds(x)).ToList();
-            var turnToPost = new Turn(GameId, currentStationTurn == 0 ? ClientId1:ClientId2,TurnNumber,actionToPost);
+            var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
+            var turnToPost = new Turn(GameId, ClientId, TurnNumber,actionToPost);
             var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
             StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
-            currentStationTurn++;
             StartCoroutine(TakeTurns()); 
         }
     }
     
     private IEnumerator TakeTurns()
     {
-        if (currentStationTurn >= stations.Count)
+        turnValue.text = "Waiting for the other player...";
+        turnLabel.SetActive(true);
+        TurnsFromServer = null;
+        while (TurnsFromServer == null)
         {
-            playerText.text = "Automating";
-            turnValue.text = "Automating Simultanous Turns";
-            turnLabel.SetActive(true);
-            TurnsFromServer = null;
-            while (TurnsFromServer == null)
-            {
-                yield return StartCoroutine(sql.GetRoutine<Turn[]?>($"Game/GetTurn?gameId={GameId}&turnNumber={TurnNumber}", CheckForTurns));
-            }
-            yield return StartCoroutine(AutomateTurns(TurnsFromServer));
+            yield return StartCoroutine(sql.GetRoutine<Turn[]?>($"Game/GetTurn?gameId={GameId}&turnNumber={TurnNumber}", CheckForTurns));
         }
+        yield return StartCoroutine(AutomateTurns(TurnsFromServer));
         if (winner == -1)
         {
             ResetUI();        
@@ -523,7 +522,6 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator AutomateTurns(Turn[] turns)
     {
-        currentStationTurn = 0;
         ClearModules();
         for (int i = 0; i < 6; i++)
         {
@@ -653,15 +651,14 @@ public class GameManager : MonoBehaviour
         SetModuleBar();
         ClearSelection();
         GridManager.i.GetScores();
-        playerText.text = $"{CurrentStation.color} player's turn.";
-        ScoreToWinText.text = $"Tiles to win: {CurrentStation.score}/{GridManager.i.scoreToWin}";
-        createFleetButton.interactable = CanBuildFleet(CurrentStation);
+        ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
+        createFleetButton.interactable = CanBuildFleet(MyStation);
     }
 
     private void SetModuleBar()
     {
         ClearModules();
-        foreach (var module in CurrentStation.modules)
+        foreach (var module in MyStation.modules)
         {
             var moduleObject = Instantiate(modulePrefab, ModuleBar);
             moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module));
@@ -699,7 +696,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
-            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < CurrentStation.maxActions ? null : lockActionBar;
+            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < MyStation.maxActions ? null : lockActionBar;
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
         }
     }
@@ -713,7 +710,7 @@ public class GameManager : MonoBehaviour
                 if (i < structure.attachedModules.Count)
                 {
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
-                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == CurrentStation.stationId);
+                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == MyStation.stationId);
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
                     var module = structure.attachedModules[i];
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() =>
@@ -723,7 +720,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
-                    if (structure.stationId == CurrentStation.stationId)
+                    if (structure.stationId == MyStation.stationId)
                     {
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
