@@ -5,8 +5,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -61,16 +63,27 @@ public class GameManager : MonoBehaviour
     //temp, not for real game
     public GameObject turnLabel;
     public TextMeshProUGUI playerText;
-
+    private SqlController sql;
+    private Guid ClientId;
+    private Guid GameId;
     private void Awake()
     {
         i = this;
+        sql = new SqlController();
+        ClientId = Guid.NewGuid();
     }
     void Start()
     {
         FindUI();
         highlightParent = GameObject.Find("Highlights").transform;
+        var value = StartCoroutine(sql.RequestRoutine<Guid>($"Game/Join?ClientId={ClientId}",SetMatchGuid));
     }
+
+    private void SetMatchGuid(Guid gameId)
+    {
+        GameId = gameId;
+    }
+
     private void FindUI()
     {
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
