@@ -1,3 +1,4 @@
+using StartaneousAPI.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -77,7 +79,7 @@ public class GameManager : MonoBehaviour
     {
         FindUI();
         highlightParent = GameObject.Find("Highlights").transform;
-        var value = StartCoroutine(sql.RequestRoutine<Guid>($"Game/Join?ClientId={ClientId}",SetMatchGuid));
+        var value = StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={ClientId}",SetMatchGuid));
     }
 
     private void SetMatchGuid(Guid gameId)
@@ -476,6 +478,10 @@ public class GameManager : MonoBehaviour
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
             currentStationTurn++;
+            var actionToPost = stations[0].actions.Select(x => new ActionIds(x)).ToList();
+            var turnToPost = new Turn(GameId,ClientId,TurnNumber,actionToPost);
+            var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
+            StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
             StartCoroutine(TakeTurns()); 
         }
     }

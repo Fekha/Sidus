@@ -9,5 +9,13 @@ namespace StartaneousAPI.Models
         public Guid ClientId { get; set; }
         public int TurnNumber { get; set; }
         public List<ActionIds>? Actions { get; set; }
+
+        public Turn(Guid gameId, Guid clientId, int turnNumber, List<ActionIds> actions)
+        {
+            GameId = gameId;
+            ClientId = clientId;
+            TurnNumber = turnNumber;
+            Actions = actions;
+        }
     }
 }
