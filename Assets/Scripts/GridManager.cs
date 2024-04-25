@@ -47,8 +47,8 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
-        var spawnX = (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, Random.Range(0, 3), Random.Range(7, 10), Random.Range(7, 10), Random.Range(7, 10), 1);
+        var spawnX = 5;// (int)Random.Range(1, gridSize.x - 1);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 1, 7, 7, 7, 1);
         StartCoroutine(CreateFleet(stationNode));
     }
 
@@ -82,7 +82,7 @@ public class GridManager : MonoBehaviour
             var ship = Instantiate(shipPrefab);
             ship.transform.parent = characterParent;
             var shipNode = ship.AddComponent<Ship>();
-            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 3, 2, Random.Range(0, 3), Random.Range(1, 4), Random.Range(1, 4), Random.Range(1, 4), 1);
+            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 3, 2, 2, 3, 3, 3, 1);
         }
         yield return new WaitForSeconds(.1f);
     }
@@ -128,7 +128,7 @@ public class GridManager : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * cellPrefabSize.x) + Vector3.up * (y * cellPrefabSize.y);
                 var isObstacle = false;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
-                    isObstacle = Random.Range(0, 6) == 0;
+                    isObstacle = (x+y)%4 == 0;
                 if (isObstacle)
                     obstacleCount++;
                 var cell = Instantiate(isObstacle ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);

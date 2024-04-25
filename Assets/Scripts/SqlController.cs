@@ -1,9 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -12,16 +8,15 @@ public class SqlController
     string apiUrl;
     public SqlController()
     {
-        apiUrl = "https://game.gravitas-games.com:7001/api/";
-#if UNITY_EDITOR
+//        apiUrl = "https://game.gravitas-games.com:7001/api/";
+//#if UNITY_EDITOR
         apiUrl = "https://localhost:7220/api/";
-#endif
+//#endif
     }
     public IEnumerator GetRoutine<T>(string url, Action<T> callback = null)
     {
         using (UnityWebRequest request = UnityWebRequest.Get(apiUrl + url))
         {
-            request.SetRequestHeader("Access-Control-Allow-Origin", "*");
             yield return request.SendWebRequest();
             if (callback != null)
                 callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));

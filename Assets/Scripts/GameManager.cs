@@ -1,19 +1,13 @@
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using StartaneousAPI.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Xml.Serialization;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
-using static System.Collections.Specialized.BitVector32;
-using Unity.Android.Gradle.Manifest;
 
 public class GameManager : MonoBehaviour
 {
