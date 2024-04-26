@@ -302,10 +302,16 @@ public class GameManager : MonoBehaviour
     private bool CanUpgrade(Structure structure)
     {
         if (structure is Ship)
-            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeFleet, structure);
+            return CanLevelUp(structure as Ship) && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeFleet, structure);
         else
             return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeStation, structure);
     }
+
+    private bool CanLevelUp(Ship ship)
+    {
+        return ship.level < stations[ship.stationId].level * 2;
+    }
+
     private bool CanBuildFleet(Station station)
     {
         return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station);
@@ -315,15 +321,15 @@ public class GameManager : MonoBehaviour
     {
         if (actionType == ActionType.CreateFleet)
         {
-            return stations[structure.stationId].ships.Count * 2; //2,4,6
+            return stations[structure.stationId].ships.Count * 3; //3,6,9
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return (structure.level * 2) - 1; //1,3,5
+            return (structure.level * 2) - 1; //1,3,5,7,9,11
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return structure.level * 3; //3,6,9
+            return structure.level * 4; //4,8,12
         }
         else
         {
@@ -431,29 +437,33 @@ public class GameManager : MonoBehaviour
                             structureOnPath.hp -= Math.Max(structure.voidAttack - structureOnPath.voidAttack, 0);
                     }
                 }
-                if (structureOnPath.hp > 0)
-                {
-                    //even if allied don't move through, don't feel like doing recursive checks right now
-                    Debug.Log($"{structure.structureName} movement was blocked by {structureOnPath.structureName}");
-                    break;
-                }
-                else
-                {
-                    Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
-                    Destroy(structureOnPath.gameObject);
-                }
+                var endMovement = false;
                 if (structure.hp <= 0)
                 {
                     Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
                     Destroy(structure.gameObject);
-                    break;
+                    if (structureOnPath.hp > 0 && structureOnPath is Ship)
+                    {
+                        LevelUpShip(structureOnPath as Ship);
+                    }
+                    endMovement = true; // you're dead
                 }
-                if (structureOnPath.hp <= 0)
+                if (structureOnPath.hp > 0)
+                {
+                    //even if allied don't move through, don't feel like doing recursive checks right now
+                    Debug.Log($"{structure.structureName} movement was blocked by {structureOnPath.structureName}");
+                    endMovement = true; // they aren't dead
+                }
+                else
                 {
                     Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
-                    Destroy(structureOnPath.gameObject);
-                    break;
+                    Destroy(structureOnPath.gameObject); //they are dead
+                    if (structure is Ship)
+                        LevelUpShip(structure as Ship);
+                    
                 }
+                if (endMovement)
+                    break;
             }
             float elapsedTime = 0f;
             float totalTime = .25f;
@@ -587,14 +597,7 @@ public class GameManager : MonoBehaviour
             if (CanUpgrade(action.selectedStructure))
             {
                 ChargeModules(action);
-                var ship = action.selectedStructure as Ship;
-                ship.level++;
-                ship.maxAttachedModules += 2;
-                ship.maxHp++;
-                ship.hp++;
-                ship.electricAttack++;
-                ship.voidAttack++;
-                ship.thermalAttack++;
+                LevelUpShip(action.selectedStructure as Ship);
             }
             else
             {
@@ -644,6 +647,19 @@ public class GameManager : MonoBehaviour
                     action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.type == selectedModule.type));
                 }
             }
+        }
+    }
+
+    private void LevelUpShip(Ship ship)
+    {
+        if (CanLevelUp(ship)){
+            ship.level++;
+            ship.maxAttachedModules += 1;
+            ship.maxHp++;
+            ship.hp++;
+            ship.electricAttack++;
+            ship.voidAttack++;
+            ship.thermalAttack++;
         }
     }
 
