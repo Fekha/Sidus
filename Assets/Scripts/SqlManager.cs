@@ -18,8 +18,16 @@ public class SqlManager
         using (UnityWebRequest request = UnityWebRequest.Get(apiUrl + url))
         {
             yield return request.SendWebRequest();
-            if (callback != null)
-                callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(request.error);
+            }
+            else
+            {
+                Debug.Log(request.downloadHandler.text);
+                if (callback != null)
+                    callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
+            } 
         }
     }
     public IEnumerator PostRoutine<T>(string url, string ToPost, Action<T> callback = null)
@@ -34,9 +42,9 @@ public class SqlManager
             else
             {
                 Debug.Log(request.downloadHandler.text);
+                if (callback != null)
+                    callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
             }
-            if (callback != null)
-                callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
         }
     }
 }

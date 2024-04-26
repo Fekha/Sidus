@@ -9,12 +9,11 @@ public class Station : Structure
     internal int maxActions = 2; // 1+ station.level
     internal int maxShips = 2; // 1+ station.level
     internal int score = 0;
-    internal Guid ClientId;
 
-    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
+    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureId)
     {
         stationId = GameManager.i.stations.Count;
         GameManager.i.stations.Add(this);
-        InitializeStructure(_x, _y, _color + " Station", _color, _hp, _range, _shield, _electricAttack, _thermalAttack, _voidAttack, _level);
+        InitializeStructure(_x, _y, _color + " Station", _color, _hp, _range, _shield, _electricAttack, _thermalAttack, _voidAttack, _level, _structureId);
     }
 }

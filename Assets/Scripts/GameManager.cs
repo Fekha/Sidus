@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,8 @@ public class GameManager : MonoBehaviour
     public GameObject modulePrefab;
     public GameObject moduleInfoPanel;
 
-    private List<GameObject> currentPath = new List<GameObject>();
+    private List<GameObject> currentPathObjects = new List<GameObject>();
+    private List<PathNode> SelectedPath;
 
     public Transform ActionBar;
     public Transform StructureModuleBar;
@@ -56,7 +58,7 @@ public class GameManager : MonoBehaviour
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
-    internal Station MyStation {get {return stations[(int)Globals.myStationIndex];}}
+    internal Station MyStation {get {return stations[Globals.myStationIndex];}}
     //temp, not for real game
     public GameObject turnLabel;
     private SqlManager sql;
@@ -105,16 +107,16 @@ public class GameManager : MonoBehaviour
                 {
                     PathNode targetNode = hit.collider.GetComponent<PathNode>();
                     Structure targetStructure = null;
-                    if (targetNode != null && targetNode.nodeOnPath is Structure)
+                    if (targetNode != null && targetNode.structureOnPath != null)
                     {
-                        targetStructure = targetNode.nodeOnPath as Structure;
+                        targetStructure = targetNode.structureOnPath;
                     }
                     //original click on ship
                     if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId)
                     {
                         SetTextValues(targetStructure);
                         SelectedStructure = targetStructure;
-                        if (MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureId == targetStructure.structureId))
+                        if (MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureGuid == targetStructure.structureGuid))
                         {
                             Debug.Log($"{targetStructure.structureName} already has a pending movement action.");
                         }
@@ -138,30 +140,29 @@ public class GameManager : MonoBehaviour
                             //create movement
                             else
                             {
-
-                                int oldPathCount = SelectedStructure.path?.Count ?? 0;
+                                int oldPathCount = SelectedPath?.Count ?? 0;
                                 var currentNode = SelectedStructure.currentPathNode;
-                                if (SelectedStructure.path == null || SelectedStructure.path.Count == 0)
+                                if (SelectedPath == null || SelectedPath.Count == 0)
                                 {
-                                    SelectedStructure.path = GridManager.i.FindPath(currentNode, targetNode);
+                                    SelectedPath = GridManager.i.FindPath(currentNode, targetNode);
                                     Debug.Log($"Path created for {SelectedStructure.structureName}");
                                 }
                                 else
                                 {
-                                    currentNode = SelectedStructure.path.Last();
-                                    SelectedStructure.path.AddRange(GridManager.i.FindPath(currentNode, targetNode));
+                                    currentNode = SelectedPath.Last();
+                                    SelectedPath.AddRange(GridManager.i.FindPath(currentNode, targetNode));
                                     Debug.Log($"Path edited for {SelectedStructure.structureName}");
                                 }
-                                SelectedStructure.subtractMovement(SelectedStructure.path.Count - oldPathCount);
+                                SelectedStructure.subtractMovement(SelectedPath.Count - oldPathCount);
                                 HighlightRangeOfMovement(targetNode, SelectedStructure.getMovementRange());
                                 ClearMovementPath();
                                 SelectedNode = targetNode;
-                                foreach (var node in SelectedStructure.path)
+                                foreach (var node in SelectedPath)
                                 {
-                                    if (node == SelectedStructure.path.Last())
-                                        currentPath.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
+                                    if (node == SelectedPath.Last())
+                                        currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
                                     else
-                                        currentPath.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
+                                        currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
                                 }
                             }
                         }
@@ -204,17 +205,31 @@ public class GameManager : MonoBehaviour
             ClearSelection();
         }
     }
+
+    private List<Guid>? GetAvailableModules(Station station, int modulesToGet)
+    {
+        if (modulesToGet > 0)
+        {
+            List<Guid> assignedModules = station.actions.SelectMany(x => x.selectedModulesIds).ToList();
+            List<Guid> availableModules = station.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).Select(x => x.moduleGuid).ToList();
+            if (station.modules.Count - assignedModules.Count >= modulesToGet)
+            {
+                return availableModules.GetRange(0, modulesToGet);
+            }
+        }
+        return null;
+    }
+
     public void DetachModule(int i)
     {
-       
         if (SelectedStructure != null && MyStation.stationId == SelectedStructure.stationId)
         {
-            if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModules.Any(y => y.type == SelectedStructure.attachedModules[i].type)))
+            if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModulesIds.Any(y => y == SelectedStructure.attachedModules[i].moduleGuid)))
             {
                 Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedStructure.attachedModules[i].type} has already been queued up");
             }
             else{
-                QueueAction(ActionType.DetachModule, new List<Module>() { SelectedStructure.attachedModules[i] });
+                QueueAction(ActionType.DetachModule, new List<Guid>() { SelectedStructure.attachedModules[i].moduleGuid });
                 ClearSelection();
             }
         }
@@ -225,6 +240,7 @@ public class GameManager : MonoBehaviour
         ClearMovementRange();
         SelectedNode = null;
         SelectedStructure = null;
+        SelectedPath = null;
         ViewStructureInformation(false);
     }
 
@@ -264,7 +280,7 @@ public class GameManager : MonoBehaviour
             if (MyStation.ships.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
             {
                 QueueAction(ActionType.CreateFleet);
-                createFleetButton.interactable = false; //Only allow 1 fleet build per turn?
+                //createFleetButton.interactable = false; //Only allow 1 fleet build per turn?
             }
             else
             {
@@ -298,22 +314,22 @@ public class GameManager : MonoBehaviour
 
     private int GetCostOfAction(ActionType actionType, Structure structure)
     {
-        if (structure != null)
+        if (actionType == ActionType.CreateFleet)
         {
-            if (actionType == ActionType.CreateFleet)
-            {
-                return stations[structure.stationId].ships.Count * 2; //2,4,6
-            }
-            else if (actionType == ActionType.UpgradeFleet)
-            {
-                return (structure.level * 2) - 1; //1,3,5
-            }
-            else if (actionType == ActionType.UpgradeStation)
-            {
-                return structure.level * 3; //3,6,9
-            }   
+            return stations[structure.stationId].ships.Count * 2; //2,4,6
         }
-        return int.MaxValue;
+        else if (actionType == ActionType.UpgradeFleet)
+        {
+            return (structure.level * 2) - 1; //1,3,5
+        }
+        else if (actionType == ActionType.UpgradeStation)
+        {
+            return structure.level * 3; //3,6,9
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     public void GenerateModule()
@@ -324,14 +340,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void QueueAction(ActionType actionType, List<Module> cost = null)
+    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null)
     {
         if (MyStation.actions.Count < MyStation.maxActions)
         {
-            Debug.Log($"{MyStation.structureName} queuing up action {actionType}");
-            AddActionBarImage(actionType, MyStation.actions.Count());
-            var selected = SelectedStructure ?? MyStation;
-            MyStation.actions.Add(new Action(actionType, selected, cost));
+            var costOfAction = GetCostOfAction(actionType, MyStation);
+            if(selectedModules == null)
+                selectedModules = GetAvailableModules(MyStation, costOfAction);
+            if (costOfAction == 0 || selectedModules != null)
+            {
+                Debug.Log($"{MyStation.structureName} queuing up action {actionType}");
+                AddActionBarImage(actionType, MyStation.actions.Count());
+                MyStation.actions.Add(new Action(actionType, SelectedStructure ?? MyStation, selectedModules, SelectedPath));
+            }
+            else
+            {
+                Debug.Log($"You can't afford to queue {actionType} due to pending actions or general lackthere of modules");
+            }
         }
     }
 
@@ -354,17 +379,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator MoveStructure(Structure selectedStructure)
+    private IEnumerator MoveStructure(Structure selectedStructure, List<PathNode> selectedPath)
     {
         isMoving = true;
-        if (selectedStructure != null && selectedStructure.path != null && selectedStructure.path.Count > 0 && selectedStructure.path.Count <= selectedStructure.getMaxMovementRange())
+        if (selectedStructure != null && selectedPath != null && selectedPath.Count > 0 && selectedPath.Count <= selectedStructure.getMaxMovementRange())
         {
             Debug.Log("Moving to position: " + selectedStructure.currentPathNode.transform.position);
-            yield return StartCoroutine(MoveOnPath(selectedStructure, selectedStructure.path));
+            yield return StartCoroutine(MoveOnPath(selectedStructure, selectedPath));
         }
         else
         {
-            Debug.Log("Cannot move to position: " + selectedStructure.path?.Last()?.transform?.position + ". Out of range or no longer exists.");
+            Debug.Log("Cannot move to position: " + selectedPath?.Last()?.transform?.position + ". Out of range or no longer exists.");
         }
         yield return new WaitForSeconds(.1f);
         isMoving = false;
@@ -373,14 +398,14 @@ public class GameManager : MonoBehaviour
     private IEnumerator MoveOnPath(Structure structure, List<PathNode> path)
     {
         int i = 0;
-        structure.currentPathNode.nodeOnPath = null;
+        structure.currentPathNode.structureOnPath = null;
         ClearMovementRange();
         foreach (var node in path)
         {
             i++;
-            if (node.nodeOnPath is Structure)
+            if (node.structureOnPath != null)
             {
-                var structureOnPath = node.nodeOnPath as Structure;
+                var structureOnPath = node.structureOnPath;
                 //if not ally, attack instead of move
                 if (structureOnPath.stationId != structure.stationId)
                 {
@@ -449,7 +474,7 @@ public class GameManager : MonoBehaviour
         //character.movementRange -= path.Count();
         //HighlightRangeOfMovement(ship.currentPathNode, ship.getMovementRange());
         structure.transform.position = structure.currentPathNode.transform.position;
-        structure.currentPathNode.nodeOnPath = structure;
+        structure.currentPathNode.structureOnPath = structure;
     }
     
     public void HighlightRangeOfMovement(PathNode currentNode, int shipRange)
@@ -473,7 +498,7 @@ public class GameManager : MonoBehaviour
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
             var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
-            var turnToPost = new Turn(Globals.GameId, Globals.ClientId, TurnNumber,actionToPost);
+            var turnToPost = new Turn(Globals.GameId, Globals.localStationId, TurnNumber,actionToPost);
             var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
             StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
             StartCoroutine(TakeTurns()); 
@@ -543,7 +568,7 @@ public class GameManager : MonoBehaviour
         var currentStation = stations[action.selectedStructure.stationId];
         if (action.actionType == ActionType.MoveStructure)
         {
-            yield return StartCoroutine(MoveStructure(action.selectedStructure));
+            yield return StartCoroutine(MoveStructure(action.selectedStructure, action.selectedPath));
             action.selectedStructure.resetMovementRange();
         }
         else if (action.actionType == ActionType.CreateFleet)
@@ -551,7 +576,7 @@ public class GameManager : MonoBehaviour
             if (CanBuildFleet(stations[action.selectedStructure.stationId]))
             {
                 ChargeModules(action);
-                yield return StartCoroutine(GridManager.i.CreateFleet(currentStation));
+                yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid));
             }
             else
             {
@@ -595,7 +620,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.GenerateModule)
         {
-            currentStation.modules.Add(new Module(Random.Range(0,7)));
+            currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
         } 
         else if (action.actionType == ActionType.AttachModule)
         {
@@ -610,22 +635,26 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.DetachModule)
         {
-            if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModules != null && action.selectedModules.Count > 0)
+            if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
             {
-                currentStation.modules.Add(action.selectedModules[0]);
-                action.selectedStructure.EditModule(action.selectedModules[0].type, -1);
-                action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x=>x.type == action.selectedModules[0].type));
+                var selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                if (selectedModule != null)
+                {
+                    currentStation.modules.Add(selectedModule);
+                    action.selectedStructure.EditModule(selectedModule.type, -1);
+                    action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.type == selectedModule.type));
+                }
             }
         }
     }
 
     private void ChargeModules(Action action)
     {
-        var cost = GetCostOfAction(action.actionType, action.selectedStructure);
+        var station = stations[action.selectedStructure.stationId];
         //will need massive overhaul here and a better method name
-        for (int i = 0; i < cost; i++)
+        foreach (var selectedModule in action.selectedModulesIds)
         {
-            stations[action.selectedStructure.stationId].modules.RemoveAt(0);
+            station.modules.RemoveAt(station.modules.Select(x=>x.moduleGuid).ToList().IndexOf(selectedModule));
         }
     }
 
@@ -669,7 +698,7 @@ public class GameManager : MonoBehaviour
 
     private void ClearMovementPath()
     {
-        while (currentPath.Count > 0) { Destroy(currentPath[0].gameObject); currentPath.RemoveAt(0); }
+        while (currentPathObjects.Count > 0) { Destroy(currentPathObjects[0].gameObject); currentPathObjects.RemoveAt(0); }
     }
     private void ClearModules()
     {
@@ -722,5 +751,10 @@ public class GameManager : MonoBehaviour
                 StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
             }
         }
+    }
+
+    internal List<PathNode> GetPathFromCoords(List<Coords> selectedCoords)
+    {
+        return selectedCoords.Select(x => GridManager.i.grid[x.x, x.y]).ToList();
     }
 }

@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class Module : MonoBehaviour
 {
-    internal Guid id;
+    internal Guid moduleGuid;
     internal int type;
     internal Sprite icon;
     internal String effectText;
-    public Module(int _type)
+    public Module(int _type, Guid _moduleGuid)
     {
-        id = Guid.NewGuid();
+        moduleGuid = _moduleGuid;
         type = _type;
         icon = Resources.Load<Sprite>($"Sprites/Modules/{_type}");
         switch (type)

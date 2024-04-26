@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,62 +28,75 @@ public class GridManager : MonoBehaviour
         CreateGrid();
         GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
         characterParent = GameObject.Find("Characters").transform;
-        CreateStation(enemyStationPrefab, 0);
-        CreateStation(playerStationPrefab, 1);
+        for (int i = 0; i < Globals.Players.Length; i++)
+        {
+            CreateStation(i);
+        }
     }
-    private void CreateStation(GameObject stationPrefab,int team)
+    private void CreateStation(int team)
     {
-        int spawnY;
-        string teamColor;
-        if (team == 0)
+        int spawnY = 0;
+        var stationOfClient = team == Globals.myStationIndex;
+        string teamColor = "Red";
+        GameObject stationPrefab = enemyStationPrefab;
+        Guid stationGuid = Globals.enemyClient.StationId;
+        Guid shipGuid = Globals.enemyClient.ShipIds[0];
+        if (team == 1)
         {
             spawnY = (int)gridSize.y - 1;
-            teamColor = "Red";
         }
-        else
+        if (stationOfClient)
         {
-            spawnY = 0;
             teamColor = "Green";
+            stationPrefab = playerStationPrefab;
+            stationGuid = Globals.localStationId;
+            shipGuid = Globals.localClient.ShipIds[0];
         }
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = 5;// (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 1, 7, 7, 7, 1);
-        StartCoroutine(CreateFleet(stationNode));
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 1, 7, 7, 7, 1, stationGuid);
+        StartCoroutine(CreateFleet(stationNode, shipGuid));
     }
 
-    public IEnumerator CreateFleet(Station stationNode)
+    public IEnumerator CreateFleet(Station stationNode, Guid shipGuid)
     {
-        GameObject shipPrefab;
-        if (stationNode.color == "Red")
-        {
-            shipPrefab = enemyPrefab;
-        }
-        else
+        GameObject shipPrefab = enemyPrefab;
+        if (stationNode.structureGuid == Globals.localStationId)
         {
             shipPrefab = playerPrefab;
         }
-        var spawnX = stationNode.x;
-        var spawnY = stationNode.y;
-        if (CanSpawnShip(spawnX, spawnY -1) || CanSpawnShip(spawnX, spawnY +1) || CanSpawnShip(spawnX - 1, spawnY) || CanSpawnShip(spawnX +1, spawnY))
+        int spawnX = stationNode.x;
+        int spawnY = stationNode.y;
+        if (CanSpawnShip(spawnX - 1, spawnY))
         {
-            do {
-                spawnX = stationNode.x;
-                spawnY = stationNode.y;
-                if (Random.Range(0, 2) == 0)
-                {
-                    spawnX += Random.Range(0, 2) == 0 ? -1 : 1;
-                }
-                else
-                {
-                    spawnY += Random.Range(0, 2) == 0 ? -1 : 1;
-                }
-            } while (!CanSpawnShip(spawnX, spawnY));
+            spawnX -= 1;
+        }
+        else if (CanSpawnShip(spawnX + 1, spawnY))
+        {
+            spawnX += 1;
+        }
+        else if (CanSpawnShip(spawnX, spawnY - 1))
+        {
+            spawnY -= 1;
+        }
+        else if (CanSpawnShip(spawnX, spawnY + 1))
+        {
+            spawnY += 1;
+        }
+        else
+        {
+            spawnX = -1;
+            spawnY = -1;
+            Debug.Log("Failed to find valid spawn location");
+        }
+        if (spawnX != -1 && spawnY != -1)
+        {
             var ship = Instantiate(shipPrefab);
             ship.transform.parent = characterParent;
             var shipNode = ship.AddComponent<Ship>();
-            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 3, 2, 2, 3, 3, 3, 1);
+            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 3, 2, 2, 3, 3, 3, 1, shipGuid);
         }
         yield return new WaitForSeconds(.1f);
     }
@@ -90,7 +104,7 @@ public class GridManager : MonoBehaviour
     {
         if (IsInTheBox(x, y)) {
 
-            if (grid[x, y].nodeOnPath == null && !grid[x, y].isObstacle)
+            if (grid[x, y].structureOnPath == null && !grid[x, y].isObstacle)
             {
                 Debug.Log($"Can Spawn at {x},{y}");
                 return true;

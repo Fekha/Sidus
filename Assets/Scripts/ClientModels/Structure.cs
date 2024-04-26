@@ -7,7 +7,7 @@ public class Structure : Node
 {
     internal string structureName;
     internal string color;
-    internal Guid structureId;
+    internal Guid structureGuid;
     internal int stationId;
     internal int maxHp;
     internal int hp;
@@ -18,12 +18,11 @@ public class Structure : Node
     internal int thermalAttack;
     internal int voidAttack;
     internal int level;
-    internal List<PathNode> path;
     internal List<Module> attachedModules = new List<Module>();
     internal int maxAttachedModules = 0; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level)
+    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureGuid)
     {
-        structureId = Guid.NewGuid();
+        structureGuid = _structureGuid;
         x = _x;
         y = _y;
         color = _color;
@@ -37,7 +36,7 @@ public class Structure : Node
         thermalAttack = _thermalAttack;
         voidAttack = _voidAttack;
         structureName = _structureName;
-        currentPathNode.nodeOnPath = this;
+        currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
         SetNodeColor();
@@ -50,13 +49,12 @@ public class Structure : Node
     }
     public void SetNodeColor()
     {
-        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = stationId == 0 ? new Color(1, 0.7421383f, 0.7421383f, 1) : new Color(0.8731644f, 1, 0.572327f, 1);
+        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GameManager.i.stations[stationId].structureGuid == Globals.localStationId ? new Color(0.8731644f, 1, 0.572327f, 1) : new Color(1, 0.7421383f, 0.7421383f, 1);
         currentPathNode.ownedById = stationId;
     }
     internal void resetMovementRange()
     {
         range = maxRange;
-        path = null;
     }
 
     internal void clearMovementRange()
