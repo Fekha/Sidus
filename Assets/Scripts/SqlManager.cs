@@ -3,10 +3,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class SqlController
+public class SqlManager
 {
     string apiUrl;
-    public SqlController()
+    public SqlManager()
     {
 //        apiUrl = "https://game.gravitas-games.com:7001/api/";
 //#if UNITY_EDITOR
@@ -37,7 +37,6 @@ public class SqlController
             }
             if (callback != null)
                 callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
-
         }
     }
 }

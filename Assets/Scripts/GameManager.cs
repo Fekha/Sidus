@@ -56,36 +56,26 @@ public class GameManager : MonoBehaviour
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
-    internal int myStationIndex = 0;
-    internal Station MyStation {get {return stations[myStationIndex];}}
+    internal Station MyStation {get {return stations[(int)Globals.myStationIndex];}}
     //temp, not for real game
     public GameObject turnLabel;
-    private SqlController sql;
-    private Guid ClientId;
-    private Guid GameId = Guid.Empty;
+    private SqlManager sql;
     private int TurnNumber = 0;
     private Turn[]? TurnsFromServer;
     private int maxPlayers = 2;
     private void Awake()
     {
         i = this;
-        sql = new SqlController();
-        ClientId = Guid.NewGuid();
+        sql = new SqlManager();
     }
     void Start()
     {
         FindUI();
         highlightParent = GameObject.Find("Highlights").transform;
-        StartCoroutine(sql.GetRoutine<Tuple<Guid,int>>($"Game/Join?ClientId={ClientId}",SetMatchGuid));
     }
     public bool HasGameStarted()
     {
-        return stations.Count > 1 && GameId != Guid.Empty;
-    }
-    private void SetMatchGuid(Tuple<Guid, int> gameStats)
-    {
-        GameId = gameStats.Item1;
-        myStationIndex = gameStats.Item2;
+        return stations.Count > 1 && Globals.GameId != Guid.Empty;
     }
 
     private void FindUI()
@@ -483,7 +473,7 @@ public class GameManager : MonoBehaviour
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
             var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
-            var turnToPost = new Turn(GameId, ClientId, TurnNumber,actionToPost);
+            var turnToPost = new Turn(Globals.GameId, Globals.ClientId, TurnNumber,actionToPost);
             var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
             StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
             StartCoroutine(TakeTurns()); 
@@ -497,7 +487,7 @@ public class GameManager : MonoBehaviour
         TurnsFromServer = null;
         while (TurnsFromServer == null)
         {
-            yield return StartCoroutine(sql.GetRoutine<Turn[]?>($"Game/GetTurn?gameId={GameId}&turnNumber={TurnNumber}", CheckForTurns));
+            yield return StartCoroutine(sql.GetRoutine<Turn[]?>($"Game/GetTurn?gameId={Globals.GameId}&turnNumber={TurnNumber}", CheckForTurns));
         }
         yield return StartCoroutine(AutomateTurns(TurnsFromServer));
         if (winner == -1)
