@@ -142,7 +142,8 @@ public class GridManager : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * cellPrefabSize.x) + Vector3.up * (y * cellPrefabSize.y);
                 var isObstacle = false;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
-                    isObstacle = (x+y+y)%3 == 0;
+                    if(!((x == 3 && (y == 3 || y == 4)) || (x == 4 && (y == 3 || y == 4))))
+                        isObstacle = (x+y+y)%3 == 0;
                 if (isObstacle)
                     obstacleCount++;
                 var cell = Instantiate(isObstacle ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
