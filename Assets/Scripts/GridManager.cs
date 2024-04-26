@@ -55,7 +55,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
-        var spawnX = 5;// (int)Random.Range(1, gridSize.x - 1);
+        var spawnX = 4;// (int)Random.Range(1, gridSize.x - 1);
         stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 1, 7, 7, 7, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, shipGuid));
     }
@@ -142,7 +142,7 @@ public class GridManager : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * cellPrefabSize.x) + Vector3.up * (y * cellPrefabSize.y);
                 var isObstacle = false;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
-                    isObstacle = (x+y)%4 == 0;
+                    isObstacle = (x+y+y)%3 == 0;
                 if (isObstacle)
                     obstacleCount++;
                 var cell = Instantiate(isObstacle ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
