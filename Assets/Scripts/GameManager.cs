@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -637,8 +636,8 @@ public class GameManager : MonoBehaviour
         {
             if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
             {
-                var selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                if (selectedModule != null)
+                Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                if (selectedModule is object)
                 {
                     currentStation.modules.Add(selectedModule);
                     action.selectedStructure.EditModule(selectedModule.type, -1);
