@@ -331,6 +331,10 @@ public class GameManager : MonoBehaviour
         {
             return structure.level * 4; //4,8,12
         }
+        else if (actionType == ActionType.AttachModule)
+        {
+            return 1;
+        }
         else
         {
             return 0;
@@ -628,11 +632,13 @@ public class GameManager : MonoBehaviour
         {
             if (currentStation.modules.Count > 0 && action.selectedStructure.attachedModules.Count < action.selectedStructure.maxAttachedModules)
             {
-                var moduleToAttachIndex = Random.Range(0, currentStation.modules.Count);
-                var moduleToAttach = currentStation.modules[moduleToAttachIndex];
-                action.selectedStructure.attachedModules.Add(moduleToAttach);
-                action.selectedStructure.EditModule(moduleToAttach.type);
-                currentStation.modules.RemoveAt(moduleToAttachIndex);
+                Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                if (selectedModule is object)
+                {
+                    action.selectedStructure.attachedModules.Add(selectedModule);
+                    action.selectedStructure.EditModule(selectedModule.type);
+                    currentStation.modules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                }
             }
         }
         else if (action.actionType == ActionType.DetachModule)
@@ -644,7 +650,7 @@ public class GameManager : MonoBehaviour
                 {
                     currentStation.modules.Add(selectedModule);
                     action.selectedStructure.EditModule(selectedModule.type, -1);
-                    action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.type == selectedModule.type));
+                    action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                 }
             }
         }

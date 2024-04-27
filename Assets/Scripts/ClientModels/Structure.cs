@@ -94,6 +94,7 @@ public class Structure : Node
                 if (modifer == 1) shield = AttackType.Electric;
                 break;
             case 3:
+                maxRange += (1 * modifer);
                 range += (1 * modifer);
                 shield = AttackType.Thermal;
                 break;
