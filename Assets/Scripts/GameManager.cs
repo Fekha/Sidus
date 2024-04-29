@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,6 +43,8 @@ public class GameManager : MonoBehaviour
 
     private Button upgradeButton;
     public Button createFleetButton;
+    private TextMeshProUGUI createFleetCost;
+    private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI levelValue;
     private TextMeshProUGUI hpValue;
@@ -72,8 +75,18 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         FindUI();
-        highlightParent = GameObject.Find("Highlights").transform;
+        StartCoroutine(WaitforGameToStart());
     }
+
+    private IEnumerator WaitforGameToStart()
+    {
+        while (!HasGameStarted())
+        {
+            yield return new WaitForSeconds(.1f);
+        }
+        ResetUI();
+    }
+
     public bool HasGameStarted()
     {
         return stations.Count > 1 && Globals.GameId != Guid.Empty;
@@ -81,6 +94,7 @@ public class GameManager : MonoBehaviour
 
     private void FindUI()
     {
+        highlightParent = GameObject.Find("Highlights").transform;
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
         levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
         hpValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
@@ -91,7 +105,9 @@ public class GameManager : MonoBehaviour
         voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
+        createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
+        upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -198,13 +214,13 @@ public class GameManager : MonoBehaviour
     }
     public void AttachModule()
     {
-        if (SelectedStructure != null && MyStation.modules.Count > 0 && SelectedStructure.attachedModules.Count < SelectedStructure.maxAttachedModules && MyStation.stationId == SelectedStructure.stationId)
+        if (SelectedStructure != null && MyStation.modules.Count > 0 && (SelectedStructure.attachedModules.Count+MyStation.actions.Where(x=>x.actionType == ActionType.AttachModule && x.selectedStructure.structureGuid == SelectedStructure.structureGuid).Count()) < SelectedStructure.maxAttachedModules && MyStation.stationId == SelectedStructure.stationId)
         {
             QueueAction(ActionType.AttachModule);
             ClearSelection();
         }
     }
-
+    //only call for queying up
     private List<Guid>? GetAvailableModules(Station station, int modulesToGet)
     {
         if (modulesToGet > 0)
@@ -253,20 +269,26 @@ public class GameManager : MonoBehaviour
         thermalValue.text = structure.thermalAttack.ToString();
         voidValue.text = structure.voidAttack.ToString();
         shieldValue.text = structure.shield.ToString();
+        var actionType = structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         if (structure.stationId == MyStation.stationId)
         {
             upgradeButton.gameObject.SetActive(true);
-            upgradeButton.interactable = CanUpgrade(structure);
+            upgradeButton.interactable = CanQueueUpgrade(structure, actionType);
         }
         else
         {
             upgradeButton.gameObject.SetActive(false);
             upgradeButton.interactable = false;
         }
+        upgradeCost.text = GetCostText(GetCostOfAction(actionType, structure));
         SetModuleBar(structure);
         infoPanel.gameObject.SetActive(true);
     }
 
+    private string GetCostText(int cost)
+    {
+        return $"({cost} Modules)";
+    }
     private void AddActionBarImage(ActionType actionType, int i)
     {
         ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{(int)actionType}");
@@ -274,12 +296,13 @@ public class GameManager : MonoBehaviour
     }
     public void CreateFleet()
     {
-        if (CanBuildFleet(MyStation) && HasGameStarted())
+        if (CanQueueBuildFleet(MyStation) && HasGameStarted())
         {
             if (MyStation.ships.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
             {
                 QueueAction(ActionType.CreateFleet);
-                //createFleetButton.interactable = false; //Only allow 1 fleet build per turn?
+                createFleetButton.interactable = CanQueueBuildFleet(MyStation);
+                createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation));
             }
             else
             {
@@ -290,46 +313,52 @@ public class GameManager : MonoBehaviour
 
     public void UpgradeStructure()
     {
-        if (CanUpgrade(SelectedStructure) && HasGameStarted()){
-            if (SelectedStructure is Ship)
-                QueueAction(ActionType.UpgradeFleet);
-            if (SelectedStructure is Station)
-                QueueAction(ActionType.UpgradeStation);
+        ActionType actionType = SelectedStructure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
+        if (CanQueueUpgrade(SelectedStructure, actionType) && HasGameStarted()){
+            QueueAction(actionType);
         }
         ClearSelection();
     }
 
-    private bool CanUpgrade(Structure structure)
+    private bool CanQueueUpgrade(Structure structure, ActionType actionType)
     {
-        if (structure is Ship)
-            return CanLevelUp(structure as Ship) && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeFleet, structure);
+        return CanLevelUp(structure, actionType) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure)) != null;
+    }
+    private bool CanPerformUpgrade(Structure structure, ActionType actionType)
+    {
+        return CanLevelUp(structure, actionType) && stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure);
+    }
+    private bool CanLevelUp(Structure structure, ActionType actionType)
+    {
+        var nextLevel = (structure.level + stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count());
+        if (actionType == ActionType.UpgradeFleet)
+            return nextLevel < stations[structure.stationId].level * 2;
         else
-            return structure.level < 5 && stations[structure.stationId].modules.Count >= GetCostOfAction(ActionType.UpgradeStation, structure);
+            return nextLevel < 5;
     }
 
-    private bool CanLevelUp(Ship ship)
+    private bool CanQueueBuildFleet(Station station)
     {
-        return ship.level < stations[ship.stationId].level * 2;
+        return (station.ships.Count+ station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count()) < station.maxShips && GetAvailableModules(station, GetCostOfAction(ActionType.CreateFleet, station)) != null;
     }
-
-    private bool CanBuildFleet(Station station)
+    private bool CanPerformBuildFleet(Station station)
     {
         return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station);
     }
-
     private int GetCostOfAction(ActionType actionType, Structure structure)
     {
+        var station = stations[structure.stationId];
         if (actionType == ActionType.CreateFleet)
         {
-            return stations[structure.stationId].ships.Count * 3; //3,6,9
+            return (station.ships.Count + station.actions.Where(x=>x.actionType == ActionType.CreateFleet).Count()) * 3; //3,6,9
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return (structure.level * 2) - 1; //1,3,5,7,9,11
+            return ((structure.level + station.actions.Where(x => x.actionType == ActionType.UpgradeFleet).Count()) * 2) - 1; //1,3,5,7,9,11
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return structure.level * 4; //4,8,12
+            return (structure.level+ station.actions.Where(x => x.actionType == ActionType.UpgradeStation).Count()) * 4; //4,8,12
         }
         else if (actionType == ActionType.AttachModule)
         {
@@ -386,6 +415,8 @@ public class GameManager : MonoBehaviour
                 AddActionBarImage(MyStation.actions[i].actionType, i);
             }
         }
+        createFleetButton.interactable = CanQueueBuildFleet(MyStation);
+        createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation));
     }
 
     private IEnumerator MoveStructure(Structure selectedStructure, List<PathNode> selectedPath)
@@ -446,9 +477,14 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
                     Destroy(structure.gameObject);
-                    if (structureOnPath.hp > 0 && structureOnPath is Ship)
-                    {
-                        LevelUpShip(structureOnPath as Ship);
+                    if (structureOnPath is Ship) {
+                        if (structureOnPath.hp > 0)
+                        {
+                            LevelUpShip(structureOnPath as Ship);
+                        }
+                    }
+                    if (structure is Station) {
+                        (structure as Station).defeated = true;
                     }
                     endMovement = true; // you're dead
                 }
@@ -464,7 +500,9 @@ public class GameManager : MonoBehaviour
                     Destroy(structureOnPath.gameObject); //they are dead
                     if (structure is Ship)
                         LevelUpShip(structure as Ship);
-                    
+                    if (structureOnPath is Station)
+                        (structureOnPath as Station).defeated = true;
+
                 }
                 if (endMovement)
                     break;
@@ -530,7 +568,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(AutomateTurns(TurnsFromServer));
         if (winner == -1)
         {
-            ResetUI();        
+            ResetUI();
             turnLabel.SetActive(false);
             isEndingTurn = false;
             Debug.Log($"New Turn Starting");
@@ -578,79 +616,82 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PerformAction(Action action)
     {
-        var currentStation = stations[action.selectedStructure.stationId];
-        if (action.actionType == ActionType.MoveStructure)
+        if (action.selectedStructure != null)
         {
-            yield return StartCoroutine(MoveStructure(action.selectedStructure, action.selectedPath));
-            action.selectedStructure.resetMovementRange();
-        }
-        else if (action.actionType == ActionType.CreateFleet)
-        {
-            if (CanBuildFleet(stations[action.selectedStructure.stationId]))
+            var currentStation = stations[action.selectedStructure.stationId];
+            if (action.actionType == ActionType.MoveStructure)
             {
-                ChargeModules(action);
-                yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid));
+                yield return StartCoroutine(MoveStructure(action.selectedStructure, action.selectedPath));
+                action.selectedStructure.resetMovementRange();
             }
-            else
+            else if (action.actionType == ActionType.CreateFleet)
             {
-                Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
-            }
-        }
-        else if (action.actionType == ActionType.UpgradeFleet)
-        {
-            if (CanUpgrade(action.selectedStructure))
-            {
-                ChargeModules(action);
-                LevelUpShip(action.selectedStructure as Ship);
-            }
-            else
-            {
-                Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
-            }
-        }
-        else if (action.actionType == ActionType.UpgradeStation)
-        {
-            if (CanUpgrade(action.selectedStructure))
-            {
-                ChargeModules(action);
-                var station = action.selectedStructure as Station;
-                station.level++;
-                station.maxAttachedModules += 2;
-                station.maxShips++;
-                station.maxActions++;
-            }
-            else
-            {
-                Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
-            }
-        }
-        else if (action.actionType == ActionType.GenerateModule)
-        {
-            currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
-        } 
-        else if (action.actionType == ActionType.AttachModule)
-        {
-            if (currentStation.modules.Count > 0 && action.selectedStructure.attachedModules.Count < action.selectedStructure.maxAttachedModules)
-            {
-                Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                if (selectedModule is object)
+                if (CanPerformBuildFleet(currentStation))
                 {
-                    action.selectedStructure.attachedModules.Add(selectedModule);
-                    action.selectedStructure.EditModule(selectedModule.type);
-                    currentStation.modules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                    ChargeModules(action);
+                    yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid));
+                }
+                else
+                {
+                    Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
                 }
             }
-        }
-        else if (action.actionType == ActionType.DetachModule)
-        {
-            if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
+            else if (action.actionType == ActionType.UpgradeFleet)
             {
-                Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                if (selectedModule is object)
+                if (CanPerformUpgrade(action.selectedStructure, action.actionType))
                 {
-                    currentStation.modules.Add(selectedModule);
-                    action.selectedStructure.EditModule(selectedModule.type, -1);
-                    action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                    ChargeModules(action);
+                    LevelUpShip(action.selectedStructure as Ship);
+                }
+                else
+                {
+                    Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
+                }
+            }
+            else if (action.actionType == ActionType.UpgradeStation)
+            {
+                if (CanPerformUpgrade(action.selectedStructure, action.actionType))
+                {
+                    ChargeModules(action);
+                    var station = action.selectedStructure as Station;
+                    station.level++;
+                    station.maxAttachedModules += 2;
+                    station.maxShips++;
+                    station.maxActions++;
+                }
+                else
+                {
+                    Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+                }
+            }
+            else if (action.actionType == ActionType.GenerateModule)
+            {
+                currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
+            }
+            else if (action.actionType == ActionType.AttachModule)
+            {
+                if (currentStation.modules.Count > 0 && action.selectedStructure.attachedModules.Count < action.selectedStructure.maxAttachedModules)
+                {
+                    Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                    if (selectedModule is object)
+                    {
+                        action.selectedStructure.attachedModules.Add(selectedModule);
+                        action.selectedStructure.EditModule(selectedModule.type);
+                        currentStation.modules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                    }
+                }
+            }
+            else if (action.actionType == ActionType.DetachModule)
+            {
+                if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
+                {
+                    Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                    if (selectedModule is object)
+                    {
+                        currentStation.modules.Add(selectedModule);
+                        action.selectedStructure.EditModule(selectedModule.type, -1);
+                        action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                    }
                 }
             }
         }
@@ -658,7 +699,7 @@ public class GameManager : MonoBehaviour
 
     private void LevelUpShip(Ship ship)
     {
-        if (CanLevelUp(ship)){
+        if (CanLevelUp(ship, ActionType.UpgradeFleet)){
             ship.level++;
             ship.maxAttachedModules += 1;
             ship.maxHp++;
@@ -686,7 +727,8 @@ public class GameManager : MonoBehaviour
         ClearSelection();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
-        createFleetButton.interactable = CanBuildFleet(MyStation);
+        createFleetButton.interactable = CanQueueBuildFleet(MyStation);
+        createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation));
     }
 
     private void SetModuleBar()

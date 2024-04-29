@@ -56,7 +56,7 @@ public class GridManager : MonoBehaviour
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         var spawnX = 4;// (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 1, 7, 7, 7, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 1, 3, 10, 10, 10, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, shipGuid));
     }
 
@@ -285,6 +285,10 @@ public class GridManager : MonoBehaviour
             if (GameManager.i.stations[i].score >= scoreToWin)
             {
                 return i;
+            }
+            else if (GameManager.i.stations[i].defeated)
+            {
+                return i + 1 % 2;
             }
         }
         return -1;

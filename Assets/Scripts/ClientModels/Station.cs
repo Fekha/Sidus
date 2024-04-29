@@ -9,6 +9,7 @@ public class Station : Structure
     internal int maxActions = 2; // 1+ station.level
     internal int maxShips = 2; // 1+ station.level
     internal int score = 0;
+    internal bool defeated = false;
 
     public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureId)
     {
