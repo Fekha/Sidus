@@ -4,11 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -280,7 +278,7 @@ public class GameManager : MonoBehaviour
             upgradeButton.gameObject.SetActive(false);
             upgradeButton.interactable = false;
         }
-        upgradeCost.text = GetCostText(GetCostOfAction(actionType, structure));
+        upgradeCost.text = GetCostText(GetCostOfAction(actionType, structure, true));
         SetModuleBar(structure);
         infoPanel.gameObject.SetActive(true);
     }
@@ -301,8 +299,7 @@ public class GameManager : MonoBehaviour
             if (MyStation.ships.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
             {
                 QueueAction(ActionType.CreateFleet);
-                createFleetButton.interactable = CanQueueBuildFleet(MyStation);
-                createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation));
+                
             }
             else
             {
@@ -310,7 +307,11 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
+    private void UpdateFleetCostText()
+    {
+        createFleetButton.interactable = CanQueueBuildFleet(MyStation);
+        createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation,true));
+    }
     public void UpgradeStructure()
     {
         ActionType actionType = SelectedStructure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
@@ -322,11 +323,11 @@ public class GameManager : MonoBehaviour
 
     private bool CanQueueUpgrade(Structure structure, ActionType actionType)
     {
-        return CanLevelUp(structure, actionType) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure)) != null;
+        return CanLevelUp(structure, actionType) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure,true)) != null;
     }
     private bool CanPerformUpgrade(Structure structure, ActionType actionType)
     {
-        return CanLevelUp(structure, actionType) && stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure);
+        return CanLevelUp(structure, actionType) && stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
     }
     private bool CanLevelUp(Structure structure, ActionType actionType)
     {
@@ -339,26 +340,27 @@ public class GameManager : MonoBehaviour
 
     private bool CanQueueBuildFleet(Station station)
     {
-        return (station.ships.Count+ station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count()) < station.maxShips && GetAvailableModules(station, GetCostOfAction(ActionType.CreateFleet, station)) != null;
+        return (station.ships.Count+ station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count()) < station.maxShips && GetAvailableModules(station, GetCostOfAction(ActionType.CreateFleet, station,true)) != null;
     }
     private bool CanPerformBuildFleet(Station station)
     {
-        return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station);
+        return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
     }
-    private int GetCostOfAction(ActionType actionType, Structure structure)
+    private int GetCostOfAction(ActionType actionType, Structure structure, bool queue)
     {
         var station = stations[structure.stationId];
+        var countingQueue = queue ? station.actions.Where(x => x.actionType == actionType && x.selectedStructure.structureGuid == structure.structureGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
-            return (station.ships.Count + station.actions.Where(x=>x.actionType == ActionType.CreateFleet).Count()) * 3; //3,6,9
+            return (station.ships.Count + countingQueue) * 3; //3,6,9
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return ((structure.level + station.actions.Where(x => x.actionType == ActionType.UpgradeFleet).Count()) * 2) - 1; //1,3,5,7,9,11
+            return ((structure.level + countingQueue) * 2) - 1; //1,3,5,7,9,11
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return (structure.level+ station.actions.Where(x => x.actionType == ActionType.UpgradeStation).Count()) * 4; //4,8,12
+            return (structure.level + countingQueue) * 4; //4,8,12
         }
         else if (actionType == ActionType.AttachModule)
         {
@@ -382,7 +384,7 @@ public class GameManager : MonoBehaviour
     {
         if (MyStation.actions.Count < MyStation.maxActions)
         {
-            var costOfAction = GetCostOfAction(actionType, MyStation);
+            var costOfAction = GetCostOfAction(actionType, MyStation, true);
             if(selectedModules == null)
                 selectedModules = GetAvailableModules(MyStation, costOfAction);
             if (costOfAction == 0 || selectedModules != null)
@@ -390,6 +392,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log($"{MyStation.structureName} queuing up action {actionType}");
                 AddActionBarImage(actionType, MyStation.actions.Count());
                 MyStation.actions.Add(new Action(actionType, SelectedStructure ?? MyStation, selectedModules, SelectedPath));
+                UpdateFleetCostText();
             }
             else
             {
@@ -415,8 +418,7 @@ public class GameManager : MonoBehaviour
                 AddActionBarImage(MyStation.actions[i].actionType, i);
             }
         }
-        createFleetButton.interactable = CanQueueBuildFleet(MyStation);
-        createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation));
+        UpdateFleetCostText();
     }
 
     private IEnumerator MoveStructure(Structure selectedStructure, List<PathNode> selectedPath)
@@ -727,8 +729,7 @@ public class GameManager : MonoBehaviour
         ClearSelection();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
-        createFleetButton.interactable = CanQueueBuildFleet(MyStation);
-        createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation));
+        UpdateFleetCostText();
     }
 
     private void SetModuleBar()
