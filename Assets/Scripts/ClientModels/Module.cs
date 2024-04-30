@@ -15,10 +15,10 @@ public class Module : MonoBehaviour
         switch (type)
         {
             case 0:
-                effectText = "+4 Electric Attack \n On Attach: Change Shield to Thermal";
+                effectText = "+3 Electric Attack \n +1 Void Attack \n On Attach: Change Shield to Thermal";
                 break;
             case 1:
-                effectText = "+4 Thermal Attack \n On Attach: Change Shield to Void";
+                effectText = "+3 Thermal Attack \n +1 Electric Attack \n On Attach: Change Shield to Electric";
                 break;
             case 2:
                 effectText = "+4 Void Attack \n On Attach: Change Shield to Electric";
@@ -36,16 +36,16 @@ public class Module : MonoBehaviour
                 effectText = "+2 Electric Attack \n +2 Void Attack \n +1 Thermal Attack \n On Attach: Change Shield to Thermal";
                 break;
             case 7:
-                effectText = "+2 Thermal Attack \n +2 Electric Attack \n +1 Void Attack \n On Attach: Change Shield to Void";
+                effectText = "+2 Thermal Attack \n +2 Electric Attack \n +2 Void Attack \n On Attach: Change Shield to Thermal";
                 break;
             case 8:
                 effectText = "+3 Void Attack \n +1 Electric Attack \n +1 Thermal Attack \n On Attach: Change Shield to Thermal";
                 break;
             case 9:
-                effectText = "+3 Electric Attack \n +1 Thermal Attack \n +1 Void Attack \n On Attach: Change Shield to Void";
+                effectText = "+2 Electric Attack \n +1 Thermal Attack \n +2 Void Attack \n On Attach: Change Shield to Electric";
                 break;
             case 10:
-                effectText = "+3 Thermal Attack \n +1 Electric Attack \n +1 Void Attack \n On Attach: Change Shield to Electric";
+                effectText = "+3 Thermal Attack \n +1 Electric Attack \n +2 Void Attack \n On Attach: Change Shield to Electric";
                 break;
             default:
                 break;

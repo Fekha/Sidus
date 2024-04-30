@@ -100,7 +100,7 @@ public class GridManager : MonoBehaviour
             var ship = Instantiate(shipPrefab);
             ship.transform.parent = characterParent;
             var shipNode = ship.AddComponent<Ship>();
-            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 5, 2, 0, 3, 3, 3, 1, shipGuid);
+            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 5, 3, 0, 2, 3, 4, 1, shipGuid);
         }
         yield return new WaitForSeconds(.1f);
     }
@@ -286,14 +286,14 @@ public class GridManager : MonoBehaviour
         GetScores();
         for (int i = 0; i < 2; i++)
         {
-            if (GameManager.i.stations[i].score >= scoreToWin)
+            if (GameManager.i.Stations[i].score >= scoreToWin)
             {
                 return i;
             }
         }
-        if (GameManager.i.stations.Where(x => x.defeated == false).Count() == 1)
+        if (GameManager.i.Stations.Where(x => x.defeated == false).Count() == 1)
         {
-            return GameManager.i.stations.FirstOrDefault(x => x.defeated == false).stationId;
+            return GameManager.i.Stations.FirstOrDefault(x => x.defeated == false).stationId;
         }
         return -1;
     }
@@ -311,7 +311,7 @@ public class GridManager : MonoBehaviour
                 scores[grid[i, j].ownedById]++;
             }
         }
-        GameManager.i.stations[0].score = scores[0];
-        GameManager.i.stations[1].score = scores[1];
+        GameManager.i.Stations[0].score = scores[0];
+        GameManager.i.Stations[1].score = scores[1];
     }
 }

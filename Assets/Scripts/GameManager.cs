@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     private Structure SelectedStructure;
     private List<Node> currentMovementRange = new List<Node>();
     private List<Module> currentModules = new List<Module>();
-    internal List<Station> stations = new List<Station>();
+    internal List<Station> Stations = new List<Station>();
 
     private bool isMoving = false;
     private bool isEndingTurn = false;
@@ -56,12 +56,14 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI fightText;
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI TurnOrderText;
+    public TextMeshProUGUI alertText;
     public GameObject infoPanel;
     public GameObject fightPanel;
+    public GameObject alertPanel;
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
-    internal Station MyStation {get {return stations[Globals.myStationIndex];}}
+    internal Station MyStation {get {return Stations[Globals.myStationIndex];}}
     //temp, not for real game
     public GameObject turnLabel;
     private SqlManager sql;
@@ -91,9 +93,19 @@ public class GameManager : MonoBehaviour
     {
         fightPanel.SetActive(active);
     }
+    
+    public void ShowAlertPanel(int unlock)
+    {
+        alertPanel.SetActive(true);
+        alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} tiles.";
+    }
+    public void HideAlertPanel()
+    {
+        alertPanel.SetActive(false);
+    }
     public bool HasGameStarted()
     {
-        return stations.Count > 1 && Globals.GameId != Guid.Empty;
+        return Stations.Count > 1 && Globals.GameId != Guid.Empty;
     }
 
     private void FindUI()
@@ -113,6 +125,7 @@ public class GameManager : MonoBehaviour
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
+        alertText = alertPanel.transform.Find("AlertText").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -298,6 +311,7 @@ public class GameManager : MonoBehaviour
     {
         ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{(int)actionType}");
         ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
+        ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(false);
     }
     public void CreateFleet()
     {
@@ -334,16 +348,16 @@ public class GameManager : MonoBehaviour
     }
     private bool CanPerformUpgrade(Structure structure, ActionType actionType)
     {
-        return CanLevelUp(structure, actionType, false) && stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
+        return CanLevelUp(structure, actionType, false) && Stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
     }
     private bool CanLevelUp(Structure structure, ActionType actionType, bool countQueue)
     {
-        var countingQueue = countQueue ? stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count() : 0;
+        var countingQueue = countQueue ? Stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count() : 0;
         var nextLevel = (structure.level + countingQueue);
         if (actionType == ActionType.UpgradeFleet)
-            return nextLevel < stations[structure.stationId].level * 2;
+            return nextLevel < Stations[structure.stationId].level;
         else
-            return nextLevel < 5;
+            return nextLevel < 7;
     }
 
     private bool CanQueueBuildFleet(Station station)
@@ -356,19 +370,19 @@ public class GameManager : MonoBehaviour
     }
     private int GetCostOfAction(ActionType actionType, Structure structure, bool countQueue)
     {
-        var station = stations[structure.stationId];
+        var station = Stations[structure.stationId];
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedStructure.structureGuid == structure.structureGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
-            return (station.ships.Count + countingQueue) * 2; //2,4,6,8
+            return (station.ships.Count + countingQueue) * 2; //2,4,6,8,10
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return ((structure.level + countingQueue) * 2) - 1; //1,3,5,7,9,11
+            return ((structure.level + countingQueue) * 2) - 1; //1,3,5,7,9
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return (structure.level + countingQueue) * 4; //4,8,12
+            return ((structure.level + countingQueue) * 2) + 1; //3,5,7,9,11
         }
         else if (actionType == ActionType.AttachModule)
         {
@@ -650,20 +664,29 @@ public class GameManager : MonoBehaviour
                     if (turns[c].Actions[i] is object)
                     {
                         var action = new Action(turns[c].Actions[i]);
-                        turnValue.text = $"{stations[c].color} action {i + 1}: {action.actionType}";
-                        Debug.Log($"Perfoming {stations[c].color}'s action {i + 1}: {action.actionType}");
+                        turnValue.text = $"{Stations[c].color} action {i + 1}: {action.actionType}";
+                        Debug.Log($"Perfoming {Stations[c].color}'s action {i + 1}: {action.actionType}");
                         yield return StartCoroutine(PerformAction(action));
                     }
                     else
                     {
-                        turnValue.text = $"{stations[c].color} action {i + 1}: No Action";
+                        turnValue.text = $"{Stations[c].color} action {i + 1}: No Action";
                     }
                     yield return new WaitForSeconds(1f);
                 }
             }
         }
-        stations.ForEach(x => x.actions.Clear());
         winner = GridManager.i.CheckForWin();
+        foreach (var station in Stations)
+        {
+            station.actions.Clear();
+            for (int i = 1; i <= 3; i++) {
+                if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
+                {
+                    MyStation.maxActions = 2 + i;
+                }
+            }
+        }
         if (winner != -1)
         {
             turnValue.text = $"Player {winner} won";
@@ -676,7 +699,7 @@ public class GameManager : MonoBehaviour
     {
         if (action.selectedStructure != null)
         {
-            var currentStation = stations[action.selectedStructure.stationId];
+            var currentStation = Stations[action.selectedStructure.stationId];
             if (action.actionType == ActionType.MoveStructure)
             {
                 yield return StartCoroutine(MoveStructure(action.selectedStructure, action.selectedPath));
@@ -713,9 +736,8 @@ public class GameManager : MonoBehaviour
                     ChargeModules(action);
                     var station = action.selectedStructure as Station;
                     station.level++;
-                    station.maxAttachedModules += 2;
+                    station.maxAttachedModules++;
                     station.maxShips++;
-                    station.maxActions++;
                 }
                 else
                 {
@@ -770,7 +792,7 @@ public class GameManager : MonoBehaviour
 
     private void ChargeModules(Action action)
     {
-        var station = stations[action.selectedStructure.stationId];
+        var station = Stations[action.selectedStructure.stationId];
         //will need massive overhaul here and a better method name
         foreach (var selectedModule in action.selectedModulesIds)
         {
@@ -812,7 +834,10 @@ public class GameManager : MonoBehaviour
     {
         moduleInfoPanel.SetActive(active);
     }
+    public void ShowUnlockCondition()
+    {
 
+    }
     private void ClearMovementRange()
     {
         while(currentMovementRange.Count > 0) { Destroy(currentMovementRange[0].gameObject); currentMovementRange.RemoveAt(0); }
@@ -833,6 +858,7 @@ public class GameManager : MonoBehaviour
         {
             ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < MyStation.maxActions ? null : lockActionBar;
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
+            ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(i >= MyStation.maxActions);
         }
     }
     

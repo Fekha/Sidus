@@ -49,7 +49,7 @@ public class Structure : Node
     }
     public void SetNodeColor()
     {
-        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GameManager.i.stations[stationId].structureGuid == Globals.localStationId ? new Color(0.8731644f, 1, 0.572327f, 1) : new Color(1, 0.7421383f, 0.7421383f, 1);
+        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GameManager.i.Stations[stationId].structureGuid == Globals.localStationId ? new Color(0.8731644f, 1, 0.572327f, 1) : new Color(1, 0.7421383f, 0.7421383f, 1);
         currentPathNode.ownedById = stationId;
     }
     internal void resetMovementRange()
@@ -82,12 +82,14 @@ public class Structure : Node
         switch (id)
         {
             case 0:
-                electricAttack += (4 * modifer);
-                if(modifer == 1) shield = AttackType.Thermal; 
+                electricAttack += (3 * modifer);
+                voidAttack += (1 * modifer);
+                if (modifer == 1) shield = AttackType.Thermal; 
                 break;
             case 1:
-                thermalAttack += (4 * modifer);
-                if (modifer == 1) shield = AttackType.Void;
+                thermalAttack += (3 * modifer);
+                electricAttack += (1 * modifer);
+                if (modifer == 1) shield = AttackType.Electric;
                 break;
             case 2:
                 voidAttack += (4 * modifer);
@@ -118,8 +120,8 @@ public class Structure : Node
             case 7:
                 electricAttack += (2 * modifer);
                 thermalAttack += (2 * modifer); 
-                voidAttack += (1 * modifer);
-                if (modifer == 1) shield = AttackType.Void;
+                voidAttack += (2 * modifer);
+                if (modifer == 1) shield = AttackType.Thermal;
                 break;
             case 8:
                 electricAttack += (1 * modifer);
@@ -128,15 +130,15 @@ public class Structure : Node
                 if (modifer == 1) shield = AttackType.Thermal;
                 break;
             case 9:
-                electricAttack += (3 * modifer);
+                electricAttack += (2 * modifer);
                 thermalAttack += (1 * modifer);
-                voidAttack += (1 * modifer);
-                if (modifer == 1) shield = AttackType.Void;
+                voidAttack += (2 * modifer);
+                if (modifer == 1) shield = AttackType.Electric;
                 break;
             case 10:
                 electricAttack += (1 * modifer);
                 thermalAttack += (3 * modifer);
-                voidAttack += (1 * modifer);
+                voidAttack += (2 * modifer);
                 if (modifer == 1) shield = AttackType.Electric;
                 break;
             default:
