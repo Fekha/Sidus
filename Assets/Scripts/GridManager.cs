@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -35,7 +36,8 @@ public class GridManager : MonoBehaviour
     }
     private void CreateStation(int team)
     {
-        int spawnY = 0;
+        var spawnX = 1;
+        int spawnY = 5;
         var stationOfClient = team == Globals.myStationIndex;
         string teamColor = "Red";
         GameObject stationPrefab = enemyStationPrefab;
@@ -43,7 +45,8 @@ public class GridManager : MonoBehaviour
         Guid shipGuid = Globals.enemyClient.ShipIds[0];
         if (team == 1)
         {
-            spawnY = (int)gridSize.y - 1;
+            spawnX = 6;
+            spawnY = 2;
         }
         if (stationOfClient)
         {
@@ -55,7 +58,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
-        var spawnX = 4;// (int)Random.Range(1, gridSize.x - 1);
+        // (int)Random.Range(1, gridSize.x - 1);
         stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 1, 3, 10, 10, 10, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, shipGuid));
     }
@@ -69,21 +72,22 @@ public class GridManager : MonoBehaviour
         }
         int spawnX = stationNode.x;
         int spawnY = stationNode.y;
-        if (CanSpawnShip(spawnX - 1, spawnY))
-        {
-            spawnX -= 1;
-        }
-        else if (CanSpawnShip(spawnX + 1, spawnY))
-        {
-            spawnX += 1;
-        }
-        else if (CanSpawnShip(spawnX, spawnY - 1))
+       
+        if (CanSpawnShip(spawnX, spawnY - 1))
         {
             spawnY -= 1;
         }
         else if (CanSpawnShip(spawnX, spawnY + 1))
         {
             spawnY += 1;
+        }
+        else if (CanSpawnShip(spawnX - 1, spawnY))
+        {
+            spawnX -= 1;
+        }
+        else if (CanSpawnShip(spawnX + 1, spawnY))
+        {
+            spawnX += 1;
         }
         else
         {
@@ -96,7 +100,7 @@ public class GridManager : MonoBehaviour
             var ship = Instantiate(shipPrefab);
             ship.transform.parent = characterParent;
             var shipNode = ship.AddComponent<Ship>();
-            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 3, 2, 2, 3, 3, 3, 1, shipGuid);
+            shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 5, 2, 0, 3, 3, 3, 1, shipGuid);
         }
         yield return new WaitForSeconds(.1f);
     }
@@ -286,10 +290,10 @@ public class GridManager : MonoBehaviour
             {
                 return i;
             }
-            else if (GameManager.i.stations[i].defeated)
-            {
-                return i + 1 % 2;
-            }
+        }
+        if (GameManager.i.stations.Where(x => x.defeated == false).Count() == 1)
+        {
+            return GameManager.i.stations.FirstOrDefault(x => x.defeated == false).stationId;
         }
         return -1;
     }

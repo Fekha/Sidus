@@ -53,8 +53,11 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI voidValue;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI moduleInfoValue;
+    private TextMeshProUGUI fightText;
     public TextMeshProUGUI ScoreToWinText;
+    public TextMeshProUGUI TurnOrderText;
     public GameObject infoPanel;
+    public GameObject fightPanel;
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
@@ -84,7 +87,10 @@ public class GameManager : MonoBehaviour
         }
         ResetUI();
     }
-
+    public void ViewFightPanel(bool active)
+    {
+        fightPanel.SetActive(active);
+    }
     public bool HasGameStarted()
     {
         return stations.Count > 1 && Globals.GameId != Guid.Empty;
@@ -106,6 +112,7 @@ public class GameManager : MonoBehaviour
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
+        fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -323,15 +330,16 @@ public class GameManager : MonoBehaviour
 
     private bool CanQueueUpgrade(Structure structure, ActionType actionType)
     {
-        return CanLevelUp(structure, actionType) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure,true)) != null;
+        return CanLevelUp(structure, actionType, true) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure, true)) != null;
     }
     private bool CanPerformUpgrade(Structure structure, ActionType actionType)
     {
-        return CanLevelUp(structure, actionType) && stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
+        return CanLevelUp(structure, actionType, false) && stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
     }
-    private bool CanLevelUp(Structure structure, ActionType actionType)
+    private bool CanLevelUp(Structure structure, ActionType actionType, bool countQueue)
     {
-        var nextLevel = (structure.level + stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count());
+        var countingQueue = countQueue ? stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count() : 0;
+        var nextLevel = (structure.level + countingQueue);
         if (actionType == ActionType.UpgradeFleet)
             return nextLevel < stations[structure.stationId].level * 2;
         else
@@ -346,13 +354,13 @@ public class GameManager : MonoBehaviour
     {
         return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
     }
-    private int GetCostOfAction(ActionType actionType, Structure structure, bool queue)
+    private int GetCostOfAction(ActionType actionType, Structure structure, bool countQueue)
     {
         var station = stations[structure.stationId];
-        var countingQueue = queue ? station.actions.Where(x => x.actionType == actionType && x.selectedStructure.structureGuid == structure.structureGuid).Count() : 0;
+        var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedStructure.structureGuid == structure.structureGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
-            return (station.ships.Count + countingQueue) * 3; //3,6,9
+            return (station.ships.Count + countingQueue) * 2; //2,4,6,8
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
@@ -384,7 +392,7 @@ public class GameManager : MonoBehaviour
     {
         if (MyStation.actions.Count < MyStation.maxActions)
         {
-            var costOfAction = GetCostOfAction(actionType, MyStation, true);
+            var costOfAction = GetCostOfAction(actionType, SelectedStructure ?? MyStation, true);
             if(selectedModules == null)
                 selectedModules = GetAvailableModules(MyStation, costOfAction);
             if (costOfAction == 0 || selectedModules != null)
@@ -448,30 +456,22 @@ public class GameManager : MonoBehaviour
             if (node.structureOnPath != null)
             {
                 var structureOnPath = node.structureOnPath;
+                var beforeStats = $"Pre-fight stats:\n{structure.structureName}: HP {structure.hp}, Electric {structure.electricAttack}, Thermal {structure.thermalAttack}, Void {structure.voidAttack}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Electric {structureOnPath.electricAttack}, Thermal {structureOnPath.thermalAttack}, Void {structureOnPath.voidAttack}.";
+                var duringFightText = "";
                 //if not ally, attack instead of move
                 if (structureOnPath.stationId != structure.stationId)
                 {
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
-                    if (structure.hp > 0 && structureOnPath.hp > 0)
+                    for (int attackType = 0; attackType <= (int)AttackType.Void; attackType++)
                     {
-                        if (structure.shield != AttackType.Electric)
-                            structure.hp -= Math.Max(structureOnPath.electricAttack - structure.electricAttack, 0);
-                        if (structureOnPath.shield != AttackType.Electric)
-                            structureOnPath.hp -= Math.Max(structure.electricAttack - structureOnPath.electricAttack, 0);
+                        if (structure.hp > 0 && structureOnPath.hp > 0)
+                            duringFightText += Fight(structure, structureOnPath, (AttackType)attackType);
                     }
-                    if (structure.hp > 0 && structureOnPath.hp > 0)
+                    fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats:\n{structure.structureName}: HP {structure.hp}, Electric {structure.electricAttack}, Thermal {structure.thermalAttack}, Void {structure.voidAttack}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Electric {structureOnPath.electricAttack}, Thermal {structureOnPath.thermalAttack}, Void {structureOnPath.voidAttack}.";
+                    ViewFightPanel(true);
+                    while (fightPanel.activeInHierarchy)
                     {
-                        if (structure.shield != AttackType.Thermal)
-                            structure.hp -= Math.Max(structureOnPath.thermalAttack - structure.thermalAttack, 0);
-                        if(structureOnPath.shield != AttackType.Thermal)
-                            structureOnPath.hp -= Math.Max(structure.thermalAttack - structureOnPath.thermalAttack, 0);
-                    }
-                    if (structure.hp > 0 && structureOnPath.hp > 0)
-                    {
-                        if(structure.shield != AttackType.Void)
-                            structure.hp -= Math.Max(structureOnPath.voidAttack - structure.voidAttack, 0);
-                        if(structureOnPath.shield != AttackType.Void)
-                            structureOnPath.hp -= Math.Max(structure.voidAttack - structureOnPath.voidAttack, 0);
+                        yield return new WaitForSeconds(.5f);
                     }
                 }
                 var endMovement = false;
@@ -529,7 +529,61 @@ public class GameManager : MonoBehaviour
         structure.transform.position = structure.currentPathNode.transform.position;
         structure.currentPathNode.structureOnPath = structure;
     }
-    
+
+    private string Fight(Structure s1, Structure s2, AttackType type)
+    {
+        int s1Dmg = s2.voidAttack - s1.voidAttack;
+        int s2Dmg = s1.voidAttack - s2.voidAttack;
+        if (type == AttackType.Electric)
+        {
+            s1Dmg = s2.electricAttack - s1.electricAttack;
+            s2Dmg = s1.electricAttack - s2.electricAttack;
+        }
+        else if (type == AttackType.Thermal)
+        {
+            s1Dmg = s2.thermalAttack - s1.thermalAttack;
+            s2Dmg = s1.thermalAttack - s2.thermalAttack;
+        }
+
+        if (s1Dmg > 0)
+        {
+            if (s1.shield != type)
+            {
+                s1.hp -= s1Dmg;
+                if (type == AttackType.Electric)
+                    s2.electricAttack--;
+                else if (type == AttackType.Thermal)
+                    s2.electricAttack--;
+                else
+                    s2.voidAttack--;
+                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg} HP, {s2.structureName} expends 1 {type} attack.\n";
+            }
+            else
+            {
+                return $"{type.ToString()} Phase: {s1.structureName} shielded {s1Dmg} damage.\n";
+            }
+        }
+        else if (s2Dmg > 0)
+        {
+            if (s2.shield != type)
+            {
+                s2.hp -= s2Dmg;
+                if (type == AttackType.Electric)
+                    s1.electricAttack--;
+                else if (type == AttackType.Thermal)
+                    s1.electricAttack--;
+                else
+                    s1.voidAttack--;
+                return $"{type.ToString()} Phase: {s2.structureName} lost {s2Dmg} HP, {s1.structureName} expends 1 {type} attack.\n";
+            }
+            else
+            {
+                return $"{type.ToString()} Phase: {s2.structureName} shielded {s2Dmg} damage.\n";
+            }
+        }
+        return $"{type.ToString()} Phase: Stalemate.\n";
+    }
+
     public void HighlightRangeOfMovement(PathNode currentNode, int shipRange)
     {
         ClearMovementRange();
@@ -585,24 +639,26 @@ public class GameManager : MonoBehaviour
     private IEnumerator AutomateTurns(Turn[] turns)
     {
         ClearModules();
+        int c = TurnNumber % maxPlayers;
         for (int i = 0; i < 6; i++)
         {
             for(int j = 0; j < maxPlayers; j++)
             {
-                if (i < turns[j].Actions.Count)
+                c = (c+j) % maxPlayers;
+                if (i < turns[c].Actions.Count)
                 {
-                    if (turns[j].Actions[i] is object)
+                    if (turns[c].Actions[i] is object)
                     {
-                        var action = new Action(turns[j].Actions[i]);
-                        turnValue.text = $"{stations[j].color} action {i + 1}: {action.actionType}";
-                        Debug.Log($"Perfoming {stations[j].color}'s action {i + 1}: {action.actionType}");
+                        var action = new Action(turns[c].Actions[i]);
+                        turnValue.text = $"{stations[c].color} action {i + 1}: {action.actionType}";
+                        Debug.Log($"Perfoming {stations[c].color}'s action {i + 1}: {action.actionType}");
                         yield return StartCoroutine(PerformAction(action));
                     }
                     else
                     {
-                        turnValue.text = $"{stations[j].color} action {i + 1}: No Action";
+                        turnValue.text = $"{stations[c].color} action {i + 1}: No Action";
                     }
-                    yield return new WaitForSeconds(.5f);
+                    yield return new WaitForSeconds(1f);
                 }
             }
         }
@@ -701,7 +757,7 @@ public class GameManager : MonoBehaviour
 
     private void LevelUpShip(Ship ship)
     {
-        if (CanLevelUp(ship, ActionType.UpgradeFleet)){
+        if (CanLevelUp(ship, ActionType.UpgradeFleet, false)){
             ship.level++;
             ship.maxAttachedModules += 1;
             ship.maxHp++;
@@ -729,6 +785,8 @@ public class GameManager : MonoBehaviour
         ClearSelection();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
+        var firstText = MyStation.stationId == TurnNumber % maxPlayers ? "You" : "They";
+        TurnOrderText.text = $"{firstText} have the first action";
         UpdateFleetCostText();
     }
 
