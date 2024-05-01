@@ -7,7 +7,7 @@ public class Station : Structure
     internal List<Ship> ships = new List<Ship>();
     internal List<Module> modules = new List<Module>();
     internal int maxActions = 2; // 1+ station.level
-    internal int maxShips = 2; // 1+ station.level
+    internal int maxShips = 1; // 1+ station.level
     internal int score = 0;
     internal bool defeated = false;
 

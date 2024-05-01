@@ -288,24 +288,39 @@ public class GameManager : MonoBehaviour
         voidValue.text = structure.voidAttack.ToString();
         shieldValue.text = structure.shield.ToString();
         var actionType = structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
+        upgradeButton.interactable = false;
         if (structure.stationId == MyStation.stationId)
         {
+            if (CanLevelUp(structure, actionType, true))
+            {
+                upgradeCost.text = GetCostText(GetCostOfAction(actionType, structure, true));
+                upgradeButton.interactable = CanQueueUpgrade(structure, actionType);
+            }
+            else
+            {
+                if (structure is Ship)
+                {
+                    upgradeCost.text = "(Station Upgrade Required)";
+                }
+                else
+                {
+                    upgradeCost.text = "(Max Station Level)";
+                }
+            }
             upgradeButton.gameObject.SetActive(true);
-            upgradeButton.interactable = CanQueueUpgrade(structure, actionType);
         }
         else
         {
             upgradeButton.gameObject.SetActive(false);
-            upgradeButton.interactable = false;
         }
-        upgradeCost.text = GetCostText(GetCostOfAction(actionType, structure, true));
         SetModuleBar(structure);
         infoPanel.gameObject.SetActive(true);
     }
 
     private string GetCostText(int cost)
     {
-        return $"({cost} Modules)";
+        string plural = cost == 1 ? "" : "s";
+        return $"(Costs {cost} Module{plural})";
     }
     private void AddActionBarImage(ActionType actionType, int i)
     {
@@ -330,8 +345,15 @@ public class GameManager : MonoBehaviour
     }
     private void UpdateFleetCostText()
     {
-        createFleetButton.interactable = CanQueueBuildFleet(MyStation);
-        createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation,true));
+        if (CanBuildAdditonalFleet(MyStation))
+        {
+            createFleetButton.interactable = CanQueueBuildFleet(MyStation);
+            createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation, true));
+        }
+        else
+        {
+            createFleetCost.text = "(Station Upgrade Required)";
+        }
     }
     public void UpgradeStructure()
     {
@@ -362,7 +384,11 @@ public class GameManager : MonoBehaviour
 
     private bool CanQueueBuildFleet(Station station)
     {
-        return (station.ships.Count+ station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count()) < station.maxShips && GetAvailableModules(station, GetCostOfAction(ActionType.CreateFleet, station,true)) != null;
+        return CanBuildAdditonalFleet(station) && GetAvailableModules(station, GetCostOfAction(ActionType.CreateFleet, station,true)) != null;
+    }
+    private bool CanBuildAdditonalFleet(Station station)
+    {
+        return station.ships.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxShips;
     }
     private bool CanPerformBuildFleet(Station station)
     {
