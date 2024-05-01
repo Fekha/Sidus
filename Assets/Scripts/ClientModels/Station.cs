@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Station : Structure
 {
     internal List<Action> actions = new List<Action>();
-    internal List<Ship> ships = new List<Ship>();
+    internal List<Fleet> fleets = new List<Fleet>();
     internal List<Module> modules = new List<Module>();
     internal int maxActions = 2; // 1+ station.level
     internal int maxShips = 1; // 1+ station.level

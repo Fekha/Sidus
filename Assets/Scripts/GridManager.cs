@@ -99,7 +99,7 @@ public class GridManager : MonoBehaviour
         {
             var ship = Instantiate(shipPrefab);
             ship.transform.parent = characterParent;
-            var shipNode = ship.AddComponent<Ship>();
+            var shipNode = ship.AddComponent<Fleet>();
             shipNode.InitializeShip(spawnX, spawnY, stationNode, stationNode.color, 5, 3, 0, 2, 3, 4, 1, shipGuid);
         }
         yield return new WaitForSeconds(.1f);

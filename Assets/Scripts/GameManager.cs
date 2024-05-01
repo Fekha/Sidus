@@ -298,7 +298,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                if (structure is Ship)
+                if (structure is Fleet)
                 {
                     upgradeCost.text = "(Station Upgrade Required)";
                 }
@@ -332,7 +332,7 @@ public class GameManager : MonoBehaviour
     {
         if (CanQueueBuildFleet(MyStation) && HasGameStarted())
         {
-            if (MyStation.ships.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
+            if (MyStation.fleets.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
             {
                 QueueAction(ActionType.CreateFleet);
                 
@@ -388,11 +388,11 @@ public class GameManager : MonoBehaviour
     }
     private bool CanBuildAdditonalFleet(Station station)
     {
-        return station.ships.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxShips;
+        return station.fleets.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxShips;
     }
     private bool CanPerformBuildFleet(Station station)
     {
-        return station.ships.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
+        return station.fleets.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
     }
     private int GetCostOfAction(ActionType actionType, Structure structure, bool countQueue)
     {
@@ -400,7 +400,7 @@ public class GameManager : MonoBehaviour
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedStructure.structureGuid == structure.structureGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
-            return (station.ships.Count + countingQueue) * 2; //2,4,6,8,10
+            return (station.fleets.Count + countingQueue) * 2; //2,4,6,8,10
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
@@ -519,10 +519,10 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
                     Destroy(structure.gameObject);
-                    if (structureOnPath is Ship) {
+                    if (structureOnPath is Fleet) {
                         if (structureOnPath.hp > 0)
                         {
-                            LevelUpShip(structureOnPath as Ship);
+                            LevelUpShip(structureOnPath as Fleet);
                         }
                     }
                     if (structure is Station) {
@@ -540,8 +540,8 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
                     Destroy(structureOnPath.gameObject); //they are dead
-                    if (structure is Ship)
-                        LevelUpShip(structure as Ship);
+                    if (structure is Fleet)
+                        LevelUpShip(structure as Fleet);
                     if (structureOnPath is Station)
                         (structureOnPath as Station).defeated = true;
 
@@ -748,7 +748,7 @@ public class GameManager : MonoBehaviour
                 if (CanPerformUpgrade(action.selectedStructure, action.actionType))
                 {
                     ChargeModules(action);
-                    LevelUpShip(action.selectedStructure as Ship);
+                    LevelUpShip(action.selectedStructure as Fleet);
                 }
                 else
                 {
@@ -803,7 +803,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LevelUpShip(Ship ship)
+    private void LevelUpShip(Fleet ship)
     {
         if (CanLevelUp(ship, ActionType.UpgradeFleet, false)){
             ship.level++;
