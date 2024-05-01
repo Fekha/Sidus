@@ -11,24 +11,29 @@ public class LoginManager : MonoBehaviour
 {
     private SqlManager sql;
     public GameObject waitingPanel;
-    public GameObject findPanel;
+    public GameObject joinGamePanel;
     public Transform findContent;
     public GameObject openGamePrefab;
-    private List<GameObject> openGamesObjects;
+    private TextMeshProUGUI waitingText;
+    private List<GameObject> openGamesObjects = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
     {
         sql = new SqlManager();
         Globals.localStationId = Guid.NewGuid();
+        waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
     }
     public void CreateGame()
     {
-        StartCoroutine(sql.GetRoutine<Guid>($"Game/Create?ClientId={Globals.localStationId}", SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Create?ClientId={Globals.localStationId}", SetMatchGuid));
     }
-    public void ViewOpenGames()
+    public void ViewOpenGames(bool active)
     {
-        FindGames();
-        findPanel.SetActive(true);
+        if (active)
+        {
+            FindGames();
+        }
+        joinGamePanel.SetActive(active);
     }
     public void FindGames()
     {
@@ -36,7 +41,7 @@ public class LoginManager : MonoBehaviour
     }
     public void JoinGame(Guid guid)
     {
-        StartCoroutine(sql.GetRoutine<Guid>($"Game/Join?ClientId={Globals.localStationId}&GameId={guid}", SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Join?ClientId={Globals.localStationId}&GameId={guid}", SetMatchGuid));
     }
     private void GetAllMatches(List<Guid> list)
     {
@@ -45,7 +50,7 @@ public class LoginManager : MonoBehaviour
         {
             var prefab = Instantiate(openGamePrefab, findContent);
             prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(guid));
-            prefab.GetComponent<TextMeshProUGUI>().text = guid.ToString().Substring(0, 6);
+            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = guid.ToString().Substring(0, 6);
             openGamesObjects.Add(prefab);
         }
     }
@@ -55,12 +60,13 @@ public class LoginManager : MonoBehaviour
     }
 
     
-    private void SetMatchGuid(Guid gameId)
+    private void SetMatchGuid(Guid? gameId)
     {
         if (gameId != null)
         {
-            Globals.GameId = gameId;
+            Globals.GameId = (Guid)gameId;
             waitingPanel.SetActive(true);
+            waitingText.text = $"Waiting for another player to join game {Globals.GameId.ToString().Substring(0, 6)}....";
             StartCoroutine(GetStationIndex());
         }
     }
