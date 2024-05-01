@@ -345,9 +345,9 @@ public class GameManager : MonoBehaviour
     }
     private void UpdateFleetCostText()
     {
+        createFleetButton.interactable = CanQueueBuildFleet(MyStation); 
         if (CanBuildAdditonalFleet(MyStation))
         {
-            createFleetButton.interactable = CanQueueBuildFleet(MyStation);
             createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation, true));
         }
         else
