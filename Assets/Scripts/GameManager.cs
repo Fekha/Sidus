@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
                     {
                         targetStructure = targetNode.structureOnPath;
                     }
-                    //original click on ship
+                    //original click on fleet
                     if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId)
                     {
                         SetTextValues(targetStructure);
@@ -332,7 +332,7 @@ public class GameManager : MonoBehaviour
     {
         if (CanQueueBuildFleet(MyStation) && HasGameStarted())
         {
-            if (MyStation.fleets.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxShips)
+            if (MyStation.fleets.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxFleets)
             {
                 QueueAction(ActionType.CreateFleet);
                 
@@ -388,11 +388,11 @@ public class GameManager : MonoBehaviour
     }
     private bool CanBuildAdditonalFleet(Station station)
     {
-        return station.fleets.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxShips;
+        return station.fleets.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxFleets;
     }
     private bool CanPerformBuildFleet(Station station)
     {
-        return station.fleets.Count < station.maxShips && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
+        return station.fleets.Count < station.maxFleets && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
     }
     private int GetCostOfAction(ActionType actionType, Structure structure, bool countQueue)
     {
@@ -522,7 +522,7 @@ public class GameManager : MonoBehaviour
                     if (structureOnPath is Fleet) {
                         if (structureOnPath.hp > 0)
                         {
-                            LevelUpShip(structureOnPath as Fleet);
+                            LevelUpFleet(structureOnPath as Fleet);
                         }
                     }
                     if (structure is Station) {
@@ -541,7 +541,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
                     Destroy(structureOnPath.gameObject); //they are dead
                     if (structure is Fleet)
-                        LevelUpShip(structure as Fleet);
+                        LevelUpFleet(structure as Fleet);
                     if (structureOnPath is Station)
                         (structureOnPath as Station).defeated = true;
 
@@ -565,7 +565,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(.25f);
         }
         //character.movementRange -= path.Count();
-        //HighlightRangeOfMovement(ship.currentPathNode, ship.getMovementRange());
+        //HighlightRangeOfMovement(fleet.currentPathNode, fleet.getMovementRange());
         structure.transform.position = structure.currentPathNode.transform.position;
         structure.currentPathNode.structureOnPath = structure;
     }
@@ -624,10 +624,10 @@ public class GameManager : MonoBehaviour
         return $"{type.ToString()} Phase: Stalemate.\n";
     }
 
-    public void HighlightRangeOfMovement(PathNode currentNode, int shipRange)
+    public void HighlightRangeOfMovement(PathNode currentNode, int fleetRange)
     {
         ClearMovementRange();
-        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, shipRange);
+        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, fleetRange);
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(movementRangePrefab, node.transform.position, Quaternion.identity);
@@ -748,7 +748,7 @@ public class GameManager : MonoBehaviour
                 if (CanPerformUpgrade(action.selectedStructure, action.actionType))
                 {
                     ChargeModules(action);
-                    LevelUpShip(action.selectedStructure as Fleet);
+                    LevelUpFleet(action.selectedStructure as Fleet);
                 }
                 else
                 {
@@ -763,7 +763,7 @@ public class GameManager : MonoBehaviour
                     var station = action.selectedStructure as Station;
                     station.level++;
                     station.maxAttachedModules++;
-                    station.maxShips++;
+                    station.maxFleets++;
                 }
                 else
                 {
@@ -803,16 +803,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LevelUpShip(Fleet ship)
+    private void LevelUpFleet(Fleet fleet)
     {
-        if (CanLevelUp(ship, ActionType.UpgradeFleet, false)){
-            ship.level++;
-            ship.maxAttachedModules += 1;
-            ship.maxHp++;
-            ship.hp++;
-            ship.electricAttack++;
-            ship.voidAttack++;
-            ship.thermalAttack++;
+        if (CanLevelUp(fleet, ActionType.UpgradeFleet, false)){
+            fleet.level++;
+            fleet.maxAttachedModules += 1;
+            fleet.maxHp++;
+            fleet.hp++;
+            fleet.electricAttack++;
+            fleet.voidAttack++;
+            fleet.thermalAttack++;
         }
     }
 

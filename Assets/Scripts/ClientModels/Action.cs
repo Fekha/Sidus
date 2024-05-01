@@ -14,10 +14,10 @@ public class Action : MonoBehaviour
     public int generatedModuleId;
     public Guid generatedGuid;
 
-    public Action(ActionType _actionType, Structure _selectedShip, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
+    public Action(ActionType _actionType, Structure _selectedFleet, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
     {
         actionType = _actionType;
-        selectedStructure = _selectedShip;
+        selectedStructure = _selectedFleet;
         selectedModulesIds = _selectedModules ?? new List<Guid>();
         selectedPath = _selectedPath ?? new List<PathNode>();
     }

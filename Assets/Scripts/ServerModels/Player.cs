@@ -7,6 +7,6 @@ namespace StarTaneousAPI.Models
     public class Player
     {
         public Guid StationId { get; set; }
-        public List<Guid> ShipIds { get; set; }
+        public List<Guid> FleetIds { get; set; }
     }
 }
