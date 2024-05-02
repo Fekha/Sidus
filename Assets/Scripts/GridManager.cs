@@ -59,7 +59,7 @@ public class GridManager : MonoBehaviour
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         // (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 1, 3, 10, 10, 10, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 8, 1, 3, 4, 5, 6, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, fleetGuid));
     }
 

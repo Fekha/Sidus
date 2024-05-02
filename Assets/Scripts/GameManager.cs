@@ -7,6 +7,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -520,7 +521,7 @@ public class GameManager : MonoBehaviour
                     if (structureOnPath is Fleet) {
                         if (structureOnPath.hp > 0)
                         {
-                            LevelUpFleet(structureOnPath as Fleet);
+                            LevelUpStructure(structureOnPath as Fleet);
                         }
                     }
                     if (structure is Station)
@@ -545,7 +546,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
                     Destroy(structureOnPath.gameObject); //they are dead
                     if (structure is Fleet)
-                        LevelUpFleet(structure as Fleet);
+                        LevelUpStructure(structure as Fleet);
                     if (structureOnPath is Station)
                     {
                         (structureOnPath as Station).defeated = true;
@@ -735,11 +736,13 @@ public class GameManager : MonoBehaviour
     {
         if (action.selectedStructure != null)
         {
-            var currentStation = Stations[action.selectedStructure.stationId];
+            var currentStructure = action.selectedStructure;
+            var currentStation = Stations[currentStructure.stationId];
+
             if (action.actionType == ActionType.MoveStructure)
             {
-                yield return StartCoroutine(MoveStructure(action.selectedStructure, action.selectedPath));
-                action.selectedStructure.resetMovementRange();
+                yield return StartCoroutine(MoveStructure(currentStructure, action.selectedPath));
+                currentStructure.resetMovementRange();
             }
             else if (action.actionType == ActionType.CreateFleet)
             {
@@ -750,34 +753,31 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
+                    Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
                 }
             }
             else if (action.actionType == ActionType.UpgradeFleet)
             {
-                if (CanPerformUpgrade(action.selectedStructure, action.actionType))
+                if (CanPerformUpgrade(currentStructure, action.actionType))
                 {
                     ChargeModules(action);
-                    LevelUpFleet(action.selectedStructure as Fleet);
+                    LevelUpStructure(currentStructure as Fleet);
                 }
                 else
                 {
-                    Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
+                    Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
                 }
             }
             else if (action.actionType == ActionType.UpgradeStation)
             {
-                if (CanPerformUpgrade(action.selectedStructure, action.actionType))
+                if (CanPerformUpgrade(currentStructure, action.actionType))
                 {
                     ChargeModules(action);
-                    var station = action.selectedStructure as Station;
-                    station.level++;
-                    station.maxAttachedModules++;
-                    station.maxFleets++;
+                    LevelUpStructure(currentStructure);
                 }
                 else
                 {
-                    Debug.Log($"Broke ass {action.selectedStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
+                    Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
                 }
             }
             else if (action.actionType == ActionType.GenerateModule)
@@ -786,43 +786,47 @@ public class GameManager : MonoBehaviour
             }
             else if (action.actionType == ActionType.AttachModule)
             {
-                if (currentStation.modules.Count > 0 && action.selectedStructure.attachedModules.Count < action.selectedStructure.maxAttachedModules)
+                if (currentStation.modules.Count > 0 && currentStructure.attachedModules.Count < currentStructure.maxAttachedModules)
                 {
                     Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
                     if (selectedModule is object)
                     {
-                        action.selectedStructure.attachedModules.Add(selectedModule);
-                        action.selectedStructure.EditModule(selectedModule.type);
-                        currentStation.modules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                        currentStructure.attachedModules.Add(selectedModule);
+                        currentStructure.EditModule(selectedModule.type);
+                        currentStation.modules.Remove(currentStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                     }
                 }
             }
             else if (action.actionType == ActionType.DetachModule)
             {
-                if (action.selectedStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
+                if (currentStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
                 {
                     Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
                     if (selectedModule is object)
                     {
                         currentStation.modules.Add(selectedModule);
-                        action.selectedStructure.EditModule(selectedModule.type, -1);
-                        action.selectedStructure.attachedModules.Remove(action.selectedStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                        currentStructure.EditModule(selectedModule.type, -1);
+                        currentStructure.attachedModules.Remove(currentStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                     }
                 }
             }
         }
     }
 
-    private void LevelUpFleet(Fleet fleet)
+    private void LevelUpStructure(Structure structure)
     {
-        if (CanLevelUp(fleet, ActionType.UpgradeFleet, false)){
-            fleet.level++;
-            fleet.maxAttachedModules += 1;
-            fleet.maxHp++;
-            fleet.hp++;
-            fleet.electricAttack++;
-            fleet.voidAttack++;
-            fleet.thermalAttack++;
+        if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false)){
+            structure.level++;
+            structure.maxAttachedModules++;
+            structure.maxHp++;
+            structure.hp++;
+            structure.electricAttack++;
+            structure.voidAttack++;
+            structure.thermalAttack++;
+            if (structure is Station)
+            {
+                (structure as Station).maxFleets++;
+            }
         }
     }
 

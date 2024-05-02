@@ -9,9 +9,9 @@ public class SqlManager
     public SqlManager()
     {
         apiUrl = "https://game.gravitas-games.com:7001/api/";
-//#if UNITY_EDITOR
-//        apiUrl = "https://localhost:7001/api/";
-//#endif
+#if UNITY_EDITOR
+        apiUrl = "https://localhost:7001/api/";
+#endif
     }
     public IEnumerator GetRoutine<T>(string url, Action<T> callback = null)
     {
