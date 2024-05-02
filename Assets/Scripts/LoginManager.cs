@@ -20,12 +20,12 @@ public class LoginManager : MonoBehaviour
     void Start()
     {
         sql = new SqlManager();
-        Globals.localStationId = Guid.NewGuid();
+        Globals.localStationGuid = Guid.NewGuid();
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
     }
     public void CreateGame()
     {
-        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Create?ClientId={Globals.localStationId}", SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Create?ClientId={Globals.localStationGuid}", SetMatchGuid));
     }
     public void ViewOpenGames(bool active)
     {
@@ -41,7 +41,7 @@ public class LoginManager : MonoBehaviour
     }
     public void JoinGame(Guid guid)
     {
-        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Join?ClientId={Globals.localStationId}&GameId={guid}", SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Join?ClientId={Globals.localStationGuid}&GameId={guid}", SetMatchGuid));
     }
     private void GetAllMatches(List<Guid> list)
     {
@@ -75,7 +75,7 @@ public class LoginManager : MonoBehaviour
     {
         while (Globals.Players == null)
         {
-            yield return StartCoroutine(sql.GetRoutine<Player[]?>($"Game/HasGameStarted?GameId={Globals.GameId}&ClientId={Globals.localStationId}", SetStationGuids));
+            yield return StartCoroutine(sql.GetRoutine<Player[]?>($"Game/HasGameStarted?GameId={Globals.GameId}&ClientId={Globals.localStationGuid}", SetStationGuids));
         }
     }
 
@@ -85,7 +85,7 @@ public class LoginManager : MonoBehaviour
         {
             for (int i = 0; i < players.Length; i++)
             {
-                if (players[i].StationId == Globals.localStationId)
+                if (players[i].StationId == Globals.localStationGuid)
                 {
                     Globals.myStationIndex = i;
                     Globals.localClient = players[i];

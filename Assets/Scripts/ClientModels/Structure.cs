@@ -49,7 +49,7 @@ public class Structure : Node
     }
     public void SetNodeColor()
     {
-        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GameManager.i.Stations[stationId].structureGuid == Globals.localStationId ? new Color(0.8731644f, 1, 0.572327f, 1) : new Color(1, 0.7421383f, 0.7421383f, 1);
+        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GameManager.i.Stations[stationId].structureGuid == Globals.localStationGuid ? new Color(0.8731644f, 1, 0.572327f, 1) : new Color(1, 0.7421383f, 0.7421383f, 1);
         currentPathNode.ownedById = stationId;
     }
     internal void resetMovementRange()

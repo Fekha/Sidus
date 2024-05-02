@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
                         targetStructure = targetNode.structureOnPath;
                     }
                     //original click on fleet
-                    if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId)
+                    if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId && !MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure.structureGuid == targetStructure.structureGuid))
                     {
                         SetTextValues(targetStructure);
                         SelectedStructure = targetStructure;
@@ -492,6 +492,7 @@ public class GameManager : MonoBehaviour
         foreach (var node in path)
         {
             i++;
+            bool blockedMovement = false;
             if (node.structureOnPath != null)
             {
                 var structureOnPath = node.structureOnPath;
@@ -513,27 +514,31 @@ public class GameManager : MonoBehaviour
                         yield return new WaitForSeconds(.5f);
                     }
                 }
-                var endMovement = false;
                 if (structure.hp <= 0)
                 {
                     Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
-                    Destroy(structure.gameObject);
                     if (structureOnPath is Fleet) {
                         if (structureOnPath.hp > 0)
                         {
                             LevelUpFleet(structureOnPath as Fleet);
                         }
                     }
-                    if (structure is Station) {
+                    if (structure is Station)
+                    {
                         (structure as Station).defeated = true;
                     }
-                    endMovement = true; // you're dead
+                    else if (structure is Fleet)
+                    {
+                        Stations[structure.stationId].fleets.Remove(structure as Fleet);
+                    }
+                    Destroy(structure.gameObject);
+                    blockedMovement = true; // you're dead
                 }
                 if (structureOnPath.hp > 0)
                 {
                     //even if allied don't move through, don't feel like doing recursive checks right now
                     Debug.Log($"{structure.structureName} movement was blocked by {structureOnPath.structureName}");
-                    endMovement = true; // they aren't dead
+                    blockedMovement = true; // they aren't dead
                 }
                 else
                 {
@@ -542,22 +547,28 @@ public class GameManager : MonoBehaviour
                     if (structure is Fleet)
                         LevelUpFleet(structure as Fleet);
                     if (structureOnPath is Station)
+                    {
                         (structureOnPath as Station).defeated = true;
-
+                    }
+                    else if (structureOnPath is Fleet)
+                    {
+                        Stations[structureOnPath.stationId].fleets.Remove(structureOnPath as Fleet);
+                    }
                 }
-                if (endMovement)
-                    break;
             }
-            float elapsedTime = 0f;
-            float totalTime = .25f;
-            while (elapsedTime <= totalTime)
+            if (!blockedMovement)
             {
-                structure.transform.position = Vector3.Lerp(structure.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
+                float elapsedTime = 0f;
+                float totalTime = .25f;
+                while (elapsedTime <= totalTime)
+                {
+                    structure.transform.position = Vector3.Lerp(structure.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
+                structure.currentPathNode = node;
             }
-            structure.currentPathNode = node;
-            if (path.Count == i || node.ownedById == -1)
+            if (path.Count == i || node.ownedById == -1 || blockedMovement)
             {
                 structure.SetNodeColor();
             }
@@ -644,7 +655,7 @@ public class GameManager : MonoBehaviour
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
             var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
-            var turnToPost = new Turn(Globals.GameId, Globals.localStationId, TurnNumber,actionToPost);
+            var turnToPost = new Turn(Globals.GameId, Globals.localStationGuid, TurnNumber,actionToPost);
             var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
             StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
             StartCoroutine(TakeTurns()); 
@@ -714,8 +725,8 @@ public class GameManager : MonoBehaviour
         }
         if (winner != -1)
         {
-            turnValue.text = $"Player {winner} won";
-            Debug.Log($"Player {winner} won");
+            turnValue.text = $"Player {Stations[winner].color} won";
+            Debug.Log($"Player {Stations[winner].color} won");
         }
         TurnNumber++;
     }

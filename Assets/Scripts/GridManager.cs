@@ -52,7 +52,7 @@ public class GridManager : MonoBehaviour
         {
             teamColor = "Green";
             stationPrefab = playerStationPrefab;
-            stationGuid = Globals.localStationId;
+            stationGuid = Globals.localStationGuid;
             fleetGuid = Globals.localClient.FleetIds[0];
         }
         var station = Instantiate(stationPrefab);
@@ -66,7 +66,7 @@ public class GridManager : MonoBehaviour
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid)
     {
         GameObject fleetPrefab = enemyPrefab;
-        if (stationNode.structureGuid == Globals.localStationId)
+        if (stationNode.structureGuid == Globals.localStationGuid)
         {
             fleetPrefab = playerPrefab;
         }
