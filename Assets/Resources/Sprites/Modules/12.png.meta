@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1571e76c6be87194fb24182a0e180546
+guid: c96809cc1de93bb4ab576a2ae64c4f78
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2600053897239245800
-    second: planet-core_0
+      213: -720460867068611702
+    second: tesla-turret_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: planet-core_0
+      name: tesla-turret_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 81c4f2291c0caebd0800000000000000
-      internalID: -2600053897239245800
+      spriteID: a833ec798a86006f0800000000000000
+      internalID: -720460867068611702
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      planet-core_0: -2600053897239245800
+      tesla-turret_0: -720460867068611702
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 134d213e8ee8e494196b1ea14d63cda3
+guid: cb2c835f187440149bdf7eb5d640e197
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5343533267496870947
-    second: orrery_0
+      213: 1083749986811074725
+    second: cannister_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: orrery_0
+      name: cannister_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ddbdd51fdc4f7d5b0800000000000000
-      internalID: -5343533267496870947
+      spriteID: 5a8553dfed04a0f00800000000000000
+      internalID: 1083749986811074725
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      orrery_0: -5343533267496870947
+      cannister_0: 1083749986811074725
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

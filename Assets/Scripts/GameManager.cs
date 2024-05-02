@@ -172,7 +172,6 @@ public class GameManager : MonoBehaviour
                             if (targetNode == SelectedNode)
                             {
                                 QueueAction(ActionType.MoveStructure);
-                                ClearSelection();
                             }
                             //create movement
                             else
@@ -247,6 +246,7 @@ public class GameManager : MonoBehaviour
                 var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
                 moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
                 moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
+                moduleObject.transform.Find("Queued").gameObject.SetActive(false);
                 currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
             }
             ViewModuleSelection(true);
@@ -277,7 +277,6 @@ public class GameManager : MonoBehaviour
             }
             else{
                 QueueAction(ActionType.DetachModule, new List<Guid>() { SelectedStructure.attachedModules[i].moduleGuid });
-                ClearSelection();
             }
         }
     }
@@ -374,9 +373,7 @@ public class GameManager : MonoBehaviour
         if (CanQueueUpgrade(SelectedStructure, actionType) && HasGameStarted()){
             QueueAction(actionType);
         }
-        ClearSelection();
     }
-
     private bool CanQueueUpgrade(Structure structure, ActionType actionType)
     {
         return CanLevelUp(structure, actionType, true) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure, true)) != null;
@@ -455,6 +452,8 @@ public class GameManager : MonoBehaviour
                 AddActionBarImage(actionType, MyStation.actions.Count());
                 MyStation.actions.Add(new Action(actionType, structure, selectedModules, SelectedPath));
                 UpdateFleetCostText();
+                SetModuleGrid();
+                ClearSelection();
             }
             else
             {
@@ -481,6 +480,8 @@ public class GameManager : MonoBehaviour
             }
         }
         UpdateFleetCostText();
+        SetModuleGrid();
+        ClearSelection();
     }
 
     private IEnumerator MoveStructure(Structure selectedStructure, List<PathNode> selectedPath)
@@ -874,6 +875,7 @@ public class GameManager : MonoBehaviour
             var moduleObject = Instantiate(modulePrefab, ModuleGrid);
             moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
+            moduleObject.transform.Find("Queued").gameObject.SetActive(MyStation.actions.Any(x=>x.selectedModulesIds.Contains(module.moduleGuid)));
             currentModules.Add(moduleObject.GetComponent<Module>());
         }
     }
@@ -891,7 +893,6 @@ public class GameManager : MonoBehaviour
             ViewModuleSelection(false);
             QueueAction(ActionType.AttachModule, new List<Guid>() { moduleGuid }, structure);
             ClearSelectableModules();
-            ClearSelection();
         }
     }
 
