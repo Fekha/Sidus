@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
     internal Station MyStation {get {return Stations[Globals.myStationIndex];}}
-    //temp, not for real game
     public GameObject turnLabel;
     private SqlManager sql;
     private int TurnNumber = 0;
@@ -335,7 +334,6 @@ public class GameManager : MonoBehaviour
             if (MyStation.fleets.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxFleets)
             {
                 QueueAction(ActionType.CreateFleet);
-                
             }
             else
             {
@@ -432,14 +430,15 @@ public class GameManager : MonoBehaviour
     {
         if (MyStation.actions.Count < MyStation.maxActions)
         {
-            var costOfAction = GetCostOfAction(actionType, SelectedStructure ?? MyStation, true);
+            var structure = SelectedStructure ?? MyStation;
+            var costOfAction = GetCostOfAction(actionType, structure, true);
             if(selectedModules == null)
                 selectedModules = GetAvailableModules(MyStation, costOfAction);
             if (costOfAction == 0 || selectedModules != null)
             {
                 Debug.Log($"{MyStation.structureName} queuing up action {actionType}");
                 AddActionBarImage(actionType, MyStation.actions.Count());
-                MyStation.actions.Add(new Action(actionType, SelectedStructure ?? MyStation, selectedModules, SelectedPath));
+                MyStation.actions.Add(new Action(actionType, structure, selectedModules, SelectedPath));
                 UpdateFleetCostText();
             }
             else
@@ -709,7 +708,7 @@ public class GameManager : MonoBehaviour
             for (int i = 1; i <= 3; i++) {
                 if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
                 {
-                    MyStation.maxActions = 2 + i;
+                    station.maxActions = 2 + i;
                 }
             }
         }
@@ -859,10 +858,6 @@ public class GameManager : MonoBehaviour
     public void ViewModuleInfo(bool active)
     {
         moduleInfoPanel.SetActive(active);
-    }
-    public void ShowUnlockCondition()
-    {
-
     }
     private void ClearMovementRange()
     {
