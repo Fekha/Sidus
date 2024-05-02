@@ -19,13 +19,18 @@ public class GameManager : MonoBehaviour
     public GameObject movementRangePrefab;
     public GameObject modulePrefab;
     public GameObject moduleInfoPanel;
+    public GameObject infoPanel;
+    public GameObject fightPanel;
+    public GameObject alertPanel;
+    public GameObject selectModuelPanel;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
     private List<PathNode> SelectedPath;
 
     public Transform ActionBar;
     public Transform StructureModuleBar;
-    public Transform ModuleBar;
+    public Transform ModuleGrid;
+    public Transform SelectedModuleGrid;
 
     public Sprite lockActionBar;
     public Sprite lockModuleBar;
@@ -35,6 +40,7 @@ public class GameManager : MonoBehaviour
     private Structure SelectedStructure;
     private List<Node> currentMovementRange = new List<Node>();
     private List<Module> currentModules = new List<Module>();
+    private List<Module> currentModulesForSelection = new List<Module>();
     internal List<Station> Stations = new List<Station>();
 
     private bool isMoving = false;
@@ -58,9 +64,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI TurnOrderText;
     public TextMeshProUGUI alertText;
-    public GameObject infoPanel;
-    public GameObject fightPanel;
-    public GameObject alertPanel;
+ 
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
@@ -234,8 +238,18 @@ public class GameManager : MonoBehaviour
     {
         if (SelectedStructure != null && MyStation.modules.Count > 0 && (SelectedStructure.attachedModules.Count+MyStation.actions.Where(x=>x.actionType == ActionType.AttachModule && x.selectedStructure.structureGuid == SelectedStructure.structureGuid).Count()) < SelectedStructure.maxAttachedModules && MyStation.stationId == SelectedStructure.stationId)
         {
-            QueueAction(ActionType.AttachModule);
-            ClearSelection();
+            ClearSelectableModules();
+            List<Guid> assignedModules = MyStation.actions.SelectMany(x => x.selectedModulesIds).ToList();
+            var availableModules = MyStation.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
+            foreach (var module in availableModules)
+            {
+                var selectedStructure = SelectedStructure;
+                var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
+                moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
+                moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
+                currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
+            }
+            ViewModuleSelection(true);
         }
     }
     //only call for queying up
@@ -245,7 +259,7 @@ public class GameManager : MonoBehaviour
         {
             List<Guid> assignedModules = station.actions.SelectMany(x => x.selectedModulesIds).ToList();
             List<Guid> availableModules = station.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).Select(x => x.moduleGuid).ToList();
-            if (station.modules.Count - assignedModules.Count >= modulesToGet)
+            if (availableModules.Count >= modulesToGet)
             {
                 return availableModules.GetRange(0, modulesToGet);
             }
@@ -427,11 +441,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null)
+    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null, Structure _structure = null)
     {
         if (MyStation.actions.Count < MyStation.maxActions)
         {
-            var structure = SelectedStructure ?? MyStation;
+            var structure = _structure ?? SelectedStructure ?? MyStation;
             var costOfAction = GetCostOfAction(actionType, structure, true);
             if(selectedModules == null)
                 selectedModules = GetAvailableModules(MyStation, costOfAction);
@@ -793,7 +807,7 @@ public class GameManager : MonoBehaviour
                     {
                         currentStructure.attachedModules.Add(selectedModule);
                         currentStructure.EditModule(selectedModule.type);
-                        currentStation.modules.Remove(currentStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                        ChargeModules(action);
                     }
                 }
             }
@@ -843,7 +857,7 @@ public class GameManager : MonoBehaviour
     private void ResetUI()
     {
         ClearActionBar();
-        SetModuleBar();
+        SetModuleGrid();
         ClearSelection();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
@@ -852,27 +866,42 @@ public class GameManager : MonoBehaviour
         UpdateFleetCostText();
     }
 
-    private void SetModuleBar()
+    private void SetModuleGrid()
     {
         ClearModules();
         foreach (var module in MyStation.modules)
         {
-            var moduleObject = Instantiate(modulePrefab, ModuleBar);
-            moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module));
+            var moduleObject = Instantiate(modulePrefab, ModuleGrid);
+            moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
             currentModules.Add(moduleObject.GetComponent<Module>());
         }
     }
 
-    private void SetModuleInfo(Module module)
+    private void SetModuleInfo(string effectText)
     {
-        moduleInfoValue.text = module.effectText;
+        moduleInfoValue.text = effectText;
         ViewModuleInfo(true);
+    } 
+    private void SetSelectedModule(Guid moduleGuid, Structure structure)
+    {
+        //if not already queued up
+        if (!MyStation.actions.Any(x => x.actionType == ActionType.GenerateModule && x.selectedModulesIds.Contains(moduleGuid)))
+        {
+            ViewModuleSelection(false);
+            QueueAction(ActionType.AttachModule, new List<Guid>() { moduleGuid }, structure);
+            ClearSelectableModules();
+            ClearSelection();
+        }
     }
 
     public void ViewModuleInfo(bool active)
     {
         moduleInfoPanel.SetActive(active);
+    }
+    public void ViewModuleSelection(bool active)
+    {
+        selectModuelPanel.SetActive(active);
     }
     private void ClearMovementRange()
     {
@@ -886,6 +915,10 @@ public class GameManager : MonoBehaviour
     private void ClearModules()
     {
         while (currentModules.Count > 0) { Destroy(currentModules[0].gameObject); currentModules.RemoveAt(0); }
+    } 
+    private void ClearSelectableModules()
+    {
+        while (currentModulesForSelection.Count > 0) { Destroy(currentModulesForSelection[0].gameObject); currentModulesForSelection.RemoveAt(0); }
     }
 
     private void ClearActionBar()
@@ -909,9 +942,9 @@ public class GameManager : MonoBehaviour
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
                     StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == MyStation.stationId);
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
-                    var module = structure.attachedModules[i];
+                    var moduleText = structure.attachedModules[i].effectText;
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() =>
-                        SetModuleInfo(module)
+                        SetModuleInfo(moduleText)
                     );
                 }
                 else
