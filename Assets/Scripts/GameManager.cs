@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
                         targetStructure = targetNode.structureOnPath;
                     }
                     //original click on fleet
-                    if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId && !MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure.structureGuid == targetStructure.structureGuid))
+                    if (targetStructure != null && SelectedStructure == null && targetStructure.stationId == MyStation.stationId)
                     {
                         SetTextValues(targetStructure);
                         SelectedStructure = targetStructure;
@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         //clicked on valid move
-                        if (targetNode != null && SelectedStructure != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode))
+                        if (targetNode != null && SelectedStructure != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureGuid == SelectedStructure.structureGuid))
                         {
                             //double click confirm
                             if (targetNode == SelectedNode)
