@@ -158,7 +158,7 @@ public class GridManager : MonoBehaviour
                 if (isObstacle)
                 {
                     obstacleCount++;
-                    //var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
+                    var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.parent = nodeParent;
@@ -317,11 +317,11 @@ public class GridManager : MonoBehaviour
     internal void GetScores()
     {
         Dictionary<int, int> scores = new Dictionary<int, int>();
-        scores.Add(-1, 0);
-        scores.Add(0, 0);
-        scores.Add(1, 0);
-        scores.Add(2, 0);
-        scores.Add(3, 0);
+        //-1 for unowned stations
+        for (int i = -1; i < GameManager.i.Stations.Count; i++)
+        {
+            scores.Add(i, 0);
+        }
         for (int i = 0; i < gridSize.x; i++)
         {
             for (int j = 0; j < gridSize.y; j++)
@@ -329,7 +329,9 @@ public class GridManager : MonoBehaviour
                 scores[grid[i, j].ownedById]++;
             }
         }
-        GameManager.i.Stations[0].score = scores[0];
-        GameManager.i.Stations[1].score = scores[1];
+        for (int i = 0; i < GameManager.i.Stations.Count; i++)
+        {
+            GameManager.i.Stations[i].score = scores[i];
+        }
     }
 }

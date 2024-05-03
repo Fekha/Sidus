@@ -15,35 +15,41 @@ public class SqlManager
     }
     public IEnumerator GetRoutine<T>(string url, Action<T> callback = null)
     {
-        using (UnityWebRequest request = UnityWebRequest.Get(apiUrl + url))
+        if (Globals.Online)
         {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
+            using (UnityWebRequest request = UnityWebRequest.Get(apiUrl + url))
             {
-                Debug.Log(request.error);
+                yield return request.SendWebRequest();
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(request.error);
+                }
+                else
+                {
+                    Debug.Log(request.downloadHandler.text);
+                    if (callback != null)
+                        callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
+                }
             }
-            else
-            {
-                Debug.Log(request.downloadHandler.text);
-                if (callback != null)
-                    callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
-            } 
         }
     }
     public IEnumerator PostRoutine<T>(string url, string ToPost, Action<T> callback = null)
     {
-        using (UnityWebRequest request = UnityWebRequest.Post(apiUrl + url, ToPost, "application/json"))
+        if (Globals.Online)
         {
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
+            using (UnityWebRequest request = UnityWebRequest.Post(apiUrl + url, ToPost, "application/json"))
             {
-                Debug.Log(request.error);
-            }
-            else
-            {
-                Debug.Log(request.downloadHandler.text);
-                if (callback != null)
-                    callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
+                yield return request.SendWebRequest();
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(request.error);
+                }
+                else
+                {
+                    Debug.Log(request.downloadHandler.text);
+                    if (callback != null)
+                        callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text));
+                }
             }
         }
     }
