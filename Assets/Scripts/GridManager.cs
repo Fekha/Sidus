@@ -150,14 +150,17 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < gridSize.y; y++)
             {
                 // Calculate the world position based on the size of the cellPrefab
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * cellPrefabSize.x) + Vector3.up * (y * cellPrefabSize.y);
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * 1.08f  * cellPrefabSize.x) + Vector3.up * (y * .85f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.53f * cellPrefabSize.x);
                 var isObstacle = false;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
                     if(!((x == 3 && (y == 3 || y == 4)) || (x == 4 && (y == 3 || y == 4))))
                         isObstacle = (x+y+y)%3 == 0;
                 if (isObstacle)
+                {
                     obstacleCount++;
-                var cell = Instantiate(isObstacle ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
+                    //var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
+                }
+                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.parent = nodeParent;
                 grid[x, y] = cell.AddComponent<PathNode>();
                 grid[x, y].InitializeNode(x, y, isObstacle);
@@ -229,7 +232,6 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < levelSize; i++)
             {
                 PathNode currentNode = queue.Dequeue();
-
                 nodesWithinRange.Add(currentNode);
 
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
@@ -262,23 +264,30 @@ public class GridManager : MonoBehaviour
 
     int GetDistance(PathNode nodeA, PathNode nodeB)
     {
-        int dstX = Mathf.Abs(nodeA.x - nodeB.x);
-        int dstY = Mathf.Abs(nodeA.y - nodeB.y);
+        int deltaX = Mathf.Abs(nodeA.x - nodeB.x);
+        int deltaY = Mathf.Abs(nodeA.y - nodeB.y);
+        int deltaZ = Mathf.Abs((-nodeA.x - nodeA.y) - (-nodeB.x - nodeB.y));
 
-        return dstX + dstY;
+        return Mathf.Max(deltaX, deltaY, deltaZ);
     }
 
     List<PathNode> GetNeighbors(PathNode node)
     {
         List<PathNode> neighbors = new List<PathNode>();
 
-        int[] xOffsets = { 0, 1, 0, -1 }; // Right, Up, Left, Down
-        int[] yOffsets = { 1, 0, -1, 0 }; // Right, Up, Left, Down
 
-        for (int i = 0; i < xOffsets.Length; i++)
+        int[] xEvenOffsets = { -1, 0, 1, 1, 0, -1 }; // Clockwise from top-left
+        int[] yEvenOffsets = { -1, -1, -1, 0, 1, 0 }; // Clockwise from top-left
+
+        int[] xOddOffsets = { -1, 0, 1, 1, 0, -1 }; // Clockwise from top-left
+        int[] yOddOffsets = { 0, -1, 0, 1, 1, 1 }; // Clockwise from top-left
+
+
+
+        for (int i = 0; i < 6; i++)
         {
-            int checkX = node.x + xOffsets[i];
-            int checkY = node.y + yOffsets[i];
+            int checkX = node.x + (!node.isEvenCol ? xEvenOffsets[i] : xOddOffsets[i]);
+            int checkY = node.y + (!node.isEvenCol ? yEvenOffsets[i] : yOddOffsets[i]);
 
             if (checkX >= 0 && checkX < gridSize.x && checkY >= 0 && checkY < gridSize.y)
             {
@@ -288,7 +297,6 @@ public class GridManager : MonoBehaviour
 
         return neighbors;
     }
-
     internal int CheckForWin()
     {
         GetScores();
