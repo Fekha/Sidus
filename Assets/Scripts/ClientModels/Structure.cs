@@ -20,7 +20,7 @@ public class Structure : Node
     internal int level;
     internal List<Module> attachedModules = new List<Module>();
     internal int maxAttachedModules = 0; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureGuid)
+    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, AttackType _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureGuid)
     {
         structureGuid = _structureGuid;
         x = _x;
@@ -31,7 +31,7 @@ public class Structure : Node
         maxRange = _range;
         range = _range;
         level = _level;
-        shield = (AttackType)_shield;
+        shield = _shield;
         electricAttack = _electricAttack;
         thermalAttack = _thermalAttack;
         voidAttack = _voidAttack;

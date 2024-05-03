@@ -11,7 +11,7 @@ public class Station : Structure
     internal int score = 0;
     internal bool defeated = false;
 
-    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureId)
+    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, AttackType _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureId)
     {
         stationId = GameManager.i.Stations.Count;
         GameManager.i.Stations.Add(this);

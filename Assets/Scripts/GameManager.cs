@@ -588,6 +588,10 @@ public class GameManager : MonoBehaviour
             {
                 structure.SetNodeColor();
             }
+            if (blockedMovement)
+            {
+                break;
+            }
             yield return new WaitForSeconds(.25f);
         }
         //character.movementRange -= path.Count();
@@ -666,7 +670,7 @@ public class GameManager : MonoBehaviour
     
     public void EndTurn()
     {
-        if (!isEndingTurn && HasGameStarted())
+        if (!isEndingTurn && HasGameStarted() && MyStation.actions.Count == MyStation.maxActions)
         {
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");

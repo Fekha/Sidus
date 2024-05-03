@@ -59,7 +59,7 @@ public class GridManager : MonoBehaviour
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
         // (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 8, 1, 3, 4, 5, 6, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 8, 1, AttackType.Void, 4, 5, 6, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, fleetGuid));
     }
 
@@ -100,7 +100,7 @@ public class GridManager : MonoBehaviour
             var fleet = Instantiate(fleetPrefab);
             fleet.transform.parent = characterParent;
             var fleetNode = fleet.AddComponent<Fleet>();
-            fleetNode.InitializeFleet(spawnX, spawnY, stationNode, stationNode.color, 5, 3, 0, 2, 3, 4, 1, fleetGuid);
+            fleetNode.InitializeFleet(spawnX, spawnY, stationNode, stationNode.color, 5, 3, AttackType.Electric, 2, 3, 4, 1, fleetGuid);
         }
         yield return new WaitForSeconds(.1f);
     }

@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 5281316649084455316}
   - component: {fileID: 2961744160400242527}
   m_Layer: 0
-  m_Name: Enemy (1)
+  m_Name: Fleet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -373,7 +373,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.0024, y: 0.0024, z: 0}
-  m_LocalScale: {x: 0.1570523, y: 0.1570523, z: 0}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2588552868371736413}
