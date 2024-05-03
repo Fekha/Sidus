@@ -1,3 +1,4 @@
+using StartaneousAPI.Models;
 using StarTaneousAPI.Models;
 using System;
 using System.Collections;
@@ -12,20 +13,25 @@ public class LoginManager : MonoBehaviour
     private SqlManager sql;
     public GameObject waitingPanel;
     public GameObject joinGamePanel;
+    public GameObject createGamePanel;
     public Transform findContent;
     public GameObject openGamePrefab;
     private TextMeshProUGUI waitingText;
+    private TextMeshProUGUI playersText;
     private List<GameObject> openGamesObjects = new List<GameObject>();
+    internal int MaxPlayers;
     // Start is called before the first frame update
     void Start()
     {
         sql = new SqlManager();
         Globals.localStationGuid = Guid.NewGuid();
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
+        playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
     }
     public void CreateGame()
     {
-        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Create?ClientId={Globals.localStationGuid}", SetMatchGuid));
+        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(new NewGame(Globals.localStationGuid, MaxPlayers));
+        StartCoroutine(sql.PostRoutine<NewGame>($"Game/Create?", stringToPost, SetMatchGuid));
     }
     public void ViewOpenGames(bool active)
     {
@@ -35,22 +41,39 @@ public class LoginManager : MonoBehaviour
         }
         joinGamePanel.SetActive(active);
     }
+    public void ViewGameCreation(bool active)
+    {
+        createGamePanel.SetActive(active);
+    }
+    public void EditMaxPlayers(bool plus)
+    {
+        if (plus && MaxPlayers < 4)
+        {
+            MaxPlayers++;
+        }
+        else if (!plus && MaxPlayers > 2)
+        {
+            MaxPlayers--;
+        }
+        playersText.text = $"{MaxPlayers}";
+    }
     public void FindGames()
     {
-        StartCoroutine(sql.GetRoutine<List<Guid>>($"Game/Find", GetAllMatches));
+        StartCoroutine(sql.GetRoutine<List<NewGame>>($"Game/Find", GetAllMatches));
     }
     public void JoinGame(Guid guid)
     {
-        StartCoroutine(sql.GetRoutine<Guid?>($"Game/Join?ClientId={Globals.localStationGuid}&GameId={guid}", SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<NewGame?>($"Game/Join?ClientId={Globals.localStationGuid}&GameId={guid}", SetMatchGuid));
     }
-    private void GetAllMatches(List<Guid> list)
+    private void GetAllMatches(List<NewGame> newGames)
     {
         ClearOpenGames();
-        foreach (var guid in list)
+        foreach (var game in newGames)
         {
             var prefab = Instantiate(openGamePrefab, findContent);
-            prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(guid));
-            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = guid.ToString().Substring(0, 6);
+            prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game.GameId));
+            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameId.ToString().Substring(0, 6);
+            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.PlayerCount}/{game.MaxPlayers}";
             openGamesObjects.Add(prefab);
         }
     }
@@ -59,18 +82,22 @@ public class LoginManager : MonoBehaviour
         while (openGamesObjects.Count > 0) { Destroy(openGamesObjects[0].gameObject); openGamesObjects.RemoveAt(0); }
     }
 
-    
-    private void SetMatchGuid(Guid? gameId)
+    private void SetMatchGuid(NewGame game)
     {
-        if (gameId != null)
+        if (game != null)
         {
-            Globals.GameId = (Guid)gameId;
+            Globals.GameId = game.GameId;
+            MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
-            waitingText.text = $"Waiting for another player to join game {Globals.GameId.ToString().Substring(0, 6)}....";
+            UpdateWaitingText(game.MaxPlayers - game.PlayerCount);
             StartCoroutine(GetStationIndex());
         }
     }
-
+    public void UpdateWaitingText(int players)
+    {
+        var plural = players == 1 ? "" : "s";
+        waitingText.text = $"Waiting for {players} more player{plural} to join game {Globals.GameId.ToString().Substring(0, 6)}....";
+    }
     private IEnumerator GetStationIndex()
     {
         while (Globals.Players == null)
@@ -83,20 +110,19 @@ public class LoginManager : MonoBehaviour
     {
         if (players != null)
         {
-            for (int i = 0; i < players.Length; i++)
-            {
-                if (players[i].StationId == Globals.localStationGuid)
+            if (players.Length == MaxPlayers) {
+                for (int i = 0; i < players.Length; i++)
                 {
-                    Globals.myStationIndex = i;
-                    Globals.localClient = players[i];
+                    if (players[i].StationGuid == Globals.localStationGuid)
+                    {
+                        Globals.localStationIndex = i;
+                    }
                 }
-                else
-                {
-                    Globals.enemyClient = players[i];
-                }
+                Globals.Players = players;
+                SceneManager.LoadScene(1);
+            } else {
+                UpdateWaitingText(MaxPlayers - players.Length);
             }
-            Globals.Players = players;
-            SceneManager.LoadScene(1);
         }
     }
 }

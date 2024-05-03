@@ -8,8 +8,6 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager i;
     public GameObject nodePrefab;
-    public GameObject enemyPrefab;
-    public GameObject enemyStationPrefab;
     public GameObject obsticalPrefab;
 
     public GameObject playerPrefab;
@@ -18,10 +16,16 @@ public class GridManager : MonoBehaviour
     private Transform characterParent;
     internal PathNode[,] grid;
     private Vector2 gridSize = new Vector2(8, 8);
-    internal int scoreToWin = 0;
+    internal int scoreToWin = 99;
+    public List<Color> playerColors;
+    public List<Color> tileColors;
     private void Awake()
     {
         i = this;
+        //Got colors from https://rgbcolorpicker.com/0-1
+        //Blue, Pink, Yellow, Red
+        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0.894f, 1), new Color(1, 0.757f, 0, 1), new Color(1, 0, 0, 1), };
+        tileColors = new List<Color>() { new Color(0, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.937f, 1), new Color(0.945f, 1, 0, 1), new Color(0.98f, 0.561f, 0.561f, 1),  };
     }
     void Start()
     {
@@ -36,43 +40,46 @@ public class GridManager : MonoBehaviour
     }
     private void CreateStation(int team)
     {
-        var spawnX = 1;
+        
+        var stationOfClient = team == Globals.localStationIndex;
+        string teamColor = "Blue";
+        GameObject stationPrefab = playerStationPrefab;
+        stationPrefab.transform.Find("Structure").GetComponent<SpriteRenderer>().color = playerColors[team];
+        Guid stationGuid = Globals.Players[team].StationGuid;
+        Guid fleetGuid = Globals.Players[team].FleetGuids[0];
+        int spawnX = 1;
         int spawnY = 5;
-        var stationOfClient = team == Globals.myStationIndex;
-        string teamColor = "Red";
-        GameObject stationPrefab = enemyStationPrefab;
-        Guid stationGuid = Globals.enemyClient.StationId;
-        Guid fleetGuid = Globals.enemyClient.FleetIds[0];
         if (team == 1)
         {
+            teamColor = "Pink";
             spawnX = 6;
             spawnY = 2;
         }
-        if (stationOfClient)
+        else if (team == 2)
         {
-            teamColor = "Green";
-            stationPrefab = playerStationPrefab;
-            stationGuid = Globals.localStationGuid;
-            fleetGuid = Globals.localClient.FleetIds[0];
+            teamColor = "Yellow";
+            spawnX = 2;
+            spawnY = 1;
+        }
+        else if (team == 3)
+        {
+            teamColor = "Red";
+            spawnX = 5;
+            spawnY = 6;
         }
         var station = Instantiate(stationPrefab);
         station.transform.parent = characterParent;
         var stationNode = station.AddComponent<Station>();
-        // (int)Random.Range(1, gridSize.x - 1);
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 8, 1, AttackType.Void, 4, 5, 6, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, AttackType.Void, 3, 4, 5, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, fleetGuid));
     }
 
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid)
     {
-        GameObject fleetPrefab = enemyPrefab;
-        if (stationNode.structureGuid == Globals.localStationGuid)
-        {
-            fleetPrefab = playerPrefab;
-        }
+        GameObject fleetPrefab = playerPrefab;
+        fleetPrefab.transform.Find("Structure").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
         int spawnX = stationNode.x;
-        int spawnY = stationNode.y;
-       
+        int spawnY = stationNode.y;     
         if (CanSpawnFleet(spawnX, spawnY - 1))
         {
             spawnY -= 1;
@@ -100,7 +107,7 @@ public class GridManager : MonoBehaviour
             var fleet = Instantiate(fleetPrefab);
             fleet.transform.parent = characterParent;
             var fleetNode = fleet.AddComponent<Fleet>();
-            fleetNode.InitializeFleet(spawnX, spawnY, stationNode, stationNode.color, 5, 3, AttackType.Electric, 2, 3, 4, 1, fleetGuid);
+            fleetNode.InitializeFleet(spawnX, spawnY, stationNode, stationNode.color, 3, 3, AttackType.None, 2, 3, 4, 1, fleetGuid);
         }
         yield return new WaitForSeconds(.1f);
     }
@@ -156,7 +163,8 @@ public class GridManager : MonoBehaviour
                 grid[x, y].InitializeNode(x, y, isObstacle);
             }
         }
-        scoreToWin = (int)(((gridSize.x * gridSize.y) - obstacleCount) * .66);
+        //(int)((((gridSize.x * gridSize.y) - obstacleCount) / Globals.Players.Count()) * 1.5);
+        scoreToWin = 42 - ((Globals.Players.Count()-1) * 7);
     }
 
     internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
@@ -284,7 +292,7 @@ public class GridManager : MonoBehaviour
     internal int CheckForWin()
     {
         GetScores();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < GameManager.i.Stations.Count; i++)
         {
             if (GameManager.i.Stations[i].score >= scoreToWin)
             {
@@ -304,6 +312,8 @@ public class GridManager : MonoBehaviour
         scores.Add(-1, 0);
         scores.Add(0, 0);
         scores.Add(1, 0);
+        scores.Add(2, 0);
+        scores.Add(3, 0);
         for (int i = 0; i < gridSize.x; i++)
         {
             for (int j = 0; j < gridSize.y; j++)

@@ -7,7 +7,6 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -63,17 +62,18 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI fightText;
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI TurnOrderText;
+    public TextMeshProUGUI ColorText;
     public TextMeshProUGUI alertText;
  
     internal List<Structure> AllStructures = new List<Structure>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
-    internal Station MyStation {get {return Stations[Globals.myStationIndex];}}
+    internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
     private SqlManager sql;
     private int TurnNumber = 0;
     private Turn[]? TurnsFromServer;
-    private int maxPlayers = 2;
+    //Got game icons from https://game-icons.net/
     private void Awake()
     {
         i = this;
@@ -91,6 +91,8 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
+        ColorText.text = $"You are {MyStation.color}";
+        ColorText.color = GridManager.i.playerColors[MyStation.stationId];
         ResetUI();
     }
     public void ViewFightPanel(bool active)
@@ -129,7 +131,7 @@ public class GameManager : MonoBehaviour
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
-        alertText = alertPanel.transform.Find("AlertText").GetComponent<TextMeshProUGUI>();
+        alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -389,12 +391,13 @@ public class GameManager : MonoBehaviour
         if (actionType == ActionType.UpgradeFleet)
             return nextLevel < Stations[structure.stationId].level;
         else
-            return nextLevel < 7;
+            return nextLevel < 6;
     }
 
     private bool CanQueueBuildFleet(Station station)
     {
-        return CanBuildAdditonalFleet(station) && GetAvailableModules(station, GetCostOfAction(ActionType.CreateFleet, station,true)) != null;
+        var cost = GetCostOfAction(ActionType.CreateFleet, station, true);
+        return CanBuildAdditonalFleet(station) && (GetAvailableModules(station, cost) != null || cost == 0);
     }
     private bool CanBuildAdditonalFleet(Station station)
     {
@@ -517,6 +520,7 @@ public class GameManager : MonoBehaviour
                 //if not ally, attack instead of move
                 if (structureOnPath.stationId != structure.stationId)
                 {
+                    structureOnPath.transform.Find("InCombat").gameObject.SetActive(true);
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
                     for (int attackType = 0; attackType <= (int)AttackType.Void; attackType++)
                     {
@@ -529,6 +533,7 @@ public class GameManager : MonoBehaviour
                     {
                         yield return new WaitForSeconds(.5f);
                     }
+                    structureOnPath.transform.Find("InCombat").gameObject.SetActive(false);
                 }
                 if (structure.hp <= 0)
                 {
@@ -620,13 +625,18 @@ public class GameManager : MonoBehaviour
             if (s1.shield != type)
             {
                 s1.hp -= s1Dmg;
-                if (type == AttackType.Electric)
-                    s2.electricAttack--;
-                else if (type == AttackType.Thermal)
-                    s2.electricAttack--;
-                else
-                    s2.voidAttack--;
-                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg} HP, {s2.structureName} expends 1 {type} attack.\n";
+                string expendsText = ", stations do not expend attack power.";
+                if (s2 is Fleet)
+                {
+                    if (type == AttackType.Electric)
+                        s2.electricAttack--;
+                    else if (type == AttackType.Thermal)
+                        s2.electricAttack--;
+                    else
+                        s2.voidAttack--;
+                    expendsText = $", {s2.structureName} expends 1 {type} attack.";
+                }
+                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg} HP{expendsText}\n";
             }
             else
             {
@@ -709,12 +719,12 @@ public class GameManager : MonoBehaviour
     private IEnumerator AutomateTurns(Turn[] turns)
     {
         ClearModules();
-        int c = TurnNumber % maxPlayers;
+        int c = TurnNumber % Stations.Count;
         for (int i = 0; i < 6; i++)
         {
-            for(int j = 0; j < maxPlayers; j++)
+            for(int j = 0; j < Stations.Count; j++)
             {
-                c = (c+j) % maxPlayers;
+                c = (c+j) % Stations.Count;
                 if (i < turns[c].Actions.Count)
                 {
                     if (turns[c].Actions[i] is object)
@@ -866,8 +876,7 @@ public class GameManager : MonoBehaviour
         ClearSelection();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
-        var firstText = MyStation.stationId == TurnNumber % maxPlayers ? "You" : "They";
-        TurnOrderText.text = $"{firstText} have the first action";
+        TurnOrderText.text = $"{Stations[TurnNumber % Stations.Count].color} has the first action";
         UpdateFleetCostText();
     }
 

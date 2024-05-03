@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dcf8e4a632bcd544ca14a82112cc5cf0
+guid: f4baa6317a43cd5439aea8e888d439c2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4360530552843628718
-    second: ship_0
+      213: -3878934256555427670
+    second: star-gate_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ship_0
+      name: star-gate_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 540
-        height: 540
+        width: 511
+        height: 511
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 25f8485b0984c73c0800000000000000
-      internalID: -4360530552843628718
+      spriteID: aa87bea58d14b2ac0800000000000000
+      internalID: -3878934256555427670
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      star-gate_0: -3878934256555427670
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

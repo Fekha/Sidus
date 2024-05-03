@@ -21,13 +21,13 @@ public class Module : MonoBehaviour
                 effectText = "+3 Thermal Attack \n +1 Electric Attack \n On Attach: Change Shield to Electric";
                 break;
             case 2:
-                effectText = "+4 Void Attack \n On Attach: Change Shield to Electric";
+                effectText = "+4 Void Attack \n On Attach: Change Shield to Void";
                 break;
             case 3:
-                effectText = "+1 Movement \n On Attach: Change Shield to Thermal";
+                effectText = "+1 Movement \n On Attach: Change Shield to Void";
                 break;
             case 4:
-                effectText = "+5 Max HP \n On Attach: Change Shield to Electric";
+                effectText = "+5 Max HP \n On Attach: Change Shield to Void";
                 break;
             case 5:
                 effectText = "+2 Void Attack \n +2 Thermal Attack \n +1 Electric Attack \n On Attach: Change Shield to Electric";
@@ -45,7 +45,34 @@ public class Module : MonoBehaviour
                 effectText = "+2 Electric Attack \n +1 Thermal Attack \n +2 Void Attack \n On Attach: Change Shield to Electric";
                 break;
             case 10:
-                effectText = "+3 Thermal Attack \n +1 Electric Attack \n +2 Void Attack \n On Attach: Change Shield to Electric";
+                effectText = "+3 Thermal Attack \n +1 Electric Attack \n +2 Void Attack";
+                break;
+            case 11:
+                effectText = "+3 Electric Attack \n +2 Void Attack";
+                break;
+            case 12:
+                effectText = "+3 Thermal Attack \n +2 Void Attack";
+                break;
+            case 13:
+                effectText = "+4 Void Attack";
+                break;
+            case 14:
+                effectText = "+1 Movement";
+                break;
+            case 15:
+                effectText = "+6 Max HP";
+                break;
+            case 16:
+                effectText = "+3 Void Attack \n +2 Thermal Attack";
+                break;
+            case 17:
+                effectText = "+3 Electric Attack \n +1 Void Attack \n +1 Thermal Attack";
+                break;
+            case 18:
+                effectText = "+3 Thermal Attack \n +1 Electric Attack \n +1 Void Attack";
+                break;
+            case 19:
+                effectText = "+3 Void Attack \n +1 Electric Attack \n +1 Thermal Attack";
                 break;
             default:
                 break;

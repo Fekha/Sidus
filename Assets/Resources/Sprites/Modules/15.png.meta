@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dcf8e4a632bcd544ca14a82112cc5cf0
+guid: bb7d438b81940874eadb70dbfbfc0985
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4360530552843628718
-    second: ship_0
+      213: -794825011739804795
+    second: mecha-head_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ship_0
+      name: mecha-head_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 540
-        height: 540
+        width: 511
+        height: 511
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 25f8485b0984c73c0800000000000000
-      internalID: -4360530552843628718
+      spriteID: 58b37acecd638f4f0800000000000000
+      internalID: -794825011739804795
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      mecha-head_0: -794825011739804795
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
