@@ -684,7 +684,7 @@ public class GameManager : MonoBehaviour
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(movementRangePrefab, node.transform.position, Quaternion.identity);
-            range.transform.parent = highlightParent;
+            range.transform.SetParent(highlightParent);
             var rangeComponent = range.AddComponent<Node>();
             rangeComponent.Initialize(node);
             currentMovementRange.Add(rangeComponent);

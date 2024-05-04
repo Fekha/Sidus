@@ -19,7 +19,7 @@ public class LoginManager : MonoBehaviour
     private TextMeshProUGUI waitingText;
     private TextMeshProUGUI playersText;
     private List<GameObject> openGamesObjects = new List<GameObject>();
-    internal int MaxPlayers;
+    internal int MaxPlayers = 2;
     // Start is called before the first frame update
     void Start()
     {
