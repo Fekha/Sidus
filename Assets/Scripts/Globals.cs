@@ -6,4 +6,5 @@ public static class Globals{
     internal static int localStationIndex;
     internal static Guid GameId;
     internal static Guid localStationGuid;
+    internal static bool Online = true;
 }

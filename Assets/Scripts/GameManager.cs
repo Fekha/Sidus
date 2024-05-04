@@ -1,4 +1,5 @@
 using StartaneousAPI.Models;
+using StarTaneousAPI.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -78,6 +79,18 @@ public class GameManager : MonoBehaviour
     {
         i = this;
         sql = new SqlManager();
+#if UNITY_EDITOR
+        if (Globals.Players == null) {
+            Globals.Online = false;
+            Globals.GameId = Guid.NewGuid();
+            Globals.localStationGuid = Guid.NewGuid();
+            Globals.localStationIndex = 0;
+            var player = new Player();
+            player.StationGuid = Globals.localStationGuid;
+            player.FleetGuids = new List<Guid>() { Guid.NewGuid() };
+            Globals.Players = new Player[1] { player };
+        }
+#endif
     }
     void Start()
     {
@@ -111,7 +124,7 @@ public class GameManager : MonoBehaviour
     }
     public bool HasGameStarted()
     {
-        return Stations.Count > 1 && Globals.GameId != Guid.Empty;
+        return Stations.Count > 0 && Globals.GameId != Guid.Empty;
     }
 
     private void FindUI()
@@ -671,7 +684,7 @@ public class GameManager : MonoBehaviour
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(movementRangePrefab, node.transform.position, Quaternion.identity);
-            range.transform.parent = highlightParent;
+            range.transform.SetParent(highlightParent);
             var rangeComponent = range.AddComponent<Node>();
             rangeComponent.Initialize(node);
             currentMovementRange.Add(rangeComponent);

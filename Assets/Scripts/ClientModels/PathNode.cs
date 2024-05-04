@@ -9,8 +9,10 @@ public class PathNode : MonoBehaviour
     public int x;
     public int y;
     public int fCost { get { return gCost + hCost; } }
+    public bool isEvenCol { get { return x % 2 == 0; } }
     public Structure structureOnPath;
     public PathNode parent;
+
     public int ownedById;
     public void InitializeNode(int _x, int _y, bool obstacle)
     {
