@@ -275,16 +275,19 @@ public class GridManager : MonoBehaviour
     {
         List<PathNode> neighbors = new List<PathNode>();
 
-        int[] xEvenOffsets = { 0, 1, 1, 1, 0, -1 }; // Clockwise from top-left
-        int[] yEvenOffsets = { 1, 1, 0, -1, 1, 0 }; // Clockwise from top-left
+        int[] xEvenOffsets = { 1, 1, 0, -1, 0, 1 }; // Clockwise from top-left
+        int[] yEvenOffsets = { 0, -1, -1, 0, 1, 1 }; // Clockwise from top-left
 
-        int[] xOddOffsets = { -1, 0, 1, 0, -1, -1 }; // Clockwise from top-left
-        int[] yOddOffsets = { 1, 1, 0, -1, -1, 0 }; // Clockwise from top-left
+        int[] xOddOffsets = { 1, 0, -1, -1, -1, 0 }; // Clockwise from top-left
+        int[] yOddOffsets = { 0, -1, -1, 0, 1, 1 }; // Clockwise from top-left
+
+        int[] xOffset = node.isEvenCol ? xEvenOffsets : xOddOffsets;
+        int[] yOffset = node.isEvenCol ? yEvenOffsets : yOddOffsets;
 
         for (int i = 0; i < 6; i++)
         {
-            int checkX = node.x + (!node.isEvenCol ? xEvenOffsets[i] : xOddOffsets[i]);
-            int checkY = node.y + (!node.isEvenCol ? yEvenOffsets[i] : yOddOffsets[i]);
+            int checkX = node.x + xOffset[i];
+            int checkY = node.y + yOffset[i];
 
             if (checkX >= 0 && checkX < gridSize.x && checkY >= 0 && checkY < gridSize.y)
             {
@@ -294,6 +297,7 @@ public class GridManager : MonoBehaviour
 
         return neighbors;
     }
+
     internal int CheckForWin()
     {
         GetScores();
