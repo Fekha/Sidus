@@ -275,14 +275,11 @@ public class GridManager : MonoBehaviour
     {
         List<PathNode> neighbors = new List<PathNode>();
 
+        int[] xEvenOffsets = { 1, 0, -1, -1, -1, 0 }; // Clockwise from top-left
+        int[] yEvenOffsets = { 0, -1, -1, 0, 1, 1 }; // Clockwise from top-left
 
-        int[] xEvenOffsets = { -1, 0, 1, 1, 0, -1 }; // Clockwise from top-left
-        int[] yEvenOffsets = { -1, -1, -1, 0, 1, 0 }; // Clockwise from top-left
-
-        int[] xOddOffsets = { -1, 0, 1, 1, 0, -1 }; // Clockwise from top-left
-        int[] yOddOffsets = { 0, -1, 0, 1, 1, 1 }; // Clockwise from top-left
-
-
+        int[] xOddOffsets = { 1, 1, 0, -1, 0, 1 }; // Clockwise from top-left
+        int[] yOddOffsets = { 0, -1, -1, 0, 1, 1 }; // Clockwise from top-left
 
         for (int i = 0; i < 6; i++)
         {
