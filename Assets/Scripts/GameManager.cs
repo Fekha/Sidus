@@ -246,7 +246,7 @@ public class GameManager : MonoBehaviour
             {
                 var selectedStructure = SelectedStructure;
                 var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
-                moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
+                moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
                 moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
                 moduleObject.transform.Find("Queued").gameObject.SetActive(false);
                 currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
