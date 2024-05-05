@@ -250,7 +250,7 @@ public class GridManager : MonoBehaviour
         return Mathf.Max(deltaX, deltaY, deltaZ);
     }
 
-    List<PathNode> GetNeighbors(PathNode node)
+    internal List<PathNode> GetNeighbors(PathNode node)
     {
         List<PathNode> neighbors = new List<PathNode>();
 

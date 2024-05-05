@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
     public void ShowAlertPanel(int unlock)
     {
         alertPanel.SetActive(true);
-        alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} tiles.";
+        alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} hexes.";
     }
     public void HideAlertPanel()
     {
@@ -527,66 +527,95 @@ public class GameManager : MonoBehaviour
             bool blockedMovement = false;
             if (node.structureOnPath != null)
             {
+                blockedMovement = true;
                 var structureOnPath = node.structureOnPath;
-                var beforeStats = $"Pre-fight stats:\n{structure.structureName}: HP {structure.hp}, Electric {structure.electricAttack}, Thermal {structure.thermalAttack}, Void {structure.voidAttack}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Electric {structureOnPath.electricAttack}, Thermal {structureOnPath.thermalAttack}, Void {structureOnPath.voidAttack}.";
-                var duringFightText = "";
-                //if not ally, attack instead of move
+                //if enemy, attack instead of move, then move if you destroy them
                 if (structureOnPath.stationId != structure.stationId)
                 {
-                    structureOnPath.transform.Find("InCombat").gameObject.SetActive(true);
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
+                    structureOnPath.transform.Find("InCombat").gameObject.SetActive(true);
+                    var supportingFleets = GridManager.i.GetNeighbors(node).Select(x=>x.structureOnPath).Where(x=>x != null && x.structureGuid != structureOnPath.structureGuid);
+                    int s1sElectric = 0;
+                    int s2sElectric = 0;
+                    int s1sThermal = 0;
+                    int s2sThermal = 0;
+                    int s1sVoid = 0;
+                    int s2sVoid = 0;
+                    foreach (var supportFleet in supportingFleets)
+                    {
+                        if (supportFleet.stationId == MyStation.stationId)
+                        {
+                            s1sElectric += Convert.ToInt32(Math.Floor(supportFleet.electricAttack * .5));
+                            s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
+                            s1sVoid += Convert.ToInt32(Math.Floor(supportFleet.voidAttack * .5));
+                        }
+                        else
+                        {
+                            s2sElectric += Convert.ToInt32(Math.Floor(supportFleet.electricAttack * .5));
+                            s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
+                            s2sVoid += Convert.ToInt32(Math.Floor(supportFleet.voidAttack * .5));
+                        }
+                    }
+                    string s1sElectricText = s1sElectric > 0 ? $"(+{s1sElectric})" : "";
+                    string s1sThermalText = s1sThermal > 0 ? $"(+{s1sThermal})" : "";
+                    string s1sVoidText = s1sVoid > 0 ? $"(+{s1sVoid})" : "";
+                    string s2sElectricText = s2sElectric > 0 ? $"(+{s2sElectric})" : "";
+                    string s2sThermalText = s2sThermal > 0 ? $"(+{s2sThermal})" : "";
+                    string s2sVoidText = s2sVoid > 0 ? $"(+{s2sVoid})" : "";                    
+                    string beforeStats = $"Pre-fight stats: \n{structure.structureName}: HP {structure.hp}, Electric {structure.electricAttack}{s1sElectricText}, Thermal {structure.thermalAttack}{s1sThermalText}, Void {structure.voidAttack}{s1sVoidText}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Electric {structureOnPath.electricAttack}{s2sElectricText}, Thermal {structureOnPath.thermalAttack}{s2sThermalText}, Void {structureOnPath.voidAttack}{s2sVoidText}.";
+                    string duringFightText = "";
                     for (int attackType = 0; attackType <= (int)AttackType.Void; attackType++)
                     {
                         if (structure.hp > 0 && structureOnPath.hp > 0)
-                            duringFightText += Fight(structure, structureOnPath, (AttackType)attackType);
+                            duringFightText += Fight(structure, structureOnPath, (AttackType)attackType, s1sElectric, s1sThermal, s1sVoid, s2sElectric, s2sThermal, s2sVoid);
                     }
-                    fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats:\n{structure.structureName}: HP {structure.hp}, Electric {structure.electricAttack}, Thermal {structure.thermalAttack}, Void {structure.voidAttack}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Electric {structureOnPath.electricAttack}, Thermal {structureOnPath.thermalAttack}, Void {structureOnPath.voidAttack}.";
+                    fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats: \n{structure.structureName}: HP {structure.hp}\n{structureOnPath.structureName}: HP {structureOnPath.hp}";
                     ViewFightPanel(true);
                     while (fightPanel.activeInHierarchy)
                     {
                         yield return new WaitForSeconds(.5f);
                     }
                     structureOnPath.transform.Find("InCombat").gameObject.SetActive(false);
-                }
-                if (structure.hp <= 0)
-                {
-                    Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
-                    if (structureOnPath is Fleet) {
-                        if (structureOnPath.hp > 0)
+                    if (structure.hp <= 0)
+                    {
+                        Debug.Log($"{structureOnPath.structureName} destroyed {structure.structureName}");
+                        if (structureOnPath is Fleet)
                         {
-                            LevelUpStructure(structureOnPath as Fleet);
+                            if (structureOnPath.hp > 0)
+                            {
+                                LevelUpStructure(structureOnPath as Fleet);
+                            }
                         }
+                        if (structure is Station)
+                        {
+                            (structure as Station).defeated = true;
+                        }
+                        else if (structure is Fleet)
+                        {
+                            Stations[structure.stationId].fleets.Remove(structure as Fleet);
+                        }
+                        Destroy(structure.gameObject);
                     }
-                    if (structure is Station)
+                    if (structureOnPath.hp > 0)
                     {
-                        (structure as Station).defeated = true;
+                        //even if allied don't move through, don't feel like doing recursive checks right now
+                        Debug.Log($"{structure.structureName} movement was blocked by {structureOnPath.structureName}");
                     }
-                    else if (structure is Fleet)
+                    else
                     {
-                        Stations[structure.stationId].fleets.Remove(structure as Fleet);
-                    }
-                    Destroy(structure.gameObject);
-                    blockedMovement = true; // you're dead
-                }
-                if (structureOnPath.hp > 0)
-                {
-                    //even if allied don't move through, don't feel like doing recursive checks right now
-                    Debug.Log($"{structure.structureName} movement was blocked by {structureOnPath.structureName}");
-                    blockedMovement = true; // they aren't dead
-                }
-                else
-                {
-                    Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
-                    Destroy(structureOnPath.gameObject); //they are dead
-                    if (structure is Fleet)
-                        LevelUpStructure(structure as Fleet);
-                    if (structureOnPath is Station)
-                    {
-                        (structureOnPath as Station).defeated = true;
-                    }
-                    else if (structureOnPath is Fleet)
-                    {
-                        Stations[structureOnPath.stationId].fleets.Remove(structureOnPath as Fleet);
+                        Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
+                        Destroy(structureOnPath.gameObject); //they are dead
+                        if (structure is Fleet)
+                            LevelUpStructure(structure as Fleet);
+                        if (structureOnPath is Station)
+                        {
+                            (structureOnPath as Station).defeated = true;
+                        }
+                        else if (structureOnPath is Fleet)
+                        {
+                            Stations[structureOnPath.stationId].fleets.Remove(structureOnPath as Fleet);
+                        }
+                        blockedMovement = false;
                     }
                 }
             }
@@ -618,38 +647,26 @@ public class GameManager : MonoBehaviour
         structure.currentPathNode.structureOnPath = structure;
     }
 
-    private string Fight(Structure s1, Structure s2, AttackType type)
+    private string Fight(Structure s1, Structure s2, AttackType type, int s1sElectric, int s1sThermal, int s1sVoid, int s2sElectric, int s2sThermal, int s2sVoid)
     {
-        int s1Dmg = s2.voidAttack - s1.voidAttack;
-        int s2Dmg = s1.voidAttack - s2.voidAttack;
+        int s1Dmg = (s2.voidAttack+s2sVoid) - (s1.voidAttack+s1sVoid);
+        int s2Dmg = (s1.voidAttack+s1sVoid) - (s2.voidAttack+s2sVoid);
         if (type == AttackType.Electric)
         {
-            s1Dmg = s2.electricAttack - s1.electricAttack;
-            s2Dmg = s1.electricAttack - s2.electricAttack;
+            s1Dmg = (s2.electricAttack+s2sElectric) - (s1.electricAttack+s1sElectric);
+            s2Dmg = (s1.electricAttack+s1sElectric) - (s2.electricAttack+s2sElectric);
         }
         else if (type == AttackType.Thermal)
         {
-            s1Dmg = s2.thermalAttack - s1.thermalAttack;
-            s2Dmg = s1.thermalAttack - s2.thermalAttack;
+            s1Dmg = (s2.thermalAttack+s2sThermal) - (s1.thermalAttack+s1sThermal);
+            s2Dmg = (s1.thermalAttack+s1sThermal) - (s2.thermalAttack+s2sThermal);
         }
-
         if (s1Dmg > 0)
         {
             if (s1.shield != type)
             {
                 s1.hp -= s1Dmg;
-                string expendsText = ", stations do not expend attack power.";
-                if (s2 is Fleet)
-                {
-                    if (type == AttackType.Electric)
-                        s2.electricAttack--;
-                    else if (type == AttackType.Thermal)
-                        s2.electricAttack--;
-                    else
-                        s2.voidAttack--;
-                    expendsText = $", {s2.structureName} expends 1 {type} attack.";
-                }
-                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg} HP{expendsText}\n";
+                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg}";
             }
             else
             {
@@ -661,13 +678,7 @@ public class GameManager : MonoBehaviour
             if (s2.shield != type)
             {
                 s2.hp -= s2Dmg;
-                if (type == AttackType.Electric)
-                    s1.electricAttack--;
-                else if (type == AttackType.Thermal)
-                    s1.electricAttack--;
-                else
-                    s1.voidAttack--;
-                return $"{type.ToString()} Phase: {s2.structureName} lost {s2Dmg} HP, {s1.structureName} expends 1 {type} attack.\n";
+                return $"{type.ToString()} Phase: {s2.structureName} lost {s2Dmg}";
             }
             else
             {
@@ -888,8 +899,13 @@ public class GameManager : MonoBehaviour
         SetModuleGrid();
         ClearSelection();
         GridManager.i.GetScores();
-        ScoreToWinText.text = $"Tiles to win: {MyStation.score}/{GridManager.i.scoreToWin}";
-        TurnOrderText.text = $"{Stations[TurnNumber % Stations.Count].color} has the first action";
+        ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
+        TurnOrderText.text = $"Turn Order: ";
+        for (int i = 0; i < Stations.Count; i++)
+        {
+            TurnOrderText.text += Stations[(TurnNumber+i) % Stations.Count].color;
+            TurnOrderText.text += i == Stations.Count - 1 ? "." : ", ";
+        }
         UpdateFleetCostText();
     }
 
