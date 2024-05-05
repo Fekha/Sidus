@@ -732,24 +732,24 @@ public class GameManager : MonoBehaviour
     private IEnumerator AutomateTurns(Turn[] turns)
     {
         ClearModules();
-        int c = TurnNumber % Stations.Count;
         for (int i = 0; i < 6; i++)
         {
-            for(int j = 0; j < Stations.Count; j++)
+            int c = TurnNumber % Stations.Count;
+            for (int j = 0; j < Stations.Count; j++)
             {
-                c = (c+j) % Stations.Count;
-                if (i < turns[c].Actions.Count)
+                int k = (c+j) % Stations.Count;
+                if (i < turns[k].Actions.Count)
                 {
-                    if (turns[c].Actions[i] is object)
+                    if (turns[k].Actions[i] is object)
                     {
-                        var action = new Action(turns[c].Actions[i]);
-                        turnValue.text = $"{Stations[c].color} action {i + 1}: {action.actionType}";
-                        Debug.Log($"Perfoming {Stations[c].color}'s action {i + 1}: {action.actionType}");
+                        var action = new Action(turns[k].Actions[i]);
+                        turnValue.text = $"{Stations[k].color} action {i + 1}: {action.actionType}";
+                        Debug.Log($"Perfoming {Stations[k].color}'s action {i + 1}: {action.actionType}");
                         yield return StartCoroutine(PerformAction(action));
                     }
                     else
                     {
-                        turnValue.text = $"{Stations[c].color} action {i + 1}: No Action";
+                        turnValue.text = $"{Stations[k].color} action {i + 1}: No Action";
                     }
                     yield return new WaitForSeconds(1f);
                 }

@@ -78,43 +78,22 @@ public class GridManager : MonoBehaviour
     {
         GameObject fleetPrefab = playerPrefab;
         fleetPrefab.transform.Find("Structure").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
-        int spawnX = stationNode.x;
-        int spawnY = stationNode.y;     
-        if (CanSpawnFleet(spawnX, spawnY - 1))
-        {
-            spawnY -= 1;
-        }
-        else if (CanSpawnFleet(spawnX, spawnY + 1))
-        {
-            spawnY += 1;
-        }
-        else if (CanSpawnFleet(spawnX - 1, spawnY))
-        {
-            spawnX -= 1;
-        }
-        else if (CanSpawnFleet(spawnX + 1, spawnY))
-        {
-            spawnX += 1;
-        }
-        else
-        {
-            spawnX = -1;
-            spawnY = -1;
-            Debug.Log("Failed to find valid spawn location");
-        }
-        if (spawnX != -1 && spawnY != -1)
-        {
-            var fleet = Instantiate(fleetPrefab);
-            fleet.transform.SetParent(characterParent);
-            var fleetNode = fleet.AddComponent<Fleet>();
-            fleetNode.InitializeFleet(spawnX, spawnY, stationNode, stationNode.color, 3, 3, AttackType.None, 2, 3, 4, 1, fleetGuid);
+        var hexesNearby = GetNeighbors(stationNode.currentPathNode);
+        foreach(var hex in hexesNearby) {
+            if (CanSpawnFleet(hex.x, hex.y))
+            {
+                var fleet = Instantiate(fleetPrefab);
+                fleet.transform.SetParent(characterParent);
+                var fleetNode = fleet.AddComponent<Fleet>();
+                fleetNode.InitializeFleet(hex.x, hex.y, stationNode, stationNode.color, 3, 3, AttackType.None, 2, 3, 4, 1, fleetGuid);
+                break;
+            }
         }
         yield return new WaitForSeconds(.1f);
     }
     bool CanSpawnFleet(int x, int y)
     {
-        if (IsInTheBox(x, y)) {
-
+        if (IsInGridBounds(x, y)) {
             if (grid[x, y].structureOnPath == null && !grid[x, y].isObstacle)
             {
                 Debug.Log($"Can Spawn at {x},{y}");
@@ -130,7 +109,7 @@ public class GridManager : MonoBehaviour
         return false;
         
     }
-    bool IsInTheBox(int x, int y)
+    bool IsInGridBounds(int x, int y)
     {
         if (x >= 0 && y >= 0 && x < gridSize.x && y < gridSize.y)
         {
@@ -289,7 +268,7 @@ public class GridManager : MonoBehaviour
             int checkX = node.x + xOffset[i];
             int checkY = node.y + yOffset[i];
 
-            if (checkX >= 0 && checkX < gridSize.x && checkY >= 0 && checkY < gridSize.y)
+            if (IsInGridBounds(checkX, checkY))
             {
                 neighbors.Add(grid[checkX, checkY]);
             }
