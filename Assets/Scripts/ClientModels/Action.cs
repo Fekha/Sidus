@@ -8,13 +8,13 @@ using static GameManager;
 public class Action : MonoBehaviour
 {
     public ActionType actionType;
-    public Structure selectedStructure;
+    public Unit selectedStructure;
     public List<Guid> selectedModulesIds;
     public List<PathNode> selectedPath;
     public int generatedModuleId;
     public Guid generatedGuid;
 
-    public Action(ActionType _actionType, Structure _selectedFleet, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
+    public Action(ActionType _actionType, Unit _selectedFleet, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
     {
         actionType = _actionType;
         selectedStructure = _selectedFleet;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class Station : Structure
+public class Station : Unit
 {
     internal List<Action> actions = new List<Action>();
     internal List<Fleet> fleets = new List<Fleet>();

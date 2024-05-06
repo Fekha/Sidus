@@ -10,7 +10,7 @@ public class PathNode : MonoBehaviour
     public int y;
     public int fCost { get { return gCost + hCost; } }
     public bool isEvenCol { get { return y % 2 == 0; } }
-    public Structure structureOnPath;
+    public Unit structureOnPath;
     public PathNode parent;
 
     public int ownedById;

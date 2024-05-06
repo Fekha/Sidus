@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     public Sprite attachModuleBar;
 
     private PathNode SelectedNode;
-    private Structure SelectedStructure;
+    private Unit SelectedStructure;
     private List<Node> currentMovementRange = new List<Node>();
     private List<Module> currentModules = new List<Module>();
     private List<Module> currentModulesForSelection = new List<Module>();
@@ -54,10 +54,12 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI levelValue;
     private TextMeshProUGUI hpValue;
     private TextMeshProUGUI rangeValue;
-    private TextMeshProUGUI shieldValue;
-    private TextMeshProUGUI kineticValue;
-    private TextMeshProUGUI thermalValue;
-    private TextMeshProUGUI explosiveValue;
+    private TextMeshProUGUI kineticAttackValue;
+    private TextMeshProUGUI thermalAttackValue;
+    private TextMeshProUGUI explosiveAttackValue;
+    //private TextMeshProUGUI kineticArmorValue;
+    //private TextMeshProUGUI thermalArmorValue;
+    //private TextMeshProUGUI explosiveArmorValue;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI moduleInfoValue;
     private TextMeshProUGUI fightText;
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI alertText;
  
-    internal List<Structure> AllStructures = new List<Structure>();
+    internal List<Unit> AllStructures = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
     internal int winner = -1;
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
@@ -134,10 +136,9 @@ public class GameManager : MonoBehaviour
         levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
         hpValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
-        shieldValue = infoPanel.transform.Find("ShieldValue").GetComponent<TextMeshProUGUI>();
-        kineticValue = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
-        thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
-        explosiveValue = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
+        kineticAttackValue = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
+        thermalAttackValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
+        explosiveAttackValue = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
@@ -158,7 +159,7 @@ public class GameManager : MonoBehaviour
                 if (hit.collider != null && !isMoving)
                 {
                     PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                    Structure targetStructure = null;
+                    Unit targetStructure = null;
                     if (targetNode != null && targetNode.structureOnPath != null)
                     {
                         targetStructure = targetNode.structureOnPath;
@@ -305,16 +306,18 @@ public class GameManager : MonoBehaviour
         ViewStructureInformation(false);
     }
 
-    public void SetTextValues(Structure structure)
+    public void SetTextValues(Unit structure)
     {
         nameValue.text = structure.structureName;
         levelValue.text = structure.level.ToString();
         hpValue.text = structure.hp + "/" + structure.maxHp;
         rangeValue.text = structure.maxRange.ToString();
-        kineticValue.text = structure.kineticAttack.ToString();
-        thermalValue.text = structure.thermalAttack.ToString();
-        explosiveValue.text = structure.explosiveAttack.ToString();
-        shieldValue.text = structure.shield.ToString();
+        kineticAttackValue.text = structure.kineticAttack.ToString();
+        thermalAttackValue.text = structure.thermalAttack.ToString();
+        explosiveAttackValue.text = structure.explosiveAttack.ToString();
+        //kineticArmorValue.text = structure.kineticAttack.ToString();
+        //thermalArmorValue.text = structure.thermalAttack.ToString();
+        //explosiveArmorValue.text = structure.explosiveAttack.ToString();
         var actionType = structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
         if (structure.stationId == MyStation.stationId)
@@ -389,15 +392,15 @@ public class GameManager : MonoBehaviour
             QueueAction(actionType);
         }
     }
-    private bool CanQueueUpgrade(Structure structure, ActionType actionType)
+    private bool CanQueueUpgrade(Unit structure, ActionType actionType)
     {
         return CanLevelUp(structure, actionType, true) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure, true)) != null;
     }
-    private bool CanPerformUpgrade(Structure structure, ActionType actionType)
+    private bool CanPerformUpgrade(Unit structure, ActionType actionType)
     {
         return CanLevelUp(structure, actionType, false) && Stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
     }
-    private bool CanLevelUp(Structure structure, ActionType actionType, bool countQueue)
+    private bool CanLevelUp(Unit structure, ActionType actionType, bool countQueue)
     {
         var countingQueue = countQueue ? Stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count() : 0;
         var nextLevel = (structure.level + countingQueue);
@@ -420,7 +423,7 @@ public class GameManager : MonoBehaviour
     {
         return station.fleets.Count < station.maxFleets && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
     }
-    private int GetCostOfAction(ActionType actionType, Structure structure, bool countQueue)
+    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue)
     {
         var station = Stations[structure.stationId];
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedStructure.structureGuid == structure.structureGuid).Count() : 0;
@@ -454,7 +457,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null, Structure _structure = null)
+    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null, Unit _structure = null)
     {
         if (MyStation.actions.Count < MyStation.maxActions)
         {
@@ -500,7 +503,7 @@ public class GameManager : MonoBehaviour
         ClearSelection();
     }
 
-    private IEnumerator MoveStructure(Structure selectedStructure, List<PathNode> selectedPath)
+    private IEnumerator MoveStructure(Unit selectedStructure, List<PathNode> selectedPath)
     {
         isMoving = true;
         if (selectedStructure != null && selectedPath != null && selectedPath.Count > 0 && selectedPath.Count <= selectedStructure.getMaxMovementRange())
@@ -516,7 +519,7 @@ public class GameManager : MonoBehaviour
         isMoving = false;
     }
 
-    private IEnumerator MoveOnPath(Structure structure, List<PathNode> path)
+    private IEnumerator MoveOnPath(Unit structure, List<PathNode> path)
     {
         int i = 0;
         structure.currentPathNode.structureOnPath = null;
@@ -534,7 +537,7 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
                     structureOnPath.transform.Find("InCombat").gameObject.SetActive(true);
-                    var supportingFleets = GridManager.i.GetNeighbors(node).Select(x=>x.structureOnPath).Where(x=>x != null && x.structureGuid != structureOnPath.structureGuid);
+                    var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.structureGuid != structureOnPath.structureGuid);
                     int s1sKinetic = 0;
                     int s2sKinetic = 0;
                     int s1sThermal = 0;
@@ -561,8 +564,12 @@ public class GameManager : MonoBehaviour
                     string s1sExplosiveText = s1sExplosive > 0 ? $"(+{s1sExplosive})" : "";
                     string s2sKineticText = s2sKinetic > 0 ? $"(+{s2sKinetic})" : "";
                     string s2sThermalText = s2sThermal > 0 ? $"(+{s2sThermal})" : "";
-                    string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";                    
-                    string beforeStats = $"Pre-fight stats: \n{structure.structureName}: HP {structure.hp}, Kinetic {structure.kineticAttack}{s1sKineticText}, Thermal {structure.thermalAttack}{s1sThermalText}, Explosive {structure.explosiveAttack}{s1sExplosiveText}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Kinetic {structureOnPath.kineticAttack}{s2sKineticText}, Thermal {structureOnPath.thermalAttack}{s2sThermalText}, Explosive {structureOnPath.explosiveAttack}{s2sExplosiveText}.";
+                    string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";
+                    string beforeStats = $"Pre-fight stats: \n{structure.structureName}: {structure.hp} HP." +
+                        $"\n Stats: {structure.kineticAttack}{s1sKineticText} Kinetic, {structure.thermalAttack}{s1sThermalText} Thermal, {structure.explosiveAttack}{s1sExplosiveText} Explosive." +
+                        $"\n\n {structureOnPath.structureName}: {structureOnPath.hp} HP." +
+                        $"\n Stats: {structureOnPath.kineticAttack}{s2sKineticText} Kinetic, {structureOnPath.thermalAttack}{s2sThermalText} Thermal, {structureOnPath.explosiveAttack}{s2sExplosiveText} Explosive.";
+
                     string duringFightText = "";
                     for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
                     {
@@ -583,7 +590,7 @@ public class GameManager : MonoBehaviour
                         {
                             if (structureOnPath.hp > 0)
                             {
-                                LevelUpStructure(structureOnPath as Fleet);
+                                LevelUpUnit(structureOnPath as Fleet);
                             }
                         }
                         if (structure is Station)
@@ -606,7 +613,7 @@ public class GameManager : MonoBehaviour
                         Debug.Log($"{structure.structureName} destroyed {structureOnPath.structureName}");
                         Destroy(structureOnPath.gameObject); //they are dead
                         if (structure is Fleet)
-                            LevelUpStructure(structure as Fleet);
+                            LevelUpUnit(structure as Fleet);
                         if (structureOnPath is Station)
                         {
                             (structureOnPath as Station).defeated = true;
@@ -616,6 +623,19 @@ public class GameManager : MonoBehaviour
                             Stations[structureOnPath.stationId].fleets.Remove(structureOnPath as Fleet);
                         }
                         blockedMovement = false;
+                    }
+                }
+                else //if ally, and theres room after, move through.
+                {
+                    if (path.Count != i)
+                    {
+                        for (int j = i; j < path.Count; j++)
+                        {
+                            if (path[j].structureOnPath == null)
+                            {
+                                blockedMovement = false;
+                            }
+                        }
                     }
                 }
             }
@@ -647,43 +667,37 @@ public class GameManager : MonoBehaviour
         structure.currentPathNode.structureOnPath = structure;
     }
 
-    private string Fight(Structure s1, Structure s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
+    private string Fight(Unit s1, Unit s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
     {
         int s1Dmg = (s2.explosiveAttack+s2sExplosive) - (s1.explosiveAttack+s1sExplosive);
         int s2Dmg = (s1.explosiveAttack+s1sExplosive) - (s2.explosiveAttack+s2sExplosive);
+        int s1Amr = s1.explosiveArmor;
+        int s2Amr = s2.explosiveArmor;
         if (type == AttackType.Kinetic)
         {
             s1Dmg = (s2.kineticAttack+s2sKinetic) - (s1.kineticAttack+s1sKinetic);
             s2Dmg = (s1.kineticAttack+s1sKinetic) - (s2.kineticAttack+s2sKinetic);
+            s1Amr = s1.kineticArmor;
+            s2Amr = s2.kineticArmor;
         }
         else if (type == AttackType.Thermal)
         {
             s1Dmg = (s2.thermalAttack+s2sThermal) - (s1.thermalAttack+s1sThermal);
             s2Dmg = (s1.thermalAttack+s1sThermal) - (s2.thermalAttack+s2sThermal);
+            s1Amr = s1.thermalArmor;
+            s2Amr = s2.thermalArmor;
         }
         if (s1Dmg > 0)
         {
-            if (s1.shield != type)
-            {
-                s1.hp -= s1Dmg;
-                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg} \n";
-            }
-            else
-            {
-                return $"{type.ToString()} Phase: {s1.structureName} shielded {s1Dmg} damage.\n";
-            }
+            var damage = Mathf.Max(s1Dmg - s1Amr, 0);
+            s1.hp -= damage;
+            return $"{type.ToString()} Phase: {s1.structureName} lost, base damage is {s1Dmg}, after modules applied they lost {damage} HP \n";
         }
         else if (s2Dmg > 0)
         {
-            if (s2.shield != type)
-            {
-                s2.hp -= s2Dmg;
-                return $"{type.ToString()} Phase: {s2.structureName} lost {s2Dmg} \n";
-            }
-            else
-            {
-                return $"{type.ToString()} Phase: {s2.structureName} shielded {s2Dmg} damage.\n";
-            }
+            var damage = Mathf.Max(s2Dmg - s2Amr, 0);
+            s2.hp -= damage;
+            return $"{type.ToString()} Phase: {s2.structureName} lost, base damage is {s1Dmg}, after modules applied they lost {damage} HP \n";
         }
         return $"{type.ToString()} Phase: Stalemate.\n";
     }
@@ -814,7 +828,7 @@ public class GameManager : MonoBehaviour
                 if (CanPerformUpgrade(currentStructure, action.actionType))
                 {
                     ChargeModules(action);
-                    LevelUpStructure(currentStructure as Fleet);
+                    LevelUpUnit(currentStructure as Fleet);
                 }
                 else
                 {
@@ -826,7 +840,7 @@ public class GameManager : MonoBehaviour
                 if (CanPerformUpgrade(currentStructure, action.actionType))
                 {
                     ChargeModules(action);
-                    LevelUpStructure(currentStructure);
+                    LevelUpUnit(currentStructure);
                 }
                 else
                 {
@@ -866,7 +880,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LevelUpStructure(Structure structure)
+    private void LevelUpUnit(Unit structure)
     {
         if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false)){
             structure.level++;
@@ -927,7 +941,7 @@ public class GameManager : MonoBehaviour
         moduleInfoValue.text = effectText;
         ViewModuleInfo(true);
     } 
-    private void SetSelectedModule(Guid moduleGuid, Structure structure)
+    private void SetSelectedModule(Guid moduleGuid, Unit structure)
     {
         //if not already queued up
         if (!MyStation.actions.Any(x => x.actionType == ActionType.GenerateModule && x.selectedModulesIds.Contains(moduleGuid)))
@@ -974,7 +988,7 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    private void SetModuleBar(Structure structure)
+    private void SetModuleBar(Unit structure)
     {
         for (int i = 0; i < 6; i++)
         {

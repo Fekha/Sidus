@@ -1,7 +1,7 @@
 
 using System;
 
-public class Fleet : Structure
+public class Fleet : Unit
 {
     public void InitializeFleet(int _x, int _y, Station _station, string _color, int _hp, int _range, AttackType _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureId)
     {
