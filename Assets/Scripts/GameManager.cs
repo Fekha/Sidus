@@ -1,3 +1,4 @@
+using NUnit.Framework.Internal;
 using StartaneousAPI.Models;
 using StarTaneousAPI.Models;
 using System;
@@ -8,6 +9,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class GameManager : MonoBehaviour
     public GameObject infoPanel;
     public GameObject fightPanel;
     public GameObject alertPanel;
-    public GameObject selectModuelPanel;
+    public GameObject selectModulePanel;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
     private List<PathNode> SelectedPath;
@@ -47,12 +49,16 @@ public class GameManager : MonoBehaviour
     private bool isEndingTurn = false;
 
     private Button upgradeButton;
+    public Button mineButton;
     public Button createFleetButton;
+    public Button generateModuleButton;
     private TextMeshProUGUI createFleetCost;
+    private TextMeshProUGUI generateModuleCost;
     private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI levelValue;
     private TextMeshProUGUI hpValue;
+    private TextMeshProUGUI miningValue;
     private TextMeshProUGUI rangeValue;
     private TextMeshProUGUI kineticAttackValue;
     private TextMeshProUGUI thermalAttackValue;
@@ -66,6 +72,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI TurnOrderText;
     public TextMeshProUGUI ColorText;
+    public TextMeshProUGUI CreditText;
     public TextMeshProUGUI alertText;
  
     internal List<Unit> AllStructures = new List<Unit>();
@@ -135,6 +142,7 @@ public class GameManager : MonoBehaviour
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
         levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
         hpValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
+        miningValue = infoPanel.transform.Find("MiningValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
         kineticAttackValue = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
         thermalAttackValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
@@ -142,6 +150,7 @@ public class GameManager : MonoBehaviour
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
+        generateModuleCost = generateModuleButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
@@ -182,7 +191,7 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         //clicked on valid move
-                        if (targetNode != null && SelectedStructure != null && !targetNode.isObstacle && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureGuid == SelectedStructure.structureGuid))
+                        if (targetNode != null && SelectedStructure != null && !targetNode.isAsteroid && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !MyStation.actions.Any(x => x.actionType == ActionType.MoveStructure && x.selectedStructure?.structureGuid == SelectedStructure.structureGuid))
                         {
                             //double click confirm
                             if (targetNode == SelectedNode)
@@ -236,7 +245,7 @@ public class GameManager : MonoBehaviour
                                     Debug.Log($"Invalid tile selected, reseting path and selection.");
                                     SelectedStructure.resetMovementRange();
                                 }
-                                ClearSelection();
+                                ResetAfterSelection();
                             }
                         }
                     }
@@ -251,36 +260,27 @@ public class GameManager : MonoBehaviour
     }
     public void AttachModule()
     {
-        if (SelectedStructure != null && MyStation.modules.Count > 0 && (SelectedStructure.attachedModules.Count+MyStation.actions.Where(x=>x.actionType == ActionType.AttachModule && x.selectedStructure.structureGuid == SelectedStructure.structureGuid).Count()) < SelectedStructure.maxAttachedModules && MyStation.stationId == SelectedStructure.stationId)
+        if (SelectedStructure != null 
+            && MyStation.modules.Count > 0 
+            && (SelectedStructure.attachedModules.Count+MyStation.actions.Count(x=>x.actionType == ActionType.AttachModule)) < SelectedStructure.maxAttachedModules 
+            && MyStation.stationId == SelectedStructure.stationId)
         {
             ClearSelectableModules();
             List<Guid> assignedModules = MyStation.actions.SelectMany(x => x.selectedModulesIds).ToList();
             var availableModules = MyStation.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
-            foreach (var module in availableModules)
-            {
-                var selectedStructure = SelectedStructure;
-                var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
-                moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
-                moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
-                moduleObject.transform.Find("Queued").gameObject.SetActive(false);
-                currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
-            }
-            ViewModuleSelection(true);
-        }
-    }
-    //only call for queying up
-    private List<Guid>? GetAvailableModules(Station station, int modulesToGet)
-    {
-        if (modulesToGet > 0)
-        {
-            List<Guid> assignedModules = station.actions.SelectMany(x => x.selectedModulesIds).ToList();
-            List<Guid> availableModules = station.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).Select(x => x.moduleGuid).ToList();
-            if (availableModules.Count >= modulesToGet)
-            {
-                return availableModules.GetRange(0, modulesToGet);
+            if(availableModules.Count > 0){
+                foreach (var module in availableModules)
+                {
+                    var selectedStructure = SelectedStructure;
+                    var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
+                    moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
+                    moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
+                    moduleObject.transform.Find("Queued").gameObject.SetActive(false);
+                    currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
+                }
+                ViewModuleSelection(true);
             }
         }
-        return null;
     }
 
     public void DetachModule(int i)
@@ -315,6 +315,7 @@ public class GameManager : MonoBehaviour
         kineticAttackValue.text = structure.kineticAttack.ToString();
         thermalAttackValue.text = structure.thermalAttack.ToString();
         explosiveAttackValue.text = structure.explosiveAttack.ToString();
+        miningValue.text = structure.mining.ToString();
         //kineticArmorValue.text = structure.kineticAttack.ToString();
         //thermalArmorValue.text = structure.thermalAttack.ToString();
         //explosiveArmorValue.text = structure.explosiveAttack.ToString();
@@ -339,6 +340,7 @@ public class GameManager : MonoBehaviour
                 }
             }
             upgradeButton.gameObject.SetActive(true);
+            mineButton.gameObject.SetActive(true);
         }
         else
         {
@@ -351,7 +353,7 @@ public class GameManager : MonoBehaviour
     private string GetCostText(int cost)
     {
         string plural = cost == 1 ? "" : "s";
-        return $"(Costs {cost} Module{plural})";
+        return $"(Costs {cost} Credit{plural})";
     }
     private void AddActionBarImage(ActionType actionType, int i)
     {
@@ -385,6 +387,12 @@ public class GameManager : MonoBehaviour
             createFleetCost.text = "(Station Upgrade Required)";
         }
     }
+    private void UpdateGenerateModuleCostText()
+    {
+        var actionCost = GetCostOfAction(ActionType.GenerateModule, MyStation, false);
+        generateModuleCost.text = GetCostText(actionCost);
+        generateModuleButton.interactable = MyStation.credits >= actionCost;
+    }
     public void UpgradeStructure()
     {
         ActionType actionType = SelectedStructure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
@@ -394,12 +402,9 @@ public class GameManager : MonoBehaviour
     }
     private bool CanQueueUpgrade(Unit structure, ActionType actionType)
     {
-        return CanLevelUp(structure, actionType, true) && GetAvailableModules(MyStation, GetCostOfAction(actionType, structure, true)) != null;
+        return CanLevelUp(structure, actionType, true) && MyStation.credits >= GetCostOfAction(actionType, structure, true);
     }
-    private bool CanPerformUpgrade(Unit structure, ActionType actionType)
-    {
-        return CanLevelUp(structure, actionType, false) && Stations[structure.stationId].modules.Count >= GetCostOfAction(actionType, structure,false);
-    }
+
     private bool CanLevelUp(Unit structure, ActionType actionType, bool countQueue)
     {
         var countingQueue = countQueue ? Stations[structure.stationId].actions.Where(x => x.selectedStructure.structureGuid == structure.structureGuid && x.actionType == actionType).Count() : 0;
@@ -412,16 +417,11 @@ public class GameManager : MonoBehaviour
 
     private bool CanQueueBuildFleet(Station station)
     {
-        var cost = GetCostOfAction(ActionType.CreateFleet, station, true);
-        return CanBuildAdditonalFleet(station) && (GetAvailableModules(station, cost) != null || cost == 0);
+        return CanBuildAdditonalFleet(station) && station.credits >= GetCostOfAction(ActionType.CreateFleet, station, true);
     }
     private bool CanBuildAdditonalFleet(Station station)
     {
         return station.fleets.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxFleets;
-    }
-    private bool CanPerformBuildFleet(Station station)
-    {
-        return station.fleets.Count < station.maxFleets && station.modules.Count >= GetCostOfAction(ActionType.CreateFleet, station, false);
     }
     private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue)
     {
@@ -439,9 +439,9 @@ public class GameManager : MonoBehaviour
         {
             return ((structure.level + countingQueue) * 2) + 1; //3,5,7,9,11
         }
-        else if (actionType == ActionType.AttachModule)
+        else if (actionType == ActionType.GenerateModule)
         {
-            return 1;
+            return 2;
         }
         else
         {
@@ -451,10 +451,15 @@ public class GameManager : MonoBehaviour
 
     public void GenerateModule()
     {
-        if (HasGameStarted())
+        if (HasGameStarted() && MyStation.credits >= GetCostOfAction(ActionType.GenerateModule, MyStation, false))
         {
             QueueAction(ActionType.GenerateModule);
         }
+    }
+    
+    public void MineAsteroid()
+    {
+        QueueAction(ActionType.MineAsteroid);
     }
 
     private void QueueAction(ActionType actionType, List<Guid> selectedModules = null, Unit _structure = null)
@@ -463,20 +468,16 @@ public class GameManager : MonoBehaviour
         {
             var structure = _structure ?? SelectedStructure ?? MyStation;
             var costOfAction = GetCostOfAction(actionType, structure, true);
-            if(selectedModules == null)
-                selectedModules = GetAvailableModules(MyStation, costOfAction);
-            if (costOfAction == 0 || selectedModules != null)
+            if (costOfAction <= MyStation.credits)
             {
                 Debug.Log($"{MyStation.structureName} queuing up action {actionType}");
                 AddActionBarImage(actionType, MyStation.actions.Count());
                 MyStation.actions.Add(new Action(actionType, structure, selectedModules, SelectedPath));
-                UpdateFleetCostText();
-                SetModuleGrid();
-                ClearSelection();
+                ResetAfterSelection();
             }
             else
             {
-                Debug.Log($"You can't afford to queue {actionType} due to pending actions or general lackthere of modules");
+                Debug.Log($"You can't afford to queue {actionType} due to pending actions or general lackthere of credits");
             }
         }
     }
@@ -498,25 +499,21 @@ public class GameManager : MonoBehaviour
                 AddActionBarImage(MyStation.actions[i].actionType, i);
             }
         }
+        ResetAfterSelection();
+    }
+
+    private void ResetAfterSelection()
+    {
+        UpdateGenerateModuleCostText();
         UpdateFleetCostText();
+        UpdateCreditTotal();
         SetModuleGrid();
         ClearSelection();
     }
 
-    private IEnumerator MoveStructure(Unit selectedStructure, List<PathNode> selectedPath)
+    private void UpdateCreditTotal()
     {
-        isMoving = true;
-        if (selectedStructure != null && selectedPath != null && selectedPath.Count > 0 && selectedPath.Count <= selectedStructure.getMaxMovementRange())
-        {
-            Debug.Log("Moving to position: " + selectedStructure.currentPathNode.transform.position);
-            yield return StartCoroutine(MoveOnPath(selectedStructure, selectedPath));
-        }
-        else
-        {
-            Debug.Log("Cannot move to position: " + selectedPath?.Last()?.transform?.position + ". Out of range or no longer exists.");
-        }
-        yield return new WaitForSeconds(.1f);
-        isMoving = false;
+        CreditText.text = $"{MyStation.credits} Credits";
     }
 
     private IEnumerator MoveOnPath(Unit structure, List<PathNode> path)
@@ -776,7 +773,7 @@ public class GameManager : MonoBehaviour
                     {
                         turnValue.text = $"{Stations[k].color} action {i + 1}: No Action";
                     }
-                    yield return new WaitForSeconds(1f);
+                    yield return new WaitForSeconds(.1f);
                 }
             }
         }
@@ -790,6 +787,10 @@ public class GameManager : MonoBehaviour
                     station.maxActions = 2 + i;
                 }
             }
+        }
+        foreach (var asteroid in GridManager.i.asteroids)
+        {
+            asteroid.ReginCredits();
         }
         if (winner != -1)
         {
@@ -805,77 +806,129 @@ public class GameManager : MonoBehaviour
         {
             var currentStructure = action.selectedStructure;
             var currentStation = Stations[currentStructure.stationId];
-
-            if (action.actionType == ActionType.MoveStructure)
+            var actionCost = GetCostOfAction(action.actionType, action.selectedStructure, false);
+            if (currentStation.credits >= actionCost)
             {
-                yield return StartCoroutine(MoveStructure(currentStructure, action.selectedPath));
-                currentStructure.resetMovementRange();
-            }
-            else if (action.actionType == ActionType.CreateFleet)
-            {
-                if (CanPerformBuildFleet(currentStation))
+                if (action.actionType == ActionType.MoveStructure)
                 {
-                    ChargeModules(action);
-                    yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid));
-                }
-                else
-                {
-                    Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {ActionType.CreateFleet}");
-                }
-            }
-            else if (action.actionType == ActionType.UpgradeFleet)
-            {
-                if (CanPerformUpgrade(currentStructure, action.actionType))
-                {
-                    ChargeModules(action);
-                    LevelUpUnit(currentStructure as Fleet);
-                }
-                else
-                {
-                    Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {ActionType.UpgradeFleet}");
-                }
-            }
-            else if (action.actionType == ActionType.UpgradeStation)
-            {
-                if (CanPerformUpgrade(currentStructure, action.actionType))
-                {
-                    ChargeModules(action);
-                    LevelUpUnit(currentStructure);
-                }
-                else
-                {
-                    Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {ActionType.UpgradeStation}");
-                }
-            }
-            else if (action.actionType == ActionType.GenerateModule)
-            {
-                currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
-            }
-            else if (action.actionType == ActionType.AttachModule)
-            {
-                if (currentStation.modules.Count > 0 && currentStructure.attachedModules.Count < currentStructure.maxAttachedModules)
-                {
-                    Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                    if (selectedModule is object)
+                    isMoving = true;
+                    if (currentStructure != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentStructure.getMaxMovementRange())
                     {
-                        currentStructure.attachedModules.Add(selectedModule);
-                        currentStructure.EditModule(selectedModule.type);
-                        ChargeModules(action);
+                        Debug.Log("Moving to position: " + currentStructure.currentPathNode.transform.position);
+                        yield return StartCoroutine(MoveOnPath(currentStructure, action.selectedPath));
+                    }
+                    else
+                    {
+                        Debug.Log("Cannot move to position: " + action.selectedPath?.Last()?.transform?.position + ". Out of range or no longer exists.");
+                    }
+                    yield return new WaitForSeconds(.1f);
+                    isMoving = false;
+                    currentStructure.resetMovementRange(); //We actually don't currently use range, regardless afraid to comment out        
+                }
+                else if (action.actionType == ActionType.CreateFleet)
+                {
+                    if (currentStation.fleets.Count < currentStation.maxFleets)
+                    {
+                        currentStation.credits -= actionCost;
+                        yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid));
+                    }
+                    else
+                    {
+                        Debug.Log($"{currentStructure.structureName} not eligible for {action.actionType}");
+                    }
+                    yield return new WaitForSeconds(1f);
+                }
+                else if (action.actionType == ActionType.UpgradeFleet)
+                {
+                    if (CanLevelUp(currentStructure, action.actionType, false))
+                    {
+                        currentStation.credits -= actionCost;
+                        LevelUpUnit(currentStructure as Fleet);
+                    }
+                    else
+                    {
+                        Debug.Log($"{currentStructure.structureName} not eligible for {action.actionType}");
+                    }
+                    yield return new WaitForSeconds(1f);
+                }
+                else if (action.actionType == ActionType.UpgradeStation)
+                {
+                    if (CanLevelUp(currentStructure, action.actionType, false))
+                    {
+                        currentStation.credits -= actionCost;
+                        LevelUpUnit(currentStructure);
+                    }
+                    else
+                    {
+                        Debug.Log($"{currentStructure.structureName} not eligible for {action.actionType}");
+                    }
+                    yield return new WaitForSeconds(1f);
+                }
+                else if (action.actionType == ActionType.GenerateModule)
+                {
+                    currentStation.credits -= actionCost;
+                    currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
+                    yield return new WaitForSeconds(1f);
+                }
+                else if (action.actionType == ActionType.AttachModule)
+                {
+                    if (currentStation.modules.Count > 0 && currentStructure.attachedModules.Count < currentStructure.maxAttachedModules)
+                    {
+                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                        if (selectedModule is object)
+                        {
+                            currentStructure.attachedModules.Add(selectedModule);
+                            currentStructure.EditModule(selectedModule.type);
+                            currentStation.modules.RemoveAt(currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid));
+                        }
+                        else
+                        {
+                            Debug.Log($"Module not available");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log($"Module not available");
+                    }
+                    yield return new WaitForSeconds(1f);
+                }
+                else if (action.actionType == ActionType.DetachModule)
+                {
+                    if (currentStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
+                    {
+                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                        if (selectedModule is object)
+                        {
+                            currentStation.modules.Add(selectedModule);
+                            currentStructure.EditModule(selectedModule.type, -1);
+                            currentStructure.attachedModules.Remove(currentStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                        }
+                        else
+                        {
+                            Debug.Log($"Module not available");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log($"Module not available");
+                    }
+                    yield return new WaitForSeconds(1f);
+                }
+                else if (action.actionType == ActionType.MineAsteroid)
+                {
+                    var asteroidToMine = GridManager.i.GetNeighbors(currentStructure.currentPathNode).FirstOrDefault(x => x.isAsteroid);
+                    if (asteroidToMine != null)
+                    {
+                        currentStation.credits += asteroidToMine.MineCredits(currentStructure.mining);
+                        asteroidToMine.transform.Find("Mine").gameObject.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        asteroidToMine.transform.Find("Mine").gameObject.SetActive(false);
                     }
                 }
             }
-            else if (action.actionType == ActionType.DetachModule)
+            else
             {
-                if (currentStructure.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
-                {
-                    Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                    if (selectedModule is object)
-                    {
-                        currentStation.modules.Add(selectedModule);
-                        currentStructure.EditModule(selectedModule.type, -1);
-                        currentStructure.attachedModules.Remove(currentStructure.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
-                    }
-                }
+                Debug.Log($"Broke ass {currentStructure.color} bitch couldn't afford {action.actionType}");
             }
         }
     }
@@ -910,8 +963,6 @@ public class GameManager : MonoBehaviour
     private void ResetUI()
     {
         ClearActionBar();
-        SetModuleGrid();
-        ClearSelection();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
         TurnOrderText.text = $"Turn Order: ";
@@ -920,7 +971,7 @@ public class GameManager : MonoBehaviour
             TurnOrderText.text += Stations[(TurnNumber+i) % Stations.Count].color;
             TurnOrderText.text += i == Stations.Count - 1 ? "." : ", ";
         }
-        UpdateFleetCostText();
+        ResetAfterSelection();
     }
 
     private void SetModuleGrid()
@@ -944,7 +995,7 @@ public class GameManager : MonoBehaviour
     private void SetSelectedModule(Guid moduleGuid, Unit structure)
     {
         //if not already queued up
-        if (!MyStation.actions.Any(x => x.actionType == ActionType.GenerateModule && x.selectedModulesIds.Contains(moduleGuid)))
+        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModulesIds.Contains(moduleGuid)))
         {
             ViewModuleSelection(false);
             QueueAction(ActionType.AttachModule, new List<Guid>() { moduleGuid }, structure);
@@ -958,7 +1009,7 @@ public class GameManager : MonoBehaviour
     }
     public void ViewModuleSelection(bool active)
     {
-        selectModuelPanel.SetActive(active);
+        selectModulePanel.SetActive(active);
     }
     private void ClearMovementRange()
     {

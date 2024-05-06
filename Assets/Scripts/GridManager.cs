@@ -15,6 +15,7 @@ public class GridManager : MonoBehaviour
     private Vector3 cellPrefabSize;
     private Transform characterParent;
     internal PathNode[,] grid;
+    internal List<PathNode> asteroids = new List<PathNode>();
     private Vector2 gridSize = new Vector2(8, 8);
     internal int scoreToWin = 99;
     public List<Color> playerColors;
@@ -70,7 +71,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, AttackType.Explosive, 3, 4, 5, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 3, 4, 5, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, fleetGuid));
     }
 
@@ -85,7 +86,7 @@ public class GridManager : MonoBehaviour
                 var fleet = Instantiate(fleetPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hex.x, hex.y, stationNode, stationNode.color, 3, 3, AttackType.None, 2, 3, 4, 1, fleetGuid);
+                fleetNode.InitializeFleet(hex.x, hex.y, stationNode, stationNode.color, 3, 3, 2, 3, 4, 1, fleetGuid);
                 break;
             }
         }
@@ -94,7 +95,7 @@ public class GridManager : MonoBehaviour
     bool CanSpawnFleet(int x, int y)
     {
         if (IsInGridBounds(x, y)) {
-            if (grid[x, y].structureOnPath == null && !grid[x, y].isObstacle)
+            if (grid[x, y].structureOnPath == null && !grid[x, y].isAsteroid)
             {
                 Debug.Log($"Can Spawn at {x},{y}");
                 return true;
@@ -130,19 +131,27 @@ public class GridManager : MonoBehaviour
             {
                 // Calculate the world position based on the size of the cellPrefab
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * 1.08f  * cellPrefabSize.x) + Vector3.up * (y * .85f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.53f * cellPrefabSize.x);
-                var isObstacle = false;
+                bool isAsteroid = false;
+                int maxCredits = 0;
+                int creditRegin = 0;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
                     if(!((x == 3 && (y == 3 || y == 4)) || (x == 4 && (y == 3 || y == 4))))
-                        isObstacle = (x+y+y)%3 == 0;
-                if (isObstacle)
+                        isAsteroid = (x+y+y)%3 == 0;
+                if (isAsteroid)
                 {
                     obstacleCount++;
-                    var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
+                    maxCredits = 5;
+                    creditRegin = 1;
+                    //var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
                 }
-                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
+                var cell = Instantiate(isAsteroid ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
                 grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, isObstacle);
+                grid[x, y].InitializeNode(x, y, isAsteroid, maxCredits, creditRegin);
+                if (isAsteroid)
+                {
+                    asteroids.Add(grid[x, y]);
+                }
             }
         }
         //(int)((((gridSize.x * gridSize.y) - obstacleCount) / Globals.Players.Count()) * 1.5);
@@ -176,7 +185,7 @@ public class GridManager : MonoBehaviour
 
             foreach (PathNode neighbor in GetNeighbors(currentNode))
             {
-                if (neighbor != targetNode && (neighbor.isObstacle || closedSet.Contains(neighbor)))
+                if (neighbor != targetNode && (neighbor.isAsteroid || closedSet.Contains(neighbor)))
                     continue;
 
                 int newCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
@@ -215,7 +224,7 @@ public class GridManager : MonoBehaviour
 
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
-                    if (!visited.Contains(neighbor) && !neighbor.isObstacle)
+                    if (!visited.Contains(neighbor) && !neighbor.isAsteroid)
                     {
                         queue.Enqueue(neighbor);
                         visited.Add(neighbor);
@@ -233,7 +242,7 @@ public class GridManager : MonoBehaviour
         PathNode currentNode = endNode;
         while (currentNode != startNode)
         {
-            if (!currentNode.isObstacle)
+            if (!currentNode.isAsteroid)
                 path.Add(currentNode);
             currentNode = currentNode.parent;
         }

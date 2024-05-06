@@ -19,10 +19,11 @@ public class Unit : Node
     internal int kineticArmor;
     internal int thermalArmor;
     internal int explosiveArmor;
+    internal int mining;
     internal int level;
     internal List<Module> attachedModules = new List<Module>();
     internal int maxAttachedModules = 1; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, AttackType _shield, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureGuid)
+    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureGuid, int _mining)
     {
         structureGuid = _structureGuid;
         x = _x;
@@ -37,6 +38,7 @@ public class Unit : Node
         thermalAttack = _thermalAttack;
         explosiveAttack = _voidAttack;
         structureName = _structureName;
+        mining = _mining;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
