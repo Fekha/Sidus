@@ -1,7 +1,7 @@
 public enum AttackType
 {
-    Electric,
+    Kinetic,
     Thermal,
-    Void,
+    Explosive,
     None
 }

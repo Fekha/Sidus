@@ -5345,7 +5345,7 @@ GameObject:
   - component: {fileID: 1024754251}
   - component: {fileID: 1024754250}
   m_Layer: 5
-  m_Name: ElectricLabel
+  m_Name: KineticLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5390,7 +5390,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Electric:'
+  m_text: 'Kinetic:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6729,7 +6729,7 @@ GameObject:
   - component: {fileID: 1223001633}
   - component: {fileID: 1223001632}
   m_Layer: 5
-  m_Name: VoidLabel
+  m_Name: ExplosiveLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6774,7 +6774,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Void:'
+  m_text: 'Explosive:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10323,7 +10323,7 @@ GameObject:
   - component: {fileID: 1800302378}
   - component: {fileID: 1800302377}
   m_Layer: 5
-  m_Name: ElectricValue
+  m_Name: KineticValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11579,7 +11579,7 @@ GameObject:
   - component: {fileID: 2043081785}
   - component: {fileID: 2043081784}
   m_Layer: 5
-  m_Name: VoidValue
+  m_Name: ExplosiveValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

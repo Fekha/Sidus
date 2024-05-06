@@ -70,7 +70,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, AttackType.Void, 3, 4, 5, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, AttackType.Explosive, 3, 4, 5, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, fleetGuid));
     }
 

@@ -14,9 +14,9 @@ public class Structure : Node
     internal int maxRange;
     internal int range;
     internal AttackType shield;
-    internal int electricAttack;
+    internal int kineticAttack;
     internal int thermalAttack;
-    internal int voidAttack;
+    internal int explosiveAttack;
     internal int level;
     internal List<Module> attachedModules = new List<Module>();
     internal int maxAttachedModules = 1; // 1+ station.level
@@ -32,9 +32,9 @@ public class Structure : Node
         range = _range;
         level = _level;
         shield = _shield;
-        electricAttack = _electricAttack;
+        kineticAttack = _electricAttack;
         thermalAttack = _thermalAttack;
-        voidAttack = _voidAttack;
+        explosiveAttack = _voidAttack;
         structureName = _structureName;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
@@ -82,74 +82,74 @@ public class Structure : Node
         switch (id)
         {
             case 0:
-                electricAttack += (3 * modifer);
-                voidAttack += (1 * modifer);
+                kineticAttack += (3 * modifer);
+                explosiveAttack += (1 * modifer);
                 if (modifer == 1) shield = AttackType.Thermal; 
                 break;
             case 1:
                 thermalAttack += (3 * modifer);
-                electricAttack += (1 * modifer);
-                if (modifer == 1) shield = AttackType.Electric;
+                kineticAttack += (1 * modifer);
+                if (modifer == 1) shield = AttackType.Kinetic;
                 break;
             case 2:
-                voidAttack += (4 * modifer);
-                if (modifer == 1) shield = AttackType.Void;
+                explosiveAttack += (4 * modifer);
+                if (modifer == 1) shield = AttackType.Explosive;
                 break;
             case 3:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                shield = AttackType.Void;
+                shield = AttackType.Explosive;
                 break;
             case 4:
                 maxHp += (5 * modifer);
                 hp += (5 * modifer);
-                if (modifer == 1) shield = AttackType.Void;
+                if (modifer == 1) shield = AttackType.Explosive;
                 break;
             case 5:
-                electricAttack += (1 * modifer);
+                kineticAttack += (1 * modifer);
                 thermalAttack += (2 * modifer);
-                voidAttack += (2 * modifer);
-                if (modifer == 1) shield = AttackType.Electric;
+                explosiveAttack += (2 * modifer);
+                if (modifer == 1) shield = AttackType.Kinetic;
                 break;
             case 6:
-                electricAttack += (2 * modifer);
+                kineticAttack += (2 * modifer);
                 thermalAttack += (1 * modifer); 
-                voidAttack += (2 * modifer);
+                explosiveAttack += (2 * modifer);
                 if (modifer == 1) shield = AttackType.Thermal;
                 break;
             case 7:
-                electricAttack += (2 * modifer);
+                kineticAttack += (2 * modifer);
                 thermalAttack += (2 * modifer); 
-                voidAttack += (2 * modifer);
+                explosiveAttack += (2 * modifer);
                 if (modifer == 1) shield = AttackType.Thermal;
                 break;
             case 8:
-                electricAttack += (1 * modifer);
+                kineticAttack += (1 * modifer);
                 thermalAttack += (1 * modifer);
-                voidAttack += (3 * modifer);
+                explosiveAttack += (3 * modifer);
                 if (modifer == 1) shield = AttackType.Thermal;
                 break;
             case 9:
-                electricAttack += (2 * modifer);
+                kineticAttack += (2 * modifer);
                 thermalAttack += (1 * modifer);
-                voidAttack += (2 * modifer);
-                if (modifer == 1) shield = AttackType.Electric;
+                explosiveAttack += (2 * modifer);
+                if (modifer == 1) shield = AttackType.Kinetic;
                 break;
             case 10:
-                electricAttack += (1 * modifer);
+                kineticAttack += (1 * modifer);
                 thermalAttack += (3 * modifer);
-                voidAttack += (2 * modifer);
+                explosiveAttack += (2 * modifer);
                 break;
             case 11:
-                electricAttack += (3 * modifer);
-                voidAttack += (2 * modifer);
+                kineticAttack += (3 * modifer);
+                explosiveAttack += (2 * modifer);
                 break;
             case 12:
                 thermalAttack += (3 * modifer);
-                voidAttack += (2 * modifer);
+                explosiveAttack += (2 * modifer);
                 break;
             case 13:
-                voidAttack += (4 * modifer);
+                explosiveAttack += (4 * modifer);
                 break;
             case 14:
                 maxRange += (1 * modifer);
@@ -161,22 +161,22 @@ public class Structure : Node
                 break;
             case 16:
                 thermalAttack += (2 * modifer);
-                voidAttack += (3 * modifer);
+                explosiveAttack += (3 * modifer);
                 break;
             case 17:
-                electricAttack += (3 * modifer);
+                kineticAttack += (3 * modifer);
                 thermalAttack += (1 * modifer);
-                voidAttack += (1 * modifer);
+                explosiveAttack += (1 * modifer);
                 break;
             case 18:
-                electricAttack += (1 * modifer);
+                kineticAttack += (1 * modifer);
                 thermalAttack += (3 * modifer);
-                voidAttack += (1 * modifer);
+                explosiveAttack += (1 * modifer);
                 break;
             case 19:
-                electricAttack += (1 * modifer);
+                kineticAttack += (1 * modifer);
                 thermalAttack += (1 * modifer);
-                voidAttack += (3 * modifer);
+                explosiveAttack += (3 * modifer);
                 break;
             default:
                 break;

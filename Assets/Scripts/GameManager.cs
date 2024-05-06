@@ -55,9 +55,9 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI hpValue;
     private TextMeshProUGUI rangeValue;
     private TextMeshProUGUI shieldValue;
-    private TextMeshProUGUI electricValue;
+    private TextMeshProUGUI kineticValue;
     private TextMeshProUGUI thermalValue;
-    private TextMeshProUGUI voidValue;
+    private TextMeshProUGUI explosiveValue;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI moduleInfoValue;
     private TextMeshProUGUI fightText;
@@ -135,9 +135,9 @@ public class GameManager : MonoBehaviour
         hpValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
         shieldValue = infoPanel.transform.Find("ShieldValue").GetComponent<TextMeshProUGUI>();
-        electricValue = infoPanel.transform.Find("ElectricValue").GetComponent<TextMeshProUGUI>();
+        kineticValue = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
         thermalValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
-        voidValue = infoPanel.transform.Find("VoidValue").GetComponent<TextMeshProUGUI>();
+        explosiveValue = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
@@ -311,9 +311,9 @@ public class GameManager : MonoBehaviour
         levelValue.text = structure.level.ToString();
         hpValue.text = structure.hp + "/" + structure.maxHp;
         rangeValue.text = structure.maxRange.ToString();
-        electricValue.text = structure.electricAttack.ToString();
+        kineticValue.text = structure.kineticAttack.ToString();
         thermalValue.text = structure.thermalAttack.ToString();
-        voidValue.text = structure.voidAttack.ToString();
+        explosiveValue.text = structure.explosiveAttack.ToString();
         shieldValue.text = structure.shield.ToString();
         var actionType = structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
@@ -535,39 +535,39 @@ public class GameManager : MonoBehaviour
                     Debug.Log($"{structure.structureName} is attacking {structureOnPath.structureName}");
                     structureOnPath.transform.Find("InCombat").gameObject.SetActive(true);
                     var supportingFleets = GridManager.i.GetNeighbors(node).Select(x=>x.structureOnPath).Where(x=>x != null && x.structureGuid != structureOnPath.structureGuid);
-                    int s1sElectric = 0;
-                    int s2sElectric = 0;
+                    int s1sKinetic = 0;
+                    int s2sKinetic = 0;
                     int s1sThermal = 0;
                     int s2sThermal = 0;
-                    int s1sVoid = 0;
-                    int s2sVoid = 0;
+                    int s1sExplosive = 0;
+                    int s2sExplosive = 0;
                     foreach (var supportFleet in supportingFleets)
                     {
-                        if (supportFleet.stationId == MyStation.stationId)
+                        if (supportFleet.stationId == structure.stationId)
                         {
-                            s1sElectric += Convert.ToInt32(Math.Floor(supportFleet.electricAttack * .5));
+                            s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
                             s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
-                            s1sVoid += Convert.ToInt32(Math.Floor(supportFleet.voidAttack * .5));
+                            s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
                         }
                         else
                         {
-                            s2sElectric += Convert.ToInt32(Math.Floor(supportFleet.electricAttack * .5));
+                            s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
                             s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
-                            s2sVoid += Convert.ToInt32(Math.Floor(supportFleet.voidAttack * .5));
+                            s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
                         }
                     }
-                    string s1sElectricText = s1sElectric > 0 ? $"(+{s1sElectric})" : "";
+                    string s1sKineticText = s1sKinetic > 0 ? $"(+{s1sKinetic})" : "";
                     string s1sThermalText = s1sThermal > 0 ? $"(+{s1sThermal})" : "";
-                    string s1sVoidText = s1sVoid > 0 ? $"(+{s1sVoid})" : "";
-                    string s2sElectricText = s2sElectric > 0 ? $"(+{s2sElectric})" : "";
+                    string s1sExplosiveText = s1sExplosive > 0 ? $"(+{s1sExplosive})" : "";
+                    string s2sKineticText = s2sKinetic > 0 ? $"(+{s2sKinetic})" : "";
                     string s2sThermalText = s2sThermal > 0 ? $"(+{s2sThermal})" : "";
-                    string s2sVoidText = s2sVoid > 0 ? $"(+{s2sVoid})" : "";                    
-                    string beforeStats = $"Pre-fight stats: \n{structure.structureName}: HP {structure.hp}, Electric {structure.electricAttack}{s1sElectricText}, Thermal {structure.thermalAttack}{s1sThermalText}, Void {structure.voidAttack}{s1sVoidText}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Electric {structureOnPath.electricAttack}{s2sElectricText}, Thermal {structureOnPath.thermalAttack}{s2sThermalText}, Void {structureOnPath.voidAttack}{s2sVoidText}.";
+                    string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";                    
+                    string beforeStats = $"Pre-fight stats: \n{structure.structureName}: HP {structure.hp}, Kinetic {structure.kineticAttack}{s1sKineticText}, Thermal {structure.thermalAttack}{s1sThermalText}, Explosive {structure.explosiveAttack}{s1sExplosiveText}.\n{structureOnPath.structureName}: HP {structureOnPath.hp}, Kinetic {structureOnPath.kineticAttack}{s2sKineticText}, Thermal {structureOnPath.thermalAttack}{s2sThermalText}, Explosive {structureOnPath.explosiveAttack}{s2sExplosiveText}.";
                     string duringFightText = "";
-                    for (int attackType = 0; attackType <= (int)AttackType.Void; attackType++)
+                    for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
                     {
                         if (structure.hp > 0 && structureOnPath.hp > 0)
-                            duringFightText += Fight(structure, structureOnPath, (AttackType)attackType, s1sElectric, s1sThermal, s1sVoid, s2sElectric, s2sThermal, s2sVoid);
+                            duringFightText += Fight(structure, structureOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
                     }
                     fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats: \n{structure.structureName}: HP {structure.hp}\n{structureOnPath.structureName}: HP {structureOnPath.hp}";
                     ViewFightPanel(true);
@@ -647,14 +647,14 @@ public class GameManager : MonoBehaviour
         structure.currentPathNode.structureOnPath = structure;
     }
 
-    private string Fight(Structure s1, Structure s2, AttackType type, int s1sElectric, int s1sThermal, int s1sVoid, int s2sElectric, int s2sThermal, int s2sVoid)
+    private string Fight(Structure s1, Structure s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
     {
-        int s1Dmg = (s2.voidAttack+s2sVoid) - (s1.voidAttack+s1sVoid);
-        int s2Dmg = (s1.voidAttack+s1sVoid) - (s2.voidAttack+s2sVoid);
-        if (type == AttackType.Electric)
+        int s1Dmg = (s2.explosiveAttack+s2sExplosive) - (s1.explosiveAttack+s1sExplosive);
+        int s2Dmg = (s1.explosiveAttack+s1sExplosive) - (s2.explosiveAttack+s2sExplosive);
+        if (type == AttackType.Kinetic)
         {
-            s1Dmg = (s2.electricAttack+s2sElectric) - (s1.electricAttack+s1sElectric);
-            s2Dmg = (s1.electricAttack+s1sElectric) - (s2.electricAttack+s2sElectric);
+            s1Dmg = (s2.kineticAttack+s2sKinetic) - (s1.kineticAttack+s1sKinetic);
+            s2Dmg = (s1.kineticAttack+s1sKinetic) - (s2.kineticAttack+s2sKinetic);
         }
         else if (type == AttackType.Thermal)
         {
@@ -666,7 +666,7 @@ public class GameManager : MonoBehaviour
             if (s1.shield != type)
             {
                 s1.hp -= s1Dmg;
-                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg}";
+                return $"{type.ToString()} Phase: {s1.structureName} lost {s1Dmg} \n";
             }
             else
             {
@@ -678,7 +678,7 @@ public class GameManager : MonoBehaviour
             if (s2.shield != type)
             {
                 s2.hp -= s2Dmg;
-                return $"{type.ToString()} Phase: {s2.structureName} lost {s2Dmg}";
+                return $"{type.ToString()} Phase: {s2.structureName} lost {s2Dmg} \n";
             }
             else
             {
@@ -873,8 +873,8 @@ public class GameManager : MonoBehaviour
             structure.maxAttachedModules++;
             structure.maxHp++;
             structure.hp++;
-            structure.electricAttack++;
-            structure.voidAttack++;
+            structure.kineticAttack++;
+            structure.explosiveAttack++;
             structure.thermalAttack++;
             if (structure is Station)
             {
