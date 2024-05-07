@@ -9,7 +9,6 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -460,7 +459,7 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.GenerateModule)
         {
-            return 2 * exoFlation;
+            return 1 * exoFlation;
         }
         else
         {
@@ -495,7 +494,7 @@ public class GameManager : MonoBehaviour
         {
             var structure = _structure ?? SelectedUnit ?? MyStation;
             var costOfAction = GetCostOfAction(actionType, structure, true);
-            if (costOfAction <= MyStation.credits)
+            if (costOfAction+MyStation.actions.Sum(x=>GetCostOfAction(x.actionType,x.selectedUnit,false)) <= MyStation.credits)
             {
                 Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
                 AddActionBarImage(actionType, MyStation.actions.Count());
@@ -504,7 +503,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log($"You can't afford to queue {actionType} due to pending actions or general lackthere of credits");
+                Debug.Log($"Broke ass {structure.color} bitch couldn't afford {actionType}");
             }
         }
     }
@@ -568,6 +567,7 @@ public class GameManager : MonoBehaviour
                 if (structureOnPath.stationId != structure.stationId)
                 {
                     Debug.Log($"{structure.unitName} is attacking {structureOnPath.unitName}");
+                    structure.selectIcon.SetActive(true);
                     structureOnPath.inCombatIcon.SetActive(true);
                     var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.unitGuid != structureOnPath.unitGuid);
                     int s1sKinetic = 0;
@@ -598,9 +598,9 @@ public class GameManager : MonoBehaviour
                     string s2sThermalText = s2sThermal > 0 ? $"(+{s2sThermal})" : "";
                     string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";
                     string beforeStats = $"Pre-fight stats: \n{structure.unitName}: {structure.hp} HP." +
-                        $"\n Stats: {structure.kineticAttack}{s1sKineticText} Kinetic, {structure.thermalAttack}{s1sThermalText} Thermal, {structure.explosiveAttack}{s1sExplosiveText} Explosive." +
-                        $"\n\n {structureOnPath.unitName}: {structureOnPath.hp} HP." +
-                        $"\n Stats: {structureOnPath.kineticAttack}{s2sKineticText} Kinetic, {structureOnPath.thermalAttack}{s2sThermalText} Thermal, {structureOnPath.explosiveAttack}{s2sExplosiveText} Explosive.";
+                        $"\nStats: {structure.kineticAttack}{s1sKineticText} Kinetic, {structure.thermalAttack}{s1sThermalText} Thermal, {structure.explosiveAttack}{s1sExplosiveText} Explosive." +
+                        $"\n\n{structureOnPath.unitName}: {structureOnPath.hp} HP." +
+                        $"\nStats: {structureOnPath.kineticAttack}{s2sKineticText} Kinetic, {structureOnPath.thermalAttack}{s2sThermalText} Thermal, {structureOnPath.explosiveAttack}{s2sExplosiveText} Explosive.";
 
                     string duringFightText = "";
                     for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
@@ -615,6 +615,7 @@ public class GameManager : MonoBehaviour
                         yield return new WaitForSeconds(.5f);
                     }
                     structureOnPath.inCombatIcon.SetActive(false);
+                    structure.selectIcon.SetActive(false);
                     if (structure.hp <= 0)
                     {
                         Debug.Log($"{structureOnPath.unitName} destroyed {structure.unitName}");
@@ -633,6 +634,7 @@ public class GameManager : MonoBehaviour
                         {
                             Stations[structure.stationId].fleets.Remove(structure as Fleet);
                         }
+                        AllUnits.Remove(structure);
                         Destroy(structure.gameObject);
                     }
                     if (structureOnPath.hp > 0)
@@ -643,7 +645,6 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         Debug.Log($"{structure.unitName} destroyed {structureOnPath.unitName}");
-                        Destroy(structureOnPath.gameObject); //they are dead
                         if (structure is Fleet)
                             LevelUpUnit(structure as Fleet);
                         if (structureOnPath is Station)
@@ -655,6 +656,8 @@ public class GameManager : MonoBehaviour
                             Stations[structureOnPath.stationId].fleets.Remove(structureOnPath as Fleet);
                         }
                         blockedMovement = false;
+                        AllUnits.Remove(structureOnPath); 
+                        Destroy(structureOnPath.gameObject); //they are dead
                     }
                 }
                 else //if ally, and theres room after, move through.
@@ -723,15 +726,23 @@ public class GameManager : MonoBehaviour
         {
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
             s1.hp -= damage;
-            return $"{type.ToString()} Phase: {s1.unitName} lost, base damage is {s1Dmg}, after modules applied they lost {damage} HP \n";
+            if (s1Amr == 0)
+            {
+                return $"{type} Phase: {s1.unitName} lost {damage} HP \n";
+            }
+            return $"{type} Phase: {s1.unitName} lost, base damage is {s1Dmg}, after modules applied they lost {damage} HP \n";
         }
         else if (s2Dmg > 0)
         {
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
             s2.hp -= damage;
-            return $"{type.ToString()} Phase: {s2.unitName} lost, base damage is {s2Dmg}, after modules applied they lost {damage} HP \n";
+            if (s2Amr == 0)
+            {
+                return $"{type} Phase: {s2.unitName} lost {damage} HP \n";
+            }
+            return $"{type} Phase: {s2.unitName} lost, base damage is {s2Dmg}, after modules applied they lost {damage} HP \n";
         }
-        return $"{type.ToString()} Phase: Stalemate.\n";
+        return $"{type} Phase: Stalemate.\n";
     }
 
     public void HighlightRangeOfMovement(PathNode currentNode, int fleetRange)
@@ -810,7 +821,7 @@ public class GameManager : MonoBehaviour
     {
         ClearModules();
         ToggleMineralText(true);
-        ToggleHPText(true);
+        //ToggleHPText(true);
         for (int i = 0; i < 6; i++)
         {
             int c = TurnNumber % Stations.Count;
@@ -852,153 +863,167 @@ public class GameManager : MonoBehaviour
         if (action.selectedUnit != null)
         {
             var currentUnit = action.selectedUnit;
-            var currentStation = Stations[currentUnit.stationId];
-            var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false);
-            if (currentStation.credits >= actionCost)
+            if (currentUnit != null)
             {
-                if (action.actionType == ActionType.MoveStructure)
+                var currentStation = Stations[currentUnit.stationId];
+                var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false);
+                if (currentStation.credits >= actionCost)
                 {
-                    isMoving = true;
-                    if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
+                    if (action.actionType == ActionType.MoveStructure)
                     {
-                        Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
-                        yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
-                        if(Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString()))
-                            yield return StartCoroutine(PerformMine(currentStation, currentUnit));
-                    }
-                    else
-                    {
-                        Debug.Log("Cannot move to position: " + action.selectedPath?.Last()?.transform?.position + ". Out of range or no longer exists.");
-                    }
-                    yield return new WaitForSeconds(.1f);
-                    isMoving = false;
-                    currentUnit.resetMovementRange(); //We actually don't currently use range, regardless afraid to comment out        
-                }
-                else if (action.actionType == ActionType.CreateFleet)
-                {
-                    if (currentStation.fleets.Count < currentStation.maxFleets)
-                    {
-                        currentStation.credits -= actionCost;
-                        yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid, false));
-                    }
-                    else
-                    {
-                        Debug.Log($"{currentUnit.unitName} not eligible for {action.actionType}");
-                    }
-                }
-                else if (action.actionType == ActionType.UpgradeFleet)
-                {
-                    if (CanLevelUp(currentUnit, action.actionType, false))
-                    {
-                        currentStation.credits -= actionCost;
-                        LevelUpUnit(currentUnit as Fleet);
-                    }
-                    else
-                    {
-                        Debug.Log($"{currentUnit.unitName} not eligible for {action.actionType}");
-                    }
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return new WaitForSeconds(1f);
-                    currentUnit.selectIcon.SetActive(false);
-                }
-                else if (action.actionType == ActionType.UpgradeStation)
-                {
-                    if (CanLevelUp(currentUnit, action.actionType, false))
-                    {
-                        currentStation.credits -= actionCost;
-                        LevelUpUnit(currentUnit);
-                    }
-                    else
-                    {
-                        Debug.Log($"{currentUnit.unitName} not eligible for {action.actionType}");
-                    }
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return new WaitForSeconds(1f);
-                    currentUnit.selectIcon.SetActive(false);
-                }
-                else if (action.actionType == ActionType.GenerateModule)
-                {
-                    currentStation.credits -= actionCost;
-                    currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return new WaitForSeconds(1f);
-                    currentUnit.selectIcon.SetActive(false);
-                }
-                else if (action.actionType == ActionType.AttachModule)
-                {
-                    if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count < currentUnit.maxAttachedModules)
-                    {
-                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                        if (selectedModule is object)
+                        isMoving = true;
+                        if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
                         {
-                            currentUnit.attachedModules.Add(selectedModule);
-                            currentUnit.EditModule(selectedModule.type);
-                            currentStation.modules.RemoveAt(currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid));
+                            Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
+                            yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
+                            if (Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString()))
+                                yield return StartCoroutine(PerformMine(currentStation, currentUnit));
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot move to position: " + action.selectedPath?.Last()?.transform?.position + ". Out of range or no longer exists.");
+                        }
+                        yield return new WaitForSeconds(.1f);
+                        isMoving = false;
+                        currentUnit.resetMovementRange(); //We actually don't currently use range, regardless afraid to comment out        
+                    }
+                    else if (action.actionType == ActionType.CreateFleet)
+                    {
+                        if (currentStation.fleets.Count < currentStation.maxFleets)
+                        {
+                            currentStation.credits -= actionCost;
+                            yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid, false));
+                        }
+                        else
+                        {
+                            Debug.Log($"{currentUnit.unitName} not eligible for {action.actionType}");
+                        }
+                    }
+                    else if (action.actionType == ActionType.UpgradeFleet)
+                    {
+                        if (CanLevelUp(currentUnit, action.actionType, false))
+                        {
+                            currentStation.credits -= actionCost;
+                            LevelUpUnit(currentUnit as Fleet);
+                        }
+                        else
+                        {
+                            Debug.Log($"{currentUnit.unitName} not eligible for {action.actionType}");
+                        }
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
+                    }
+                    else if (action.actionType == ActionType.UpgradeStation)
+                    {
+                        if (CanLevelUp(currentUnit, action.actionType, false))
+                        {
+                            currentStation.credits -= actionCost;
+                            LevelUpUnit(currentUnit);
+                        }
+                        else
+                        {
+                            Debug.Log($"{currentUnit.unitName} not eligible for {action.actionType}");
+                        }
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
+                    }
+                    else if (action.actionType == ActionType.GenerateModule)
+                    {
+                        currentStation.credits -= actionCost;
+                        currentStation.modules.Add(new Module(action.generatedModuleId, action.generatedGuid));
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
+                    }
+                    else if (action.actionType == ActionType.AttachModule)
+                    {
+                        if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count < currentUnit.maxAttachedModules)
+                        {
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                            if (selectedModule is object)
+                            {
+                                currentUnit.attachedModules.Add(selectedModule);
+                                currentUnit.EditModule(selectedModule.type);
+                                currentStation.modules.RemoveAt(currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid));
+                            }
+                            else
+                            {
+                                Debug.Log($"Module not available");
+                            }
                         }
                         else
                         {
                             Debug.Log($"Module not available");
                         }
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
                     }
-                    else
+                    else if (action.actionType == ActionType.DetachModule)
                     {
-                        Debug.Log($"Module not available");
-                    }
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return new WaitForSeconds(1f);
-                    currentUnit.selectIcon.SetActive(false);
-                }
-                else if (action.actionType == ActionType.DetachModule)
-                {
-                    if (currentUnit.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
-                    {
-                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
-                        if (selectedModule is object)
+                        if (currentUnit.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
                         {
-                            currentStation.modules.Add(selectedModule);
-                            currentUnit.EditModule(selectedModule.type, -1);
-                            currentUnit.attachedModules.Remove(currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                            if (selectedModule is object)
+                            {
+                                currentStation.modules.Add(selectedModule);
+                                currentUnit.EditModule(selectedModule.type, -1);
+                                currentUnit.attachedModules.Remove(currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                            }
+                            else
+                            {
+                                Debug.Log($"Module not available");
+                            }
                         }
                         else
                         {
                             Debug.Log($"Module not available");
                         }
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
                     }
-                    else
+                    else if (action.actionType == ActionType.MineAsteroid)
                     {
-                        Debug.Log($"Module not available");
+                        yield return StartCoroutine(PerformMine(currentStation, currentUnit));
                     }
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return new WaitForSeconds(1f);
-                    currentUnit.selectIcon.SetActive(false);
                 }
-                else if (action.actionType == ActionType.MineAsteroid)
+                else
                 {
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(PerformMine(currentStation, currentUnit));
-                    currentUnit.selectIcon.SetActive(false);
+                    Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {action.actionType}");
                 }
-            }
-            else
-            {
-                Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {action.actionType}");
             }
         }
     }
 
-    private IEnumerator PerformMine(Station _currentStation, Unit _currentUnit)
+    private IEnumerator PerformMine(Station currentStation, Unit currentUnit)
     {
-        if (!_currentUnit.hasMinedThisTurn)
+        if (!currentUnit.hasMinedThisTurn)
         {
-            var asteroidToMine = GridManager.i.GetNeighbors(_currentUnit.currentPathNode).FirstOrDefault(x => x.isAsteroid);
-            if (asteroidToMine != null)
+            currentUnit.selectIcon.SetActive(true);
+            var asteroidsToMine = GridManager.i.GetNeighbors(currentUnit.currentPathNode).Where(x => x.isAsteroid && x.currentCredits > 0);
+            if (asteroidsToMine.Count() > 0)
             {
-                _currentUnit.hasMinedThisTurn = true;
-                _currentStation.credits += asteroidToMine.MineCredits(_currentUnit.mining);
-                asteroidToMine.transform.Find("Mine").gameObject.SetActive(true);
-                yield return new WaitForSeconds(1f);
-                asteroidToMine.transform.Find("Mine").gameObject.SetActive(false);
+                var minedAmount = 0;
+                foreach (var asteroid in asteroidsToMine)
+                {
+                    if (minedAmount < currentUnit.mining)
+                    {
+                        minedAmount += asteroid.MineCredits(currentUnit.mining - minedAmount);
+                        asteroid.transform.Find("Mine").gameObject.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        asteroid.transform.Find("Mine").gameObject.SetActive(false);
+                    }
+                }
+                if (minedAmount > 0)
+                {
+                    currentUnit.hasMinedThisTurn = true;
+                }
+                currentStation.credits += minedAmount;
             }
+            currentUnit.selectIcon.SetActive(false);
         }
     }
 

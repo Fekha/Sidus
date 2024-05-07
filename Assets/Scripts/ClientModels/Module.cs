@@ -15,73 +15,73 @@ public class Module : MonoBehaviour
         switch (type)
         {
             case 0:
-                effectText ="+2 Kinetic \n +1 Explosive";
+                effectText = "+2 Kinetic \n +1 Explosive \n -1 Thermal Damage Recieved";
                 break;
             case 1:
-                effectText ="+2 Thermal \n +1 Kinetic";
+                effectText = "+2 Thermal \n +1 Kinetic \n -1 Explosive Damage Recieved";
                 break;
             case 2:
-                effectText ="+3 Explosive";
+                effectText = "+3 Explosive \n -1 Kinetic Damage Recieved";
                 break;
             case 3:
                 effectText ="+1 Movement \n -1 Explosive Damage Recieved";
                 break;
             case 4:
-                effectText ="+5 Max HP \n -1 Explosive Damage Taken";
+                effectText ="+3 Mining \n -1 Explosive Damage Taken";
                 break;
             case 5:
-                effectText ="+2 Explosive \n +1 Thermal \n +1 Kinetic \n +1 Kinetic Damage Recieved";
+                effectText ="+2 Explosive \n +1 Thermal \n +1 Kinetic";
                 break;
             case 6:
-                effectText = "+2 Kinetic \n +1 Explosive \n +1 Thermal \n +1 Explosive Damage Recieved";
+                effectText = "+2 Kinetic \n +1 Explosive \n +1 Thermal";
                 break;
             case 7:
-                effectText = "+2 Thermal \n +1 Kinetic \n +1 Explosive \n +1 Thermal Damage Recieved";
+                effectText = "+2 Thermal \n +1 Kinetic \n +1 Explosive";
                 break;
             case 8:
-                effectText ="+2 Explosive \n -1 Thermal Damage Recieved";
+                effectText ="+2 Explosive \n -2 Thermal Damage Recieved";
                 break;
             case 9:
-                effectText ="+2 Kinetic \n -1 Kinetic Damage Recieved";
+                effectText ="+2 Kinetic \n -2 Kinetic Damage Recieved";
                 break;
             case 10:
-                effectText = "+2 Thermal \n -1 Explosive Damage Recieved";
+                effectText = "+2 Thermal \n -2 Explosive Damage Recieved";
                 break;
             case 11:
-                effectText = "+2 Kinetic \n +2 Explosive \n +1 Thermal Damage Recieved";
+                effectText = "+2 Kinetic \n +2 Explosive";
                 break;
             case 12:
-                effectText = "+2 Thermal \n +2 Explosive \n +1 Kinetic Damage Recieved";
+                effectText = "+2 Thermal \n +2 Explosive";
                 break;
             case 13:
-                effectText = "+4 Explosive \n +1 Kinetic Damage Recieved";
+                effectText = "+4 Explosive";
                 break;
             case 14:
                 effectText ="+1 Movement \n -1 Thermal Damage Recieved";
                 break;
             case 15:
-                effectText = "+6 Max HP \n -1 Explosive Damage Recieved";
+                effectText = "+3 Mining \n -1 Kinetic Damage Recieved";
                 break;
             case 16:
-                effectText = "+3 Explosive \n +2 Thermal \n +2 Kinetic Damage Recieved";
+                effectText = "+3 Explosive \n +2 Thermal \n +1 Kinetic Damage Recieved";
                 break;
             case 17:
-                effectText = "+3 Thermal \n +2 Kinetic \n  +2 Explosive Damage Recieved";
+                effectText = "+3 Thermal \n +2 Kinetic \n  +1 Explosive Damage Recieved";
                 break;
             case 18:
-                effectText = "+3 Thermal \n +2 Explosive \n +2 Kinetic Damage Recieved";
+                effectText = "+3 Thermal \n +2 Explosive \n +1 Kinetic Damage Recieved";
                 break;
             case 19:
-                effectText = "+5 Explosive \n +2 Kinetic Damage Recieved";
+                effectText = "+5 Explosive \n +1 Kinetic Damage Recieved";
                 break;
             case 20:
-                effectText = "+1 Kinetic \n -2 Explosive Damage Recieved";
+                effectText = "+1 Kinetic \n -2 Explosive Damage Recieved \n -1 Thermal Damage Recieved";
                 break;
             case 21:
-                effectText = "+1 Thermal \n -2 Kinetic Damage Recieved";
+                effectText = "+1 Thermal \n -2 Kinetic Damage Recieved \n -1 Explosive Damage Recieved";
                 break;
             case 22:
-                effectText = "+1 Explosive \n -2 Thermal Damage Recieved";
+                effectText = "+1 Explosive \n -2 Thermal Damage Recieved \n -1 Kinetic Damage Recieved";
                 break;
             default:
                 break;
