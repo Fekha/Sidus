@@ -1409,7 +1409,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!224 &912218495
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1428,7 +1428,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -42.75, y: -102.28645}
+  m_AnchoredPosition: {x: -4, y: -102.28645}
   m_SizeDelta: {x: 403.5, y: 49.4272}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &935991375
@@ -2409,7 +2409,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 66.99997, y: 16}
+  m_AnchoredPosition: {x: -21, y: 16}
   m_SizeDelta: {x: -28, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1191357393
@@ -2445,7 +2445,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Mine after move:'
+  m_Text: 'Auto mine after move:'
 --- !u!222 &1191357394
 CanvasRenderer:
   m_ObjectHideFlags: 0

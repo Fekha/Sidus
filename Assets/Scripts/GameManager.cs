@@ -599,14 +599,14 @@ public class GameManager : MonoBehaviour
                     string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";
                     string beforeStats = $"Pre-fight stats: \n{structure.unitName}: {structure.hp} HP." +
                         $"\nStats: {structure.kineticAttack}{s1sKineticText} Kinetic, {structure.thermalAttack}{s1sThermalText} Thermal, {structure.explosiveAttack}{s1sExplosiveText} Explosive." +
-                        $"\n\n{structureOnPath.unitName}: {structureOnPath.hp} HP." +
+                        $"\n{structureOnPath.unitName}: {structureOnPath.hp} HP." +
                         $"\nStats: {structureOnPath.kineticAttack}{s2sKineticText} Kinetic, {structureOnPath.thermalAttack}{s2sThermalText} Thermal, {structureOnPath.explosiveAttack}{s2sExplosiveText} Explosive.";
 
                     string duringFightText = "";
                     for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
                     {
                         if (structure.hp > 0 && structureOnPath.hp > 0)
-                            duringFightText += Fight(structure, structureOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
+                            duringFightText += DoCombat(structure, structureOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
                     }
                     fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats: \n{structure.unitName}: HP {structure.hp}\n{structureOnPath.unitName}: HP {structureOnPath.hp}";
                     ViewFightPanel(true);
@@ -662,16 +662,17 @@ public class GameManager : MonoBehaviour
                 }
                 else //if ally, and theres room after, move through.
                 {
-                    if (path.Count != i)
-                    {
-                        for (int j = i; j < path.Count; j++)
-                        {
-                            if (path[j].structureOnPath == null)
-                            {
-                                blockedMovement = false;
-                            }
-                        }
-                    }
+                    //TODO take in to account combat that might happen after a move. Example: you move 3, first spot is ally, second is enemy, third is open
+                    //if (path.Count != i)
+                    //{
+                    //    for (int j = i; j < path.Count; j++)
+                    //    {
+                    //        if (path[j].structureOnPath == null)
+                    //        {
+                    //            blockedMovement = false;
+                    //        }
+                    //    }
+                    //}
                 }
             }
             if (!blockedMovement)
@@ -702,7 +703,7 @@ public class GameManager : MonoBehaviour
         structure.currentPathNode.structureOnPath = structure;
     }
 
-    private string Fight(Unit s1, Unit s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
+    private string DoCombat(Unit s1, Unit s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
     {
         int s1Dmg = (s2.explosiveAttack+s2sExplosive) - (s1.explosiveAttack+s1sExplosive);
         int s2Dmg = (s1.explosiveAttack+s1sExplosive) - (s2.explosiveAttack+s2sExplosive);
