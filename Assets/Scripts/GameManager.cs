@@ -761,7 +761,7 @@ public class GameManager : MonoBehaviour
     
     public void EndTurn()
     {
-        if (!isEndingTurn && HasGameStarted() && MyStation.actions.Count == MyStation.maxActions)
+        if (!isEndingTurn && HasGameStarted() /*&& MyStation.actions.Count == MyStation.maxActions*/)
         {
             isEndingTurn = true;
             Debug.Log($"Turn Ending, Starting Simultanous Turns");
@@ -860,7 +860,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PerformAction(Action action)
     {
-        if (action.selectedUnit != null)
+        if (action.selectedUnit != null && AllUnits.Contains(action.selectedUnit))
         {
             var currentUnit = action.selectedUnit;
             if (currentUnit != null)
@@ -1000,9 +1000,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PerformMine(Station currentStation, Unit currentUnit)
     {
-        if (!currentUnit.hasMinedThisTurn)
+        if (AllUnits.Contains(currentUnit) && !currentUnit.hasMinedThisTurn)
         {
-            currentUnit.selectIcon.SetActive(true);
             var asteroidsToMine = GridManager.i.GetNeighbors(currentUnit.currentPathNode).Where(x => x.isAsteroid && x.currentCredits > 0);
             if (asteroidsToMine.Count() > 0)
             {
@@ -1012,9 +1011,11 @@ public class GameManager : MonoBehaviour
                     if (minedAmount < currentUnit.mining)
                     {
                         minedAmount += asteroid.MineCredits(currentUnit.mining - minedAmount);
+                        currentUnit.selectIcon.SetActive(true);
                         asteroid.transform.Find("Mine").gameObject.SetActive(true);
                         yield return new WaitForSeconds(1f);
                         asteroid.transform.Find("Mine").gameObject.SetActive(false);
+                        currentUnit.selectIcon.SetActive(false);
                     }
                 }
                 if (minedAmount > 0)
@@ -1023,7 +1024,6 @@ public class GameManager : MonoBehaviour
                 }
                 currentStation.credits += minedAmount;
             }
-            currentUnit.selectIcon.SetActive(false);
         }
     }
 
@@ -1032,8 +1032,8 @@ public class GameManager : MonoBehaviour
         if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false)){
             structure.level++;
             structure.maxAttachedModules++;
-            structure.maxHp++;
-            structure.hp++;
+            structure.maxHp+=4;
+            structure.hp+=4;
             structure.kineticAttack++;
             structure.explosiveAttack++;
             structure.thermalAttack++;
