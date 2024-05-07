@@ -16,6 +16,7 @@ public class LoginManager : MonoBehaviour
     public GameObject createGamePanel;
     public Transform findContent;
     public GameObject openGamePrefab;
+    public Toggle mineAfterMove;
     private TextMeshProUGUI waitingText;
     private TextMeshProUGUI playersText;
     private List<GameObject> openGamesObjects = new List<GameObject>();
@@ -30,7 +31,9 @@ public class LoginManager : MonoBehaviour
     }
     public void CreateGame()
     {
-        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(new NewGame(Globals.localStationGuid, MaxPlayers));
+        if (mineAfterMove.isOn)
+            Globals.GameSettings.Add(GameSettingType.MineAfterMove.ToString());
+        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(new NewGame(Globals.localStationGuid, MaxPlayers, Globals.GameSettings));
         StartCoroutine(sql.PostRoutine<NewGame>($"Game/Create?", stringToPost, SetMatchGuid));
     }
     public void ViewOpenGames(bool active)
@@ -63,7 +66,7 @@ public class LoginManager : MonoBehaviour
     }
     public void JoinGame(Guid guid)
     {
-        StartCoroutine(sql.GetRoutine<NewGame?>($"Game/Join?ClientId={Globals.localStationGuid}&GameId={guid}", SetMatchGuid));
+        StartCoroutine(sql.GetRoutine<NewGame>($"Game/Join?ClientId={Globals.localStationGuid}&GameId={guid}", SetMatchGuid));
     }
     private void GetAllMatches(List<NewGame> newGames)
     {
@@ -87,6 +90,7 @@ public class LoginManager : MonoBehaviour
         if (game != null)
         {
             Globals.GameId = game.GameId;
+            Globals.GameSettings = game.GameSettings;
             MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
             UpdateWaitingText(game.MaxPlayers - game.PlayerCount);
@@ -102,11 +106,11 @@ public class LoginManager : MonoBehaviour
     {
         while (Globals.Players == null)
         {
-            yield return StartCoroutine(sql.GetRoutine<Player[]?>($"Game/HasGameStarted?GameId={Globals.GameId}&ClientId={Globals.localStationGuid}", SetStationGuids));
+            yield return StartCoroutine(sql.GetRoutine<Player[]>($"Game/HasGameStarted?GameId={Globals.GameId}&ClientId={Globals.localStationGuid}", SetStationGuids));
         }
     }
 
-    private void SetStationGuids(Player[]? players)
+    private void SetStationGuids(Player[] players)
     {
         if (players != null)
         {

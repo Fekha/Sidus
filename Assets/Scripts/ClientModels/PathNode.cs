@@ -1,13 +1,15 @@
+using TMPro;
 using UnityEngine;
 using static GameManager;
 
 public class PathNode : MonoBehaviour
 {
     public bool isAsteroid;
-    public int maxCredits = 0;
-    public int currentCredits = 0;
-    public int creditsRegin = 0;
-    
+    internal int maxCredits = 0;
+    internal int currentCredits = 0;
+    internal int creditsRegin = 0;
+    internal bool hasBeenMinedThisTurn = false;
+    public TextMeshPro mineralText;
     public int gCost;
     public int hCost;
     public int x;
@@ -18,38 +20,40 @@ public class PathNode : MonoBehaviour
     public PathNode parent;
 
     public int ownedById;
-    public void InitializeNode(int _x, int _y, bool _isAsteroid, int _maxCredits, int _creditRegin)
+    public void InitializeNode(int _x, int _y, bool _isAsteroid, int _startCredits, int _maxCredits, int _creditRegin)
     {
+        maxCredits = _maxCredits;
+        currentCredits = _startCredits;
+        creditsRegin = _creditRegin;
         isAsteroid = _isAsteroid;
+        if (isAsteroid)
+        {
+            mineralText = transform.Find("Minerals").GetComponent<TextMeshPro>();
+            mineralText.text = $"{currentCredits}/{maxCredits}";
+        }
         ownedById = -1;
         x = _x;
         y = _y;
-        maxCredits = _maxCredits;
-        currentCredits = _maxCredits;
-        creditsRegin = _creditRegin;
+        
     }
 
     public void ReginCredits()
     {
-        if (currentCredits < maxCredits)
+        if (currentCredits < maxCredits && !hasBeenMinedThisTurn)
         {
             currentCredits = Mathf.Min(currentCredits + creditsRegin, maxCredits);
+            mineralText.text = $"{currentCredits}/{maxCredits}";
         }
+        hasBeenMinedThisTurn = false;
     }
 
     public int MineCredits(int mineValue)
     {
-        var totalCredits = currentCredits;
-        var leftover = currentCredits - mineValue;
-        if (leftover >= 0)
-        {
-            currentCredits = leftover;
-            return mineValue;
-        }
-        else
-        {
-            currentCredits = 0;
-            return totalCredits;
-        }
+        var startingCredits = currentCredits;
+        int amountMined = (currentCredits - mineValue) >= 0 ? mineValue : startingCredits;
+        currentCredits -= amountMined;
+        mineralText.text = $"{currentCredits}/{maxCredits}";
+        hasBeenMinedThisTurn = true;
+        return amountMined;
     }
 }

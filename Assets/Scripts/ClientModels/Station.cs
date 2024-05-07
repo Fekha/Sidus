@@ -6,7 +6,7 @@ public class Station : Unit
     internal List<Action> actions = new List<Action>();
     internal List<Fleet> fleets = new List<Fleet>();
     internal List<Module> modules = new List<Module>();
-    internal int maxActions = 2; // 1+ station.level
+    internal int maxActions = 2;
     internal int maxFleets = 1; // 1+ station.level
     internal int score = 0;
     internal int credits = 10;
@@ -16,6 +16,6 @@ public class Station : Unit
     {
         stationId = GameManager.i.Stations.Count;
         GameManager.i.Stations.Add(this);
-        InitializeStructure(_x, _y, _color + " Station", _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _level, _structureId, 1);
+        InitializeStructure(_x, _y, _color + " Station", _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _level, _structureId, 5);
     }
 }

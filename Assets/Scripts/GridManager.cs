@@ -72,10 +72,10 @@ public class GridManager : MonoBehaviour
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
         stationNode.InitializeStation(spawnX, spawnY, teamColor, 5, 1, 3, 4, 5, 1, stationGuid);
-        StartCoroutine(CreateFleet(stationNode, fleetGuid));
+        StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
     }
 
-    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid)
+    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
     {
         GameObject fleetPrefab = playerPrefab;
         fleetPrefab.transform.Find("Structure").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
@@ -87,10 +87,15 @@ public class GridManager : MonoBehaviour
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
                 fleetNode.InitializeFleet(hex.x, hex.y, stationNode, stationNode.color, 3, 3, 2, 3, 4, 1, fleetGuid);
+                if (!originalSpawn)
+                {
+                    fleetNode.selectIcon.SetActive(true);
+                    yield return new WaitForSeconds(1f);
+                    fleetNode.selectIcon.SetActive(false);
+                }
                 break;
             }
         }
-        yield return new WaitForSeconds(.1f);
     }
     bool CanSpawnFleet(int x, int y)
     {
@@ -133,6 +138,7 @@ public class GridManager : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * 1.08f  * cellPrefabSize.x) + Vector3.up * (y * .85f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.53f * cellPrefabSize.x);
                 bool isAsteroid = false;
                 int maxCredits = 0;
+                int startCredits = 0;
                 int creditRegin = 0;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
                     if(!((x == 3 && (y == 3 || y == 4)) || (x == 4 && (y == 3 || y == 4))))
@@ -140,14 +146,15 @@ public class GridManager : MonoBehaviour
                 if (isAsteroid)
                 {
                     obstacleCount++;
-                    maxCredits = 5;
-                    creditRegin = 1;
+                    startCredits = 10;
+                    maxCredits = 20;
+                    creditRegin = 3;
                     //var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
                 }
                 var cell = Instantiate(isAsteroid ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
                 grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, isAsteroid, maxCredits, creditRegin);
+                grid[x, y].InitializeNode(x, y, isAsteroid, startCredits, maxCredits, creditRegin);
                 if (isAsteroid)
                 {
                     asteroids.Add(grid[x, y]);

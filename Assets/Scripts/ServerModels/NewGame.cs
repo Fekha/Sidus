@@ -10,11 +10,13 @@ namespace StartaneousAPI.Models
         public Guid GameId { get; set; }
         public int MaxPlayers { get; set; }
         public int PlayerCount { get; set; }
+        public List<string> GameSettings { get; set; }
 
-        public NewGame(Guid localStationGuid, int _maxPlayers)
+        public NewGame(Guid _clientId, int _maxPlayers, List<string> _gameSettings)
         {
-            ClientId = localStationGuid;
+            ClientId = _clientId;
             MaxPlayers = _maxPlayers;
+            GameSettings = _gameSettings;
         }
     }
 }

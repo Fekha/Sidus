@@ -8,7 +8,7 @@ namespace StartaneousAPI.Models
     public class ActionIds
     {
         public int? actionTypeId {get;set;}
-        public Guid? selectedStructureId { get; set; }
+        public Guid? selectedUnitId { get; set; }
         public List<Guid>? selectedModulesIds { get; set; }
         public List<Coords> selectedCoords { get; set; }
         public int generatedModuleId { get; set; }
@@ -18,7 +18,7 @@ namespace StartaneousAPI.Models
         {
             if (action is object) {
                 actionTypeId = (int)action.actionType;
-                selectedStructureId = action.selectedStructure?.structureGuid;
+                selectedUnitId = action.selectedUnit?.unitGuid;
                 selectedModulesIds = action.selectedModulesIds;
                 selectedCoords = action.selectedPath.Select(x=>new Coords(x.x, x.y)).ToList();
                 generatedGuid = action.generatedGuid;

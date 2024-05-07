@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Unit : Node
 {
-    internal string structureName;
+    internal string unitName;
     internal string color;
-    internal Guid structureGuid;
+    internal Guid unitGuid;
     internal int stationId;
     internal int maxHp;
     internal int hp;
@@ -21,11 +21,15 @@ public class Unit : Node
     internal int explosiveArmor;
     internal int mining;
     internal int level;
+    internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
+    internal TextMeshPro hpText;
+    internal GameObject selectIcon;
+    internal GameObject inCombatIcon;
     internal int maxAttachedModules = 1; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _structureGuid, int _mining)
+    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _unitGuid, int _mining)
     {
-        structureGuid = _structureGuid;
+        unitGuid = _unitGuid;
         x = _x;
         y = _y;
         color = _color;
@@ -37,13 +41,16 @@ public class Unit : Node
         kineticAttack = _electricAttack;
         thermalAttack = _thermalAttack;
         explosiveAttack = _voidAttack;
-        structureName = _structureName;
+        unitName = _structureName;
         mining = _mining;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
         SetNodeColor();
-        GameManager.i.AllStructures.Add(this);
+        hpText = transform.Find("HP").GetComponent<TextMeshPro>();
+        selectIcon = transform.Find("Select").gameObject;
+        inCombatIcon = transform.Find("InCombat").gameObject;
+        GameManager.i.AllUnits.Add(this);
     }
 
     public void TakeDamage(int damage)

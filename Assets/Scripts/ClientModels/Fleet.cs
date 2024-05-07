@@ -7,6 +7,6 @@ public class Fleet : Unit
     {
         stationId = _station.stationId;
         _station.fleets.Add(this);
-        InitializeStructure(_x, _y, _color + " Fleet", _color, _hp, _range,_electricAttack,_thermalAttack,_voidAttack, _level, _structureId, 1);
+        InitializeStructure(_x, _y, _color + " Fleet", _color, _hp, _range,_electricAttack,_thermalAttack,_voidAttack, _level, _structureId, 3);
     }
 }
