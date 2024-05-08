@@ -21,7 +21,7 @@ public class Unit : Node
     internal int explosiveArmor;
     internal int mining;
     internal int level;
-    //internal bool hasMinedThisTurn = false;
+    internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
     internal TextMeshPro hpText;
     internal GameObject selectIcon;
@@ -108,11 +108,11 @@ public class Unit : Node
             case 3:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                explosiveArmor += (-1 * modifer);
+                explosiveArmor += (1 * modifer);
                 break;
             case 4:
                 mining += (3 * modifer);
-                explosiveArmor += (-1 * modifer);
+                explosiveArmor += (1 * modifer);
                 break;
             case 5:
                 kineticAttack += (1 * modifer);
@@ -155,30 +155,30 @@ public class Unit : Node
             case 14:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticArmor += (-1 * modifer);
+                thermalArmor += (1 * modifer);
                 break;
             case 15:
                 mining += (3 * modifer);
-                kineticArmor += (-1 * modifer);
+                kineticArmor += (1 * modifer);
                 break;
             case 16:
                 thermalAttack += (2 * modifer);
                 explosiveAttack += (3 * modifer);
-                kineticArmor += (-2 * modifer);
+                kineticArmor += (-1 * modifer);
                 break;
             case 17:
                 kineticAttack += (2 * modifer);
                 thermalAttack += (3 * modifer);
-                explosiveArmor += (-2 * modifer);
+                explosiveArmor += (-1 * modifer);
                 break;
             case 18:
                 thermalAttack += (3 * modifer);
                 explosiveAttack += (2 * modifer);
-                kineticArmor += (-2 * modifer); 
+                kineticArmor += (-1 * modifer); 
                 break;
             case 19:
                 explosiveAttack += (5 * modifer);
-                kineticArmor += (-2 * modifer); 
+                kineticArmor += (-1 * modifer); 
                 break;
             case 20:
                 kineticAttack += (1 * modifer);
@@ -198,11 +198,5 @@ public class Unit : Node
             default:
                 break;
         }
-    }
-
-    internal void ShowHPText(bool value)
-    {
-        hpText.text = $"{hp}";
-        hpText.gameObject.SetActive(value);
     }
 }
