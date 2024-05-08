@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public GameObject infoPanel;
     public GameObject fightPanel;
     public GameObject alertPanel;
+    public GameObject areYouSurePanel;
     public GameObject selectModulePanel;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
@@ -130,6 +131,10 @@ public class GameManager : MonoBehaviour
     public void HideAlertPanel()
     {
         alertPanel.SetActive(false);
+    }
+    public void ShowAreYouSurePanel(bool value)
+    {
+        areYouSurePanel.SetActive(value);
     }
     public bool HasGameStarted()
     {
@@ -776,17 +781,25 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    public void EndTurn()
+    public void EndTurn(bool theyAreSure)
     {
-        if (!isEndingTurn && HasGameStarted() /*&& MyStation.actions.Count == MyStation.maxActions*/)
+        if (!isEndingTurn && HasGameStarted())
         {
-            isEndingTurn = true;
-            Debug.Log($"Turn Ending, Starting Simultanous Turns");
-            var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
-            var turnToPost = new Turn(Globals.GameId, Globals.localStationGuid, TurnNumber,actionToPost);
-            var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
-            StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
-            StartCoroutine(TakeTurns()); 
+            if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
+            {
+                ShowAreYouSurePanel(false);
+                isEndingTurn = true;
+                Debug.Log($"Turn Ending, Starting Simultanous Turns");
+                var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
+                var turnToPost = new Turn(Globals.GameId, Globals.localStationGuid, TurnNumber, actionToPost);
+                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
+                StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
+                StartCoroutine(TakeTurns());
+            }
+            else
+            {
+                ShowAreYouSurePanel(true);
+            }
         }
     }
     
@@ -896,7 +909,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log("Cannot move to position: " + action.selectedPath?.Last()?.transform?.position + ". Out of range or no longer exists.");
+                            Debug.Log("Out of range or no longer exists.");
                         }
                         yield return new WaitForSeconds(.1f);
                         isMoving = false;
