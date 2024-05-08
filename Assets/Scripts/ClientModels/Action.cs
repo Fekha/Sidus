@@ -13,11 +13,13 @@ public class Action : MonoBehaviour
     public List<PathNode> selectedPath;
     public int generatedModuleId;
     public Guid generatedGuid;
+    internal int costOfAction;
 
-    public Action(ActionType _actionType, Unit _selectedFleet, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
+    public Action(ActionType _actionType, Unit _selectedFleet, int _cost, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
     {
         actionType = _actionType;
         selectedUnit = _selectedFleet;
+        costOfAction = _cost;
         selectedModulesIds = _selectedModules ?? new List<Guid>();
         selectedPath = _selectedPath ?? new List<PathNode>();
     }

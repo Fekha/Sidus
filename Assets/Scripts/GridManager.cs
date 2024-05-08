@@ -71,7 +71,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 1, 3, 4, 5, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 2, 3, 4, 5, 1, stationGuid);
         StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
     }
 
@@ -228,13 +228,15 @@ public class GridManager : MonoBehaviour
             {
                 PathNode currentNode = queue.Dequeue();
                 nodesWithinRange.Add(currentNode);
-
-                foreach (PathNode neighbor in GetNeighbors(currentNode))
+                if (!currentNode.isAsteroid)
                 {
-                    if (!visited.Contains(neighbor) && !neighbor.isAsteroid)
+                    foreach (PathNode neighbor in GetNeighbors(currentNode))
                     {
-                        queue.Enqueue(neighbor);
-                        visited.Add(neighbor);
+                        if (!visited.Contains(neighbor))
+                        {
+                            queue.Enqueue(neighbor);
+                            visited.Add(neighbor);
+                        }
                     }
                 }
             }
@@ -249,8 +251,7 @@ public class GridManager : MonoBehaviour
         PathNode currentNode = endNode;
         while (currentNode != startNode)
         {
-            if (!currentNode.isAsteroid)
-                path.Add(currentNode);
+            path.Add(currentNode);
             currentNode = currentNode.parent;
         }
         path.Reverse();

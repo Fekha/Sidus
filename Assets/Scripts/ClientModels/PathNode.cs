@@ -29,7 +29,7 @@ public class PathNode : MonoBehaviour
         if (isAsteroid)
         {
             mineralText = transform.Find("Minerals").GetComponent<TextMeshPro>();
-            mineralText.text = $"{currentCredits}/{maxCredits}";
+            mineralText.text = $"{currentCredits}";
         }
         ownedById = -1;
         x = _x;
@@ -42,7 +42,7 @@ public class PathNode : MonoBehaviour
         if (currentCredits < maxCredits && !hasBeenMinedThisTurn)
         {
             currentCredits = Mathf.Min(currentCredits + creditsRegin, maxCredits);
-            mineralText.text = $"{currentCredits}/{maxCredits}";
+            mineralText.text = $"{currentCredits}";
         }
         hasBeenMinedThisTurn = false;
     }
@@ -52,7 +52,7 @@ public class PathNode : MonoBehaviour
         var startingCredits = currentCredits;
         int amountMined = (currentCredits - mineValue) >= 0 ? mineValue : startingCredits;
         currentCredits -= amountMined;
-        mineralText.text = $"{currentCredits}/{maxCredits}";
+        mineralText.text = $"{currentCredits}";
         hasBeenMinedThisTurn = true;
         return amountMined;
     }
