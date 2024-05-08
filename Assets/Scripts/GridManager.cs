@@ -20,6 +20,7 @@ public class GridManager : MonoBehaviour
     internal int scoreToWin = 99;
     public List<Color> playerColors;
     public List<Color> tileColors;
+   
     private void Awake()
     {
         i = this;
@@ -45,7 +46,7 @@ public class GridManager : MonoBehaviour
         var stationOfClient = team == Globals.localStationIndex;
         string teamColor = "Blue";
         GameObject stationPrefab = playerStationPrefab;
-        stationPrefab.transform.Find("Structure").GetComponent<SpriteRenderer>().color = playerColors[team];
+        stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>().color = playerColors[team];
         Guid stationGuid = Globals.Players[team].StationGuid;
         Guid fleetGuid = Globals.Players[team].FleetGuids[0];
         int spawnX = 1;
@@ -78,7 +79,9 @@ public class GridManager : MonoBehaviour
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
     {
         GameObject fleetPrefab = playerPrefab;
-        fleetPrefab.transform.Find("Structure").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
+        fleetPrefab.transform.Find("Unit/Unit1").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
+        fleetPrefab.transform.Find("Unit/Unit2").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
+        fleetPrefab.transform.Find("Unit/Unit3").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
         foreach(var hex in hexesNearby) {
             if (CanSpawnFleet(hex.x, hex.y))
@@ -270,21 +273,10 @@ public class GridManager : MonoBehaviour
     internal List<PathNode> GetNeighbors(PathNode node)
     {
         List<PathNode> neighbors = new List<PathNode>();
-
-        int[] xEvenOffsets = { 1, 1, 0, -1, 0, 1 }; // Clockwise from top-left
-        int[] yEvenOffsets = { 0, -1, -1, 0, 1, 1 }; // Clockwise from top-left
-
-        int[] xOddOffsets = { 1, 0, -1, -1, -1, 0 }; // Clockwise from top-left
-        int[] yOddOffsets = { 0, -1, -1, 0, 1, 1 }; // Clockwise from top-left
-
-        int[] xOffset = node.isEvenCol ? xEvenOffsets : xOddOffsets;
-        int[] yOffset = node.isEvenCol ? yEvenOffsets : yOddOffsets;
-
         for (int i = 0; i < 6; i++)
         {
-            int checkX = node.x + xOffset[i];
-            int checkY = node.y + yOffset[i];
-
+            int checkX = node.x + node.offSet[i].x;
+            int checkY = node.y + node.offSet[i].y;
             if (IsInGridBounds(checkX, checkY))
             {
                 neighbors.Add(grid[checkX, checkY]);

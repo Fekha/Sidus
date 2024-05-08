@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -698,13 +699,17 @@ public class GameManager : MonoBehaviour
             if (!blockedMovement)
             {
                 float elapsedTime = 0f;
-                float totalTime = .25f;
+                float totalTime = .5f;
+                var toRot = GetDirection(structure, node);
+                var unitImage = structure.transform.Find("Unit");
                 while (elapsedTime <= totalTime)
                 {
+                    unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
                     structure.transform.position = Vector3.Lerp(structure.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
                     elapsedTime += Time.deltaTime;
                     yield return null;
                 }
+                unitImage.rotation = toRot;
                 structure.currentPathNode = node;
             }
             if (path.Count == i || node.ownedById == -1 || blockedMovement)
@@ -721,6 +726,15 @@ public class GameManager : MonoBehaviour
         //HighlightRangeOfMovement(fleet.currentPathNode, fleet.getMovementRange());
         structure.transform.position = structure.currentPathNode.transform.position;
         structure.currentPathNode.structureOnPath = structure;
+    }
+
+    private Quaternion GetDirection(Unit unit, PathNode node)
+    {
+        int x = node.x - unit.currentPathNode.x;
+        int y = node.y - unit.currentPathNode.y;
+        var offSetCoords = unit.currentPathNode.offSet.FirstOrDefault(c=>c.x == x && c.y == y);
+        unit.facing = (Direction)Array.IndexOf(unit.currentPathNode.offSet, offSetCoords);
+        return Quaternion.Euler(unit.transform.rotation.x, unit.transform.rotation.y, 270 - (unit.facing == Direction.TopRight ? -60 : (int)unit.facing * 60));
     }
 
     private string DoCombat(Unit s1, Unit s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)

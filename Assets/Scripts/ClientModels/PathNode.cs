@@ -10,12 +10,17 @@ public class PathNode : MonoBehaviour
     internal int creditsRegin = 0;
     internal bool hasBeenMinedThisTurn = false;
     public TextMeshPro mineralText;
+    public TextMeshPro coordsText;
     public int gCost;
     public int hCost;
     public int x;
     public int y;
     public int fCost { get { return gCost + hCost; } }
+    private Coords[] evenOffsets = { new Coords(1, 0), new Coords(1, -1), new Coords(0, -1), new Coords(-1, 0), new Coords(0, 1), new Coords(1, 1) }; // Clockwise from right
+    private Coords[] oddOffsets = { new Coords(1, 0), new Coords(0, -1), new Coords(-1, -1), new Coords(-1, 0), new Coords(-1, 1), new Coords(0, 1) }; // Clockwise from right
     public bool isEvenCol { get { return y % 2 == 0; } }
+    public Coords[] offSet { get { return isEvenCol ? evenOffsets : oddOffsets; } }
+
     public Unit structureOnPath;
     public PathNode parent;
 
@@ -34,7 +39,8 @@ public class PathNode : MonoBehaviour
         ownedById = -1;
         x = _x;
         y = _y;
-        
+        coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
+        coordsText.text = $"{x},{y}";
     }
 
     public void ReginCredits()
