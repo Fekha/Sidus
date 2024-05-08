@@ -162,7 +162,65 @@ public class GameManager : MonoBehaviour
         fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
     }
-
+    public void SetTextValues(Unit unit)
+    {
+        nameValue.text = unit.unitName;
+        levelValue.text = unit.level.ToString();
+        hpValue.text = unit.hp + "/" + unit.maxHp;
+        rangeValue.text = unit.maxRange.ToString();
+        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.stationId == unit.stationId);
+        var kineticSupport = 0;
+        var thermalSupport = 0;
+        var explosiveSupport = 0;
+        if (supportingFleets.Any())
+        {
+            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticAttack * .5)));
+            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalAttack * .5)));
+            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosiveAttack * .5)));
+        }
+        kineticAttackValue.text = $"{unit.kineticAttack}|{kineticSupport}|{unit.kineticArmor}";
+        thermalAttackValue.text = $"{unit.thermalAttack}|{thermalSupport}|{unit.thermalArmor}";
+        explosiveAttackValue.text = $"{unit.explosiveAttack}|{explosiveSupport}|{unit.explosiveArmor}";
+        miningValue.text = unit.mining.ToString();
+        var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
+        upgradeButton.interactable = false;
+        if (unit.stationId == MyStation.stationId)
+        {
+            if (CanLevelUp(unit, actionType, true))
+            {
+                upgradeCost.text = GetCostText(GetCostOfAction(actionType, unit, true));
+                upgradeButton.interactable = CanQueueUpgrade(unit, actionType);
+            }
+            else
+            {
+                if (unit is Fleet)
+                {
+                    upgradeCost.text = "(Station Upgrade Required)";
+                }
+                else
+                {
+                    upgradeCost.text = "(Max Station Level)";
+                }
+            }
+            upgradeButton.gameObject.SetActive(true);
+            //if (HasQueuedAction(ActionType.MineAsteroid, structure) && Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString())) {
+            //    mineButton.interactable = false;
+            //    mineRestrictedText.text = "(Already Queued)";
+            //} else {
+            //    mineButton.interactable = true;
+            //    mineRestrictedText.text = "(Be next to Asteroid)";
+            //}
+            mineButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            upgradeButton.gameObject.SetActive(false);
+            mineButton.gameObject.SetActive(false);
+        }
+        SetModuleBar(unit);
+        infoPanel.gameObject.SetActive(true);
+        ToggleMineralText(true);
+    }
     void Update()
     {
         if(HasGameStarted()) {
@@ -299,65 +357,6 @@ public class GameManager : MonoBehaviour
                 QueueAction(ActionType.DetachModule, new List<Guid>() { SelectedUnit.attachedModules[i].moduleGuid });
             }
         }
-    }
-
-    public void SetTextValues(Unit unit)
-    {
-        nameValue.text = unit.unitName;
-        levelValue.text = unit.level.ToString();
-        hpValue.text = unit.hp + "/" + unit.maxHp;
-        rangeValue.text = unit.maxRange.ToString();
-        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x=>x.structureOnPath).Where(x => x != null && x.stationId == unit.stationId);
-        var kineticSupport = 0;
-        var thermalSupport = 0;
-        var explosiveSupport = 0;
-        if (supportingFleets.Any()) {
-            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticAttack * .5)));
-            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalAttack * .5)));
-            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosiveAttack * .5)));
-        }
-        kineticAttackValue.text = $"{unit.kineticAttack}|{kineticSupport}|{unit.kineticArmor}";
-        thermalAttackValue.text = $"{unit.thermalAttack}|{thermalSupport}|{unit.thermalArmor}";
-        explosiveAttackValue.text = $"{unit.explosiveAttack}|{explosiveSupport}|{unit.explosiveArmor}";
-        miningValue.text = unit.mining.ToString();
-        var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
-        upgradeButton.interactable = false;
-        if (unit.stationId == MyStation.stationId)
-        {
-            if (CanLevelUp(unit, actionType, true))
-            {
-                upgradeCost.text = GetCostText(GetCostOfAction(actionType, unit, true));
-                upgradeButton.interactable = CanQueueUpgrade(unit, actionType);
-            }
-            else
-            {
-                if (unit is Fleet)
-                {
-                    upgradeCost.text = "(Station Upgrade Required)";
-                }
-                else
-                {
-                    upgradeCost.text = "(Max Station Level)";
-                }
-            }
-            upgradeButton.gameObject.SetActive(true);
-            //if (HasQueuedAction(ActionType.MineAsteroid, structure) && Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString())) {
-            //    mineButton.interactable = false;
-            //    mineRestrictedText.text = "(Already Queued)";
-            //} else {
-            //    mineButton.interactable = true;
-            //    mineRestrictedText.text = "(Be next to Asteroid)";
-            //}
-            mineButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            upgradeButton.gameObject.SetActive(false);
-            mineButton.gameObject.SetActive(false);
-        }
-        SetModuleBar(unit);
-        infoPanel.gameObject.SetActive(true);
-        ToggleMineralText(true);
     }
 
     private void ToggleMineralText(bool value)
@@ -694,7 +693,7 @@ public class GameManager : MonoBehaviour
             if (node.isAsteroid)
             {
                 blockedMovement = true;
-                yield return StartCoroutine(PerformMine(structure));
+                yield return StartCoroutine(PerformSingleMine(structure, node));
             }
             if (!blockedMovement)
             {
@@ -1015,7 +1014,7 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.MineAsteroid)
                     {
-                        yield return StartCoroutine(PerformMine(currentUnit));
+                        yield return StartCoroutine(PerformAoeMine(currentUnit));
                     }
                 }
                 else
@@ -1026,12 +1025,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator PerformMine(Unit currentUnit)
+    private IEnumerator PerformAoeMine(Unit currentUnit)
     {
         Station currentStation = Stations[currentUnit.stationId];
         if (AllUnits.Contains(currentUnit))
         {
-            var asteroidsToMine = GridManager.i.GetNeighbors(currentUnit.currentPathNode).Where(x => x.isAsteroid && x.currentCredits > 0);
+            var asteroidsToMine = GridManager.i.GetNeighbors(currentUnit.currentPathNode).Where(x => x.isAsteroid && x.currentCredits > 0).OrderBy(x=>x.currentCredits);
             if (asteroidsToMine.Count() > 0)
             {
                 var minedAmount = 0;
@@ -1053,6 +1052,20 @@ public class GameManager : MonoBehaviour
                 //}
                 currentStation.credits += minedAmount;
             }
+        }
+    }
+
+    private IEnumerator PerformSingleMine(Unit currentUnit, PathNode asteroidToMine)
+    {
+        Station currentStation = Stations[currentUnit.stationId];
+        if (AllUnits.Contains(currentUnit))
+        {
+            currentStation.credits += asteroidToMine.MineCredits(currentUnit.mining);
+            currentUnit.selectIcon.SetActive(true);
+            asteroidToMine.transform.Find("Mine").gameObject.SetActive(true);
+            yield return new WaitForSeconds(1f);
+            asteroidToMine.transform.Find("Mine").gameObject.SetActive(false);
+            currentUnit.selectIcon.SetActive(false);
         }
     }
 
