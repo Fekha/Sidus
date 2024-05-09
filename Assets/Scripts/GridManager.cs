@@ -230,7 +230,8 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < levelSize; i++)
             {
                 PathNode currentNode = queue.Dequeue();
-                nodesWithinRange.Add(currentNode);
+                if(currentNode != clickedNode)
+                    nodesWithinRange.Add(currentNode);
                 if (!currentNode.isAsteroid)
                 {
                     foreach (PathNode neighbor in GetNeighbors(currentNode))

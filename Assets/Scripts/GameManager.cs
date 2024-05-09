@@ -255,39 +255,35 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        //clicked on valid move
-                        if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
+                        //double click confirm to movement
+                        if (SelectedNode != null && targetNode == SelectedNode)
                         {
-                            //double click confirm
-                            if (targetNode == SelectedNode)
+                            QueueAction(ActionType.MoveStructure);
+                        }
+                        //create movement
+                        else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
+                        {
+                            int oldPathCount = SelectedPath?.Count ?? 0;
+                            if (SelectedPath == null || SelectedPath.Count == 0)
                             {
-                                QueueAction(ActionType.MoveStructure);
+                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, targetNode);
+                                Debug.Log($"Path created for {SelectedUnit.unitName}");
                             }
-                            //create movement
                             else
                             {
-                                int oldPathCount = SelectedPath?.Count ?? 0;
-                                if (SelectedPath == null || SelectedPath.Count == 0)
-                                {
-                                    SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, targetNode);
-                                    Debug.Log($"Path created for {SelectedUnit.unitName}");
-                                }
+                                SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), targetNode));
+                                Debug.Log($"Path edited for {SelectedUnit.unitName}");
+                            }
+                            SelectedUnit.subtractMovement(SelectedPath.Count - oldPathCount);
+                            HighlightRangeOfMovement(targetNode, SelectedUnit.getMovementRange());
+                            ClearMovementPath();
+                            SelectedNode = targetNode;
+                            foreach (var node in SelectedPath)
+                            {
+                                if (node == SelectedPath.Last())
+                                    currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
                                 else
-                                {
-                                    SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), targetNode));
-                                    Debug.Log($"Path edited for {SelectedUnit.unitName}");
-                                }
-                                SelectedUnit.subtractMovement(SelectedPath.Count - oldPathCount);
-                                HighlightRangeOfMovement(targetNode, SelectedUnit.getMovementRange());
-                                ClearMovementPath();
-                                SelectedNode = targetNode;
-                                foreach (var node in SelectedPath)
-                                {
-                                    if (node == SelectedPath.Last())
-                                        currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
-                                    else
-                                        currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
-                                }
+                                    currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
                             }
                         }
                         //clicked on invalid tile
@@ -559,115 +555,41 @@ public class GameManager : MonoBehaviour
         CreditText.text = $"{fakeCredits} Credits";
     }
 
-    private IEnumerator MoveOnPath(Unit structure, List<PathNode> path)
+    private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
     {
         int i = 0;
-        structure.currentPathNode.structureOnPath = null;
+        unitMoving.currentPathNode.structureOnPath = null;
         ClearMovementRange();
         foreach (var node in path)
         {
             i++;
             bool blockedMovement = false;
+            float elapsedTime = 0f;
+            float totalTime = .5f;
+            var toRot = GetDirection(unitMoving, node);
+            var unitImage = unitMoving.transform.Find("Unit");
+            while (elapsedTime <= totalTime)
+            {
+                unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
+                if (!node.isAsteroid)
+                    unitMoving.transform.position = Vector3.Lerp(unitMoving.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            unitImage.rotation = toRot;
+            if (node.isAsteroid)
+            {
+                blockedMovement = true;
+                yield return StartCoroutine(PerformSingleMine(unitMoving, node));
+            }
             if (node.structureOnPath != null)
             {
                 blockedMovement = true;
-                var unitOnPath = node.structureOnPath;
                 //if enemy, attack instead of move, then move if you destroy them
-                if (unitOnPath.stationId != structure.stationId)
+                if (node.structureOnPath.stationId != unitMoving.stationId)
                 {
-                    Debug.Log($"{structure.unitName} is attacking {unitOnPath.unitName}");
-                    structure.selectIcon.SetActive(true);
-                    unitOnPath.inCombatIcon.SetActive(true);
-                    var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
-                    int s1sKinetic = 0;
-                    int s2sKinetic = 0;
-                    int s1sThermal = 0;
-                    int s2sThermal = 0;
-                    int s1sExplosive = 0;
-                    int s2sExplosive = 0;
-                    foreach (var supportFleet in supportingFleets)
-                    {
-                        if (supportFleet.stationId == structure.stationId)
-                        {
-                            s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
-                            s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
-                            s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
-                        }
-                        else
-                        {
-                            s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
-                            s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
-                            s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
-                        }
-                    }
-                    string s1sKineticText = s1sKinetic > 0 ? $"(+{s1sKinetic})" : "";
-                    string s1sThermalText = s1sThermal > 0 ? $"(+{s1sThermal})" : "";
-                    string s1sExplosiveText = s1sExplosive > 0 ? $"(+{s1sExplosive})" : "";
-                    string s2sKineticText = s2sKinetic > 0 ? $"(+{s2sKinetic})" : "";
-                    string s2sThermalText = s2sThermal > 0 ? $"(+{s2sThermal})" : "";
-                    string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";
-                    string beforeStats = $"Pre-fight stats: \n{structure.unitName}: {structure.hp} HP." +
-                        $"\nStats: {structure.kineticAttack}{s1sKineticText} Kinetic, {structure.thermalAttack}{s1sThermalText} Thermal, {structure.explosiveAttack}{s1sExplosiveText} Explosive." +
-                        $"\n{unitOnPath.unitName}: {unitOnPath.hp} HP." +
-                        $"\nStats: {unitOnPath.kineticAttack}{s2sKineticText} Kinetic, {unitOnPath.thermalAttack}{s2sThermalText} Thermal, {unitOnPath.explosiveAttack}{s2sExplosiveText} Explosive.";
-
-                    string duringFightText = "";
-                    for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
-                    {
-                        if (structure.hp > 0 && unitOnPath.hp > 0)
-                            duringFightText += DoCombat(structure, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
-                    }
-                    fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats: \n{structure.unitName}: HP {structure.hp}\n{unitOnPath.unitName}: HP {unitOnPath.hp}";
-                    ViewFightPanel(true);
-                    while (fightPanel.activeInHierarchy)
-                    {
-                        yield return new WaitForSeconds(.5f);
-                    }
-                    unitOnPath.inCombatIcon.SetActive(false);
-                    structure.selectIcon.SetActive(false);
-                    if (structure.hp <= 0)
-                    {
-                        Debug.Log($"{unitOnPath.unitName} destroyed {structure.unitName}");
-                        if (unitOnPath is Fleet)
-                        {
-                            if (unitOnPath.hp > 0)
-                            {
-                                LevelUpUnit(unitOnPath as Fleet);
-                            }
-                        }
-                        if (structure is Station)
-                        {
-                            (structure as Station).defeated = true;
-                        }
-                        else if (structure is Fleet)
-                        {
-                            Stations[structure.stationId].fleets.Remove(structure as Fleet);
-                        }
-                        AllUnits.Remove(structure);
-                        Destroy(structure.gameObject);
-                    }
-                    if (unitOnPath.hp > 0)
-                    {
-                        //even if allied don't move through, don't feel like doing recursive checks right now
-                        Debug.Log($"{structure.unitName} movement was blocked by {unitOnPath.unitName}");
-                    }
-                    else
-                    {
-                        Debug.Log($"{structure.unitName} destroyed {unitOnPath.unitName}");
-                        if (structure is Fleet)
-                            LevelUpUnit(structure as Fleet);
-                        if (unitOnPath is Station)
-                        {
-                            (unitOnPath as Station).defeated = true;
-                        }
-                        else if (unitOnPath is Fleet)
-                        {
-                            Stations[unitOnPath.stationId].fleets.Remove(unitOnPath as Fleet);
-                        }
-                        blockedMovement = false;
-                        AllUnits.Remove(unitOnPath); 
-                        Destroy(unitOnPath.gameObject); //they are dead
-                    }
+                    yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
+                    blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
                 }
                 else //if ally, and theres room after, move through.
                 {
@@ -691,41 +613,124 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            if (node.isAsteroid)
-            {
-                blockedMovement = true;
-                yield return StartCoroutine(PerformSingleMine(structure, node));
-            }
             if (!blockedMovement)
-            {
-                float elapsedTime = 0f;
-                float totalTime = .5f;
-                var toRot = GetDirection(structure, node);
-                var unitImage = structure.transform.Find("Unit");
-                while (elapsedTime <= totalTime)
-                {
-                    unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
-                    structure.transform.position = Vector3.Lerp(structure.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
-                    elapsedTime += Time.deltaTime;
-                    yield return null;
-                }
-                unitImage.rotation = toRot;
-                structure.currentPathNode = node;
-            }
+                unitMoving.currentPathNode = node;
+            //if its the last node on your path, if its nuetral, or your movement got blocked so it is the end of your movement
             if (path.Count == i || node.ownedById == -1 || blockedMovement)
-            {
-                structure.SetNodeColor();
-            }
+                unitMoving.SetNodeColor();
             if (blockedMovement)
-            {
                 break;
-            }
             yield return new WaitForSeconds(.25f);
         }
-        //character.movementRange -= path.Count();
-        //HighlightRangeOfMovement(fleet.currentPathNode, fleet.getMovementRange());
-        structure.transform.position = structure.currentPathNode.transform.position;
-        structure.currentPathNode.structureOnPath = structure;
+        unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
+        unitMoving.currentPathNode.structureOnPath = unitMoving;
+    }
+
+    internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
+    {
+        var unitOnPath = node.structureOnPath;
+        Debug.Log($"{unitMoving.unitName} is attacking {unitOnPath.unitName}");
+        unitMoving.selectIcon.SetActive(true);
+        unitOnPath.inCombatIcon.SetActive(true);
+        var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
+        int s1sKinetic = 0;
+        int s2sKinetic = 0;
+        int s1sThermal = 0;
+        int s2sThermal = 0;
+        int s1sExplosive = 0;
+        int s2sExplosive = 0;
+        foreach (var supportFleet in supportingFleets)
+        {
+            if (supportFleet.stationId == unitMoving.stationId)
+            {
+                s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
+                s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
+                s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
+            }
+            else
+            {
+                s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
+                s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
+                s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
+            }
+        }
+        string s1sKineticText = s1sKinetic > 0 ? $"(+{s1sKinetic})" : "";
+        string s1sThermalText = s1sThermal > 0 ? $"(+{s1sThermal})" : "";
+        string s1sExplosiveText = s1sExplosive > 0 ? $"(+{s1sExplosive})" : "";
+        string s2sKineticText = s2sKinetic > 0 ? $"(+{s2sKinetic})" : "";
+        string s2sThermalText = s2sThermal > 0 ? $"(+{s2sThermal})" : "";
+        string s2sExplosiveText = s2sExplosive > 0 ? $"(+{s2sExplosive})" : "";
+        var preCombatHp1 = unitMoving.hp;
+        var preCombatHp2 = unitOnPath.hp;
+        var resistanceText1 = (unitMoving.kineticArmor > 0 || unitMoving.thermalArmor > 0 || unitMoving.explosiveArmor > 0) ? $"\nResistance: Kinetic {unitMoving.kineticArmor}, Thermal {unitMoving.thermalArmor}, Explosive {unitMoving.explosiveArmor}." : "";
+        var resistanceText2 = (unitOnPath.kineticArmor > 0 || unitOnPath.thermalArmor > 0 || unitOnPath.explosiveArmor > 0) ? $"\nResistance: Kinetic {unitOnPath.kineticArmor}, Thermal {unitOnPath.thermalArmor}, Explosive {unitOnPath.explosiveArmor}." : "";
+        string beforeStats = $"Pre-fight stats: \n{unitMoving.unitName}: {preCombatHp1} HP." +
+            $"\nPower(+Support): Kinetic {unitMoving.kineticAttack}{s1sKineticText}, Thermal {unitMoving.thermalAttack}{s1sThermalText}, Explosive {unitMoving.explosiveAttack}{s1sExplosiveText}." +
+            resistanceText1 +
+            $"\n{unitOnPath.unitName}: {preCombatHp2} HP." +
+            $"\nPower(+Support): Kinetic {unitOnPath.kineticAttack}{s2sKineticText}, Thermal {unitOnPath.thermalAttack}{s2sThermalText}, Explosive {unitOnPath.explosiveAttack}{s2sExplosiveText}." +
+            resistanceText2;
+
+        string duringFightText = "";
+        for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
+        {
+            if (unitMoving.hp > 0 && unitOnPath.hp > 0)
+                duringFightText += DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
+        }
+        var postFightHpDiff1 = preCombatHp1 - unitMoving.hp;
+        var postFightHpDiff2 = preCombatHp2 - unitOnPath.hp;
+        var postFightHpDiff1Text = postFightHpDiff1 > 0 ? $"(-{postFightHpDiff1})" : "";
+        var postFightHpDiff2Text = postFightHpDiff2 > 0 ? $"(-{postFightHpDiff2})" : "";
+        fightText.text = $"{beforeStats}\n\n{duringFightText}\nPost-fight stats: \n{unitMoving.unitName}: HP {unitMoving.hp}{postFightHpDiff1Text}\n{unitOnPath.unitName}: HP {unitOnPath.hp}{postFightHpDiff2Text}";
+        ViewFightPanel(true);
+        while (fightPanel.activeInHierarchy)
+        {
+            yield return new WaitForSeconds(.5f);
+        }
+        unitOnPath.inCombatIcon.SetActive(false);
+        unitMoving.selectIcon.SetActive(false);
+        if (unitMoving.hp <= 0)
+        {
+            Debug.Log($"{unitOnPath.unitName} destroyed {unitMoving.unitName}");
+            //if (unitOnPath is Fleet)
+            //{
+            //    if (unitOnPath.hp > 0)
+            //    {
+            //        LevelUpUnit(unitOnPath as Fleet);
+            //    }
+            //}
+            if (unitMoving is Station)
+            {
+                (unitMoving as Station).defeated = true;
+            }
+            else if (unitMoving is Fleet)
+            {
+                Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
+            }
+            AllUnits.Remove(unitMoving);
+            Destroy(unitMoving.gameObject);
+        }
+        if (unitOnPath.hp > 0)
+        {
+            //even if allied don't move through, don't feel like doing recursive checks right now
+            Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
+        }
+        else
+        {
+            Debug.Log($"{unitMoving.unitName} destroyed {unitOnPath.unitName}");
+            //if (unitMoving is Fleet)
+            //    LevelUpUnit(unitMoving as Fleet);
+            if (unitOnPath is Station)
+            {
+                (unitOnPath as Station).defeated = true;
+            }
+            else if (unitOnPath is Fleet)
+            {
+                Stations[unitOnPath.stationId].fleets.Remove(unitOnPath as Fleet);
+            }
+            AllUnits.Remove(unitOnPath);
+            Destroy(unitOnPath.gameObject); //they are dead
+        }
     }
 
     private Quaternion GetDirection(Unit unit, PathNode node)
@@ -765,7 +770,8 @@ public class GameManager : MonoBehaviour
             {
                 return $"{type} Phase: {s1.unitName} lost {damage} HP \n";
             }
-            return $"{type} Phase: {s1.unitName} lost, base damage is {s1Dmg}, after modules applied they lost {damage} HP \n";
+            var modifierSymbol = s1Amr > 0 ? "+" : "";
+            return $"{type} Phase: {s1.unitName} lost {damage} HP after resistances were applied, {s1Dmg}({modifierSymbol}{s1Amr}) \n";
         }
         else if (s2Dmg > 0)
         {
