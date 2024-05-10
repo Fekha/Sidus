@@ -385,7 +385,6 @@ MonoBehaviour:
   TurnOrderText: {fileID: 1391829979}
   ColorText: {fileID: 961017197}
   CreditText: {fileID: 209583322}
-  alertText: {fileID: 1111257996}
   turnLabel: {fileID: 2096095987}
 --- !u!4 &54156309
 Transform:

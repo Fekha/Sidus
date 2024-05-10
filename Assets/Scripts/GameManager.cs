@@ -8,6 +8,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -72,7 +73,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI TurnOrderText;
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI CreditText;
-    public TextMeshProUGUI alertText;
+    private TextMeshProUGUI alertText;
+    private TextMeshProUGUI customAlertText;
  
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
@@ -118,29 +120,7 @@ public class GameManager : MonoBehaviour
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
         ResetUI();
     }
-    public void ViewFightPanel(bool active)
-    {
-        fightPanel.SetActive(active);
-    }
-    
-    public void ShowAlertPanel(int unlock)
-    {
-        alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} hexes.";
-        alertPanel.SetActive(true);
-    }
-    public void ShowCustomAlertPanel(string message)
-    {
-        alertText.text = message;
-        customAlertPanel.SetActive(true);
-    }
-    public void HideAlertPanel()
-    {
-        alertPanel.SetActive(false);
-    }
-    public void ShowAreYouSurePanel(bool value)
-    {
-        areYouSurePanel.SetActive(value);
-    }
+   
     public bool HasGameStarted()
     {
         return Stations.Count > 0 && Globals.GameId != Guid.Empty;
@@ -166,6 +146,7 @@ public class GameManager : MonoBehaviour
         mineRestrictedText = mineButton.transform.Find("Restriction").GetComponent<TextMeshProUGUI>();
         fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
+        customAlertText = customAlertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
     }
     public void SetTextValues(Unit unit)
     {
@@ -208,13 +189,6 @@ public class GameManager : MonoBehaviour
                 }
             }
             upgradeButton.gameObject.SetActive(true);
-            //if (HasQueuedAction(ActionType.MineAsteroid, structure) && Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString())) {
-            //    mineButton.interactable = false;
-            //    mineRestrictedText.text = "(Already Queued)";
-            //} else {
-            //    mineButton.interactable = true;
-            //    mineRestrictedText.text = "(Be next to Asteroid)";
-            //}
             mineButton.gameObject.SetActive(true);
         }
         else
@@ -320,20 +294,62 @@ public class GameManager : MonoBehaviour
         }
         ResetAfterSelection();
     }
+    public void ViewFightPanel(bool active)
+    {
+        fightPanel.SetActive(active);
+    }
 
+    public void ShowAlertPanel(int unlock)
+    {
+        alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} hexes.";
+        alertPanel.SetActive(true);
+    }
+    public void ShowCustomAlertPanel(string message)
+    {
+        customAlertText.text = message;
+        customAlertPanel.SetActive(true);
+        Debug.Log(message);
+    }
+    public void HideAlertPanel()
+    {
+        alertPanel.SetActive(false);
+        customAlertPanel.SetActive(false);
+    }
+    public void ShowAreYouSurePanel(bool value)
+    {
+        areYouSurePanel.SetActive(value);
+    }
     public void ViewStructureInformation(bool active)
     {
         if(HasGameStarted())
             infoPanel.SetActive(active);
     }
+    #region Queue Actions
     public void AttachModule()
     {
-        if (SelectedUnit != null
-            && MyStation.actions.Count < MyStation.maxActions
-            && MyStation.modules.Count > 0
-            && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) < SelectedUnit.maxAttachedModules
-            && MyStation.stationId == SelectedUnit.stationId)
+        if (SelectedUnit == null)
         {
+            ShowCustomAlertPanel("No unit selected.");
+        }
+        else if (MyStation.actions.Count >= MyStation.maxActions)
+        {
+            ShowCustomAlertPanel("No action slots available to queue this action.");
+        }
+        else if (MyStation.modules.Count <= 0)
+        {
+            ShowCustomAlertPanel("No modules available to attach.");
+        }
+        else if ((SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= SelectedUnit.maxAttachedModules)
+        {
+            ShowCustomAlertPanel("You have already queued up this action.");
+        }
+        else if (MyStation.stationId != SelectedUnit.stationId)
+        {
+            ShowCustomAlertPanel("This is not your unit!");
+        } 
+        else 
+        {
+            var selectedStructure = SelectedUnit;
             DeselectMovement();
             ClearSelectableModules();
             List<Guid> assignedModules = MyStation.actions.SelectMany(x => x.selectedModulesIds).ToList();
@@ -342,7 +358,6 @@ public class GameManager : MonoBehaviour
             {
                 foreach (var module in availableModules)
                 {
-                    var selectedStructure = SelectedUnit;
                     var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
                     moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
                     moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
@@ -352,26 +367,124 @@ public class GameManager : MonoBehaviour
                 ViewModuleSelection(true);
             }
         }
-        else
+    }
+    private void SetSelectedModule(Guid moduleGuid, Unit structure)
+    {
+        //if not already queued up
+        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModulesIds.Contains(moduleGuid)))
         {
-
+            ViewModuleSelection(false);
+            QueueAction(ActionType.AttachModule, new List<Guid>() { moduleGuid }, structure);
+            ClearSelectableModules();
         }
     }
-
     public void DetachModule(int i)
     {
-        if (SelectedUnit != null && MyStation.stationId == SelectedUnit.stationId)
+        if (SelectedUnit == null)
         {
-            if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModulesIds.Any(y => y == SelectedUnit.attachedModules[i].moduleGuid)))
-            {
-                Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].type} has already been queued up");
-            }
-            else{
-                QueueAction(ActionType.DetachModule, new List<Guid>() { SelectedUnit.attachedModules[i].moduleGuid });
-            }
+            ShowCustomAlertPanel("No unit selected.");
+        }
+        else if (MyStation.stationId != SelectedUnit.stationId)
+        {
+            ShowCustomAlertPanel("This is not your unit!");
+        }
+        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModulesIds.Any(y => y == SelectedUnit.attachedModules[i].moduleGuid)))
+        {
+             ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].type} has already been queued up");
+        }
+        else
+        {
+            QueueAction(ActionType.DetachModule, new List<Guid>() { SelectedUnit.attachedModules[i].moduleGuid });
+        }
+    }
+    public void CreateFleet()
+    {
+        if (MyStation.credits < GetCostOfAction(ActionType.CreateFleet, MyStation, true))
+        {
+            ShowCustomAlertPanel("Can not afford to queue this action");
+        }
+        else if (!IsUnderMaxFleets(MyStation,true))
+        {
+            ShowCustomAlertPanel("Can not create new fleet, you will hit max fleets for your station level");
+        }
+        else
+        {
+            QueueAction(ActionType.CreateFleet);
         }
     }
 
+    public void UpgradeStructure()
+    {
+        ActionType actionType = SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
+        if (!CanQueueUpgrade(SelectedUnit, actionType))
+        {
+            ShowCustomAlertPanel("Can not afford to queue this action");
+        }
+        else
+        {
+            QueueAction(actionType);
+        }
+    }
+    public void GenerateModule()
+    {
+        if (MyStation.credits < GetCostOfAction(ActionType.GenerateModule, MyStation, false))
+        {
+            ShowCustomAlertPanel("Can not afford to queue this action");
+        }
+        else
+        {
+            QueueAction(ActionType.GenerateModule);
+        }
+    }
+
+    public void MineAsteroid()
+    {
+        QueueAction(ActionType.MineAsteroid);
+    }
+    
+    public void CancelAction(int slot)
+    {
+        var action = MyStation.actions[slot];
+        Debug.Log($"{MyStation.unitName} removed action {action.actionType} from queue");
+        if (action is object)
+        {
+            if (action.actionType == ActionType.MoveStructure)
+            {
+                action.selectedUnit.resetMovementRange();
+            }
+            fakeCredits += action.costOfAction;
+            ClearActionBar();
+            MyStation.actions.RemoveAt(slot);
+            for (int i = 0; i < MyStation.actions.Count; i++)
+            {
+                AddActionBarImage(MyStation.actions[i].actionType, i);
+            }
+        }
+        ResetAfterSelection();
+    }
+    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null, Unit _structure = null)
+    {
+        if (MyStation.actions.Count >= MyStation.maxActions)
+        {
+            ShowCustomAlertPanel("No action slots available to queue this action.");
+        } else {
+            var structure = _structure ?? SelectedUnit ?? MyStation;
+            var costOfAction = GetCostOfAction(actionType, structure, true);
+            if (costOfAction + MyStation.actions.Sum(x => x.costOfAction) > MyStation.credits)
+            {
+                ShowCustomAlertPanel("Can not afford to queue this action");
+            }
+            else
+            {
+                fakeCredits -= costOfAction;
+                Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
+                AddActionBarImage(actionType, MyStation.actions.Count());
+                MyStation.actions.Add(new Action(actionType, structure, costOfAction, selectedModules, SelectedPath));
+                ResetAfterSelection();
+            }
+        }
+    }
+    #endregion
     private void ToggleMineralText(bool value)
     {
         foreach (var asteroid in GridManager.i.asteroids)
@@ -398,30 +511,19 @@ public class GameManager : MonoBehaviour
         ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
         ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(false);
     }
-    public void CreateFleet()
+  
+    private void UpdateCreateFleetCostText()
     {
-        if (CanQueueBuildFleet(MyStation) && HasGameStarted())
+        if (IsUnderMaxFleets(MyStation, true))
         {
-            if (MyStation.fleets.Count + MyStation.actions.Count(x => x.actionType == ActionType.CreateFleet) < MyStation.maxFleets)
-            {
-                QueueAction(ActionType.CreateFleet);
-            }
-            else
-            {
-                Debug.Log("Can not create new fleet, you will hit max fleets for your station level");
-            }
-        }
-    }
-    private void UpdateFleetCostText()
-    {
-        createFleetButton.interactable = CanQueueBuildFleet(MyStation); 
-        if (CanBuildAdditonalFleet(MyStation))
-        {
-            createFleetCost.text = GetCostText(GetCostOfAction(ActionType.CreateFleet, MyStation, true));
+            var cost = GetCostOfAction(ActionType.CreateFleet, MyStation, true);
+            createFleetCost.text = GetCostText(cost);
+            createFleetButton.interactable = (MyStation.credits >= cost);
         }
         else
         {
             createFleetCost.text = "(Station Upgrade Required)";
+            createFleetButton.interactable = false;
         }
     }
     private void UpdateGenerateModuleCostText()
@@ -430,13 +532,7 @@ public class GameManager : MonoBehaviour
         generateModuleCost.text = GetCostText(actionCost);
         generateModuleButton.interactable = MyStation.credits >= actionCost;
     }
-    public void UpgradeStructure()
-    {
-        ActionType actionType = SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
-        if (CanQueueUpgrade(SelectedUnit, actionType) && HasGameStarted()){
-            QueueAction(actionType);
-        }
-    }
+    
     private bool CanQueueUpgrade(Unit structure, ActionType actionType)
     {
         return CanLevelUp(structure, actionType, true) && MyStation.credits >= GetCostOfAction(actionType, structure, true);
@@ -444,21 +540,26 @@ public class GameManager : MonoBehaviour
 
     private bool CanLevelUp(Unit structure, ActionType actionType, bool countQueue)
     {
-        var countingQueue = countQueue ? Stations[structure.stationId].actions.Where(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType).Count() : 0;
-        var nextLevel = (structure.level + countingQueue);
+        var nextLevel = structure.level;
+        if (countQueue) {
+            nextLevel += Stations[structure.stationId].actions.Count(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType);
+        } 
         if (actionType == ActionType.UpgradeFleet)
             return nextLevel < Stations[structure.stationId].level;
         else
             return nextLevel < 6;
     }
 
-    private bool CanQueueBuildFleet(Station station)
+    private bool IsUnderMaxFleets(Station station, bool countQueue)
     {
-        return CanBuildAdditonalFleet(station) && station.credits >= GetCostOfAction(ActionType.CreateFleet, station, true);
-    }
-    private bool CanBuildAdditonalFleet(Station station)
-    {
-        return station.fleets.Count + station.actions.Where(x => x.actionType == ActionType.CreateFleet).Count() < station.maxFleets;
+        var currentFleets = station.fleets.Count;
+        var maxFleets = station.maxFleets;
+        if (countQueue)
+        {
+            currentFleets += station.actions.Count(x => x.actionType == ActionType.CreateFleet);
+            maxFleets += station.actions.Count(x => x.actionType == ActionType.UpgradeStation);
+        }
+        return currentFleets < maxFleets;
     }
     private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue)
     {
@@ -466,6 +567,8 @@ public class GameManager : MonoBehaviour
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
+            if (station.fleets.Count <= 0)
+                return 0;
             return (5 + ((station.fleets.Count-1 + countingQueue) * 3)); //5,8,11,14,17
         }
         else if (actionType == ActionType.UpgradeFleet)
@@ -486,67 +589,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GenerateModule()
-    {
-        if (HasGameStarted() && MyStation.credits >= GetCostOfAction(ActionType.GenerateModule, MyStation, false))
-        {
-            QueueAction(ActionType.GenerateModule);
-        }
-    }
-    
-    public void MineAsteroid()
-    {
-        //if (!HasQueuedAction(ActionType.MineAsteroid, SelectedUnit) || !Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString()))
-        //{
-        QueueAction(ActionType.MineAsteroid);
-        //}
-    }
-
     private bool HasQueuedAction(ActionType actionType, Unit selectedUnit)
     {
         return MyStation.actions.Any(x => x.actionType == actionType && x.selectedUnit.unitGuid == selectedUnit.unitGuid);
-    }
-
-    private void QueueAction(ActionType actionType, List<Guid> selectedModules = null, Unit _structure = null)
-    {
-        if (MyStation.actions.Count < MyStation.maxActions)
-        {
-            var structure = _structure ?? SelectedUnit ?? MyStation;
-            var costOfAction = GetCostOfAction(actionType, structure, true);
-            if (costOfAction+MyStation.actions.Sum(x=>x.costOfAction) <= MyStation.credits)
-            {
-                fakeCredits -= costOfAction;
-                Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
-                AddActionBarImage(actionType, MyStation.actions.Count());
-                MyStation.actions.Add(new Action(actionType, structure, costOfAction, selectedModules, SelectedPath));
-                ResetAfterSelection();
-            }
-            else
-            {
-                Debug.Log($"Broke ass {structure.color} bitch couldn't afford {actionType}");
-            }
-        }
-    }
-
-    public void CancelAction(int slot)
-    {
-        var action = MyStation.actions[slot];
-        Debug.Log($"{MyStation.unitName} removed action {action.actionType} from queue");
-        if (action is object)
-        {
-            if (action.actionType == ActionType.MoveStructure)
-            {
-                action.selectedUnit.resetMovementRange();
-            }
-            fakeCredits += action.costOfAction;
-            ClearActionBar();
-            MyStation.actions.RemoveAt(slot);
-            for (int i = 0; i < MyStation.actions.Count; i++)
-            {
-                AddActionBarImage(MyStation.actions[i].actionType, i);
-            }
-        }
-        ResetAfterSelection();
     }
 
     private void ResetAfterSelection()
@@ -555,7 +600,7 @@ public class GameManager : MonoBehaviour
         ToggleHPText(false);
         infoToggle = false;
         UpdateGenerateModuleCostText();
-        UpdateFleetCostText();
+        UpdateCreateFleetCostText();
         UpdateCreditTotal();
         SetModuleGrid();
         ClearMovementPath();
@@ -956,7 +1001,7 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.CreateFleet)
                     {
-                        if (currentStation.fleets.Count < currentStation.maxFleets)
+                        if (IsUnderMaxFleets(currentStation,false))
                         {
                             currentStation.credits -= actionCost;
                             yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, action.generatedGuid, false));
@@ -1159,17 +1204,7 @@ public class GameManager : MonoBehaviour
         moduleInfoValue.text = effectText;
         ViewModuleInfo(true);
     } 
-    private void SetSelectedModule(Guid moduleGuid, Unit structure)
-    {
-        //if not already queued up
-        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModulesIds.Contains(moduleGuid)))
-        {
-            ViewModuleSelection(false);
-            QueueAction(ActionType.AttachModule, new List<Guid>() { moduleGuid }, structure);
-            ClearSelectableModules();
-        }
-    }
-
+    
     public void ViewModuleInfo(bool active)
     {
         moduleInfoPanel.SetActive(active);
@@ -1210,17 +1245,15 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
+            StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
             if (i < structure.maxAttachedModules)
             {
                 if (i < structure.attachedModules.Count)
                 {
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
                     StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == MyStation.stationId);
-                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
                     var moduleText = structure.attachedModules[i].effectText;
-                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() =>
-                        SetModuleInfo(moduleText)
-                    );
+                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(moduleText));
                 }
                 else
                 {
@@ -1228,7 +1261,6 @@ public class GameManager : MonoBehaviour
                     if (structure.stationId == MyStation.stationId)
                     {
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
-                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => AttachModule());
                     }
                     else
