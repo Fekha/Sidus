@@ -137,7 +137,7 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < gridSize.y; y++)
             {
                 // Calculate the world position based on the size of the cellPrefab
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x *.98f* cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.5f * cellPrefabSize.x);
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .98f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.5f * cellPrefabSize.x);
                 bool isAsteroid = false;
                 int maxCredits = 0;
                 int startCredits = 0;
@@ -148,9 +148,9 @@ public class GridManager : MonoBehaviour
                 if (isAsteroid)
                 {
                     obstacleCount++;
-                    startCredits = 10;
-                    maxCredits = 20;
-                    creditRegin = 3;
+                    startCredits = 8;
+                    maxCredits = 15;
+                    creditRegin = 2;
                     //var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
                 }
                 var cell = Instantiate(isAsteroid ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
