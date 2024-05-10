@@ -9,6 +9,7 @@ using System.Threading;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -229,84 +230,95 @@ public class GameManager : MonoBehaviour
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
-
-                if (hit.collider != null && !isMoving)
+                if (!isMoving)
                 {
-                    PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                    Unit targetStructure = null;
-                    if (targetNode != null && targetNode.structureOnPath != null)
+                    if (hit.collider != null)
                     {
-                        targetStructure = targetNode.structureOnPath;
-                    }
-                    //original click on fleet
-                    if (targetStructure != null && SelectedUnit == null && targetStructure.stationId == MyStation.stationId)
-                    {
-                        SetTextValues(targetStructure);
-                        SelectedUnit = targetStructure;
-                        if (HasQueuedAction(ActionType.MoveStructure,targetStructure))
+                        PathNode targetNode = hit.collider.GetComponent<PathNode>();
+                        Unit targetStructure = null;
+                        if (targetNode != null && targetNode.structureOnPath != null)
                         {
-                            Debug.Log($"{targetStructure.unitName} already has a pending movement action.");
+                            targetStructure = targetNode.structureOnPath;
+                        }
+                        //original click on fleet
+                        if (targetStructure != null && SelectedUnit == null && targetStructure.stationId == MyStation.stationId)
+                        {
+                            SetTextValues(targetStructure);
+                            SelectedUnit = targetStructure;
+                            if (HasQueuedAction(ActionType.MoveStructure, targetStructure))
+                            {
+                                Debug.Log($"{targetStructure.unitName} already has a pending movement action.");
+                            }
+                            else
+                            {
+                                Debug.Log($"{targetStructure.unitName} Selected.");
+                                HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
+                            }
                         }
                         else
                         {
-                            Debug.Log($"{targetStructure.unitName} Selected.");
-                            HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
+                            //double click confirm to movement
+                            if (SelectedNode != null && targetNode == SelectedNode)
+                            {
+                                QueueAction(ActionType.MoveStructure);
+                            }
+                            //create movement
+                            else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
+                            {
+                                int oldPathCount = SelectedPath?.Count ?? 0;
+                                if (SelectedPath == null || SelectedPath.Count == 0)
+                                {
+                                    SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, targetNode);
+                                    Debug.Log($"Path created for {SelectedUnit.unitName}");
+                                }
+                                else
+                                {
+                                    SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), targetNode));
+                                    Debug.Log($"Path edited for {SelectedUnit.unitName}");
+                                }
+                                SelectedUnit.subtractMovement(SelectedPath.Count - oldPathCount);
+                                HighlightRangeOfMovement(targetNode, SelectedUnit.getMovementRange());
+                                ClearMovementPath();
+                                SelectedNode = targetNode;
+                                foreach (var node in SelectedPath)
+                                {
+                                    if (node == SelectedPath.Last())
+                                        currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
+                                    else
+                                        currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
+                                }
+                            }
+                            //clicked on invalid tile
+                            else
+                            {
+                                if (targetStructure != null)
+                                {
+                                    if (SelectedUnit == null)
+                                    {
+                                        SetTextValues(targetStructure);
+                                        ViewStructureInformation(true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (SelectedUnit != null)
+                                    {
+                                        Debug.Log($"Invalid tile selected, reseting path and selection.");
+                                        SelectedUnit.resetMovementRange();
+                                    }
+                                    ResetAfterSelection();
+                                }
+                            }
                         }
                     }
                     else
                     {
-                        //double click confirm to movement
-                        if (SelectedNode != null && targetNode == SelectedNode)
+                        if (SelectedUnit != null)
                         {
-                            QueueAction(ActionType.MoveStructure);
+                            Debug.Log($"non-tile selected, reseting path and selection.");
+                            SelectedUnit.resetMovementRange();
                         }
-                        //create movement
-                        else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
-                        {
-                            int oldPathCount = SelectedPath?.Count ?? 0;
-                            if (SelectedPath == null || SelectedPath.Count == 0)
-                            {
-                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, targetNode);
-                                Debug.Log($"Path created for {SelectedUnit.unitName}");
-                            }
-                            else
-                            {
-                                SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), targetNode));
-                                Debug.Log($"Path edited for {SelectedUnit.unitName}");
-                            }
-                            SelectedUnit.subtractMovement(SelectedPath.Count - oldPathCount);
-                            HighlightRangeOfMovement(targetNode, SelectedUnit.getMovementRange());
-                            ClearMovementPath();
-                            SelectedNode = targetNode;
-                            foreach (var node in SelectedPath)
-                            {
-                                if (node == SelectedPath.Last())
-                                    currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
-                                else
-                                    currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
-                            }
-                        }
-                        //clicked on invalid tile
-                        else
-                        {
-                            if (targetStructure != null)
-                            {
-                                if (SelectedUnit == null)
-                                {
-                                    SetTextValues(targetStructure);
-                                    ViewStructureInformation(true);
-                                }
-                            }
-                            else
-                            {
-                                if (SelectedUnit != null)
-                                {
-                                    Debug.Log($"Invalid tile selected, reseting path and selection.");
-                                    SelectedUnit.resetMovementRange();
-                                }
-                                ResetAfterSelection();
-                            }
-                        }
+                        ResetAfterSelection();
                     }
                 }
             }
@@ -564,6 +576,34 @@ public class GameManager : MonoBehaviour
         {
             i++;
             bool blockedMovement = false;
+            //if ally, and theres room after, move through.
+            if (node.structureOnPath != null && node.structureOnPath.stationId == unitMoving.stationId)
+            {
+                blockedMovement = true;
+                //Example: you move 3, first spot is ally, second is enemy, third is open : you should not move
+                if (path.Count != i)
+                {
+                    for (int j = i; j < path.Count; j++)
+                    {
+                        //If next spot after ally is empty move
+                        if (path[j].structureOnPath == null && !path[j].isAsteroid)
+                        {
+                            blockedMovement = false;
+                            break;
+                        }
+                        //if next spot after ally is enemy, stop
+                        else if (path[j].structureOnPath != null && path[j].structureOnPath.stationId != MyStation.stationId)
+                        {
+                            break;
+                        }
+                        //If next spot after ally is ally, keep looking
+                    }
+                }
+            }
+            if (node.isAsteroid)
+            {
+                blockedMovement = true;
+            }
             float elapsedTime = 0f;
             float totalTime = .5f;
             var toRot = GetDirection(unitMoving, node);
@@ -571,7 +611,7 @@ public class GameManager : MonoBehaviour
             while (elapsedTime <= totalTime)
             {
                 unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
-                if (!node.isAsteroid)
+                if (!blockedMovement)
                     unitMoving.transform.position = Vector3.Lerp(unitMoving.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
                 elapsedTime += Time.deltaTime;
                 yield return null;
@@ -579,39 +619,13 @@ public class GameManager : MonoBehaviour
             unitImage.rotation = toRot;
             if (node.isAsteroid)
             {
-                blockedMovement = true;
                 yield return StartCoroutine(PerformSingleMine(unitMoving, node));
             }
-            if (node.structureOnPath != null)
+            //if enemy, attack, if you didn't destroy them, stay blocked and move back
+            if (node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
             {
-                blockedMovement = true;
-                //if enemy, attack instead of move, then move if you destroy them
-                if (node.structureOnPath.stationId != unitMoving.stationId)
-                {
-                    yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
-                    blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
-                }
-                else //if ally, and theres room after, move through.
-                {
-                    //Example: you move 3, first spot is ally, second is enemy, third is open : you should not move
-                    if (path.Count != i)
-                    {
-                        for (int j = i; j < path.Count; j++)
-                        {
-                            //If next spot after ally is empty move
-                            if (path[j].structureOnPath == null)
-                            {
-                                blockedMovement = false;
-                                break;
-                            }
-                            //if next spot after ally is enemy, stop
-                            else if (path[j].structureOnPath.stationId != MyStation.stationId) {
-                                break;
-                            }
-                            //If next spot after ally is ally, keep looking
-                        }
-                    }
-                }
+                yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
+                blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
             }
             if (!blockedMovement)
                 unitMoving.currentPathNode = node;
@@ -708,6 +722,7 @@ public class GameManager : MonoBehaviour
                 Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
             }
             AllUnits.Remove(unitMoving);
+            unitMoving.currentPathNode.structureOnPath = null;
             Destroy(unitMoving.gameObject);
         }
         if (unitOnPath.hp > 0)
@@ -729,6 +744,7 @@ public class GameManager : MonoBehaviour
                 Stations[unitOnPath.stationId].fleets.Remove(unitOnPath as Fleet);
             }
             AllUnits.Remove(unitOnPath);
+            node.structureOnPath = null;
             Destroy(unitOnPath.gameObject); //they are dead
         }
     }

@@ -42,7 +42,6 @@ public class GridManager : MonoBehaviour
     }
     private void CreateStation(int team)
     {
-        
         var stationOfClient = team == Globals.localStationIndex;
         string teamColor = "Blue";
         GameObject stationPrefab = playerStationPrefab;
@@ -138,7 +137,7 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < gridSize.y; y++)
             {
                 // Calculate the world position based on the size of the cellPrefab
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * 1.08f  * cellPrefabSize.x) + Vector3.up * (y * .85f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.53f * cellPrefabSize.x);
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x *.98f* cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.5f * cellPrefabSize.x);
                 bool isAsteroid = false;
                 int maxCredits = 0;
                 int startCredits = 0;
