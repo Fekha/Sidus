@@ -367,7 +367,6 @@ public class GameManager : MonoBehaviour
                 Debug.Log($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].type} has already been queued up");
             }
             else{
-                DeselectMovement();
                 QueueAction(ActionType.DetachModule, new List<Guid>() { SelectedUnit.attachedModules[i].moduleGuid });
             }
         }
@@ -433,7 +432,6 @@ public class GameManager : MonoBehaviour
     }
     public void UpgradeStructure()
     {
-        DeselectMovement();
         ActionType actionType = SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         if (CanQueueUpgrade(SelectedUnit, actionType) && HasGameStarted()){
             QueueAction(actionType);
@@ -498,7 +496,6 @@ public class GameManager : MonoBehaviour
     
     public void MineAsteroid()
     {
-        DeselectMovement();
         //if (!HasQueuedAction(ActionType.MineAsteroid, SelectedUnit) || !Globals.GameSettings.Contains(GameSettingType.MineAfterMove.ToString()))
         //{
         QueueAction(ActionType.MineAsteroid);
