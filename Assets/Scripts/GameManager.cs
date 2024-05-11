@@ -227,7 +227,7 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             Debug.Log($"{targetStructure.unitName} Selected.");
-                            HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure.getMovementRange());
+                            HighlightRangeOfMovement(targetStructure.currentPathNode, targetStructure);
                         }
                     }
                     else
@@ -243,16 +243,18 @@ public class GameManager : MonoBehaviour
                             int oldPathCount = SelectedPath?.Count ?? 0;
                             if (SelectedPath == null || SelectedPath.Count == 0)
                             {
-                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, targetNode);
+                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, targetNode, SelectedUnit.stationId);
+                                SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                                 Debug.Log($"Path created for {SelectedUnit.unitName}");
                             }
                             else
                             {
-                                SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), targetNode));
+                                var newPath = GridManager.i.FindPath(SelectedPath.Last(), targetNode, SelectedUnit.stationId);
+                                SelectedUnit.subtractMovement(newPath.Last().gCost);
+                                SelectedPath.AddRange(newPath);
                                 Debug.Log($"Path edited for {SelectedUnit.unitName}");
                             }
-                            SelectedUnit.subtractMovement(SelectedPath.Count - oldPathCount);
-                            HighlightRangeOfMovement(targetNode, SelectedUnit.getMovementRange());
+                            HighlightRangeOfMovement(targetNode, SelectedUnit);
                             ClearMovementPath();
                             SelectedNode = targetNode;
                             foreach (var node in SelectedPath)
@@ -678,9 +680,7 @@ public class GameManager : MonoBehaviour
             }
             if (!blockedMovement)
                 unitMoving.currentPathNode = node;
-            //if its the last node on your path, if its nuetral, or your movement got blocked so it is the end of your movement
-            if (path.Count == i || node.ownedById == -1 || blockedMovement)
-                unitMoving.SetNodeColor();
+            unitMoving.SetNodeColor();
             if (blockedMovement)
                 break;
             yield return new WaitForSeconds(.25f);
@@ -851,10 +851,10 @@ public class GameManager : MonoBehaviour
         return $"{type} Phase: Stalemate.\n";
     }
 
-    public void HighlightRangeOfMovement(PathNode currentNode, int fleetRange)
+    public void HighlightRangeOfMovement(PathNode currentNode, Unit unit)
     {
         ClearMovementRange();
-        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, fleetRange);
+        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, unit);
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(node.isAsteroid ? movementMinePrefab : movementRangePrefab, node.transform.position, Quaternion.identity);

@@ -15,22 +15,22 @@ public class Module : MonoBehaviour
         switch (type)
         {
             case 0:
-                effectText = "+2 Kinetic Power \n +1 Explosive Power \n +1 Thermal Resistance";
+                effectText = "+2 Explosive Power \n +1 Kinetic Power \n +2 Thermal Resistance";
                 break;
             case 1:
-                effectText = "+2 Thermal Power \n +1 Kinetic Power \n +1 Explosive Resistance";
+                effectText = "+2 Thermal Power \n +1 Kinetic Power \n +2 Explosive Resistance";
                 break;
             case 2:
-                effectText = "+3 Explosive Power \n +1 Kinetic Resistance";
+                effectText = "+4 Explosive Power \n -1 Kinetic Resistance";
                 break;
             case 3:
-                effectText ="+1 Movement \n -1 Explosive Resistance";
+                effectText = "+1 Movement \n -3 Explosive Resistance";
                 break;
             case 4:
-                effectText = "+3 Mining \n -1 Explosive Resistance";
+                effectText = "+3 Mining \n -1 Explosive Power";
                 break;
             case 5:
-                effectText ="+2 Explosive Power \n +1 Thermal Power \n +1  Kinetic Power";
+                effectText ="+2 Explosive Power \n +1 Thermal Power \n +1 Kinetic Power";
                 break;
             case 6:
                 effectText = "+2 Kinetic Power \n +1 Explosive Power \n +1 Thermal Power";
@@ -39,13 +39,13 @@ public class Module : MonoBehaviour
                 effectText = "+2 Thermal Power \n +1 Kinetic Power \n +1 Explosive Power";
                 break;
             case 8:
-                effectText ="+2 Explosive Power \n +2 Thermal Resistance";
+                effectText ="+3 Explosive Power \n +2 Thermal Resistance";
                 break;
             case 9:
-                effectText ="+2 Kinetic Power \n +2 Kinetic Resistance";
+                effectText ="+3 Kinetic Power \n +2 Kinetic Resistance";
                 break;
             case 10:
-                effectText = "+2 Thermal Power \n +2 Explosive Resistance";
+                effectText = "+3 Thermal Power \n +2 Explosive Resistance";
                 break;
             case 11:
                 effectText = "+2 Kinetic Power \n +2 Explosive";
@@ -54,34 +54,34 @@ public class Module : MonoBehaviour
                 effectText = "+2 Thermal Power \n +2 Explosive";
                 break;
             case 13:
-                effectText = "+4 Explosive";
+                effectText = "+4 Explosive \n -1 Thermal Resistance";
                 break;
             case 14:
-                effectText = "+1 Movement \n -1 Kinetic Resistance";
+                effectText = "+1 Movement \n -3 Kinetic Power";
                 break;
             case 15:
-                effectText = "+3 Mining \n -1 Kinetic Resistance";
+                effectText = "+3 Mining \n -1 Kinetic Power";
                 break;
             case 16:
-                effectText = "+3 Explosive Power \n +2 Thermal Power \n -2 Kinetic Resistance";
+                effectText = "+3 Kinetic Power \n +3 Explosive Power \n -2 Thermal Power";
                 break;
             case 17:
-                effectText = "+3 Thermal Power \n +2 Kinetic Power \n  -2 Explosive Resistance";
+                effectText = "+3 Thermal Power \n +3 Kinetic Power \n  -2 Explosive Power";
                 break;
             case 18:
-                effectText = "+3 Thermal Power \n +2 Explosive Power \n -2 Kinetic Resistance";
+                effectText = "+3 Thermal Power \n +3 Explosive Power \n -2 Kinetic Power";
                 break;
             case 19:
-                effectText = "+5 Explosive Power \n -2 Kinetic Resistance";
+                effectText = "+6 Explosive Power \n -2 Kinetic Power \n -1 Kinetic Armor";
                 break;
             case 20:
-                effectText = "+1 Kinetic Power \n +2 Explosive Resistance \n +1 Thermal Resistance";
+                effectText = "+1 Movement \n -2 Explosive Power \n -2 Thermal Resistance";
                 break;
             case 21:
-                effectText = "+1 Thermal Power \n +2 Kinetic Resistance \n +1 Explosive Resistance";
+                effectText = "+1 Movement \n -2 Kinetic Power \n -2 Explosive Resistance";
                 break;
             case 22:
-                effectText = "+1 Explosive Power \n +2 Thermal Resistance \n +1 Kinetic Resistance";
+                effectText = "+1 Movement \n -2 Thermal Power \n -2 Kinetic Resistance";
                 break;
             default:
                 break;

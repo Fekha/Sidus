@@ -93,27 +93,27 @@ public class Unit : Node
         switch (id)
         {
             case 0:
-                kineticAttack += (2 * modifer);
-                explosiveAttack += (1 * modifer);
-                thermalArmor += (1 * modifer);
+                kineticAttack += (1 * modifer);
+                explosiveAttack += (2 * modifer);
+                thermalArmor += (2 * modifer);
                 break;
             case 1:
                 thermalAttack += (2 * modifer);
                 kineticAttack += (1 * modifer);
-                explosiveArmor += (1 * modifer);
+                explosiveArmor += (2 * modifer);
                 break;
             case 2:
-                explosiveAttack += (3 * modifer);
-                kineticArmor += (1 * modifer);
+                explosiveAttack += (4 * modifer);
+                kineticArmor += (-1 * modifer);
                 break;
             case 3:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                explosiveArmor += (-1 * modifer);
+                explosiveAttack += (-3 * modifer);
                 break;
             case 4:
                 mining += (3 * modifer);
-                explosiveArmor += (-1 * modifer);
+                explosiveAttack += (-1 * modifer);
                 break;
             case 5:
                 kineticAttack += (1 * modifer);
@@ -131,15 +131,15 @@ public class Unit : Node
                 explosiveAttack += (1 * modifer);
                 break;
             case 8:
-                explosiveAttack += (2 * modifer);
+                explosiveAttack += (3 * modifer);
                 thermalArmor += (2 * modifer);
                 break;
             case 9:
-                kineticAttack += (2 * modifer);
+                kineticAttack += (3 * modifer);
                 kineticArmor += (2 * modifer);
                 break;
             case 10:
-                thermalAttack += (2 * modifer);
+                thermalAttack += (3 * modifer);
                 explosiveArmor += (2 * modifer);
                 break;
             case 11:
@@ -152,49 +152,54 @@ public class Unit : Node
                 break;
             case 13:
                 explosiveAttack += (4 * modifer);
+                thermalArmor += (-1 * modifer);
                 break;
             case 14:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticArmor += (-1 * modifer);
+                kineticAttack += (-3 * modifer);
                 break;
             case 15:
                 mining += (3 * modifer);
-                kineticArmor += (-1 * modifer);
+                kineticAttack += (-1 * modifer);
                 break;
             case 16:
-                thermalAttack += (2 * modifer);
+                kineticAttack += (3 * modifer);
                 explosiveAttack += (3 * modifer);
-                kineticArmor += (-2 * modifer);
+                thermalAttack += (-2 * modifer);
                 break;
             case 17:
-                kineticAttack += (2 * modifer);
+                kineticAttack += (3 * modifer);
                 thermalAttack += (3 * modifer);
-                explosiveArmor += (-2 * modifer);
+                explosiveAttack += (-2 * modifer);
                 break;
             case 18:
                 thermalAttack += (3 * modifer);
-                explosiveAttack += (2 * modifer);
-                kineticArmor += (-2 * modifer); 
+                explosiveAttack += (3 * modifer);
+                kineticAttack += (-2 * modifer); 
                 break;
             case 19:
-                explosiveAttack += (5 * modifer);
-                kineticArmor += (-2 * modifer); 
+                explosiveAttack += (6 * modifer);
+                kineticAttack += (-2 * modifer);
+                kineticArmor += (-1 * modifer);
                 break;
             case 20:
-                kineticAttack += (1 * modifer);
-                explosiveArmor += (2 * modifer);
-                kineticArmor += (1 * modifer); 
+                maxRange += (1 * modifer);
+                range += (1 * modifer);
+                explosiveAttack += (-2 * modifer);
+                kineticArmor += (-2 * modifer); 
                 break;
             case 21:
-                thermalAttack += (1 * modifer);
-                kineticArmor += (2 * modifer); 
-                explosiveArmor += (1 * modifer);
+                maxRange += (1 * modifer);
+                range += (1 * modifer);
+                kineticAttack += (-2 * modifer);
+                explosiveArmor += (-2 * modifer);
                 break;
             case 22:
-                explosiveAttack += (1 * modifer);
-                kineticArmor += (2 * modifer); 
-                thermalArmor += (1 * modifer);
+                maxRange += (1 * modifer);
+                range += (1 * modifer);
+                kineticAttack += (-2 * modifer);
+                thermalArmor += (-2 * modifer);
                 break;
             default:
                 break;

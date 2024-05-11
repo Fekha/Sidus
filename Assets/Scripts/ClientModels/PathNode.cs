@@ -41,6 +41,7 @@ public class PathNode : MonoBehaviour
         y = _y;
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
         coordsText.text = $"{x},{y}";
+        GridManager.i.AllNodes.Add(this);
     }
 
     public void ReginCredits()

@@ -9,7 +9,6 @@ public class GridManager : MonoBehaviour
     public static GridManager i;
     public GameObject nodePrefab;
     public GameObject obsticalPrefab;
-
     public GameObject playerPrefab;
     public GameObject playerStationPrefab;
     private Vector3 cellPrefabSize;
@@ -20,7 +19,8 @@ public class GridManager : MonoBehaviour
     internal int scoreToWin = 99;
     public List<Color> playerColors;
     public List<Color> tileColors;
-   
+    internal List<PathNode> AllNodes = new List<PathNode>();
+
     private void Awake()
     {
         i = this;
@@ -167,8 +167,12 @@ public class GridManager : MonoBehaviour
         scoreToWin = 42 - ((Globals.Players.Count()-1) * 7);
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, int stationId)
     {
+        foreach (PathNode node in AllNodes)
+        {
+            node.gCost = 0;
+        }
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
         openSet.Add(startNode);
@@ -197,7 +201,7 @@ public class GridManager : MonoBehaviour
                 if (neighbor != targetNode && (neighbor.isAsteroid || closedSet.Contains(neighbor)))
                     continue;
 
-                int newCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                int newCostToNeighbor = currentNode.gCost + ((neighbor.ownedById == -1 || neighbor.ownedById == stationId) ? 1 : 2);
                 if (newCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newCostToNeighbor;
@@ -212,41 +216,42 @@ public class GridManager : MonoBehaviour
         return new List<PathNode>();
     }
 
-    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, int range)
+    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
     {
+        var range = unit.getMovementRange();
+        foreach (PathNode node in AllNodes)
+        {
+            node.gCost = 0;
+        }
         List<PathNode> nodesWithinRange = new List<PathNode>();
-
         Queue<PathNode> queue = new Queue<PathNode>();
         HashSet<PathNode> visited = new HashSet<PathNode>();
-
         queue.Enqueue(clickedNode);
+        clickedNode.gCost = 0; // Set initial cost to 0 for clicked node
         visited.Add(clickedNode);
 
-        while (queue.Count > 0 && range >= 0)
+        while (queue.Count > 0)
         {
-            int levelSize = queue.Count;
-
-            for (int i = 0; i < levelSize; i++)
+            PathNode currentNode = queue.Dequeue();
+            if (currentNode != clickedNode)
+                nodesWithinRange.Add(currentNode);
+            if (!currentNode.isAsteroid)
             {
-                PathNode currentNode = queue.Dequeue();
-                if(currentNode != clickedNode)
-                    nodesWithinRange.Add(currentNode);
-                if (!currentNode.isAsteroid)
+                foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
-                    foreach (PathNode neighbor in GetNeighbors(currentNode))
+                    int moveCost = currentNode.gCost + ((neighbor.ownedById == -1 || neighbor.ownedById == unit.stationId) ? 1 : 2); // Check if enemy owned tile and adjust cost
+                    if (!visited.Contains(neighbor) && moveCost <= range)
                     {
-                        if (!visited.Contains(neighbor))
-                        {
-                            queue.Enqueue(neighbor);
-                            visited.Add(neighbor);
-                        }
+                        neighbor.gCost = moveCost;
+                        queue.Enqueue(neighbor);
+                        visited.Add(neighbor);
                     }
                 }
             }
-            range--;
         }
         return nodesWithinRange;
     }
+
 
     List<PathNode> RetracePath(PathNode startNode, PathNode endNode)
     {
@@ -265,10 +270,11 @@ public class GridManager : MonoBehaviour
     {
         int deltaX = Mathf.Abs(nodeA.x - nodeB.x);
         int deltaY = Mathf.Abs(nodeA.y - nodeB.y);
-        int deltaZ = Mathf.Abs((-nodeA.x - nodeA.y) - (-nodeB.x - nodeB.y));
+        int deltaZ = Mathf.Abs((-nodeA.x - (nodeA.y - (nodeA.y & 1))) - (-nodeB.x - (nodeB.y - (nodeB.y & 1))));
 
         return Mathf.Max(deltaX, deltaY, deltaZ);
     }
+
 
     internal List<PathNode> GetNeighbors(PathNode node)
     {
