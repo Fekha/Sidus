@@ -8,4 +8,5 @@ public enum ActionType
     AttachModule,
     DetachModule,
     MineAsteroid,
+    MineTargetedAsteroid,
 }

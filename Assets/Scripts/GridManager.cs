@@ -201,7 +201,7 @@ public class GridManager : MonoBehaviour
                 if (neighbor != targetNode && (neighbor.isAsteroid || closedSet.Contains(neighbor)))
                     continue;
 
-                int newCostToNeighbor = currentNode.gCost + ((neighbor.ownedById == -1 || neighbor.ownedById == stationId) ? 1 : 2);
+                int newCostToNeighbor = currentNode.gCost + GetGCost(neighbor,stationId);
                 if (newCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newCostToNeighbor;
@@ -215,7 +215,11 @@ public class GridManager : MonoBehaviour
         }
         return new List<PathNode>();
     }
-
+    public int GetGCost(PathNode node, int stationId )
+    {
+        //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
+        return ((node.ownedById == -1 || node.ownedById == stationId || node.structureOnPath != null) ? 1 : 2);
+    }
     internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
     {
         var range = unit.getMovementRange();

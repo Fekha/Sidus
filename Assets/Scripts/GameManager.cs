@@ -8,7 +8,6 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +26,7 @@ public class GameManager : MonoBehaviour
     public GameObject customAlertPanel;
     public GameObject areYouSurePanel;
     public GameObject selectModulePanel;
+    public GameObject helpPanel;
     public Sprite UISprite;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
@@ -233,9 +233,17 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         //double click confirm to movement
-                        if (SelectedNode != null && targetNode == SelectedNode)
+                        if (SelectedNode != null && targetNode == SelectedNode && SelectedUnit != null && SelectedPath != null)
                         {
-                            QueueAction(ActionType.MoveStructure);
+                            if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
+                            {
+                                SelectedUnit.resetMovementRange();
+                                QueueAction(ActionType.MineTargetedAsteroid);
+                            }
+                            else
+                            {
+                                QueueAction(ActionType.MoveStructure);
+                            }
                         }
                         //create movement
                         else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
@@ -299,6 +307,10 @@ public class GameManager : MonoBehaviour
     public void ViewFightPanel(bool active)
     {
         fightPanel.SetActive(active);
+    }  
+    public void ViewHelpPanel(bool active)
+    {
+        helpPanel.SetActive(active);
     }
 
     public void ShowAlertPanel(int unlock)
@@ -623,10 +635,12 @@ public class GameManager : MonoBehaviour
         int i = 0;
         unitMoving.currentPathNode.structureOnPath = null;
         ClearMovementRange();
+        unitMoving.resetMovementRange();
         foreach (var node in path)
         {
             i++;
             bool blockedMovement = false;
+            unitMoving.subtractMovement(GridManager.i.GetGCost(node, unitMoving.stationId));
             //if ally, and theres room after, move through.
             if (node.structureOnPath != null && node.structureOnPath.stationId == unitMoving.stationId)
             {
@@ -678,6 +692,8 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
                 blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
             }
+            if (unitMoving.range < 0)
+                blockedMovement = true;
             if (!blockedMovement)
                 unitMoving.currentPathNode = node;
             unitMoving.SetNodeColor();
@@ -1101,6 +1117,10 @@ public class GameManager : MonoBehaviour
                     {
                         yield return StartCoroutine(PerformAoeMine(currentUnit));
                     }
+                    else if (action.actionType == ActionType.MineTargetedAsteroid)
+                    {
+                        yield return StartCoroutine(PerformSingleMine(currentUnit, action.selectedPath.Last()));
+                    }
                 }
                 else
                 {
@@ -1148,7 +1168,17 @@ public class GameManager : MonoBehaviour
             currentStation.credits += asteroidToMine.MineCredits(currentUnit.mining);
             currentUnit.selectIcon.SetActive(true);
             asteroidToMine.transform.Find("Mine").gameObject.SetActive(true);
-            yield return new WaitForSeconds(1f);
+            float elapsedTime = 0f;
+            float totalTime = 1f;
+            var toRot = GetDirection(currentUnit, asteroidToMine);
+            var unitImage = currentUnit.transform.Find("Unit");
+            while (elapsedTime <= totalTime)
+            {
+                unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            unitImage.rotation = toRot;
             asteroidToMine.transform.Find("Mine").gameObject.SetActive(false);
             currentUnit.selectIcon.SetActive(false);
         }
