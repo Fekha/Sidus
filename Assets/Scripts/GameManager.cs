@@ -686,14 +686,14 @@ public class GameManager : MonoBehaviour
             {
                 yield return StartCoroutine(PerformSingleMine(unitMoving, node));
             }
+            if (unitMoving.range < 0)
+                blockedMovement = true;
             //if enemy, attack, if you didn't destroy them, stay blocked and move back
             if (node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
             {
                 yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
                 blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
             }
-            if (unitMoving.range < 0)
-                blockedMovement = true;
             if (!blockedMovement)
                 unitMoving.currentPathNode = node;
             unitMoving.SetNodeColor();
