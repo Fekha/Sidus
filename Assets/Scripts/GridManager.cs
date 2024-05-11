@@ -223,10 +223,6 @@ public class GridManager : MonoBehaviour
     internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
     {
         var range = unit.getMovementRange();
-        foreach (PathNode node in AllNodes)
-        {
-            node.gCost = 0;
-        }
         List<PathNode> nodesWithinRange = new List<PathNode>();
         Queue<PathNode> queue = new Queue<PathNode>();
         HashSet<PathNode> visited = new HashSet<PathNode>();
@@ -243,7 +239,7 @@ public class GridManager : MonoBehaviour
             {
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
-                    int moveCost = currentNode.gCost + ((neighbor.ownedById == -1 || neighbor.ownedById == unit.stationId) ? 1 : 2); // Check if enemy owned tile and adjust cost
+                    int moveCost = currentNode.gCost + GetGCost(neighbor, unit.stationId); // Check if enemy owned tile and adjust cost
                     if (!visited.Contains(neighbor) && moveCost <= range)
                     {
                         neighbor.gCost = moveCost;

@@ -8,6 +8,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -353,7 +354,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("No modules available to attach.");
         }
-        else if ((SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= SelectedUnit.maxAttachedModules)
+        else if ((SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= GetUnitMaxAttachmentCount(SelectedUnit))
         {
             ShowCustomAlertPanel("You have already queued up this action.");
         }
@@ -555,11 +556,13 @@ public class GameManager : MonoBehaviour
     private bool CanLevelUp(Unit structure, ActionType actionType, bool countQueue)
     {
         var nextLevel = structure.level;
+        var maxLevel = Stations[structure.stationId].level;
         if (countQueue) {
             nextLevel += Stations[structure.stationId].actions.Count(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType);
+            maxLevel += Stations[structure.stationId].actions.Count(x => x.actionType == ActionType.UpgradeStation);
         } 
         if (actionType == ActionType.UpgradeFleet)
-            return nextLevel < Stations[structure.stationId].level;
+            return nextLevel < maxLevel;
         else
             return nextLevel < 6;
     }
@@ -1013,7 +1016,7 @@ public class GameManager : MonoBehaviour
                         }
                         yield return new WaitForSeconds(.1f);
                         isMoving = false;
-                        currentUnit.resetMovementRange(); //We actually don't currently use range, regardless afraid to comment out        
+                        currentUnit.resetMovementRange();      
                     }
                     else if (action.actionType == ActionType.CreateFleet)
                     {
@@ -1270,25 +1273,38 @@ public class GameManager : MonoBehaviour
             ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(i >= MyStation.maxActions);
         }
     }
-    
-    private void SetModuleBar(Unit structure)
+    internal int GetUnitMaxAttachmentCount(Unit unit)
+    {
+        var maxAttached = unit.maxAttachedModules;
+        if (unit is Fleet)
+        {
+            maxAttached += Stations[unit.stationId].actions.Count(x => x.actionType == ActionType.UpgradeFleet);
+        }
+        else
+        {
+            maxAttached += Stations[unit.stationId].actions.Count(x => x.actionType == ActionType.UpgradeStation);
+        }
+        return maxAttached;
+    }
+    private void SetModuleBar(Unit unit)
     {
         for (int i = 0; i < 6; i++)
         {
             StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
-            if (i < structure.maxAttachedModules)
+            var maxAttached = GetUnitMaxAttachmentCount(unit);
+            if (i < maxAttached)
             {
-                if (i < structure.attachedModules.Count)
+                if (i < unit.attachedModules.Count)
                 {
-                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = structure.attachedModules[i].icon;
-                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(structure.stationId == MyStation.stationId);
-                    var moduleText = structure.attachedModules[i].effectText;
+                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = unit.attachedModules[i].icon;
+                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId);
+                    var moduleText = unit.attachedModules[i].effectText;
                     StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(moduleText));
                 }
                 else
                 {
                     StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
-                    if (structure.stationId == MyStation.stationId)
+                    if (unit.stationId == MyStation.stationId)
                     {
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
                         StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => AttachModule());
