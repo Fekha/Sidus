@@ -1235,7 +1235,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
-            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < MyStation.maxActions ? UISprite : lockActionBar;
+            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < MyStation.maxActions ? null : lockActionBar;
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
             ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(i >= MyStation.maxActions);
         }
@@ -1265,7 +1265,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = UISprite;
+                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = null;
                     }
                 }
             }
