@@ -217,8 +217,12 @@ public class GridManager : MonoBehaviour
     }
     public int GetGCost(PathNode node, int stationId )
     {
-        //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
-        return ((node.ownedById == -1 || node.ownedById == stationId || node.structureOnPath != null) ? 1 : 2);
+        if (Globals.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString()))
+        {
+            //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
+            return (node.ownedById == -1 || node.ownedById == stationId) ? 1 : 2; // || node.structureOnPath != null
+        }
+        return 1;
     }
     internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
     {

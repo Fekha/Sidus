@@ -1361,7 +1361,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &912218494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2445,7 +2445,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Auto mine after move:'
+  m_Text: Hex takeover costs 2
 --- !u!222 &1191357394
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2668,7 +2668,7 @@ MonoBehaviour:
   createGamePanel: {fileID: 2014884160}
   findContent: {fileID: 369805248}
   openGamePrefab: {fileID: 8872072296492675797, guid: 488adef3fd3336a4e8a729165c99fc58, type: 3}
-  mineAfterMove: {fileID: 912218494}
+  toggle1: {fileID: 912218494}
 --- !u!1 &1359573820
 GameObject:
   m_ObjectHideFlags: 0

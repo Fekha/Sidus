@@ -8,7 +8,6 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -668,7 +667,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            if (node.isAsteroid)
+            if (node.isAsteroid || unitMoving.range < 0)
             {
                 blockedMovement = true;
             }
@@ -689,17 +688,20 @@ public class GameManager : MonoBehaviour
             {
                 yield return StartCoroutine(PerformSingleMine(unitMoving, node));
             }
-            if (unitMoving.range < 0)
-                blockedMovement = true;
             //if enemy, attack, if you didn't destroy them, stay blocked and move back
-            if (node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
+            if (unitMoving.range >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
             {
                 yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
                 blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
             }
             if (!blockedMovement)
                 unitMoving.currentPathNode = node;
-            unitMoving.SetNodeColor();
+            if (Globals.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
+                || unitMoving.currentPathNode.ownedById == -1
+                || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId)))
+            {
+                unitMoving.SetNodeColor();
+            }
             if (blockedMovement)
                 break;
             yield return new WaitForSeconds(.25f);

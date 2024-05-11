@@ -16,7 +16,7 @@ public class LoginManager : MonoBehaviour
     public GameObject createGamePanel;
     public Transform findContent;
     public GameObject openGamePrefab;
-    public Toggle mineAfterMove;
+    public Toggle toggle1;
     private TextMeshProUGUI waitingText;
     private TextMeshProUGUI playersText;
     private List<GameObject> openGamesObjects = new List<GameObject>();
@@ -31,8 +31,8 @@ public class LoginManager : MonoBehaviour
     }
     public void CreateGame()
     {
-        if (mineAfterMove.isOn)
-            Globals.GameSettings.Add(GameSettingType.MineAfterMove.ToString());
+        if (toggle1.isOn)
+            Globals.GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(new NewGame(Globals.localStationGuid, MaxPlayers, Globals.GameSettings));
         StartCoroutine(sql.PostRoutine<NewGame>($"Game/Create?", stringToPost, SetMatchGuid));
     }
