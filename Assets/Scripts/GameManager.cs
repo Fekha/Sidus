@@ -86,6 +86,7 @@ public class GameManager : MonoBehaviour
     private Turn[] TurnsFromServer;
     private bool infoToggle = false;
     private int fakeCredits;
+    private int helpPageNumber = 0;
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -310,7 +311,18 @@ public class GameManager : MonoBehaviour
     }  
     public void ViewHelpPanel(bool active)
     {
-        helpPanel.SetActive(active);
+        helpPageNumber++;
+        if (active) {
+            helpPanel.transform.Find("Page2").gameObject.SetActive(false);
+            helpPanel.SetActive(active);
+        } else if (helpPageNumber == 2) {
+            helpPanel.transform.Find("Page2").gameObject.SetActive(true);
+        } else {
+            helpPageNumber = 0;
+            helpPanel.SetActive(false);
+            helpPanel.transform.Find("Page2").gameObject.SetActive(false);
+
+        }
     }
 
     public void ShowAlertPanel(int unlock)
