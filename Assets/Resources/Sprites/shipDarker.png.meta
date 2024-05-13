@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      shipDarker_0: -8836093411465656138
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

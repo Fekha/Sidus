@@ -8,7 +8,6 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager i;
     public GameObject nodePrefab;
-    public GameObject obsticalPrefab;
     public GameObject playerPrefab;
     public GameObject playerStationPrefab;
     private Vector3 cellPrefabSize;
@@ -151,9 +150,8 @@ public class GridManager : MonoBehaviour
                     startCredits = 8;
                     maxCredits = 15;
                     creditRegin = 2;
-                    //var obstacle = Instantiate(obsticalPrefab, worldPoint, Quaternion.identity);
                 }
-                var cell = Instantiate(isAsteroid ? obsticalPrefab : nodePrefab, worldPoint, Quaternion.identity);
+                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
                 grid[x, y] = cell.AddComponent<PathNode>();
                 grid[x, y].InitializeNode(x, y, isAsteroid, startCredits, maxCredits, creditRegin);
@@ -169,14 +167,10 @@ public class GridManager : MonoBehaviour
 
     internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, int stationId)
     {
-        foreach (PathNode node in AllNodes)
-        {
-            node.gCost = 0;
-        }
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
+        startNode.gCost = 0;
         openSet.Add(startNode);
-
         while (openSet.Count > 0)
         {
             PathNode currentNode = openSet[0];
@@ -224,7 +218,7 @@ public class GridManager : MonoBehaviour
         }
         return 1;
     }
-    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
+    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit, bool forMining)
     {
         var range = unit.getMovementRange();
         List<PathNode> nodesWithinRange = new List<PathNode>();
@@ -243,8 +237,9 @@ public class GridManager : MonoBehaviour
             {
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
-                    int moveCost = currentNode.gCost + GetGCost(neighbor, unit.stationId); // Check if enemy owned tile and adjust cost
-                    if (!visited.Contains(neighbor) && moveCost <= range)
+                    // Check if enemy owned tile and adjust cost
+                    int moveCost = currentNode.gCost + GetGCost(neighbor, unit.stationId); 
+                    if (!visited.Contains(neighbor) && (moveCost <= range || (forMining && neighbor.isAsteroid)))
                     {
                         neighbor.gCost = moveCost;
                         queue.Enqueue(neighbor);

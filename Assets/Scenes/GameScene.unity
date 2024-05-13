@@ -380,7 +380,6 @@ MonoBehaviour:
   lockActionBar: {fileID: 6783247397999815164, guid: af85d0104b9ef4b43acb05b70eae50cf, type: 3}
   lockModuleBar: {fileID: -7702428470181183365, guid: f6f3924c7b16f0046b466c099622ed10, type: 3}
   attachModuleBar: {fileID: 8847773858092745476, guid: 4859cac581885944eb099c5e641e9abf, type: 3}
-  mineButton: {fileID: 1883847717}
   createFleetButton: {fileID: 1365777131}
   generateModuleButton: {fileID: 994743634}
   endTurnButton: {fileID: 481047912}
@@ -4360,7 +4359,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 32
+  m_fontSizeMax: 48
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -10466,8 +10465,10 @@ MonoBehaviour:
     enemy owned hexes, your unit must end its movement on the hex, and you must already
     own a neighboring hex, to claim it.\n\nCombat:\nAll fleets neighboring an attacked
     fleet participate in the combat by adding 50% of their power.\nResistance(+-
-    Damage Taken) only applies if a unit loses a phase.\n\nMining:\nAsteriods have
-    a max of 15 credits, and regenerate 3 each turn that they are not mined."
+    Damage Taken) only applies if a unit loses a phase.\n\nMining:\nMoving into an
+    asteroid will mine it.\nAdditionally, before or after queuing a move action,
+    selecting a neighboring asteroid queues a mine action. \nYou can mine as many
+    times as you want per turn."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10494,7 +10495,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 23.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12878,8 +12879,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e3e432fa72740418fe92100fea20d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodePrefab: {fileID: 5521146895598112904, guid: 5e35c9be90d2b8949988c67c90d7e807, type: 3}
-  obsticalPrefab: {fileID: 7058775101325988351, guid: 44f977c7fda6b36439c2aa32ad336618, type: 3}
+  nodePrefab: {fileID: 7058775101325988351, guid: 44f977c7fda6b36439c2aa32ad336618, type: 3}
   playerPrefab: {fileID: 6217036810452598218, guid: 47d65aa2e09c80c4dbdf1949c32c970c, type: 3}
   playerStationPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
   playerColors: []
@@ -14030,7 +14030,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1883847716
 RectTransform:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using static GameManager;
@@ -9,8 +10,10 @@ public class PathNode : MonoBehaviour
     internal int currentCredits = 0;
     internal int creditsRegin = 0;
     internal bool hasBeenMinedThisTurn = false;
-    public TextMeshPro mineralText;
-    public TextMeshPro coordsText;
+    private TextMeshPro mineralText;
+    private TextMeshPro coordsText;
+    private SpriteRenderer asteriodSprite;
+    private GameObject mineIcon;
     public int gCost;
     public int hCost;
     public int x;
@@ -31,11 +34,10 @@ public class PathNode : MonoBehaviour
         currentCredits = _startCredits;
         creditsRegin = _creditRegin;
         isAsteroid = _isAsteroid;
-        if (isAsteroid)
-        {
-            mineralText = transform.Find("Minerals").GetComponent<TextMeshPro>();
-            mineralText.text = $"{currentCredits}";
-        }
+        asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
+        asteriodSprite.gameObject.SetActive(isAsteroid);
+        mineIcon = transform.Find("Asteroid/Mine").gameObject;
+        mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
         ownedById = -1;
         x = _x;
         y = _y;
@@ -46,7 +48,7 @@ public class PathNode : MonoBehaviour
 
     public void ReginCredits()
     {
-        if (currentCredits < maxCredits && !hasBeenMinedThisTurn)
+        if (currentCredits < maxCredits && !hasBeenMinedThisTurn && isAsteroid)
         {
             currentCredits = Mathf.Min(currentCredits + creditsRegin, maxCredits);
             mineralText.text = $"{currentCredits}";
@@ -62,5 +64,15 @@ public class PathNode : MonoBehaviour
         mineralText.text = $"{currentCredits}";
         hasBeenMinedThisTurn = true;
         return amountMined;
+    }
+
+    internal void ShowMineIcon(bool active)
+    {
+        mineIcon.SetActive(active);
+    } 
+    internal void ShowMineralText(bool active)
+    {
+        mineralText.text = $"{currentCredits}";
+        mineralText.gameObject.SetActive(active);
     }
 }
