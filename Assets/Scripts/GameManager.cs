@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public GameObject areYouSurePanel;
     public GameObject selectModulePanel;
     public GameObject helpPanel;
+    public GameObject readyToSeeTurnsPanel;
     public Sprite UISprite;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour
     public Button mineButton;
     public Button createFleetButton;
     public Button generateModuleButton;
+    public Image endTurnButton;
     private TextMeshProUGUI createFleetCost;
     private TextMeshProUGUI mineRestrictedText;
     private TextMeshProUGUI generateModuleCost;
@@ -87,6 +89,7 @@ public class GameManager : MonoBehaviour
     private bool infoToggle = false;
     private int fakeCredits;
     private int helpPageNumber = 0;
+    private bool isWaitingForTurns = false;
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -905,12 +908,15 @@ public class GameManager : MonoBehaviour
             if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
             {
                 ShowAreYouSurePanel(false);
-                isEndingTurn = true;
                 Debug.Log($"Turn Ending, Starting Simultanous Turns");
                 var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
                 var turnToPost = new Turn(Globals.GameId, Globals.localStationGuid, TurnNumber, actionToPost);
                 var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
                 StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
+                endTurnButton.color = Color.blue;
+                var plural = Globals.Players.Count() > 2 ? "s" : "";
+                customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
+                customAlertPanel.SetActive(true);
                 StartCoroutine(TakeTurns());
             }
             else
@@ -919,36 +925,28 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    
-    private IEnumerator TakeTurns()
+    public void HideReadyToSeeTurnsPanel()
     {
-        turnValue.text = "Waiting for the other player...";
-        turnLabel.SetActive(true);
+        readyToSeeTurnsPanel.SetActive(false);
+    }
+    private IEnumerator GetTurnsFromServer()
+    {
+        isWaitingForTurns = true;
         TurnsFromServer = null;
         while (TurnsFromServer == null)
         {
             yield return StartCoroutine(sql.GetRoutine<Turn[]>($"Game/GetTurn?gameId={Globals.GameId}&turnNumber={TurnNumber}", CheckForTurns));
         }
-        yield return StartCoroutine(AutomateTurns(TurnsFromServer));
-        if (winner != -1)
+        customAlertPanel.SetActive(false);
+        isEndingTurn = true;
+        turnValue.text = $"\n\n Everyone submitted their turns! \n\n Tap to watch turn #{TurnNumber + 1} play out. \n\n";
+        turnLabel.SetActive(true);
+        readyToSeeTurnsPanel.SetActive(true);
+        while (readyToSeeTurnsPanel.activeInHierarchy)
         {
-            turnValue.text = $"Player {Stations[winner].color} won after {TurnNumber} turns";
-            Debug.Log($"Player {Stations[winner].color} won after {TurnNumber} turns");
-        } else {
-            foreach (var asteroid in GridManager.i.asteroids)
-            {
-                asteroid.ReginCredits();
-            }
-            //foreach (var unit in AllUnits)
-            //{
-            //    unit.hasMinedThisTurn = false;
-            //}
-            TurnNumber++; 
-            ResetUI();
-            turnLabel.SetActive(false);
-            isEndingTurn = false;
-            Debug.Log($"New Turn {TurnNumber} Starting");
+            yield return new WaitForSeconds(.5f);
         }
+        isWaitingForTurns = false;
     }
 
     private void CheckForTurns(Turn[] turns)
@@ -964,44 +962,80 @@ public class GameManager : MonoBehaviour
             ToggleHPText(infoToggle);
         }
     }
-    private IEnumerator AutomateTurns(Turn[] turns)
+    private IEnumerator TakeTurns()
     {
-        ClearModules();
-        ToggleMineralText(true);
-        //ToggleHPText(true);
-        for (int i = 0; i < 6; i++)
+        if (!isWaitingForTurns)
         {
-            int c = TurnNumber % Stations.Count;
-            for (int j = 0; j < Stations.Count; j++)
+            yield return StartCoroutine(GetTurnsFromServer());
+            if (TurnsFromServer != null)
             {
-                int k = (c+j) % Stations.Count;
-                if (i < turns[k].Actions.Count)
+                ClearModules();
+                ToggleMineralText(true);
+                //ToggleHPText(true);
+                for (int i = 0; i < 6; i++)
                 {
-                    if (turns[k].Actions[i] is object)
+                    int c = TurnNumber % Stations.Count;
+                    for (int j = 0; j < Stations.Count; j++)
                     {
-                        var action = new Action(turns[k].Actions[i]);
-                        turnValue.text = $"{Stations[k].color} action {i + 1}: {action.actionType}";
-                        Debug.Log($"Perfoming {Stations[k].color}'s action {i + 1}: {action.actionType}");
-                        yield return StartCoroutine(PerformAction(action));
+                        int k = (c + j) % Stations.Count;
+                        if (i < TurnsFromServer[k].Actions.Count)
+                        {
+                            if (TurnsFromServer[k].Actions[i] is object)
+                            {
+                                var action = new Action(TurnsFromServer[k].Actions[i]);
+                                turnValue.text = $"{Stations[k].color} action {i + 1}:\n{action.actionType}";
+                                Debug.Log($"Perfoming {Stations[k].color}'s action {i + 1}:\n{action.actionType}");
+                                yield return StartCoroutine(PerformAction(action));
+                            }
+                            else
+                            {
+                                turnValue.text = $"{Stations[k].color} action {i + 1}:\n No Action";
+                                yield return new WaitForSeconds(.4f);
+                            }
+                            yield return new WaitForSeconds(.1f);
+                        }
                     }
-                    else
-                    {
-                        turnValue.text = $"{Stations[k].color} action {i + 1}: No Action";
-                    }
-                    yield return new WaitForSeconds(.1f);
                 }
+                FinishTurns();
             }
         }
+    }
+
+    private void FinishTurns()
+    {
+        endTurnButton.color = Color.black;
         winner = GridManager.i.CheckForWin();
         foreach (var station in Stations)
         {
             station.actions.Clear();
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 3; i++)
+            {
                 if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
                 {
                     station.maxActions = 2 + i;
                 }
             }
+        }
+        if (winner != -1)
+        {
+            turnValue.text = $"{Stations[winner].color} player won after {TurnNumber + 1} turns";
+            Debug.Log($"{Stations[winner].color} player won after {TurnNumber + 1} turns");
+        }
+        else
+        {
+            foreach (var asteroid in GridManager.i.asteroids)
+            {
+                asteroid.ReginCredits();
+            }
+            //foreach (var unit in AllUnits)
+            //{
+            //    unit.hasMinedThisTurn = false;
+            //}
+            TurnNumber++;
+            ResetUI();
+            turnLabel.SetActive(false);
+            isEndingTurn = false;
+            Debug.Log($"New Turn {TurnNumber} Starting");
         }
     }
 
