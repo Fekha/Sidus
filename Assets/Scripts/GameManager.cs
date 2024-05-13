@@ -219,7 +219,7 @@ public class GameManager : MonoBehaviour
                     {
                         targetUnit = targetNode.structureOnPath;
                     }
-                    //original click on fleet
+                    //Original click on fleet
                     if (targetUnit != null && SelectedUnit == null && targetUnit.stationId == MyStation.stationId)
                     {
                         SelectedUnit = targetUnit;
@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
                         {                          
                             QueueAction(ActionType.MineAsteroid,null,null,new List<PathNode>() { targetNode });
                         }
-                        //double click confirm to movement
+                        //Double click confirm to movement
                         else if (SelectedNode != null && targetNode == SelectedNode && SelectedUnit != null && SelectedPath != null)
                         {
                             if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
@@ -258,7 +258,7 @@ public class GameManager : MonoBehaviour
                                 QueueAction(ActionType.MoveStructure);
                             }
                         }
-                        //create movement
+                        //Create movement
                         else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
                         {
                             SelectedNode = targetNode;
@@ -851,8 +851,8 @@ public class GameManager : MonoBehaviour
 
     private Quaternion GetDirection(Unit unit, PathNode node)
     {
-        int x = node.x - unit.currentPathNode.x;
-        int y = node.y - unit.currentPathNode.y;
+        int x = node.coords.x - unit.currentPathNode.coords.x;
+        int y = node.coords.y - unit.currentPathNode.coords.y;
         var offSetCoords = unit.currentPathNode.offSet.FirstOrDefault(c=>c.x == x && c.y == y);
         unit.facing = (Direction)Array.IndexOf(unit.currentPathNode.offSet, offSetCoords);
         return Quaternion.Euler(unit.transform.rotation.x, unit.transform.rotation.y, 270 - (unit.facing == Direction.TopRight ? -60 : (int)unit.facing * 60));

@@ -3,19 +3,17 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     public PathNode currentPathNode {
-        get { return GridManager.i.grid[x, y]; }
+        get { return GridManager.i.grid[coords.x, coords.y]; }
         set
         {
-            x = value.x;
-            y = value.y;
-            GridManager.i.grid[x, y] = value;
+            coords.x = value.coords.x;
+            coords.y = value.coords.y;
+            GridManager.i.grid[coords.x, coords.y] = value;
         }
     }
-    internal int x;
-    internal int y;
+    public Coords coords;
     internal void Initialize(PathNode node)
     {
-        x = node.x;
-        y = node.y;
+        coords = node.coords;
     }
 }

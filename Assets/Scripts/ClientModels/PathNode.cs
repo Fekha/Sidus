@@ -16,12 +16,11 @@ public class PathNode : MonoBehaviour
     private GameObject mineIcon;
     public int gCost;
     public int hCost;
-    public int x;
-    public int y;
+    public Coords coords;
     public int fCost { get { return gCost + hCost; } }
     private Coords[] evenOffsets = { new Coords(1, 0), new Coords(1, -1), new Coords(0, -1), new Coords(-1, 0), new Coords(0, 1), new Coords(1, 1) }; // Clockwise from right
     private Coords[] oddOffsets = { new Coords(1, 0), new Coords(0, -1), new Coords(-1, -1), new Coords(-1, 0), new Coords(-1, 1), new Coords(0, 1) }; // Clockwise from right
-    public bool isEvenCol { get { return y % 2 == 0; } }
+    public bool isEvenCol { get { return coords.y % 2 == 0; } }
     public Coords[] offSet { get { return isEvenCol ? evenOffsets : oddOffsets; } }
 
     public Unit structureOnPath;
@@ -39,10 +38,12 @@ public class PathNode : MonoBehaviour
         mineIcon = transform.Find("Asteroid/Mine").gameObject;
         mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
         ownedById = -1;
-        x = _x;
-        y = _y;
+        coords = new Coords(_x, _y);
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
-        coordsText.text = $"{x},{y}";
+        coordsText.text = $"{coords.x},{coords.y}";
+#if UNITY_EDITOR
+        coordsText.gameObject.SetActive(true);
+#endif
         GridManager.i.AllNodes.Add(this);
     }
 

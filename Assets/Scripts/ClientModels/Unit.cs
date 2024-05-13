@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class Unit : Node
 {
@@ -27,12 +28,13 @@ public class Unit : Node
     internal GameObject selectIcon;
     internal GameObject inCombatIcon;
     internal Direction facing;
+    internal Transform unitImage;
     internal int maxAttachedModules = 1; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _unitGuid, int _mining)
+    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _unitGuid, int _mining, Direction _direction)
     {
+        facing = _direction;
         unitGuid = _unitGuid;
-        x = _x;
-        y = _y;
+        coords = new Coords(_x, _y);
         color = _color;
         maxHp = _hp;
         hp = _hp;
@@ -51,6 +53,8 @@ public class Unit : Node
         hpText = transform.Find("HP").GetComponent<TextMeshPro>();
         selectIcon = transform.Find("Select").gameObject;
         inCombatIcon = transform.Find("InCombat").gameObject;
+        unitImage = this.transform.Find("Unit");
+        unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }
 

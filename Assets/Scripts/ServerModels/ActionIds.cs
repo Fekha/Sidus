@@ -20,7 +20,7 @@ namespace StartaneousAPI.Models
                 actionTypeId = (int)action.actionType;
                 selectedUnitId = action.selectedUnit?.unitGuid;
                 selectedModulesIds = action.selectedModulesIds;
-                selectedCoords = action.selectedPath.Select(x=>new Coords(x.x, x.y)).ToList();
+                selectedCoords = action.selectedPath.Select(x=>x.coords).ToList();
                 generatedGuid = action.generatedGuid;
                 generatedModuleId = action.generatedModuleId;
             }

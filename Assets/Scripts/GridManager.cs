@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class GridManager : MonoBehaviour
 {
@@ -47,47 +48,60 @@ public class GridManager : MonoBehaviour
         stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>().color = playerColors[team];
         Guid stationGuid = Globals.Players[team].StationGuid;
         Guid fleetGuid = Globals.Players[team].FleetGuids[0];
+       
         int spawnX = 1;
         int spawnY = 5;
+        Direction facing = Direction.BottomLeft;
         if (team == 1)
         {
             teamColor = "Pink";
             spawnX = 6;
             spawnY = 2;
+            facing = Direction.TopRight;
         }
         else if (team == 2)
         {
             teamColor = "Yellow";
             spawnX = 2;
             spawnY = 1;
+            facing = Direction.BottomRight;
         }
         else if (team == 3)
         {
             teamColor = "Red";
             spawnX = 5;
             spawnY = 6;
+            facing = Direction.TopLeft;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 2, 3, 4, 5, 1, stationGuid);
+        stationNode.InitializeStation(spawnX, spawnY, teamColor, 10, 2, 3, 4, 5, 1, stationGuid, facing);
         StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
     }
 
-    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
+    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn, Coords coords = null)
     {
         GameObject fleetPrefab = playerPrefab;
         fleetPrefab.transform.Find("Unit/Unit1").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
         fleetPrefab.transform.Find("Unit/Unit2").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
         fleetPrefab.transform.Find("Unit/Unit3").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
-        foreach(var hex in hexesNearby) {
-            if (CanSpawnFleet(hex.x, hex.y))
+        var startIndex = 0;
+        if (coords == null)
+        {
+            //Get spawn from station direction
+            coords = stationNode.currentPathNode.coords.Add(stationNode.currentPathNode.offSet[(int)stationNode.facing]);
+        }
+        startIndex = hexesNearby.FindIndex(x => x.coords.Equals(coords));
+        for (int i = 0; i < hexesNearby.Count; i++) {
+            int j = (i + startIndex)%hexesNearby.Count;
+            if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
             {
                 var fleet = Instantiate(fleetPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hex.x, hex.y, stationNode, stationNode.color, 6, 3, 2, 3, 4, 1, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 3, 2, 3, 4, 1, fleetGuid);
                 if (!originalSpawn)
                 {
                     fleetNode.selectIcon.SetActive(true);
@@ -267,9 +281,9 @@ public class GridManager : MonoBehaviour
 
     int GetDistance(PathNode nodeA, PathNode nodeB)
     {
-        int deltaX = Mathf.Abs(nodeA.x - nodeB.x);
-        int deltaY = Mathf.Abs(nodeA.y - nodeB.y);
-        int deltaZ = Mathf.Abs((-nodeA.x - (nodeA.y - (nodeA.y & 1))) - (-nodeB.x - (nodeB.y - (nodeB.y & 1))));
+        int deltaX = Mathf.Abs(nodeA.coords.x - nodeB.coords.x);
+        int deltaY = Mathf.Abs(nodeA.coords.y - nodeB.coords.y);
+        int deltaZ = Mathf.Abs((-nodeA.coords.x - (nodeA.coords.y - (nodeA.coords.y & 1))) - (-nodeB.coords.x - (nodeB.coords.y - (nodeB.coords.y & 1))));
 
         return Mathf.Max(deltaX, deltaY, deltaZ);
     }
@@ -280,14 +294,13 @@ public class GridManager : MonoBehaviour
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
         {
-            int checkX = node.x + node.offSet[i].x;
-            int checkY = node.y + node.offSet[i].y;
+            int checkX = node.coords.x + node.offSet[i].x;
+            int checkY = node.coords.y + node.offSet[i].y;
             if (IsInGridBounds(checkX, checkY))
             {
                 neighbors.Add(grid[checkX, checkY]);
             }
         }
-
         return neighbors;
     }
 

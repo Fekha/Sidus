@@ -9,4 +9,12 @@ public class Coords
         this.x = x;
         this.y = y;
     }
+    public Coords Add(Coords coord)
+    {
+        return new Coords(x + coord.x, y + coord.y);
+    }
+    public bool Equals(Coords coord)
+    {
+        return x == coord.x && y == coord.y;
+    }
 }
