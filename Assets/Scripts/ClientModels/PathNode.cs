@@ -11,7 +11,7 @@ public class PathNode : MonoBehaviour
     internal int creditsRegin = 0;
     internal bool hasBeenMinedThisTurn = false;
     private TextMeshPro mineralText;
-    private TextMeshPro coordsText;
+    public TextMeshPro coordsText;
     private SpriteRenderer asteriodSprite;
     private GameObject mineIcon;
     public int gCost;

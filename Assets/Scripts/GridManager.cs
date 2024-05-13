@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -190,7 +191,7 @@ public class GridManager : MonoBehaviour
             PathNode currentNode = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
-                if (openSet[i].fCost < currentNode.fCost || (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost))
+                if (openSet[i].gCost < currentNode.gCost)
                 {
                     currentNode = openSet[i];
                 }
@@ -206,6 +207,7 @@ public class GridManager : MonoBehaviour
 
             foreach (PathNode neighbor in GetNeighbors(currentNode))
             {
+                //If not the target, and is an asteriod or already checked it
                 if (neighbor != targetNode && (neighbor.isAsteroid || closedSet.Contains(neighbor)))
                     continue;
 
@@ -213,7 +215,8 @@ public class GridManager : MonoBehaviour
                 if (newCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newCostToNeighbor;
-                    neighbor.hCost = GetDistance(neighbor, targetNode);
+                    //neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.coordsText.text = $"G:{neighbor.gCost} \n H:{neighbor.hCost} \n F:{neighbor.fCost}";
                     neighbor.parent = currentNode;
 
                     if (!openSet.Contains(neighbor))
@@ -279,14 +282,20 @@ public class GridManager : MonoBehaviour
         return path;
     }
 
-    int GetDistance(PathNode nodeA, PathNode nodeB)
-    {
-        int deltaX = Mathf.Abs(nodeA.coords.x - nodeB.coords.x);
-        int deltaY = Mathf.Abs(nodeA.coords.y - nodeB.coords.y);
-        int deltaZ = Mathf.Abs((-nodeA.coords.x - (nodeA.coords.y - (nodeA.coords.y & 1))) - (-nodeB.coords.x - (nodeB.coords.y - (nodeB.coords.y & 1))));
-
-        return Mathf.Max(deltaX, deltaY, deltaZ);
-    }
+    //int GetDistance(PathNode nodeA, PathNode nodeB)
+    //{
+    //    bool sameParity = (Math.Abs(nodeA.coords.y) % 2 == Math.Abs(nodeB.coords.y) % 2);
+    //    if (sameParity)
+    //    {
+    //        return Math.Abs(nodeA.coords.x - nodeB.coords.x) + Math.Abs(nodeA.coords.y - nodeB.coords.y);
+    //    }
+    //    else
+    //    {
+    //        int hCost = Math.Abs(nodeA.coords.x - nodeB.coords.x) + Math.Abs(nodeA.coords.y - nodeB.coords.y);
+    //        hCost += Math.Abs(nodeA.coords.y - nodeB.coords.y) / 2;
+    //        return hCost;
+    //    }
+    //}
 
 
     internal List<PathNode> GetNeighbors(PathNode node)
