@@ -1,18 +1,23 @@
 using System;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class Module : MonoBehaviour
 {
     internal Guid moduleGuid;
-    internal int type;
+    internal int id;
     internal Sprite icon;
-    internal String effectText;
-    public Module(int _type, Guid _moduleGuid)
+    internal string effectText;
+    internal Rarity rarity = Rarity.Common;
+    internal int minBid = 3;
+    internal int currentBid = 3;
+    internal int turnsLeftOnMarket = 5;
+    public Module(int _id, Guid _moduleGuid)
     {
         moduleGuid = _moduleGuid;
-        type = _type;
-        icon = Resources.Load<Sprite>($"Sprites/Modules/{_type}");
-        switch (type)
+        id = _id;
+        icon = Resources.Load<Sprite>($"Sprites/Modules/{id}");
+        switch (id)
         {
             case 0:
                 effectText = "+2 Explosive Power \n +1 Kinetic Power \n -2 Thermal Damage Taken";

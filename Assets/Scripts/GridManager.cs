@@ -33,13 +33,13 @@ public class GridManager : MonoBehaviour
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
-        scoreToWin = GetScoreToWin();
-        GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
         characterParent = GameObject.Find("Characters").transform;
         for (int i = 0; i < Globals.Players.Length; i++)
         {
             CreateStation(i);
         }
+        scoreToWin = GetScoreToWin();
+        GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
     }
     private void CreateStation(int team)
     {
@@ -164,7 +164,7 @@ public class GridManager : MonoBehaviour
                     obstacleCount++;
                     startCredits = 8;
                     maxCredits = 15;
-                    creditRegin = 2;
+                    creditRegin = 3;
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
@@ -308,7 +308,7 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        return (int)(gridSize.x * gridSize.y / Globals.Players.Count() * 1.3);
+        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Count(x=>!x.defeated) * 1.25);
     }
     internal int CheckForWin()
     {

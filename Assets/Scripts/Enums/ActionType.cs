@@ -7,5 +7,7 @@ public enum ActionType
     UpgradeStation,
     AttachModule,
     DetachModule,
-    MineAsteroid
+    MineAsteroid,
+    MoveAndMine,
+    BidOnModule,
 }

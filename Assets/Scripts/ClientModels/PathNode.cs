@@ -63,7 +63,7 @@ public class PathNode : MonoBehaviour
         currentCredits -= amountMined;
         mineralText.text = $"{currentCredits}";
         hasBeenMinedThisTurn = true;
-        mineIcon.SetActive(isAsteroid);
+        asteriodSprite.gameObject.SetActive(isAsteroid);
         return amountMined;
     }
 

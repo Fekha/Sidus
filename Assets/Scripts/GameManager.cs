@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameObject movementRangePrefab;
     public GameObject movementMinePrefab;
     public GameObject modulePrefab;
+    public GameObject auctionPrefab;
     public GameObject moduleInfoPanel;
     public GameObject infoPanel;
     public GameObject fightPanel;
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GameObject selectModulePanel;
     public GameObject helpPanel;
     public GameObject readyToSeeTurnsPanel;
+    public GameObject moduleMarket;
     public Sprite UISprite;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
@@ -80,6 +82,8 @@ public class GameManager : MonoBehaviour
  
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
+    internal List<Module> AuctionModules = new List<Module>();
+    internal List<GameObject> AuctionObjects = new List<GameObject>();
     internal int winner = -1;
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
@@ -87,7 +91,7 @@ public class GameManager : MonoBehaviour
     private int TurnNumber = 0;
     private Turn[] TurnsFromServer;
     private bool infoToggle = false;
-    private int fakeCredits;
+    private int currentCredits;
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
     //Got game icons from https://game-icons.net/
@@ -185,20 +189,21 @@ public class GameManager : MonoBehaviour
             {
                 if (unit is Fleet)
                 {
+                    createFleetButton.gameObject.SetActive(false);
                     upgradeCost.text = "(Station Upgrade Required)";
                 }
                 else
                 {
+                    createFleetButton.gameObject.SetActive(true);
                     upgradeCost.text = "(Max Station Level)";
                 }
             }
             upgradeButton.gameObject.SetActive(true);
-            //mineButton.gameObject.SetActive(true);
         }
         else
         {
             upgradeButton.gameObject.SetActive(false);
-            //mineButton.gameObject.SetActive(false);
+            createFleetButton.gameObject.SetActive(false);
         }
         SetModuleBar(unit);
         infoPanel.gameObject.SetActive(true);
@@ -325,7 +330,78 @@ public class GameManager : MonoBehaviour
     public void ViewFightPanel(bool active)
     {
         fightPanel.SetActive(active);
-    }  
+    }      
+    public void ViewModuleMarket(bool active)
+    {
+        moduleMarket.SetActive(active);
+        if (active)
+        {
+            while (AuctionModules.Count < 4)
+            {
+                AuctionModules.Add(new Module(UnityEngine.Random.Range(0,23), Guid.NewGuid()));
+            }
+            ClearAuctionObjects();
+            for(int j = 0; j < AuctionModules.Count; j++)
+            {
+                int i = j;
+                var module = AuctionModules[i];
+                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModulesIds.Any(y => y == module.moduleGuid));
+                if(!hasQueued)
+                    module.currentBid = module.minBid;
+                var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
+                AuctionObjects.Add(moduleObject);
+                moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
+                var addButton = moduleObject.transform.Find("Add").GetComponent<Button>();
+                addButton.onClick.AddListener(() => ModifyBid(true, i));
+                addButton.interactable = !hasQueued && currentCredits > module.currentBid;
+                var subtractButton = moduleObject.transform.Find("Subtract").GetComponent<Button>();
+                subtractButton.interactable = !hasQueued && module.minBid < module.currentBid;
+                subtractButton.onClick.AddListener(() => ModifyBid(false,i));
+                var bidButton = moduleObject.transform.Find("Bid").GetComponent<Button>();
+                bidButton.interactable = !hasQueued && currentCredits >= module.currentBid;
+                bidButton.onClick.AddListener(() => BidOn(i));
+                moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
+                moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
+                moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"Turns Left {module.turnsLeftOnMarket}" : "Last Turn Left!";
+                moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
+            }
+        }
+    }
+
+    private void ModifyBid(bool add, int index)
+    {
+        var module = AuctionModules[index];
+        var moduleObj = AuctionObjects[index];
+        if (add) {
+            module.currentBid++;
+        }
+        else if (module.currentBid > module.minBid)
+        {
+            module.currentBid--;
+        }
+        moduleObj.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
+        moduleObj.transform.Find("Add").GetComponent<Button>().interactable = currentCredits > module.currentBid;
+        moduleObj.transform.Find("Subtract").GetComponent<Button>().interactable = module.minBid < module.currentBid;
+        moduleObj.transform.Find("Bid").GetComponent<Button>().interactable = currentCredits >= module.currentBid;
+    }
+
+    private void BidOn(int index)
+    {
+        QueueAction(ActionType.BidOnModule, new List<Guid> { AuctionModules[index].moduleGuid });
+    }
+
+    public void UpdateMarket() {
+        foreach (var module in AuctionModules)
+        {
+            module.minBid--;
+            module.turnsLeftOnMarket--;
+        }
+        AuctionModules.RemoveAll(x => x.turnsLeftOnMarket < 1);
+        while (AuctionModules.Count < 4)
+        {
+            AuctionModules.Add(new Module(UnityEngine.Random.Range(0, 23), Guid.NewGuid()));
+        }
+    }
     public void ViewHelpPanel(bool active)
     {
         helpPageNumber++;
@@ -338,7 +414,6 @@ public class GameManager : MonoBehaviour
             helpPageNumber = 0;
             helpPanel.SetActive(false);
             helpPanel.transform.Find("Page2").gameObject.SetActive(false);
-
         }
     }
 
@@ -433,7 +508,7 @@ public class GameManager : MonoBehaviour
         }
         else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModulesIds.Any(y => y == SelectedUnit.attachedModules[i].moduleGuid)))
         {
-             ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].type} has already been queued up");
+             ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].id} has already been queued up");
         }
         else
         {
@@ -495,7 +570,7 @@ public class GameManager : MonoBehaviour
             {
                 action.selectedUnit.resetMovementRange();
             }
-            fakeCredits += action.costOfAction;
+            currentCredits += action.costOfAction;
             ClearActionBar();
             MyStation.actions.RemoveAt(slot);
             for (int i = 0; i < MyStation.actions.Count; i++)
@@ -513,14 +588,14 @@ public class GameManager : MonoBehaviour
         } else {
             var structure = _structure ?? SelectedUnit ?? MyStation;
             var selectedPath = _selectedPath ?? SelectedPath;
-            var costOfAction = GetCostOfAction(actionType, structure, true);
+            var costOfAction = GetCostOfAction(actionType, structure, true, selectedModules.FirstOrDefault());
             if (costOfAction + MyStation.actions.Sum(x => x.costOfAction) > MyStation.credits)
             {
                 ShowCustomAlertPanel($"Can not afford to queue action: {actionType}.");
             }
             else
             {
-                fakeCredits -= costOfAction;
+                currentCredits -= costOfAction;
                 Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
                 MyStation.actions.Add(new Action(actionType, structure, costOfAction, selectedModules, selectedPath));
                 AddActionBarImage(actionType, MyStation.actions.Count()-1);
@@ -612,7 +687,7 @@ public class GameManager : MonoBehaviour
         }
         return currentFleets < maxFleets;
     }
-    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue)
+    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Guid? auctionGuid = null)
     {
         var station = Stations[structure.stationId];
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
@@ -633,6 +708,10 @@ public class GameManager : MonoBehaviour
         else if (actionType == ActionType.GenerateModule)
         {
             return 3;
+        }
+        else if (actionType == ActionType.BidOnModule)
+        {
+            return AuctionModules.FirstOrDefault(x=>x.moduleGuid == auctionGuid).currentBid;
         }
         else
         {
@@ -660,11 +739,12 @@ public class GameManager : MonoBehaviour
         SelectedUnit = null;
         SelectedPath = null;
         ViewStructureInformation(false);
+        ViewModuleMarket(false);
     }
 
     private void UpdateCreditTotal()
     {
-        CreditText.text = $"{fakeCredits} Credits";
+        CreditText.text = $"{currentCredits} Credits";
     }
 
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
@@ -702,7 +782,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            if (unitMoving.range < 0)
+            if (unitMoving.range < 0 || node.isAsteroid)
             {
                 blockedMovement = true;
             }
@@ -722,11 +802,6 @@ public class GameManager : MonoBehaviour
             if (node.isAsteroid)
             {
                 yield return StartCoroutine(PerformMine(unitMoving, node));
-                //Check if it was mined away
-                if (node.isAsteroid)
-                {
-                    blockedMovement = true;
-                }
             }
             //if enemy, attack, if you didn't destroy them, stay blocked and move back
             if (unitMoving.range >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
@@ -1149,7 +1224,7 @@ public class GameManager : MonoBehaviour
                             if (selectedModule is object)
                             {
                                 currentUnit.attachedModules.Add(selectedModule);
-                                currentUnit.EditModule(selectedModule.type);
+                                currentUnit.EditModule(selectedModule.id);
                                 currentStation.modules.RemoveAt(currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid));
                             }
                             else
@@ -1173,7 +1248,7 @@ public class GameManager : MonoBehaviour
                             if (selectedModule is object)
                             {
                                 currentStation.modules.Add(selectedModule);
-                                currentUnit.EditModule(selectedModule.type, -1);
+                                currentUnit.EditModule(selectedModule.id, -1);
                                 currentUnit.attachedModules.Remove(currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                             }
                             else
@@ -1292,7 +1367,7 @@ public class GameManager : MonoBehaviour
             TurnOrderText.text += Stations[(TurnNumber+i) % Stations.Count].color;
             TurnOrderText.text += i == Stations.Count - 1 ? "." : ", ";
         }
-        fakeCredits = MyStation.credits;
+        currentCredits = MyStation.credits;
         ResetAfterSelection();
     }
 
@@ -1339,6 +1414,10 @@ public class GameManager : MonoBehaviour
     private void ClearSelectableModules()
     {
         while (currentModulesForSelection.Count > 0) { Destroy(currentModulesForSelection[0].gameObject); currentModulesForSelection.RemoveAt(0); }
+    } 
+    private void ClearAuctionObjects()
+    {
+        while (AuctionObjects.Count > 0) { Destroy(AuctionObjects[0].gameObject); AuctionObjects.RemoveAt(0); }
     }
 
     private void ClearActionBar()
