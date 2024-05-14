@@ -5,7 +5,7 @@ using static GameManager;
 
 public class PathNode : MonoBehaviour
 {
-    public bool isAsteroid;
+    public bool isAsteroid { get { return currentCredits > 0; } }
     internal int maxCredits = 0;
     internal int currentCredits = 0;
     internal int creditsRegin = 0;
@@ -32,7 +32,6 @@ public class PathNode : MonoBehaviour
         maxCredits = _maxCredits;
         currentCredits = _startCredits;
         creditsRegin = _creditRegin;
-        isAsteroid = _isAsteroid;
         asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
         asteriodSprite.gameObject.SetActive(isAsteroid);
         mineIcon = transform.Find("Asteroid/Mine").gameObject;
@@ -64,6 +63,7 @@ public class PathNode : MonoBehaviour
         currentCredits -= amountMined;
         mineralText.text = $"{currentCredits}";
         hasBeenMinedThisTurn = true;
+        mineIcon.SetActive(isAsteroid);
         return amountMined;
     }
 
@@ -73,7 +73,14 @@ public class PathNode : MonoBehaviour
     } 
     internal void ShowMineralText(bool active)
     {
-        mineralText.text = $"{currentCredits}";
-        mineralText.gameObject.SetActive(active);
+        if (isAsteroid)
+        {
+            mineralText.text = $"{currentCredits}";
+            mineralText.gameObject.SetActive(active);
+        }
+        else
+        {
+            mineralText.gameObject.SetActive(false);
+        }
     }
 }

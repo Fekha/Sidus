@@ -1,12 +1,11 @@
 public enum ActionType
 {
     GenerateModule,
-    MoveStructure,
+    MoveUnit,
     CreateFleet,
     UpgradeFleet,
     UpgradeStation,
     AttachModule,
     DetachModule,
-    MineAsteroid,
-    MineTargetedAsteroid,
+    MineAsteroid
 }

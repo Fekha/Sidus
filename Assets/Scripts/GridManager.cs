@@ -15,7 +15,6 @@ public class GridManager : MonoBehaviour
     private Vector3 cellPrefabSize;
     private Transform characterParent;
     internal PathNode[,] grid;
-    internal List<PathNode> asteroids = new List<PathNode>();
     private Vector2 gridSize = new Vector2(8, 8);
     internal int scoreToWin = 99;
     public List<Color> playerColors;
@@ -34,6 +33,7 @@ public class GridManager : MonoBehaviour
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
+        scoreToWin = GetScoreToWin();
         GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
         characterParent = GameObject.Find("Characters").transform;
         for (int i = 0; i < Globals.Players.Length; i++)
@@ -170,14 +170,8 @@ public class GridManager : MonoBehaviour
                 cell.transform.SetParent(nodeParent);
                 grid[x, y] = cell.AddComponent<PathNode>();
                 grid[x, y].InitializeNode(x, y, isAsteroid, startCredits, maxCredits, creditRegin);
-                if (isAsteroid)
-                {
-                    asteroids.Add(grid[x, y]);
-                }
             }
         }
-        //(int)((((gridSize.x * gridSize.y) - obstacleCount) / Globals.Players.Count()) * 1.5);
-        scoreToWin = 42 - ((Globals.Players.Count()-1) * 7);
     }
 
     internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, int stationId)
@@ -312,10 +306,14 @@ public class GridManager : MonoBehaviour
         }
         return neighbors;
     }
-
+    internal int GetScoreToWin()
+    {
+        return (int)(gridSize.x * gridSize.y / Globals.Players.Count() * 1.3);
+    }
     internal int CheckForWin()
     {
         GetScores();
+        scoreToWin = GetScoreToWin();
         for (int i = 0; i < GameManager.i.Stations.Count; i++)
         {
             if (GameManager.i.Stations[i].score >= scoreToWin)

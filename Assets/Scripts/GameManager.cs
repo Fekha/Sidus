@@ -224,10 +224,10 @@ public class GameManager : MonoBehaviour
                     {
                         SelectedUnit = targetUnit;
                         SetTextValues(SelectedUnit);
-                        if (HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
+                        if (HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
                         {
                             SelectedUnit.subtractMovement(99);
-                            var movementAction = MyStation.actions.FirstOrDefault(x => x.actionType == ActionType.MoveStructure && x.selectedUnit.unitGuid == targetUnit.unitGuid);
+                            var movementAction = MyStation.actions.FirstOrDefault(x => x.actionType == ActionType.MoveUnit && x.selectedUnit.unitGuid == targetUnit.unitGuid);
                             DrawPath(movementAction.selectedPath);
                             Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
                             HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x=>!x.isAsteroid), SelectedUnit, true);
@@ -241,7 +241,7 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         //Mine after move
-                        if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedAction(ActionType.MoveStructure, SelectedUnit) && targetNode.isAsteroid)
+                        if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedAction(ActionType.MoveUnit, SelectedUnit) && targetNode.isAsteroid)
                         {                          
                             QueueAction(ActionType.MineAsteroid,null,null,new List<PathNode>() { targetNode });
                         }
@@ -253,13 +253,13 @@ public class GameManager : MonoBehaviour
                                 SelectedUnit.resetMovementRange();
                                 QueueAction(ActionType.MineAsteroid);
                             }
-                            else if(!HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
+                            else if(!HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
                             {
-                                QueueAction(ActionType.MoveStructure);
+                                QueueAction(ActionType.MoveUnit);
                             }
                         }
                         //Create movement
-                        else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveStructure, SelectedUnit))
+                        else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
                         {
                             SelectedNode = targetNode;
                             int oldPathCount = SelectedPath?.Count ?? 0;
@@ -491,7 +491,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"{MyStation.unitName} removed action {action.actionType} from queue");
         if (action is object)
         {
-            if (action.actionType == ActionType.MoveStructure)
+            if (action.actionType == ActionType.MoveUnit)
             {
                 action.selectedUnit.resetMovementRange();
             }
@@ -522,8 +522,8 @@ public class GameManager : MonoBehaviour
             {
                 fakeCredits -= costOfAction;
                 Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
-                AddActionBarImage(actionType, MyStation.actions.Count());
                 MyStation.actions.Add(new Action(actionType, structure, costOfAction, selectedModules, selectedPath));
+                AddActionBarImage(actionType, MyStation.actions.Count()-1);
                 ResetAfterSelection();
             }
         }
@@ -531,7 +531,7 @@ public class GameManager : MonoBehaviour
     #endregion
     private void ToggleMineralText(bool value)
     {
-        foreach (var asteroid in GridManager.i.asteroids)
+        foreach (var asteroid in GridManager.i.AllNodes)
         {
             asteroid.ShowMineralText(value);
         }
@@ -551,7 +551,12 @@ public class GameManager : MonoBehaviour
     }
     private void AddActionBarImage(ActionType actionType, int i)
     {
-        ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{(int)actionType}");
+        int image = (int)actionType;
+        if (actionType == ActionType.MoveUnit && MyStation.actions[i].selectedPath.Last().isAsteroid == true)
+        {
+            image = 8;
+        }
+        ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{image}");
         ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
         ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(false);
     }
@@ -697,7 +702,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            if (node.isAsteroid || unitMoving.range < 0)
+            if (unitMoving.range < 0)
             {
                 blockedMovement = true;
             }
@@ -716,7 +721,12 @@ public class GameManager : MonoBehaviour
             unitImage.rotation = toRot;
             if (node.isAsteroid)
             {
-                yield return StartCoroutine(PerformSingleMine(unitMoving, node));
+                yield return StartCoroutine(PerformMine(unitMoving, node));
+                //Check if it was mined away
+                if (node.isAsteroid)
+                {
+                    blockedMovement = true;
+                }
             }
             //if enemy, attack, if you didn't destroy them, stay blocked and move back
             if (unitMoving.range >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
@@ -1038,7 +1048,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            foreach (var asteroid in GridManager.i.asteroids)
+            foreach (var asteroid in GridManager.i.AllNodes)
             {
                 asteroid.ReginCredits();
             }
@@ -1065,7 +1075,7 @@ public class GameManager : MonoBehaviour
                 var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false);
                 if (currentStation.credits >= actionCost)
                 {
-                    if (action.actionType == ActionType.MoveStructure)
+                    if (action.actionType == ActionType.MoveUnit)
                     {
                         isMoving = true;
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
@@ -1188,7 +1198,7 @@ public class GameManager : MonoBehaviour
                         var targetNode = action.selectedPath.Last();
                         if (GridManager.i.GetNeighbors(currentUnit.currentPathNode).Contains(targetNode))
                         {
-                            yield return StartCoroutine(PerformSingleMine(currentUnit, targetNode));
+                            yield return StartCoroutine(PerformMine(currentUnit, targetNode));
                         }
                     }
                 }
@@ -1230,7 +1240,7 @@ public class GameManager : MonoBehaviour
     //    }
     //}
 
-    private IEnumerator PerformSingleMine(Unit currentUnit, PathNode asteroidToMine)
+    private IEnumerator PerformMine(Unit currentUnit, PathNode asteroidToMine)
     {
         Station currentStation = Stations[currentUnit.stationId];
         if (AllUnits.Contains(currentUnit))
