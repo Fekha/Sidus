@@ -1,8 +1,8 @@
-using StartaneousAPI.Models;
-using StarTaneousAPI.Models;
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,11 +20,13 @@ public class LoginManager : MonoBehaviour
     private TextMeshProUGUI waitingText;
     private TextMeshProUGUI playersText;
     private List<GameObject> openGamesObjects = new List<GameObject>();
-    internal int MaxPlayers = 2;
+    private int MaxPlayers = 2;
+    private List<string> GameSettings = new List<string>();
     // Start is called before the first frame update
     void Start()
     {
         sql = new SqlManager();
+        Globals.HasBeenToLobby = true;
         Globals.localStationGuid = Guid.NewGuid();
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
@@ -32,9 +34,26 @@ public class LoginManager : MonoBehaviour
     public void CreateGame()
     {
         if (toggle1.isOn)
-            Globals.GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
-        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(new NewGame(Globals.localStationGuid, MaxPlayers, Globals.GameSettings));
-        StartCoroutine(sql.PostRoutine<NewGame>($"Game/Create?", stringToPost, SetMatchGuid));
+            GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
+        var gameGuid = Guid.NewGuid();
+        var players = new Player[MaxPlayers];
+        players[0] = GetNewPlayer();
+        var gameMatch = new GameMatch()
+        {
+            GameGuid = gameGuid,
+            MaxPlayers = MaxPlayers,
+            GameSettings = GameSettings,
+            GameTurns = new List<GameTurn>()
+            {
+                new GameTurn() {
+                    GameGuid = gameGuid,
+                    TurnNumber = 0,
+                    Players = players
+                }
+            }
+        };
+        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
+        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/CreateGame", stringToPost, SetMatchGuid));
     }
     public void ViewOpenGames(bool active)
     {
@@ -62,21 +81,43 @@ public class LoginManager : MonoBehaviour
     }
     public void FindGames()
     {
-        StartCoroutine(sql.GetRoutine<List<NewGame>>($"Game/Find", GetAllMatches));
+        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames", GetAllMatches));
     }
-    public void JoinGame(Guid guid)
+    public void JoinGame(GameMatch gameMatch)
     {
-        StartCoroutine(sql.GetRoutine<NewGame>($"Game/Join?ClientId={Globals.localStationGuid}&GameId={guid}", SetMatchGuid));
+        gameMatch.GameTurns[0].Players[1] = GetNewPlayer();
+        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
+        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
     }
-    private void GetAllMatches(List<NewGame> newGames)
+
+    private Player GetNewPlayer()
+    {
+        return new Player()
+        {
+            Station = new StartaneousAPI.ServerModels.ServerUnit()
+            {
+                UnitGuid = Globals.localStationGuid,
+            },
+            Fleets = new List<StartaneousAPI.ServerModels.ServerUnit>()
+            {
+                new StartaneousAPI.ServerModels.ServerUnit()
+                {
+                    UnitGuid = Guid.NewGuid(),
+                },
+            },
+            Credits = 5,
+        };
+    }
+
+    private void GetAllMatches(List<GameMatch> newGames)
     {
         ClearOpenGames();
         foreach (var game in newGames)
         {
             var prefab = Instantiate(openGamePrefab, findContent);
-            prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game.GameId));
-            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameId.ToString().Substring(0, 6);
-            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.PlayerCount}/{game.MaxPlayers}";
+            prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
+            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
+            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns[0].Players.Count(x=>x!=null)}/{game.MaxPlayers}";
             openGamesObjects.Add(prefab);
         }
     }
@@ -85,48 +126,51 @@ public class LoginManager : MonoBehaviour
         while (openGamesObjects.Count > 0) { Destroy(openGamesObjects[0].gameObject); openGamesObjects.RemoveAt(0); }
     }
 
-    private void SetMatchGuid(NewGame game)
+    private void SetMatchGuid(GameMatch game)
     {
         if (game != null)
         {
-            Globals.GameId = game.GameId;
-            Globals.GameSettings = game.GameSettings;
+            Globals.GameMatch = game;
             MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
-            UpdateWaitingText(game.MaxPlayers - game.PlayerCount);
-            StartCoroutine(GetStationIndex());
+            UpdateGameStatus(game);
+            StartCoroutine(CheckIfGameHasStarted());
         }
     }
-    public void UpdateWaitingText(int players)
+    public void UpdateWaitingText()
     {
-        var plural = players == 1 ? "" : "s";
-        waitingText.text = $"Waiting for {players} more player{plural} to join game {Globals.GameId.ToString().Substring(0, 6)}....";
+        var playerNeeded = PlayersNeeded();
+        var plural = playerNeeded == 1 ? "" : "s";
+        waitingText.text = $"Waiting for {playerNeeded} more player{plural} to join game {Globals.GameMatch.GameGuid.ToString().Substring(0, 6)}....";
     }
-    private IEnumerator GetStationIndex()
+    private IEnumerator CheckIfGameHasStarted()
     {
-        while (Globals.Players == null)
+        while (PlayersNeeded() != 0)
         {
-            yield return StartCoroutine(sql.GetRoutine<Player[]>($"Game/HasGameStarted?GameId={Globals.GameId}&ClientId={Globals.localStationGuid}", SetStationGuids));
+            yield return StartCoroutine(sql.GetRoutine<GameMatch>($"Game/HasGameStarted?GameGuid={Globals.GameMatch.GameGuid}", UpdateGameStatus));
         }
     }
 
-    private void SetStationGuids(Player[] players)
+    private int PlayersNeeded()
     {
-        if (players != null)
-        {
-            if (players.Length == MaxPlayers) {
-                for (int i = 0; i < players.Length; i++)
+        return Globals.GameMatch.MaxPlayers - Globals.GameMatch.GameTurns[0].Players.Count(x => x != null);
+    }
+
+    private void UpdateGameStatus(GameMatch gameMatch)
+    {
+        Globals.GameMatch = gameMatch;
+        if (PlayersNeeded() == 0) {
+            for (int i = 0; i < Globals.GameMatch.GameTurns[0].Players.Length; i++)
+            {
+                if (Globals.GameMatch.GameTurns[0].Players[i].Station.UnitGuid == Globals.localStationGuid)
                 {
-                    if (players[i].StationGuid == Globals.localStationGuid)
-                    {
-                        Globals.localStationIndex = i;
-                    }
+                    Globals.localStationIndex = i;
                 }
-                Globals.Players = players;
-                SceneManager.LoadScene(1);
-            } else {
-                UpdateWaitingText(MaxPlayers - players.Length);
             }
+                
+            SceneManager.LoadScene((int)Scene.Game);
+        } else {
+            UpdateWaitingText();
         }
     }
 }

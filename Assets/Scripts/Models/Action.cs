@@ -1,4 +1,4 @@
-using StartaneousAPI.Models;
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ public class Action : MonoBehaviour
 {
     public ActionType actionType;
     public Unit selectedUnit;
-    public List<Guid> selectedModulesIds;
+    public List<Guid> selectedModulesGuids;
     public List<PathNode> selectedPath;
     public int generatedModuleId;
     public Guid generatedGuid;
@@ -20,18 +20,19 @@ public class Action : MonoBehaviour
         actionType = _actionType;
         selectedUnit = _selectedFleet;
         costOfAction = _cost;
-        selectedModulesIds = _selectedModules ?? new List<Guid>();
+        selectedModulesGuids = _selectedModules ?? new List<Guid>();
         selectedPath = _selectedPath ?? new List<PathNode>();
     }
-    public Action(ActionIds _action)
+    public Action(ServerAction _action)
     {
-        if (_action is object) {
-            actionType = (ActionType)_action.actionTypeId;
-            selectedUnit = GameManager.i.AllUnits.FirstOrDefault(x => x.unitGuid == _action.selectedUnitId);
-            selectedModulesIds = _action.selectedModulesIds;
-            selectedPath = GameManager.i.GetPathFromCoords(_action.selectedCoords);
-            generatedModuleId = _action.generatedModuleId;
-            generatedGuid = _action.generatedGuid;
+        if (_action is object)
+        {
+            actionType = (ActionType)_action.ActionTypeId;
+            selectedUnit = GameManager.i.AllUnits.FirstOrDefault(x => x.unitGuid == _action.SelectedUnitGuid);
+            selectedModulesGuids = _action.SelectedModulesGuids;
+            selectedPath = _action.SelectedCoords.Select(x=> GridManager.i.grid[x.X,x.Y]).ToList();
+            generatedModuleId = (int)_action.GeneratedModuleId;
+            generatedGuid = (Guid)_action.GeneratedGuid;
         }
     }
 }

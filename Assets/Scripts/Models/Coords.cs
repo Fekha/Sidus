@@ -1,13 +1,19 @@
+using StartaneousAPI.ServerModels;
 using System;
 [Serializable]
 public class Coords
 {
     public int x { get; set; }
     public int y { get; set; }
-    public Coords(int x, int y)
+    public Coords(int _x, int _y)
     {
-        this.x = x;
-        this.y = y;
+        x = _x;
+        y = _y;
+    }
+    public Coords(ServerCoords _coords)
+    {
+        x = _coords.X;
+        y = _coords.Y;
     }
     public Coords Add(Coords coord)
     {
@@ -16,5 +22,10 @@ public class Coords
     public bool Equals(Coords coord)
     {
         return x == coord.x && y == coord.y;
+    }
+
+    internal ServerCoords ToServerCoords()
+    {
+        return new ServerCoords(){X = x, Y = y};
     }
 }

@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
 public class GridManager : MonoBehaviour
 {
@@ -34,7 +32,7 @@ public class GridManager : MonoBehaviour
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
         characterParent = GameObject.Find("Characters").transform;
-        for (int i = 0; i < Globals.Players.Length; i++)
+        for (int i = 0; i < Globals.GameMatch.GameTurns[0].Players.Length; i++)
         {
             CreateStation(i);
         }
@@ -47,9 +45,8 @@ public class GridManager : MonoBehaviour
         string teamColor = "Blue";
         GameObject stationPrefab = playerStationPrefab;
         stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>().color = playerColors[team];
-        Guid stationGuid = Globals.Players[team].StationGuid;
-        Guid fleetGuid = Globals.Players[team].FleetGuids[0];
-       
+        Guid stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Station.UnitGuid;
+        Guid fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Fleets[0].UnitGuid;
         int spawnX = 1;
         int spawnY = 5;
         Direction facing = Direction.BottomLeft;
@@ -222,7 +219,7 @@ public class GridManager : MonoBehaviour
     }
     public int GetGCost(PathNode node, int stationId )
     {
-        if (Globals.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString()))
+        if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString()))
         {
             //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
             return (node.ownedById == -1 || node.ownedById == stationId) ? 1 : 2; // || node.structureOnPath != null

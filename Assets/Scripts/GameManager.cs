@@ -1,5 +1,4 @@
-using StartaneousAPI.Models;
-using StarTaneousAPI.Models;
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -88,8 +88,8 @@ public class GameManager : MonoBehaviour
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
     private SqlManager sql;
-    private int TurnNumber = 0;
-    private Turn[] TurnsFromServer;
+    private int TurnNumber = 1;
+    private GameTurn TurnsFromServer;
     private bool infoToggle = false;
     private int currentCredits;
     private int helpPageNumber = 0;
@@ -100,16 +100,8 @@ public class GameManager : MonoBehaviour
         i = this;
         sql = new SqlManager();
 #if UNITY_EDITOR
-        if (Globals.Players == null) {
-            Globals.Online = false;
-            Globals.GameId = Guid.NewGuid();
-            Globals.localStationGuid = Guid.NewGuid();
-            Globals.localStationIndex = 0;
-            var player = new Player();
-            player.StationGuid = Globals.localStationGuid;
-            player.FleetGuids = new List<Guid>() { Guid.NewGuid() };
-            Globals.Players = new Player[1] { player };
-        }
+        if(!Globals.HasBeenToLobby)
+            SceneManager.LoadScene((int)Scene.Lobby);
 #endif
     }
     void Start()
@@ -131,7 +123,7 @@ public class GameManager : MonoBehaviour
    
     public bool HasGameStarted()
     {
-        return Stations.Count > 0 && Globals.GameId != Guid.Empty;
+        return Stations.Count > 0 && Globals.GameMatch.GameGuid != Guid.Empty;
     }
 
     private void FindUI()
@@ -345,7 +337,7 @@ public class GameManager : MonoBehaviour
             {
                 int i = j;
                 var module = AuctionModules[i];
-                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModulesIds.Any(y => y == module.moduleGuid));
+                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModulesGuids.Any(y => y == module.moduleGuid));
                 if(!hasQueued)
                     module.currentBid = module.minBid;
                 var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
@@ -470,7 +462,7 @@ public class GameManager : MonoBehaviour
             var selectedStructure = SelectedUnit;
             DeselectMovement();
             ClearSelectableModules();
-            List<Guid> assignedModules = MyStation.actions.SelectMany(x => x.selectedModulesIds).ToList();
+            List<Guid> assignedModules = MyStation.actions.SelectMany(x => x.selectedModulesGuids).ToList();
             var availableModules = MyStation.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
             if (availableModules.Count > 0)
             {
@@ -489,7 +481,7 @@ public class GameManager : MonoBehaviour
     private void SetSelectedModule(Guid moduleGuid, Unit structure)
     {
         //if not already queued up
-        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModulesIds.Contains(moduleGuid)))
+        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModulesGuids.Contains(moduleGuid)))
         {
             ViewModuleSelection(false);
             QueueAction(ActionType.AttachModule, new List<Guid>() { moduleGuid }, structure);
@@ -506,7 +498,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("This is not your unit!");
         }
-        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModulesIds.Any(y => y == SelectedUnit.attachedModules[i].moduleGuid)))
+        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModulesGuids.Any(y => y == SelectedUnit.attachedModules[i].moduleGuid)))
         {
              ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].id} has already been queued up");
         }
@@ -811,7 +803,7 @@ public class GameManager : MonoBehaviour
             }
             if (!blockedMovement)
                 unitMoving.currentPathNode = node;
-            if (Globals.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
+            if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
                 || unitMoving.currentPathNode.ownedById == -1
                 || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId)))
             {
@@ -1009,12 +1001,33 @@ public class GameManager : MonoBehaviour
             {
                 ShowAreYouSurePanel(false);
                 Debug.Log($"Turn Ending, Starting Simultanous Turns");
-                var actionToPost = MyStation.actions.Select(x => new ActionIds(x)).ToList();
-                var turnToPost = new Turn(Globals.GameId, Globals.localStationGuid, TurnNumber, actionToPost);
-                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(turnToPost);
+                GameTurn gameTurn = new GameTurn()
+                {
+                    GameGuid = Globals.GameMatch.GameGuid,
+                    TurnNumber = TurnNumber,
+                    Players = new Player[Globals.GameMatch.MaxPlayers]
+                };
+                gameTurn.Players[Globals.localStationIndex] = new Player()
+                {
+                    Actions = MyStation.actions.Select(x =>
+                        new ServerAction()
+                        {
+                            ActionTypeId = (int)x.actionType,
+                            GeneratedGuid = x.generatedGuid,
+                            GeneratedModuleId = x.generatedModuleId,
+                            SelectedCoords = x.selectedPath.Select(y => y.coords.ToServerCoords()).ToList(),
+                            SelectedModulesGuids = x.selectedModulesGuids,
+                            SelectedUnitGuid = x.selectedUnit.unitGuid,
+                        }).ToList(),
+                    Credits = MyStation.credits,
+                    Station = MyStation.ToServerUnit(),
+                    Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
+                    ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
+                };
+                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
                 StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
                 endTurnButton.color = Color.blue;
-                var plural = Globals.Players.Count() > 2 ? "s" : "";
+                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
                 customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
                 customAlertPanel.SetActive(true);
                 StartCoroutine(TakeTurns());
@@ -1035,11 +1048,11 @@ public class GameManager : MonoBehaviour
         TurnsFromServer = null;
         while (TurnsFromServer == null)
         {
-            yield return StartCoroutine(sql.GetRoutine<Turn[]>($"Game/GetTurn?gameId={Globals.GameId}&turnNumber={TurnNumber}", CheckForTurns));
+            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurn?gameId={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", CheckForTurns));
         }
         customAlertPanel.SetActive(false);
         isEndingTurn = true;
-        turnValue.text = $"\n\n Everyone submitted their turns! \n\n Tap to watch turn #{TurnNumber + 1} play out. \n\n";
+        turnValue.text = $"Turn #{TurnNumber} complete! \n\n (Tap to watch) ";
         turnLabel.SetActive(true);
         readyToSeeTurnsPanel.SetActive(true);
         while (readyToSeeTurnsPanel.activeInHierarchy)
@@ -1049,7 +1062,7 @@ public class GameManager : MonoBehaviour
         isWaitingForTurns = false;
     }
 
-    private void CheckForTurns(Turn[] turns)
+    private void CheckForTurns(GameTurn turns)
     {
         TurnsFromServer = turns;
     }
@@ -1078,11 +1091,11 @@ public class GameManager : MonoBehaviour
                     for (int j = 0; j < Stations.Count; j++)
                     {
                         int k = (c + j) % Stations.Count;
-                        if (i < TurnsFromServer[k].Actions.Count)
+                        if (i < TurnsFromServer.Players[k].Actions.Count)
                         {
-                            if (TurnsFromServer[k].Actions[i] is object)
+                            if (TurnsFromServer.Players[k].Actions[i] is object)
                             {
-                                var action = new Action(TurnsFromServer[k].Actions[i]);
+                                var action = new Action(TurnsFromServer.Players[k].Actions[i]);
                                 turnValue.text = $"{Stations[k].color} action {i + 1}:\n{action.actionType}";
                                 Debug.Log($"Perfoming {Stations[k].color}'s action {i + 1}:\n{action.actionType}");
                                 yield return StartCoroutine(PerformAction(action));
@@ -1220,7 +1233,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count < currentUnit.maxAttachedModules)
                         {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesGuids[0]);
                             if (selectedModule is object)
                             {
                                 currentUnit.attachedModules.Add(selectedModule);
@@ -1242,9 +1255,9 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.DetachModule)
                     {
-                        if (currentUnit.attachedModules.Count > 0 && action.selectedModulesIds != null && action.selectedModulesIds.Count > 0)
+                        if (currentUnit.attachedModules.Count > 0 && action.selectedModulesGuids != null && action.selectedModulesGuids.Count > 0)
                         {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesIds[0]);
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModulesGuids[0]);
                             if (selectedModule is object)
                             {
                                 currentStation.modules.Add(selectedModule);
@@ -1379,7 +1392,7 @@ public class GameManager : MonoBehaviour
             var moduleObject = Instantiate(modulePrefab, ModuleGrid);
             moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
-            moduleObject.transform.Find("Queued").gameObject.SetActive(MyStation.actions.Any(x=>x.selectedModulesIds.Contains(module.moduleGuid)));
+            moduleObject.transform.Find("Queued").gameObject.SetActive(MyStation.actions.Any(x=>x.selectedModulesGuids.Contains(module.moduleGuid)));
             currentModules.Add(moduleObject.GetComponent<Module>());
         }
     }

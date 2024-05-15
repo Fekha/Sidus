@@ -1,3 +1,4 @@
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -34,7 +35,7 @@ public class Unit : Node
     {
         facing = _direction;
         unitGuid = _unitGuid;
-        coords = new Coords(_x, _y);
+        location = new Coords(_x, _y);
         color = _color;
         maxHp = _hp;
         hp = _hp;
@@ -214,5 +215,14 @@ public class Unit : Node
     {
         hpText.text = $"{hp}";
         hpText.gameObject.SetActive(value);
+    }
+    internal ServerUnit ToServerUnit()
+    {
+        return new ServerUnit()
+        {
+            UnitGuid = unitGuid,
+            Facing = facing,
+            Location = location.ToServerCoords()
+        };
     }
 }
