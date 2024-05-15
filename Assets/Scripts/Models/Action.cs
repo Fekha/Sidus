@@ -9,19 +9,20 @@ public class Action : MonoBehaviour
 {
     public ActionType actionType;
     public Unit selectedUnit;
-    public List<Guid> selectedModulesGuids;
+    public Guid? selectedModuleGuid;
     public List<PathNode> selectedPath;
     public int generatedModuleId;
-    public Guid generatedGuid;
+    public Guid? generatedGuid;
     internal int costOfAction;
 
-    public Action(ActionType _actionType, Unit _selectedFleet, int _cost, List<Guid> _selectedModules = null, List<PathNode> _selectedPath = null)
+    public Action(ActionType _actionType, Unit _selectedFleet, int _cost, Guid? _selectedModuleGuid = null, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null)
     {
         actionType = _actionType;
         selectedUnit = _selectedFleet;
         costOfAction = _cost;
-        selectedModulesGuids = _selectedModules ?? new List<Guid>();
+        selectedModuleGuid = _selectedModuleGuid;
         selectedPath = _selectedPath ?? new List<PathNode>();
+        generatedGuid = _generatedGuid;
     }
     public Action(ServerAction _action)
     {
@@ -29,7 +30,7 @@ public class Action : MonoBehaviour
         {
             actionType = (ActionType)_action.ActionTypeId;
             selectedUnit = GameManager.i.AllUnits.FirstOrDefault(x => x.unitGuid == _action.SelectedUnitGuid);
-            selectedModulesGuids = _action.SelectedModulesGuids;
+            selectedModuleGuid = _action.SelectedModuleGuid;
             selectedPath = _action.SelectedCoords.Select(x=> GridManager.i.grid[x.X,x.Y]).ToList();
             generatedModuleId = (int)_action.GeneratedModuleId;
             generatedGuid = (Guid)_action.GeneratedGuid;
