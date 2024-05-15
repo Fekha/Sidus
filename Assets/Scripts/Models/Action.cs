@@ -33,7 +33,7 @@ public class Action : MonoBehaviour
             selectedModuleGuid = _action.SelectedModuleGuid;
             selectedPath = _action.SelectedCoords.Select(x=> GridManager.i.grid[x.X,x.Y]).ToList();
             generatedModuleId = (int)_action.GeneratedModuleId;
-            generatedGuid = (Guid)_action.GeneratedGuid;
+            generatedGuid = _action.GeneratedGuid;
         }
     }
 }
