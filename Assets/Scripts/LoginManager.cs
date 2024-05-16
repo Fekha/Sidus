@@ -42,7 +42,7 @@ public class LoginManager : MonoBehaviour
         {
             GameGuid = gameGuid,
             MaxPlayers = MaxPlayers,
-            NumberOfModules = 23,
+            NumberOfModules = 26,
             GameSettings = GameSettings,
             GameTurns = new List<GameTurn>()
             {
@@ -96,13 +96,13 @@ public class LoginManager : MonoBehaviour
     {
         return new Player()
         {
-            Station = new StartaneousAPI.ServerModels.ServerUnit()
+            Station = new ServerUnit()
             {
                 UnitGuid = Globals.localStationGuid,
             },
-            Fleets = new List<StartaneousAPI.ServerModels.ServerUnit>()
+            Fleets = new List<ServerUnit>()
             {
-                new StartaneousAPI.ServerModels.ServerUnit()
+                new ServerUnit()
                 {
                     UnitGuid = Guid.NewGuid(),
                 },
@@ -168,8 +168,7 @@ public class LoginManager : MonoBehaviour
                 {
                     Globals.localStationIndex = i;
                 }
-            }
-                
+            }  
             SceneManager.LoadScene((int)Scene.Game);
         } else {
             UpdateWaitingText();

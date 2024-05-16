@@ -163,9 +163,9 @@ public class GameManager : MonoBehaviour
             thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalAttack * .5)));
             explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosiveAttack * .5)));
         }
-        kineticAttackValue.text = $"{unit.kineticAttack}|{kineticSupport}|{unit.kineticArmor}";
-        thermalAttackValue.text = $"{unit.thermalAttack}|{thermalSupport}|{unit.thermalArmor}";
-        explosiveAttackValue.text = $"{unit.explosiveAttack}|{explosiveSupport}|{unit.explosiveArmor}";
+        kineticAttackValue.text = $"{unit.kineticAttack}~{kineticSupport}~{unit.kineticArmor}";
+        thermalAttackValue.text = $"{unit.thermalAttack}~{thermalSupport}~{unit.thermalArmor}";
+        explosiveAttackValue.text = $"{unit.explosiveAttack}~{explosiveSupport}~{unit.explosiveArmor}";
         miningValue.text = unit.mining.ToString();
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
@@ -509,7 +509,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("This is not your unit!");
         }
-        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModule?.moduleGuid != SelectedUnit.attachedModules[i].moduleGuid))
+        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModule?.moduleGuid == SelectedUnit.attachedModules[i].moduleGuid))
         {
              ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].moduleId} has already been queued up");
         }
@@ -1257,7 +1257,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log($"Module not available");
+                            Debug.Log($"No modules on station or max attached modules");
                         }
                         currentUnit.selectIcon.SetActive(true);
                         yield return new WaitForSeconds(1f);
@@ -1265,7 +1265,7 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.DetachModule)
                     {
-                        if (currentUnit.attachedModules.Count > 0 && action.selectedModule != null && action.selectedModule != null)
+                        if (currentUnit.attachedModules.Count > 0)
                         {
                             Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
@@ -1281,7 +1281,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log($"Module not available");
+                            Debug.Log($"No Modules attached");
                         }
                         currentUnit.selectIcon.SetActive(true);
                         yield return new WaitForSeconds(1f);
