@@ -10,4 +10,5 @@ public enum ActionType
     MineAsteroid,
     MoveAndMine,
     BidOnModule,
+    GainCredit,
 }

@@ -222,10 +222,10 @@ public class GameManager : MonoBehaviour
                         {
                             SelectedUnit = targetUnit;
                             SetTextValues(SelectedUnit);
-                            if (HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                            if (HasQueuedMovement(SelectedUnit))
                             {
                                 SelectedUnit.subtractMovement(99);
-                                var movementAction = MyStation.actions.FirstOrDefault(x => x.actionType == ActionType.MoveUnit && x.selectedUnit.unitGuid == targetUnit.unitGuid);
+                                var movementAction = MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == targetUnit.unitGuid);
                                 DrawPath(movementAction.selectedPath);
                                 Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
                                 HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
@@ -239,7 +239,7 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             //Mine after move
-                            if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedAction(ActionType.MoveUnit, SelectedUnit) && targetNode.isAsteroid)
+                            if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedMovement(SelectedUnit) && targetNode.isAsteroid)
                             {
                                 QueueAction(ActionType.MineAsteroid, null, null, new List<PathNode>() { targetNode });
                             }
@@ -251,13 +251,16 @@ public class GameManager : MonoBehaviour
                                     SelectedUnit.resetMovementRange();
                                     QueueAction(ActionType.MineAsteroid);
                                 }
-                                else if (!HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                                else if (!HasQueuedMovement(SelectedUnit))
                                 {
-                                    QueueAction(ActionType.MoveUnit);
+                                    if(SelectedPath.Last().isAsteroid)
+                                        QueueAction(ActionType.MoveAndMine);
+                                    else
+                                        QueueAction(ActionType.MoveUnit);
                                 }
                             }
                             //Create movement
-                            else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                            else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
                             {
                                 SelectedNode = targetNode;
                                 int oldPathCount = SelectedPath?.Count ?? 0;
@@ -566,7 +569,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"{MyStation.unitName} removed action {action.actionType} from queue");
         if (action is object)
         {
-            if (action.actionType == ActionType.MoveUnit)
+            if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
             {
                 action.selectedUnit.resetMovementRange();
             }
@@ -627,10 +630,6 @@ public class GameManager : MonoBehaviour
     private void AddActionBarImage(ActionType actionType, int i)
     {
         int image = (int)actionType;
-        if (actionType == ActionType.MoveUnit && MyStation.actions[i].selectedPath.Last().isAsteroid == true)
-        {
-            image = 8;
-        }
         ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{image}");
         ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
         ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(false);
@@ -707,15 +706,19 @@ public class GameManager : MonoBehaviour
         {
             return auctionModule?.currentBid ?? 0;
         }
+        else if (actionType == ActionType.GainCredit)
+        {
+            return -1;
+        }
         else
         {
             return 0;
         }
     }
 
-    private bool HasQueuedAction(ActionType actionType, Unit selectedUnit)
+    private bool HasQueuedMovement(Unit selectedUnit)
     {
-        return MyStation.actions.Any(x => x.actionType == actionType && x.selectedUnit.unitGuid == selectedUnit.unitGuid);
+        return MyStation.actions.Any(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == selectedUnit.unitGuid);
     }
 
     private void ResetAfterSelection()
@@ -994,63 +997,7 @@ public class GameManager : MonoBehaviour
             currentMovementRange.Add(rangeComponent);
         }
     }
-    
-    public void EndTurn(bool theyAreSure)
-    {
-        if (!isEndingTurn && HasGameStarted())
-        {
-            if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
-            {
-                ShowAreYouSurePanel(false);
-                Debug.Log($"Turn Ending, Starting Simultanous Turns");
-                List<int> actionOrders = new List<int>();
-                for (int i = 1; i <= Stations.Count*5; i+=Stations.Count)
-                {
-                    for (int j = 0; j < Stations.Count; j++)
-                    {
-                        if(j == Globals.localStationIndex)
-                            actionOrders.Add(i+j);
-                    }
-                }
-                GameTurn gameTurn = new GameTurn()
-                {
-                    GameGuid = Globals.GameMatch.GameGuid,
-                    TurnNumber = TurnNumber,
-                    MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
-                    Players = new Player[Globals.GameMatch.MaxPlayers]
-                };
-                gameTurn.Players[Globals.localStationIndex] = new Player()
-                {
-                    Actions = MyStation.actions.Select((x,i) =>
-                        new ServerAction()
-                        {
-                            PlayerId = Globals.localStationIndex,
-                            ActionOrder = actionOrders[i],
-                            ActionTypeId = (int)x.actionType,
-                            GeneratedGuid = x.generatedGuid,
-                            SelectedCoords = x.selectedPath?.Select(y => y.coords?.ToServerCoords()).ToList(),
-                            SelectedModule = x.selectedModule?.ToServerModule(),
-                            SelectedUnitGuid = x.selectedUnit?.unitGuid,
-                        }).ToList(),
-                    Credits = MyStation.credits,
-                    Station = MyStation.ToServerUnit(),
-                    Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
-                    ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
-                };
-                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
-                StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
-                endTurnButton.color = Color.blue;
-                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
-                customAlertPanel.SetActive(true);
-                StartCoroutine(TakeTurns());
-            }
-            else
-            {
-                ShowAreYouSurePanel(true);
-            }
-        }
-    }
+   
     public void HideReadyToSeeTurnsPanel()
     {
         readyToSeeTurnsPanel.SetActive(false);
@@ -1090,6 +1037,68 @@ public class GameManager : MonoBehaviour
             ToggleHPText(infoToggle);
         }
     }
+#region Complete Turn
+    public void EndTurn(bool theyAreSure)
+    {
+        if (!isEndingTurn && HasGameStarted())
+        {
+            if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
+            {
+                ShowAreYouSurePanel(false);
+                Debug.Log($"Turn Ending, Starting Simultanous Turns");
+                while (MyStation.actions.Count < MyStation.maxActions)
+                {
+                    QueueAction(ActionType.GainCredit);
+                }
+                List<int> actionOrders = new List<int>();
+                for (int i = 1; i <= Stations.Count * 5; i += Stations.Count)
+                {
+                    for (int j = 0; j < Stations.Count; j++)
+                    {
+                        if (j == Globals.localStationIndex)
+                            actionOrders.Add(i + j);
+                    }
+                }
+                GameTurn gameTurn = new GameTurn()
+                {
+                    GameGuid = Globals.GameMatch.GameGuid,
+                    TurnNumber = TurnNumber,
+                    MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
+                    Players = new Player[Globals.GameMatch.MaxPlayers]
+                };
+                gameTurn.Players[Globals.localStationIndex] = new Player()
+                {
+                    Actions = MyStation.actions.Select((x, i) =>
+                        new ServerAction()
+                        {
+                            PlayerId = Globals.localStationIndex,
+                            ActionOrder = actionOrders[i],
+                            ActionTypeId = (int)x.actionType,
+                            GeneratedGuid = x.generatedGuid,
+                            SelectedCoords = x.selectedPath?.Select(y => y.coords?.ToServerCoords()).ToList(),
+                            SelectedModule = x.selectedModule?.ToServerModule(),
+                            SelectedUnitGuid = x.selectedUnit?.unitGuid,
+                        }).ToList(),
+                    Credits = MyStation.credits,
+                    Station = MyStation.ToServerUnit(),
+                    Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
+                    ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
+                };
+                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
+                StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
+                endTurnButton.color = Color.blue;
+                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
+                customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
+                customAlertPanel.SetActive(true);
+                StartCoroutine(TakeTurns());
+            }
+            else
+            {
+                ShowAreYouSurePanel(true);
+            }
+        }
+    }
+
     private IEnumerator TakeTurns()
     {
         if (!isWaitingForTurns)
@@ -1104,19 +1113,11 @@ public class GameManager : MonoBehaviour
                 //ToggleHPText(true);
                 foreach(var serverAction in serverActions){
                     var action = new Action(serverAction);
-                    if (action.actionType == ActionType.MoveUnit && action.selectedPath.Last().isAsteroid == true)
-                    {
-                        turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\nMove&Mine";
-                    }
-                    else
-                    {
-                        turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\n{action.actionType}";
-                    }
+                    turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\n{action.actionType}";
                     Debug.Log($"Perfoming {Stations[serverAction.PlayerId].color}'s action {action.actionOrder}:\n{action.actionType}");
                     yield return StartCoroutine(PerformAction(action));
                     yield return new WaitForSeconds(.1f);
                 }
-
                 FinishTurns();
             }
         }
@@ -1168,7 +1169,8 @@ public class GameManager : MonoBehaviour
                 var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
                 if (currentStation.credits >= actionCost)
                 {
-                    if (action.actionType == ActionType.MoveUnit)
+                    currentStation.credits -= actionCost;
+                    if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
                     {
                         isMoving = true;
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
@@ -1188,7 +1190,6 @@ public class GameManager : MonoBehaviour
                     {
                         if (IsUnderMaxFleets(currentStation, false))
                         {
-                            currentStation.credits -= actionCost;
                             yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
                         }
                         else
@@ -1200,7 +1201,6 @@ public class GameManager : MonoBehaviour
                     {
                         if (CanLevelUp(currentUnit, action.actionType, false))
                         {
-                            currentStation.credits -= actionCost;
                             LevelUpUnit(currentUnit as Fleet);
                         }
                         else
@@ -1215,7 +1215,6 @@ public class GameManager : MonoBehaviour
                     {
                         if (CanLevelUp(currentUnit, action.actionType, false))
                         {
-                            currentStation.credits -= actionCost;
                             LevelUpUnit(currentUnit);
                         }
                         else
@@ -1230,16 +1229,15 @@ public class GameManager : MonoBehaviour
                     {
                         if (action.selectedModule is object)
                         {
-                            currentStation.credits -= actionCost;
                             currentStation.modules.Add(new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid));
-                            currentUnit.selectIcon.SetActive(true);
-                            yield return new WaitForSeconds(1f);
-                            currentUnit.selectIcon.SetActive(false);
                         }
                         else
                         {
                             Debug.Log($"{currentUnit.unitName} lost the bid");
                         }
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.AttachModule)
                     {
@@ -1297,6 +1295,13 @@ public class GameManager : MonoBehaviour
                             yield return StartCoroutine(PerformMine(currentUnit, targetNode));
                         }
                     }
+                    else if (action.actionType == ActionType.GainCredit)
+                    {
+                        Debug.Log($"Gained 1 credit");
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return new WaitForSeconds(1f);
+                        currentUnit.selectIcon.SetActive(false);
+                    }
                 }
                 else
                 {
@@ -1330,23 +1335,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LevelUpUnit(Unit structure)
-    {
-        if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false)){
-            structure.level++;
-            structure.maxAttachedModules++;
-            structure.maxHp+=4;
-            structure.hp+=4;
-            structure.kineticAttack++;
-            structure.explosiveAttack++;
-            structure.thermalAttack++;
-            if (structure is Station)
-            {
-                (structure as Station).maxFleets++;
-            }
-        }
-    }
-
     private void StartTurn()
     {
         UpdateAuctionModules(TurnNumber);
@@ -1366,7 +1354,24 @@ public class GameManager : MonoBehaviour
         isEndingTurn = false;
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
-
+    #endregion
+    private void LevelUpUnit(Unit structure)
+    {
+        if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false))
+        {
+            structure.level++;
+            structure.maxAttachedModules++;
+            structure.maxHp += 4;
+            structure.hp += 4;
+            structure.kineticAttack++;
+            structure.explosiveAttack++;
+            structure.thermalAttack++;
+            if (structure is Station)
+            {
+                (structure as Station).maxFleets++;
+            }
+        }
+    }
     private void SetModuleGrid()
     {
         ClearModules();
