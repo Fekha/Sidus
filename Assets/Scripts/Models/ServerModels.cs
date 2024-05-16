@@ -7,6 +7,7 @@ namespace StartaneousAPI.ServerModels
     public class GameMatch
     {
         public int MaxPlayers { get; set; }
+        public int NumberOfModules { get; set; }
         public Guid GameGuid { get; set; }
         public List<GameTurn>? GameTurns { get; set; }
         public List<string>? GameSettings { get; set; }
@@ -17,6 +18,7 @@ namespace StartaneousAPI.ServerModels
     {
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
+        public List<ServerModule>? MarketModules { get; set; }
         public Player[]? Players { get; set; }
     }
 
@@ -27,17 +29,18 @@ namespace StartaneousAPI.ServerModels
         public List<ServerUnit>? Fleets { get; set; }
         public List<ServerAction>? Actions { get; set; }
         public List<Guid>? ModulesGuids { get; set; }
-        public int Credits { get; set; }
+        public int? Credits { get; set; }
     }
 
     [Serializable]
     public class ServerAction
     {
+        public int PlayerId { get; set; }
+        public int ActionOrder { get; set; }
         public int? ActionTypeId { get; set; }
         public Guid? SelectedUnitGuid { get; set; }
-        public Guid? SelectedModuleGuid { get; set; }
         public List<ServerCoords>? SelectedCoords { get; set; }
-        public int? GeneratedModuleId { get; set; }
+        public ServerModule? SelectedModule { get; set; }
         public Guid? GeneratedGuid { get; set; }
     }
 
@@ -47,6 +50,15 @@ namespace StartaneousAPI.ServerModels
         public Guid? UnitGuid { get; set; }
         public ServerCoords? Location { get; set; }
         public Direction Facing { get; set; }
+    }
+    [Serializable]
+    public class ServerModule
+    {
+        public Guid? ModuleGuid { get; set; }
+        public int ModuleId { get; set; }
+        public int MidBid { get; set; }
+        public int PlayerBid { get; set; }
+        public int TurnsLeft { get; set; }
     }
 
     [Serializable]

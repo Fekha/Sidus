@@ -88,8 +88,7 @@ public class GameManager : MonoBehaviour
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
     private SqlManager sql;
-    private int TurnNumber = 1;
-    private GameTurn TurnsFromServer;
+    private int TurnNumber = 0;
     private bool infoToggle = false;
     private int currentCredits;
     private int helpPageNumber = 0;
@@ -105,25 +104,25 @@ public class GameManager : MonoBehaviour
 #endif
     }
     void Start()
-    {
-        FindUI();
+    { 
         StartCoroutine(WaitforGameToStart());
     }
 
     private IEnumerator WaitforGameToStart()
     {
+        FindUI();
         while (!HasGameStarted())
         {
             yield return new WaitForSeconds(.1f);
         }
         ColorText.text = $"You are {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
-        ResetUI();
+        StartTurn();
     }
    
     public bool HasGameStarted()
     {
-        return Stations.Count > 0 && Globals.GameMatch.GameGuid != Guid.Empty;
+        return Stations.Count > 0 && Globals.GameMatch.GameGuid != Guid.Empty && GridManager.i.DoneLoading;
     }
 
     private void FindUI()
@@ -211,87 +210,94 @@ public class GameManager : MonoBehaviour
                 if (hit.collider != null && !isMoving)
                 {
                     PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                    Unit targetUnit = null;
-                    if (targetNode != null && targetNode.structureOnPath != null)
+                    if (targetNode != null)
                     {
-                        targetUnit = targetNode.structureOnPath;
-                    }
-                    //Original click on fleet
-                    if (targetUnit != null && SelectedUnit == null && targetUnit.stationId == MyStation.stationId)
-                    {
-                        SelectedUnit = targetUnit;
-                        SetTextValues(SelectedUnit);
-                        if (HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                        Unit targetUnit = null;
+                        if (targetNode.structureOnPath != null)
                         {
-                            SelectedUnit.subtractMovement(99);
-                            var movementAction = MyStation.actions.FirstOrDefault(x => x.actionType == ActionType.MoveUnit && x.selectedUnit.unitGuid == targetUnit.unitGuid);
-                            DrawPath(movementAction.selectedPath);
-                            Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
-                            HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x=>!x.isAsteroid), SelectedUnit, true);
+                            targetUnit = targetNode.structureOnPath;
+                        }
+                        //Original click on fleet
+                        if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
+                        {
+                            SelectedUnit = targetUnit;
+                            SetTextValues(SelectedUnit);
+                            if (HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                            {
+                                SelectedUnit.subtractMovement(99);
+                                var movementAction = MyStation.actions.FirstOrDefault(x => x.actionType == ActionType.MoveUnit && x.selectedUnit.unitGuid == targetUnit.unitGuid);
+                                DrawPath(movementAction.selectedPath);
+                                Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
+                                HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
+                            }
+                            else
+                            {
+                                Debug.Log($"{SelectedUnit.unitName} Selected.");
+                                HighlightRangeOfMovement(SelectedUnit.currentPathNode, SelectedUnit);
+                            }
                         }
                         else
                         {
-                            Debug.Log($"{SelectedUnit.unitName} Selected.");
-                            HighlightRangeOfMovement(SelectedUnit.currentPathNode, SelectedUnit);
+                            //Mine after move
+                            if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedAction(ActionType.MoveUnit, SelectedUnit) && targetNode.isAsteroid)
+                            {
+                                QueueAction(ActionType.MineAsteroid, null, null, new List<PathNode>() { targetNode });
+                            }
+                            //Double click confirm to movement
+                            else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null)
+                            {
+                                if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
+                                {
+                                    SelectedUnit.resetMovementRange();
+                                    QueueAction(ActionType.MineAsteroid);
+                                }
+                                else if (!HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                                {
+                                    QueueAction(ActionType.MoveUnit);
+                                }
+                            }
+                            //Create movement
+                            else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
+                            {
+                                SelectedNode = targetNode;
+                                int oldPathCount = SelectedPath?.Count ?? 0;
+                                if (SelectedPath == null || SelectedPath.Count == 0)
+                                {
+                                    SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.stationId);
+                                    SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
+                                    Debug.Log($"Path created for {SelectedUnit.unitName}");
+                                }
+                                else
+                                {
+                                    var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.stationId);
+                                    SelectedUnit.subtractMovement(newPath.Last().gCost);
+                                    SelectedPath.AddRange(newPath);
+                                    Debug.Log($"Path edited for {SelectedUnit.unitName}");
+                                }
+                                DrawPath(SelectedPath);
+                                HighlightRangeOfMovement(targetNode, SelectedUnit);
+                            }
+                            //Clicked on invalid tile
+                            else
+                            {
+                                if (targetUnit != null)
+                                {
+                                    if (SelectedUnit == null)
+                                    {
+                                        SetTextValues(targetUnit);
+                                        ViewStructureInformation(true);
+                                    }
+                                }
+                                else
+                                {
+                                    DeselectMovement();
+                                }
+                            }
                         }
                     }
                     else
                     {
-                        //Mine after move
-                        if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedAction(ActionType.MoveUnit, SelectedUnit) && targetNode.isAsteroid)
-                        {                          
-                            QueueAction(ActionType.MineAsteroid,null,null,new List<PathNode>() { targetNode });
-                        }
-                        //Double click confirm to movement
-                        else if (SelectedNode != null && targetNode == SelectedNode && SelectedUnit != null && SelectedPath != null)
-                        {
-                            if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
-                            {
-                                SelectedUnit.resetMovementRange();
-                                QueueAction(ActionType.MineAsteroid);
-                            }
-                            else if(!HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
-                            {
-                                QueueAction(ActionType.MoveUnit);
-                            }
-                        }
-                        //Create movement
-                        else if (targetNode != null && SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedAction(ActionType.MoveUnit, SelectedUnit))
-                        {
-                            SelectedNode = targetNode;
-                            int oldPathCount = SelectedPath?.Count ?? 0;
-                            if (SelectedPath == null || SelectedPath.Count == 0)
-                            {
-                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.stationId);
-                                SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
-                                Debug.Log($"Path created for {SelectedUnit.unitName}");
-                            }
-                            else
-                            {
-                                var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.stationId);
-                                SelectedUnit.subtractMovement(newPath.Last().gCost);
-                                SelectedPath.AddRange(newPath);
-                                Debug.Log($"Path edited for {SelectedUnit.unitName}");
-                            }
-                            DrawPath(SelectedPath);
-                            HighlightRangeOfMovement(targetNode, SelectedUnit);
-                        }
-                        //clicked on invalid tile
-                        else
-                        {
-                            if (targetUnit != null)
-                            {
-                                if (SelectedUnit == null)
-                                {
-                                    SetTextValues(targetUnit);
-                                    ViewStructureInformation(true);
-                                }
-                            }
-                            else
-                            {
-                                DeselectMovement();
-                            }
-                        }
+                        DeselectMovement();
                     }
                 }
             }
@@ -328,16 +334,12 @@ public class GameManager : MonoBehaviour
         moduleMarket.SetActive(active);
         if (active)
         {
-            while (AuctionModules.Count < 4)
-            {
-                AuctionModules.Add(new Module(UnityEngine.Random.Range(0,23), Guid.NewGuid()));
-            }
             ClearAuctionObjects();
             for(int j = 0; j < AuctionModules.Count; j++)
             {
                 int i = j;
                 var module = AuctionModules[i];
-                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModuleGuid == module.moduleGuid);
+                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModule?.moduleGuid == module.moduleGuid);
                 if(!hasQueued)
                     module.currentBid = module.minBid;
                 var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
@@ -354,7 +356,7 @@ public class GameManager : MonoBehaviour
                 bidButton.onClick.AddListener(() => BidOn(i));
                 moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
                 moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
-                moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"Turns Left {module.turnsLeftOnMarket}" : "Last Turn Left!";
+                moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"{module.turnsLeftOnMarket} Turns Left" : "Last Turn!!!";
                 moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
             }
         }
@@ -379,21 +381,21 @@ public class GameManager : MonoBehaviour
 
     private void BidOn(int index)
     {
-        QueueAction(ActionType.BidOnModule, AuctionModules[index].moduleGuid);
+        QueueAction(ActionType.BidOnModule, AuctionModules[index]);
     }
 
-    public void UpdateMarket() {
-        foreach (var module in AuctionModules)
-        {
-            module.minBid--;
-            module.turnsLeftOnMarket--;
-        }
-        AuctionModules.RemoveAll(x => x.turnsLeftOnMarket < 1);
-        while (AuctionModules.Count < 4)
-        {
-            AuctionModules.Add(new Module(UnityEngine.Random.Range(0, 23), Guid.NewGuid()));
-        }
-    }
+    //public void UpdateMarket() {
+    //    foreach (var module in AuctionModules)
+    //    {
+    //        module.minBid--;
+    //        module.turnsLeftOnMarket--;
+    //    }
+    //    AuctionModules.RemoveAll(x => x.turnsLeftOnMarket < 1);
+    //    while (AuctionModules.Count < 4)
+    //    {
+    //        AuctionModules.Add(new Module(UnityEngine.Random.Range(0, 23), Guid.NewGuid()));
+    //    }
+    //}
     public void ViewHelpPanel(bool active)
     {
         helpPageNumber++;
@@ -434,6 +436,12 @@ public class GameManager : MonoBehaviour
         if(HasGameStarted())
             infoPanel.SetActive(active);
     }
+    private void UpdateAuctionModules(int i)
+    {
+        ClearAuctionObjects();
+        AuctionModules.Clear();
+        AuctionModules.AddRange(Globals.GameMatch.GameTurns[i].MarketModules.Select(x => new Module(x)));
+    }
     #region Queue Actions
     public void AttachModule()
     {
@@ -462,14 +470,14 @@ public class GameManager : MonoBehaviour
             var selectedStructure = SelectedUnit;
             DeselectMovement();
             ClearSelectableModules();
-            List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModuleGuid).ToList();
+            List<Guid> assignedModules = MyStation.actions.Select(x => x.selectedModule.moduleGuid).ToList();
             var availableModules = MyStation.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
             if (availableModules.Count > 0)
             {
                 foreach (var module in availableModules)
                 {
                     var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
-                    moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module.moduleGuid, selectedStructure));
+                    moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module, selectedStructure));
                     moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
                     moduleObject.transform.Find("Queued").gameObject.SetActive(false);
                     currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
@@ -478,13 +486,13 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    private void SetSelectedModule(Guid moduleGuid, Unit structure)
+    private void SetSelectedModule(Module module, Unit structure)
     {
         //if not already queued up
-        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModuleGuid == moduleGuid))
+        if (!MyStation.actions.Any(x => x.actionType == ActionType.AttachModule && x.selectedModule?.moduleGuid == module.moduleGuid))
         {
             ViewModuleSelection(false);
-            QueueAction(ActionType.AttachModule, moduleGuid, structure);
+            QueueAction(ActionType.AttachModule, module, structure);
             ClearSelectableModules();
         }
     }
@@ -498,13 +506,13 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("This is not your unit!");
         }
-        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModuleGuid != SelectedUnit.attachedModules[i].moduleGuid))
+        else if (MyStation.actions.Any(x => x.actionType == ActionType.DetachModule && x.selectedModule?.moduleGuid != SelectedUnit.attachedModules[i].moduleGuid))
         {
-             ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].id} has already been queued up");
+             ShowCustomAlertPanel($"The action {ActionType.DetachModule} for the module {SelectedUnit.attachedModules[i].moduleId} has already been queued up");
         }
         else
         {
-            QueueAction(ActionType.DetachModule, SelectedUnit.attachedModules[i].moduleGuid);
+            QueueAction(ActionType.DetachModule, SelectedUnit.attachedModules[i]);
         }
     }
     public void CreateFleet()
@@ -572,7 +580,7 @@ public class GameManager : MonoBehaviour
         }
         ResetAfterSelection();
     }
-    private void QueueAction(ActionType actionType, Guid? selectedModule = null, Unit _structure = null, List<PathNode> _selectedPath = null, Guid? generatedGuid = null)
+    private void QueueAction(ActionType actionType, Module? selectedModule = null, Unit _structure = null, List<PathNode> _selectedPath = null, Guid? generatedGuid = null)
     {
         if (MyStation.actions.Count >= MyStation.maxActions)
         {
@@ -642,12 +650,6 @@ public class GameManager : MonoBehaviour
             createFleetButton.interactable = false;
         }
     }
-    private void UpdateGenerateModuleCostText()
-    {
-        var actionCost = GetCostOfAction(ActionType.GenerateModule, MyStation, false);
-        generateModuleCost.text = GetCostText(actionCost);
-        generateModuleButton.interactable = MyStation.credits >= actionCost;
-    }
     
     private bool CanQueueUpgrade(Unit structure, ActionType actionType)
     {
@@ -679,7 +681,7 @@ public class GameManager : MonoBehaviour
         }
         return currentFleets < maxFleets;
     }
-    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Guid? auctionGuid = null)
+    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Module? auctionModule = null)
     {
         var station = Stations[structure.stationId];
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
@@ -703,7 +705,7 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.BidOnModule)
         {
-            return AuctionModules.FirstOrDefault(x=>x.moduleGuid == auctionGuid).currentBid;
+            return auctionModule?.currentBid ?? 0;
         }
         else
         {
@@ -721,7 +723,6 @@ public class GameManager : MonoBehaviour
         ToggleMineralText(false);
         ToggleHPText(false);
         infoToggle = false;
-        UpdateGenerateModuleCostText();
         UpdateCreateFleetCostText();
         UpdateCreditTotal();
         SetModuleGrid();
@@ -963,8 +964,8 @@ public class GameManager : MonoBehaviour
             {
                 return $"{type} Phase: {s1.unitName} lost {damage} HP \n";
             }
-            var modifierSymbol = s1Amr > 0 ? "+" : "";
-            return $"{type} Phase: {s1.unitName} lost {damage} HP after resistances were applied, {s1Dmg}({modifierSymbol}{s1Amr}) \n";
+            var modifierSymbol = s1Amr > 0 ? "-" : "+";
+            return $"{type} Phase: {s1.unitName} lost {damage} HP after resistances were applied, {s1Dmg}({modifierSymbol}{Mathf.Abs(s1Amr)}) \n";
         }
         else if (s2Dmg > 0)
         {
@@ -974,7 +975,8 @@ public class GameManager : MonoBehaviour
             {
                 return $"{type} Phase: {s2.unitName} lost {damage} HP \n";
             }
-            return $"{type} Phase: {s2.unitName} lost, base damage is {s2Dmg}, after modules applied they lost {damage} HP \n";
+            var modifierSymbol = s2Amr > 0 ? "-" : "+";
+            return $"{type} Phase: {s2.unitName} lost {damage} HP after resistances were applied, {s2Dmg}({modifierSymbol}{Mathf.Abs(s2Amr)}) \n";
         }
         return $"{type} Phase: Stalemate.\n";
     }
@@ -1001,23 +1003,34 @@ public class GameManager : MonoBehaviour
             {
                 ShowAreYouSurePanel(false);
                 Debug.Log($"Turn Ending, Starting Simultanous Turns");
+                List<int> actionOrders = new List<int>();
+                for (int i = 1; i <= Stations.Count*5; i+=Stations.Count)
+                {
+                    for (int j = 0; j < Stations.Count; j++)
+                    {
+                        if(j == Globals.localStationIndex)
+                            actionOrders.Add(i+j);
+                    }
+                }
                 GameTurn gameTurn = new GameTurn()
                 {
                     GameGuid = Globals.GameMatch.GameGuid,
                     TurnNumber = TurnNumber,
+                    MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
                     Players = new Player[Globals.GameMatch.MaxPlayers]
                 };
                 gameTurn.Players[Globals.localStationIndex] = new Player()
                 {
-                    Actions = MyStation.actions.Select(x =>
+                    Actions = MyStation.actions.Select((x,i) =>
                         new ServerAction()
                         {
+                            PlayerId = Globals.localStationIndex,
+                            ActionOrder = actionOrders[i],
                             ActionTypeId = (int)x.actionType,
                             GeneratedGuid = x.generatedGuid,
-                            GeneratedModuleId = x.generatedModuleId,
-                            SelectedCoords = x.selectedPath.Select(y => y.coords.ToServerCoords()).ToList(),
-                            SelectedModuleGuid = x.selectedModuleGuid,
-                            SelectedUnitGuid = x.selectedUnit.unitGuid,
+                            SelectedCoords = x.selectedPath?.Select(y => y.coords?.ToServerCoords()).ToList(),
+                            SelectedModule = x.selectedModule?.ToServerModule(),
+                            SelectedUnitGuid = x.selectedUnit?.unitGuid,
                         }).ToList(),
                     Credits = MyStation.credits,
                     Station = MyStation.ToServerUnit(),
@@ -1045,8 +1058,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator GetTurnsFromServer()
     {
         isWaitingForTurns = true;
-        TurnsFromServer = null;
-        while (TurnsFromServer == null)
+        while (!Globals.GameMatch.GameTurns.Any(x=>x.TurnNumber == TurnNumber))
         {
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", CheckForTurns));
         }
@@ -1064,7 +1076,10 @@ public class GameManager : MonoBehaviour
 
     private void CheckForTurns(GameTurn turns)
     {
-        TurnsFromServer = turns;
+        if (turns != null && !Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber))
+        {
+            Globals.GameMatch.GameTurns.Add(turns);
+        }
     }
     public void ToggleAll()
     {
@@ -1080,35 +1095,28 @@ public class GameManager : MonoBehaviour
         if (!isWaitingForTurns)
         {
             yield return StartCoroutine(GetTurnsFromServer());
-            if (TurnsFromServer != null)
+            var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
+            if (turnFromServer != null)
             {
                 ClearModules();
                 ToggleMineralText(true);
+                var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x=>x.ActionOrder);
                 //ToggleHPText(true);
-                for (int i = 0; i < 6; i++)
-                {
-                    int c = TurnNumber % Stations.Count;
-                    for (int j = 0; j < Stations.Count; j++)
+                foreach(var serverAction in serverActions){
+                    var action = new Action(serverAction);
+                    if (action.actionType == ActionType.MoveUnit && action.selectedPath.Last().isAsteroid == true)
                     {
-                        int k = (c + j) % Stations.Count;
-                        if (i < TurnsFromServer.Players[k].Actions.Count)
-                        {
-                            if (TurnsFromServer.Players[k].Actions[i] is object)
-                            {
-                                var action = new Action(TurnsFromServer.Players[k].Actions[i]);
-                                turnValue.text = $"{Stations[k].color} action {i + 1}:\n{action.actionType}";
-                                Debug.Log($"Perfoming {Stations[k].color}'s action {i + 1}:\n{action.actionType}");
-                                yield return StartCoroutine(PerformAction(action));
-                            }
-                            else
-                            {
-                                turnValue.text = $"{Stations[k].color} action {i + 1}:\n No Action";
-                                yield return new WaitForSeconds(.4f);
-                            }
-                            yield return new WaitForSeconds(.1f);
-                        }
+                        turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\nMove&Mine";
                     }
+                    else
+                    {
+                        turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\n{action.actionType}";
+                    }
+                    Debug.Log($"Perfoming {Stations[serverAction.PlayerId].color}'s action {action.actionOrder}:\n{action.actionType}");
+                    yield return StartCoroutine(PerformAction(action));
+                    yield return new WaitForSeconds(.1f);
                 }
+
                 FinishTurns();
             }
         }
@@ -1118,6 +1126,7 @@ public class GameManager : MonoBehaviour
     {
         endTurnButton.color = Color.black;
         winner = GridManager.i.CheckForWin();
+        UpdateAuctionModules(TurnNumber);
         foreach (var station in Stations)
         {
             station.actions.Clear();
@@ -1144,11 +1153,7 @@ public class GameManager : MonoBehaviour
             //{
             //    unit.hasMinedThisTurn = false;
             //}
-            TurnNumber++;
-            ResetUI();
-            turnLabel.SetActive(false);
-            isEndingTurn = false;
-            Debug.Log($"New Turn {TurnNumber} Starting");
+            StartTurn();
         }
     }
 
@@ -1160,7 +1165,7 @@ public class GameManager : MonoBehaviour
             if (currentUnit != null)
             {
                 var currentStation = Stations[currentUnit.stationId];
-                var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false);
+                var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
                 if (currentStation.credits >= actionCost)
                 {
                     if (action.actionType == ActionType.MoveUnit)
@@ -1169,7 +1174,7 @@ public class GameManager : MonoBehaviour
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
                         {
                             Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
-                            yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));                               
+                            yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
                         }
                         else
                         {
@@ -1177,11 +1182,11 @@ public class GameManager : MonoBehaviour
                         }
                         yield return new WaitForSeconds(.1f);
                         isMoving = false;
-                        currentUnit.resetMovementRange();      
+                        currentUnit.resetMovementRange();
                     }
                     else if (action.actionType == ActionType.CreateFleet)
                     {
-                        if (IsUnderMaxFleets(currentStation,false))
+                        if (IsUnderMaxFleets(currentStation, false))
                         {
                             currentStation.credits -= actionCost;
                             yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
@@ -1221,23 +1226,30 @@ public class GameManager : MonoBehaviour
                         yield return new WaitForSeconds(1f);
                         currentUnit.selectIcon.SetActive(false);
                     }
-                    else if (action.actionType == ActionType.GenerateModule)
+                    else if (action.actionType == ActionType.BidOnModule)
                     {
-                        currentStation.credits -= actionCost;
-                        currentStation.modules.Add(new Module(action.generatedModuleId, (Guid)action.generatedGuid));
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
-                        currentUnit.selectIcon.SetActive(false);
+                        if (action.selectedModule is object)
+                        {
+                            currentStation.credits -= actionCost;
+                            currentStation.modules.Add(new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid));
+                            currentUnit.selectIcon.SetActive(true);
+                            yield return new WaitForSeconds(1f);
+                            currentUnit.selectIcon.SetActive(false);
+                        }
+                        else
+                        {
+                            Debug.Log($"{currentUnit.unitName} lost the bid");
+                        }
                     }
                     else if (action.actionType == ActionType.AttachModule)
                     {
                         if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count < currentUnit.maxAttachedModules)
                         {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
                             {
                                 currentUnit.attachedModules.Add(selectedModule);
-                                currentUnit.EditModule(selectedModule.id);
+                                currentUnit.EditModule(selectedModule.moduleId);
                                 currentStation.modules.RemoveAt(currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid));
                             }
                             else
@@ -1255,13 +1267,13 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.DetachModule)
                     {
-                        if (currentUnit.attachedModules.Count > 0 && action.selectedModuleGuid != null && action.selectedModuleGuid != null)
+                        if (currentUnit.attachedModules.Count > 0 && action.selectedModule != null && action.selectedModule != null)
                         {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
                             {
                                 currentStation.modules.Add(selectedModule);
-                                currentUnit.EditModule(selectedModule.id, -1);
+                                currentUnit.EditModule(selectedModule.moduleId, -1);
                                 currentUnit.attachedModules.Remove(currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                             }
                             else
@@ -1277,10 +1289,6 @@ public class GameManager : MonoBehaviour
                         yield return new WaitForSeconds(1f);
                         currentUnit.selectIcon.SetActive(false);
                     }
-                    //else if (action.actionType == ActionType.MineAsteroid)
-                    //{
-                    //    yield return StartCoroutine(PerformAoeMine(currentUnit));
-                    //}
                     else if (action.actionType == ActionType.MineAsteroid)
                     {
                         var targetNode = action.selectedPath.Last();
@@ -1297,36 +1305,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
-    //private IEnumerator PerformAoeMine(Unit currentUnit)
-    //{
-    //    Station currentStation = Stations[currentUnit.stationId];
-    //    if (AllUnits.Contains(currentUnit))
-    //    {
-    //        var asteroidsToMine = GridManager.i.GetNeighbors(currentUnit.currentPathNode).Where(x => x.isAsteroid && x.currentCredits > 0).OrderBy(x=>x.currentCredits);
-    //        if (asteroidsToMine.Count() > 0)
-    //        {
-    //            var minedAmount = 0;
-    //            foreach (var asteroid in asteroidsToMine)
-    //            {
-    //                if (minedAmount < currentUnit.mining)
-    //                {
-    //                    minedAmount += asteroid.MineCredits(currentUnit.mining - minedAmount);
-    //                    currentUnit.selectIcon.SetActive(true);
-    //                    asteroid.ShowMineIcon(true);
-    //                    yield return new WaitForSeconds(1f);
-    //                    asteroid.ShowMineIcon(false);
-    //                    currentUnit.selectIcon.SetActive(false);
-    //                }
-    //            }
-    //            //if (minedAmount > 0)
-    //            //{
-    //            //    currentUnit.hasMinedThisTurn = true;
-    //            //}
-    //            currentStation.credits += minedAmount;
-    //        }
-    //    }
-    //}
 
     private IEnumerator PerformMine(Unit currentUnit, PathNode asteroidToMine)
     {
@@ -1369,8 +1347,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ResetUI()
+    private void StartTurn()
     {
+        UpdateAuctionModules(TurnNumber);
+        TurnNumber++;
+        turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
@@ -1382,6 +1363,8 @@ public class GameManager : MonoBehaviour
         }
         currentCredits = MyStation.credits;
         ResetAfterSelection();
+        isEndingTurn = false;
+        Debug.Log($"New Turn {TurnNumber} Starting");
     }
 
     private void SetModuleGrid()
@@ -1392,7 +1375,7 @@ public class GameManager : MonoBehaviour
             var moduleObject = Instantiate(modulePrefab, ModuleGrid);
             moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
-            moduleObject.transform.Find("Queued").gameObject.SetActive(MyStation.actions.Any(x=>x.selectedModuleGuid==module.moduleGuid));
+            moduleObject.transform.Find("Queued").gameObject.SetActive(MyStation.actions.Any(x=>x.selectedModule?.moduleGuid == module.moduleGuid));
             currentModules.Add(moduleObject.GetComponent<Module>());
         }
     }

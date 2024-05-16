@@ -18,6 +18,7 @@ public class GridManager : MonoBehaviour
     public List<Color> playerColors;
     public List<Color> tileColors;
     internal List<PathNode> AllNodes = new List<PathNode>();
+    internal bool DoneLoading = false;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class GridManager : MonoBehaviour
         }
         scoreToWin = GetScoreToWin();
         GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
+        DoneLoading = true;
     }
     private void CreateStation(int team)
     {

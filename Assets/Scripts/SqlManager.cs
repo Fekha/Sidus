@@ -8,10 +8,10 @@ public class SqlManager
     string apiUrl;
     public SqlManager()
     {
-//        apiUrl = "https://game.gravitas-games.com:7001/api/";
-//#if UNITY_EDITOR
+        apiUrl = "https://game.gravitas-games.com:7001/api/";
+#if UNITY_EDITOR
         apiUrl = "https://localhost:7001/api/";
-//#endif
+#endif
     }
     public IEnumerator GetRoutine<T>(string url, Action<T> callback = null)
     {

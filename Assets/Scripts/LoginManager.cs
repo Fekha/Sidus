@@ -42,11 +42,13 @@ public class LoginManager : MonoBehaviour
         {
             GameGuid = gameGuid,
             MaxPlayers = MaxPlayers,
+            NumberOfModules = 23,
             GameSettings = GameSettings,
             GameTurns = new List<GameTurn>()
             {
                 new GameTurn() {
                     GameGuid = gameGuid,
+                    MarketModules = new List<ServerModule>(),
                     TurnNumber = 0,
                     Players = players
                 }
@@ -153,7 +155,7 @@ public class LoginManager : MonoBehaviour
 
     private int PlayersNeeded()
     {
-        return Globals.GameMatch.MaxPlayers - Globals.GameMatch.GameTurns[0].Players.Count(x => x != null);
+        return Globals.GameMatch.MaxPlayers - (Globals.GameMatch?.GameTurns[0]?.Players?.Count(x => x != null) ?? 0);
     }
 
     private void UpdateGameStatus(GameMatch gameMatch)
