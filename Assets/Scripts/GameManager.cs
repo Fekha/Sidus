@@ -463,7 +463,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel($"The action {ActionType.SwapModule} for this module has already been queued up");
         }
-        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) > GetUnitMaxAttachmentCount(SelectedUnit))
+        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= GetUnitMaxAttachmentCount(SelectedUnit))
         {
             ShowCustomAlertPanel($"This action has already been queued up.");
 
@@ -505,30 +505,6 @@ public class GameManager : MonoBehaviour
             ViewModuleSelection(false);
             QueueAction(action, module, structure, null, dettachGuid);
             ClearSelectableModules();
-        }
-    }
-    public void SwapModule(int i)
-    {
-        if (SelectedUnit == null)
-        {
-            ShowCustomAlertPanel("No unit selected.");
-        }
-        else if (MyStation.actions.Count >= MyStation.maxActions)
-        {
-            ShowCustomAlertPanel("No action slots available to queue this action.");
-        }
-        else if (MyStation.stationId != SelectedUnit.stationId)
-        {
-            ShowCustomAlertPanel("This is not your unit!");
-        }
-        
-        else if (MyStation.modules.Count <= 0)
-        {
-            ShowCustomAlertPanel("No modules available to swap.");
-        }
-        else
-        {
-            QueueAction(ActionType.SwapModule, SelectedUnit.attachedModules[i]);
         }
     }
     public void CreateFleet()
