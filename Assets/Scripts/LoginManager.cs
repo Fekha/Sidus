@@ -158,7 +158,7 @@ public class LoginManager : MonoBehaviour
 
     private int PlayersNeeded()
     {
-        return Globals.GameMatch.MaxPlayers - (Globals.GameMatch?.GameTurns[0]?.Players?.Count(x => x != null) ?? 0);
+        return Globals.GameMatch.MaxPlayers - (Globals.GameMatch?.GameTurns?[0]?.Players?.Count(x => x != null) ?? 0);
     }
 
     private void UpdateGameStatus(GameMatch gameMatch)

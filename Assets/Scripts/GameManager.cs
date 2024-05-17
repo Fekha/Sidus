@@ -79,6 +79,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI CreditText;
     private TextMeshProUGUI alertText;
     private TextMeshProUGUI customAlertText;
+    private TextMeshProUGUI creditsText;
+    private TextMeshProUGUI hexesOwnedText;
  
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
@@ -94,6 +96,7 @@ public class GameManager : MonoBehaviour
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
     private bool gameWon = false;
+    private bool SubmittedTurn = false;
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -132,6 +135,8 @@ public class GameManager : MonoBehaviour
         kineticAttackValue = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
         thermalAttackValue = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         explosiveAttackValue = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
+        creditsText = infoPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
+        hexesOwnedText = infoPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
@@ -164,6 +169,10 @@ public class GameManager : MonoBehaviour
         miningValue.text = unit.mining.ToString();
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
+        upgradeButton.gameObject.SetActive(false);
+        createFleetButton.gameObject.SetActive(false);
+        creditsText.text = $"Player Credits: {Stations[unit.stationId].credits}";
+        hexesOwnedText.text = $"Hexes Owned: {Stations[unit.stationId].score}";
         if (unit.stationId == MyStation.stationId)
         {
             if (CanLevelUp(unit, actionType, true))
@@ -183,23 +192,16 @@ public class GameManager : MonoBehaviour
                 }
             }
             upgradeButton.gameObject.SetActive(true);
-            if (unit is Fleet)
-            {
-                createFleetButton.gameObject.SetActive(false);
-            }
-            else
+            if (unit is Station)
             {
                 createFleetButton.gameObject.SetActive(true);
+                creditsText.text = $"Player Credits: {currentCredits}";
             }
-        }
-        else
-        {
-            upgradeButton.gameObject.SetActive(false);
-            createFleetButton.gameObject.SetActive(false);
+            ToggleMineralText(true);
         }
         SetModuleBar(unit);
         infoPanel.gameObject.SetActive(true);
-        ToggleMineralText(true);
+        
     }
     void Update()
     {
@@ -292,7 +294,7 @@ public class GameManager : MonoBehaviour
                                 if (SelectedUnit == null)
                                 {
                                     SetTextValues(targetUnit);
-                                    ViewStructureInformation(true);
+                                    ViewUnitInformation(true);
                                 }
                             }
                             else
@@ -405,15 +407,20 @@ public class GameManager : MonoBehaviour
     public void ViewHelpPanel(bool active)
     {
         helpPageNumber++;
-        if (active) {
-            helpPanel.transform.Find("Page2").gameObject.SetActive(false);
-            helpPanel.SetActive(active);
-        } else if (helpPageNumber == 2) {
-            helpPanel.transform.Find("Page2").gameObject.SetActive(true);
-        } else {
+        if (helpPageNumber > 3)
+        {
             helpPageNumber = 0;
             helpPanel.SetActive(false);
             helpPanel.transform.Find("Page2").gameObject.SetActive(false);
+            helpPanel.transform.Find("Page3").gameObject.SetActive(false);
+        }
+        else
+        {
+            helpPanel.transform.Find($"Page{helpPageNumber}").gameObject.SetActive(true);
+        }
+        if (active)
+        {
+            helpPanel.SetActive(active);
         }
     }
 
@@ -437,7 +444,7 @@ public class GameManager : MonoBehaviour
     {
         areYouSurePanel.SetActive(value);
     }
-    public void ViewStructureInformation(bool active)
+    public void ViewUnitInformation(bool active)
     {
         infoPanel.SetActive(active);
     }
@@ -727,7 +734,6 @@ public class GameManager : MonoBehaviour
     {
         ToggleMineralText(false);
         ToggleHPText(false);
-        infoToggle = false;
         UpdateCreateFleetCostText();
         UpdateCreditTotal();
         SetModuleGrid();
@@ -736,7 +742,7 @@ public class GameManager : MonoBehaviour
         SelectedNode = null;
         SelectedUnit = null;
         SelectedPath = null;
-        ViewStructureInformation(false);
+        ViewUnitInformation(false);
         ViewModuleMarket(false);
     }
 
@@ -1011,13 +1017,22 @@ public class GameManager : MonoBehaviour
     private IEnumerator GetTurnsFromServer()
     {
         isWaitingForTurns = true;
-        while (!Globals.GameMatch.GameTurns.Any(x=>x.TurnNumber == TurnNumber))
+        int i = 0;
+        do
         {
-            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", CheckForTurns));
+            if (i == 1)
+            {
+                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
+                customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
+                customAlertPanel.SetActive(true);
+            }
+            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
+            i++;
         }
+        while (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber));
         customAlertPanel.SetActive(false);
         isEndingTurn = true;
-        turnValue.text = $"Turn #{TurnNumber} complete! \n (Tap to watch) ";
+        turnValue.text = $"Turn #{TurnNumber} complete! \n (Tap to continue) ";
         turnLabel.SetActive(true);
         readyToSeeTurnsPanel.SetActive(true);
         while (readyToSeeTurnsPanel.activeInHierarchy)
@@ -1051,7 +1066,6 @@ public class GameManager : MonoBehaviour
             if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
             {
                 ShowAreYouSurePanel(false);
-                Debug.Log($"Turn Ending, Starting Simultanous Turns");
                 while (MyStation.actions.Count < MyStation.maxActions)
                 {
                     QueueAction(ActionType.GainCredit);
@@ -1061,7 +1075,8 @@ public class GameManager : MonoBehaviour
                 {
                     for (int j = 0; j < Stations.Count; j++)
                     {
-                        if (j == Globals.localStationIndex)
+                        int k = (TurnNumber + j) % Stations.Count;
+                        if (k == Globals.localStationIndex)
                             actionOrders.Add(i + j);
                     }
                 }
@@ -1090,13 +1105,7 @@ public class GameManager : MonoBehaviour
                     Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
                     ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
                 };
-                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
-                StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost));
-                endTurnButton.color = Color.blue;
-                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
-                customAlertPanel.SetActive(true);
-                StartCoroutine(TakeTurns());
+                StartCoroutine(DoEndTurn(gameTurn));
             }
             else
             {
@@ -1105,28 +1114,54 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator TakeTurns()
+    private IEnumerator DoEndTurn(GameTurn gameTurn)
     {
-        if (!isWaitingForTurns)
+        customAlertText.text = "Submitting Turn.";
+        customAlertPanel.SetActive(true);
+        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
+        yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost, SubmitResponse));
+        if (SubmittedTurn)
         {
-            yield return StartCoroutine(GetTurnsFromServer());
-            var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
-            if (turnFromServer != null)
+            SubmittedTurn = false;
+            endTurnButton.color = Color.blue;
+            if (!isWaitingForTurns)
             {
-                ClearModules();
-                ToggleMineralText(true);
-                var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x=>x.ActionOrder);
-                //ToggleHPText(true);
-                foreach(var serverAction in serverActions){
-                    var action = new Action(serverAction);
-                    turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\n{action.actionType}";
-                    Debug.Log($"Perfoming {Stations[serverAction.PlayerId].color}'s action {action.actionOrder}:\n{action.actionType}");
-                    yield return StartCoroutine(PerformAction(action));
-                    yield return new WaitForSeconds(.1f);
+                yield return StartCoroutine(GetTurnsFromServer());
+                var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
+                if (turnFromServer != null)
+                {
+                    ClearModules();
+                    ToggleMineralText(true);
+                    var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
+                    //ToggleHPText(true);
+                    foreach (var serverAction in serverActions)
+                    {
+                        var action = new Action(serverAction);
+                        turnValue.text = $"{Stations[serverAction.PlayerId].color} action {action.actionOrder}:\n{action.actionType}";
+                        Debug.Log($"Perfoming {Stations[serverAction.PlayerId].color}'s action {action.actionOrder}:\n{action.actionType}");
+                        yield return StartCoroutine(PerformAction(action));
+                        yield return new WaitForSeconds(.1f);
+                    }
+                    FinishTurns();
                 }
-                FinishTurns();
+            }
+            else
+            {
+                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
+                customAlertText.text = $"Your new turn was submitted, overriding your previous one. \n\n Tap to continue strategizing while you wait for the other player{plural}.";
+                customAlertPanel.SetActive(true);
             }
         }
+        else
+        {
+            customAlertText.text = $"Your turn was NOT submitted successfully. \n\n Please try again.";
+            customAlertPanel.SetActive(true);
+        }
+    }
+
+    private void SubmitResponse(bool response)
+    {
+        SubmittedTurn = response;
     }
 
     private void FinishTurns()
@@ -1357,6 +1392,7 @@ public class GameManager : MonoBehaviour
             TurnOrderText.text += i == Stations.Count - 1 ? "." : ", ";
         }
         currentCredits = MyStation.credits;
+        infoToggle = false;
         ResetAfterSelection();
         isEndingTurn = false;
         Debug.Log($"New Turn {TurnNumber} Starting");

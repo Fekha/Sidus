@@ -24,9 +24,9 @@ public class GridManager : MonoBehaviour
     {
         i = this;
         //Got colors from https://rgbcolorpicker.com/0-1
-        //Blue, Pink, Yellow, Red
-        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0.894f, 1), new Color(1, 0.757f, 0, 1), new Color(1, 0, 0, 1), };
-        tileColors = new List<Color>() { new Color(0, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.937f, 1), new Color(0.945f, 1, 0, 1), new Color(0.98f, 0.561f, 0.561f, 1),  };
+        //Blue, Purple, Yellow, Red
+        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(.776f, 0, 1, 1), new Color(1, 0.5f, 0, 1), new Color(1, 0, 0, 1), };
+        tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), new Color(0.98f, 0.561f, 0.561f, 1),  };
     }
     void Start()
     {
@@ -60,7 +60,7 @@ public class GridManager : MonoBehaviour
         Direction facing = Direction.BottomLeft;
         if (team == 1)
         {
-            teamColor = "Pink";
+            teamColor = "Purple";
             spawnX = 6;
             spawnY = 2;
             facing = Direction.TopRight;
