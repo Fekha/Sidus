@@ -459,7 +459,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("No modules available to attach.");
         }
-        else if (MyStation.actions.Any(x => x.generatedGuid == dettachGuid))
+        else if (actionType == ActionType.SwapModule && MyStation.actions.Any(x => x.actionType == ActionType.SwapModule && x.generatedGuid == dettachGuid))
         {
             ShowCustomAlertPanel($"The action {ActionType.SwapModule} for the module {dettachGuid} has already been queued up");
         }
