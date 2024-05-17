@@ -15393,15 +15393,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Modules are gained in the market by queuing up a bid action. At the end
-    of your turn if you are the only one who bid on a module, you pay the credits
-    bid and gain the module. \n\nIf multiple people bid on a module, it is handled
-    as a \"second-price auction\". The highest bidder wins, but the credits paid
-    is from the second-highest bid. If there is a tie, the winner is determined by
-    action order. Losing a bid refunds the credits bid. \n\nEach turn a module is
-    on the market the minimum bid required beomes 1 credit cheaper. Modules last
-    on the market for a max of 5 turns or until they are won in auction, afterwards
-    they wil be replaced by a new module.\n"
+  m_text: "Modules are gained in the market by queuing up a bid action, then winning
+    the auction.\n\nThe market uses a \"second-price auction\" format to determine
+    the price of the module. \n\nOnce all players have ended their turns. If only
+    one player bid on a specific module, they pay the minimum bid price and gain
+    the module. \n\nIf multiple people bid on a module, the highest bidder wins,
+    but the credits paid is from the second-highest bid. If there is a tie, the winner
+    is determined by action order. Losing a bid counts as a no-action, which awards
+    the player 1 credit.\n\nEach turn a module is on the market the minimum bid required
+    beomes 1 credit cheaper. Modules last on the market for a max of 5 turns or until
+    they are won in auction, afterwards they wil be replaced by a new module.\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

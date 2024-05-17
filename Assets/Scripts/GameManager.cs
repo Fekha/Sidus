@@ -1254,13 +1254,14 @@ public class GameManager : MonoBehaviour
                     {
                         if (action.selectedModule is object)
                         {
-                            turnValue.text = $"{Stations[action.playerId].color} action {action.actionOrder}:\nWon bid, paid {action.selectedModule.currentBid} credits";
+                            turnValue.text += $"Won bid, paid {action.selectedModule.currentBid} credits";
                             currentStation.modules.Add(new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid));
                         }
                         else
                         {
-                            turnValue.text = $"{Stations[action.playerId].color} action {action.actionOrder}:\nLost bid";
-                            Debug.Log($"{currentUnit.unitName} lost the bid");
+                            turnValue.text += "Lost bid, gained 1 credit";
+                            currentStation.credits++;
+                            Debug.Log($"{currentUnit.unitName} lost the bid, gained 1 credit");
                         }
                         currentUnit.selectIcon.SetActive(true);
                         yield return new WaitForSeconds(1f);
