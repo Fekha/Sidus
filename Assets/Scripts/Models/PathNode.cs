@@ -40,9 +40,9 @@ public class PathNode : MonoBehaviour
         coords = new Coords(_x, _y);
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
         coordsText.text = $"{coords.x},{coords.y}";
-#if UNITY_EDITOR
-        coordsText.gameObject.SetActive(true);
-#endif
+//#if UNITY_EDITOR
+//        coordsText.gameObject.SetActive(true);
+//#endif
         GridManager.i.AllNodes.Add(this);
     }
 

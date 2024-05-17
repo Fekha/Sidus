@@ -33,7 +33,8 @@ public class GridManager : MonoBehaviour
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
         characterParent = GameObject.Find("Characters").transform;
-        for (int i = 0; i < Globals.GameMatch.GameTurns[0].Players.Length; i++)
+        var stationsCount = Globals.IsCPUGame ? 4 : Globals.GameMatch.GameTurns[0].Players.Length;
+        for (int i = 0; i < stationsCount; i++)
         {
             CreateStation(i);
         }
@@ -47,8 +48,13 @@ public class GridManager : MonoBehaviour
         string teamColor = "Blue";
         GameObject stationPrefab = playerStationPrefab;
         stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>().color = playerColors[team];
-        Guid stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Station.UnitGuid;
-        Guid fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Fleets[0].UnitGuid;
+        Guid stationGuid = Guid.NewGuid();
+        Guid fleetGuid = Guid.NewGuid();
+        if (!Globals.IsCPUGame || team == 0)
+        {
+            stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Station.UnitGuid;
+            fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Fleets[0].UnitGuid;
+        }
         int spawnX = 1;
         int spawnY = 5;
         Direction facing = Direction.BottomLeft;
@@ -163,7 +169,7 @@ public class GridManager : MonoBehaviour
                     obstacleCount++;
                     startCredits = 8;
                     maxCredits = 15;
-                    creditRegin = 3;
+                    creditRegin = 2;
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);

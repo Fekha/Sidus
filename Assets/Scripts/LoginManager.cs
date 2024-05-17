@@ -31,10 +31,13 @@ public class LoginManager : MonoBehaviour
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
     }
-    public void CreateGame()
+    public void CreateGame(bool cpuGame)
     {
+        Globals.IsCPUGame = cpuGame;
         if (toggle1.isOn)
             GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
+        if (Globals.IsCPUGame)
+            MaxPlayers = 1;
         var gameGuid = Guid.NewGuid();
         var players = new Player[MaxPlayers];
         players[0] = GetNewPlayer();

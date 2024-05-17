@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour
     private int currentCredits;
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
+    private bool gameWon = false;
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -111,18 +112,13 @@ public class GameManager : MonoBehaviour
     private IEnumerator WaitforGameToStart()
     {
         FindUI();
-        while (!HasGameStarted())
+        while (!GridManager.i.DoneLoading)
         {
             yield return new WaitForSeconds(.1f);
         }
         ColorText.text = $"You are {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
         StartTurn();
-    }
-   
-    public bool HasGameStarted()
-    {
-        return Stations.Count > 0 && Globals.GameMatch.GameGuid != Guid.Empty && GridManager.i.DoneLoading;
     }
 
     private void FindUI()
@@ -142,7 +138,6 @@ public class GameManager : MonoBehaviour
         generateModuleCost = generateModuleButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
-        //mineRestrictedText = mineButton.transform.Find("Restriction").GetComponent<TextMeshProUGUI>();
         fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
         customAlertText = customAlertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
@@ -180,16 +175,22 @@ public class GameManager : MonoBehaviour
             {
                 if (unit is Fleet)
                 {
-                    createFleetButton.gameObject.SetActive(false);
                     upgradeCost.text = "(Station Upgrade Required)";
                 }
                 else
                 {
-                    createFleetButton.gameObject.SetActive(true);
                     upgradeCost.text = "(Max Station Level)";
                 }
             }
             upgradeButton.gameObject.SetActive(true);
+            if (unit is Fleet)
+            {
+                createFleetButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                createFleetButton.gameObject.SetActive(true);
+            }
         }
         else
         {
@@ -202,106 +203,108 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        if(HasGameStarted()) {
-            if (Input.GetMouseButtonDown(0) && !isEndingTurn)
+        if (Input.GetMouseButtonDown(0) && !isEndingTurn)
+        {
+            if (gameWon)
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
-                if (hit.collider != null && !isMoving)
+                SceneManager.LoadScene((int)Scene.Lobby);
+            }
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
+            if (hit.collider != null && !isMoving)
+            {
+                PathNode targetNode = hit.collider.GetComponent<PathNode>();
+                if (targetNode != null)
                 {
-                    PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                    if (targetNode != null)
+                    Unit targetUnit = null;
+                    if (targetNode.structureOnPath != null)
                     {
-                        Unit targetUnit = null;
-                        if (targetNode.structureOnPath != null)
+                        targetUnit = targetNode.structureOnPath;
+                    }
+                    //Original click on fleet
+                    if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
+                    {
+                        SelectedUnit = targetUnit;
+                        SetTextValues(SelectedUnit);
+                        if (HasQueuedMovement(SelectedUnit))
                         {
-                            targetUnit = targetNode.structureOnPath;
-                        }
-                        //Original click on fleet
-                        if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
-                        {
-                            SelectedUnit = targetUnit;
-                            SetTextValues(SelectedUnit);
-                            if (HasQueuedMovement(SelectedUnit))
-                            {
-                                SelectedUnit.subtractMovement(99);
-                                var movementAction = MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == targetUnit.unitGuid);
-                                DrawPath(movementAction.selectedPath);
-                                Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
-                                HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
-                            }
-                            else
-                            {
-                                Debug.Log($"{SelectedUnit.unitName} Selected.");
-                                HighlightRangeOfMovement(SelectedUnit.currentPathNode, SelectedUnit);
-                            }
+                            SelectedUnit.subtractMovement(99);
+                            var movementAction = MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == targetUnit.unitGuid);
+                            DrawPath(movementAction.selectedPath);
+                            Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
+                            HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
                         }
                         else
                         {
-                            //Mine after move
-                            if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedMovement(SelectedUnit) && targetNode.isAsteroid)
-                            {
-                                QueueAction(ActionType.MineAsteroid, null, null, new List<PathNode>() { targetNode });
-                            }
-                            //Double click confirm to movement
-                            else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null)
-                            {
-                                if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
-                                {
-                                    SelectedUnit.resetMovementRange();
-                                    QueueAction(ActionType.MineAsteroid);
-                                }
-                                else if (!HasQueuedMovement(SelectedUnit))
-                                {
-                                    if(SelectedPath.Last().isAsteroid)
-                                        QueueAction(ActionType.MoveAndMine);
-                                    else
-                                        QueueAction(ActionType.MoveUnit);
-                                }
-                            }
-                            //Create movement
-                            else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
-                            {
-                                SelectedNode = targetNode;
-                                int oldPathCount = SelectedPath?.Count ?? 0;
-                                if (SelectedPath == null || SelectedPath.Count == 0)
-                                {
-                                    SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.stationId);
-                                    SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
-                                    Debug.Log($"Path created for {SelectedUnit.unitName}");
-                                }
-                                else
-                                {
-                                    var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.stationId);
-                                    SelectedUnit.subtractMovement(newPath.Last().gCost);
-                                    SelectedPath.AddRange(newPath);
-                                    Debug.Log($"Path edited for {SelectedUnit.unitName}");
-                                }
-                                DrawPath(SelectedPath);
-                                HighlightRangeOfMovement(targetNode, SelectedUnit);
-                            }
-                            //Clicked on invalid tile
-                            else
-                            {
-                                if (targetUnit != null)
-                                {
-                                    if (SelectedUnit == null)
-                                    {
-                                        SetTextValues(targetUnit);
-                                        ViewStructureInformation(true);
-                                    }
-                                }
-                                else
-                                {
-                                    DeselectMovement();
-                                }
-                            }
+                            Debug.Log($"{SelectedUnit.unitName} Selected.");
+                            HighlightRangeOfMovement(SelectedUnit.currentPathNode, SelectedUnit);
                         }
                     }
                     else
                     {
-                        DeselectMovement();
+                        //Mine after move
+                        if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedMovement(SelectedUnit) && targetNode.isAsteroid)
+                        {
+                            QueueAction(ActionType.MineAsteroid, null, null, new List<PathNode>() { targetNode });
+                        }
+                        //Double click confirm to movement
+                        else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null)
+                        {
+                            if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
+                            {
+                                SelectedUnit.resetMovementRange();
+                                QueueAction(ActionType.MineAsteroid);
+                            }
+                            else if (!HasQueuedMovement(SelectedUnit))
+                            {
+                                if(SelectedPath.Last().isAsteroid)
+                                    QueueAction(ActionType.MoveAndMine);
+                                else
+                                    QueueAction(ActionType.MoveUnit);
+                            }
+                        }
+                        //Create movement
+                        else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
+                        {
+                            SelectedNode = targetNode;
+                            int oldPathCount = SelectedPath?.Count ?? 0;
+                            if (SelectedPath == null || SelectedPath.Count == 0)
+                            {
+                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.stationId);
+                                SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
+                                Debug.Log($"Path created for {SelectedUnit.unitName}");
+                            }
+                            else
+                            {
+                                var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.stationId);
+                                SelectedUnit.subtractMovement(newPath.Last().gCost);
+                                SelectedPath.AddRange(newPath);
+                                Debug.Log($"Path edited for {SelectedUnit.unitName}");
+                            }
+                            DrawPath(SelectedPath);
+                            HighlightRangeOfMovement(targetNode, SelectedUnit);
+                        }
+                        //Clicked on invalid tile
+                        else
+                        {
+                            if (targetUnit != null)
+                            {
+                                if (SelectedUnit == null)
+                                {
+                                    SetTextValues(targetUnit);
+                                    ViewStructureInformation(true);
+                                }
+                            }
+                            else
+                            {
+                                DeselectMovement();
+                            }
+                        }
                     }
+                }
+                else
+                {
+                    DeselectMovement();
                 }
             }
         }
@@ -436,8 +439,7 @@ public class GameManager : MonoBehaviour
     }
     public void ViewStructureInformation(bool active)
     {
-        if(HasGameStarted())
-            infoPanel.SetActive(active);
+        infoPanel.SetActive(active);
     }
     private void UpdateAuctionModules(int i)
     {
@@ -473,7 +475,7 @@ public class GameManager : MonoBehaviour
             var selectedStructure = SelectedUnit;
             DeselectMovement();
             ClearSelectableModules();
-            List<Guid> assignedModules = MyStation.actions.Select(x => x.selectedModule.moduleGuid).ToList();
+            List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModule?.moduleGuid).ToList();
             var availableModules = MyStation.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
             if (availableModules.Count > 0)
             {
@@ -896,7 +898,9 @@ public class GameManager : MonoBehaviour
             //}
             if (unitMoving is Station)
             {
-                (unitMoving as Station).defeated = true;
+                var station = (unitMoving as Station);
+                station.defeated = true;
+                while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]);  Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
             }
             else if (unitMoving is Fleet)
             {
@@ -918,7 +922,9 @@ public class GameManager : MonoBehaviour
             //    LevelUpUnit(unitMoving as Fleet);
             if (unitOnPath is Station)
             {
-                (unitOnPath as Station).defeated = true;
+                var station = (unitOnPath as Station);
+                station.defeated = true;
+                while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
             }
             else if (unitOnPath is Fleet)
             {
@@ -1040,7 +1046,7 @@ public class GameManager : MonoBehaviour
 #region Complete Turn
     public void EndTurn(bool theyAreSure)
     {
-        if (!isEndingTurn && HasGameStarted())
+        if (!isEndingTurn)
         {
             if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
             {
@@ -1143,6 +1149,7 @@ public class GameManager : MonoBehaviour
         {
             turnValue.text = $"{Stations[winner].color} player won after {TurnNumber + 1} turns";
             Debug.Log($"{Stations[winner].color} player won after {TurnNumber + 1} turns");
+            gameWon = true;
         }
         else
         {
