@@ -461,9 +461,9 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.SwapModule && MyStation.actions.Any(x => x.actionType == ActionType.SwapModule && x.generatedGuid == dettachGuid))
         {
-            ShowCustomAlertPanel($"The action {ActionType.SwapModule} for the module {dettachGuid} has already been queued up");
+            ShowCustomAlertPanel($"The action {ActionType.SwapModule} for this module has already been queued up");
         }
-        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= GetUnitMaxAttachmentCount(SelectedUnit))
+        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) > GetUnitMaxAttachmentCount(SelectedUnit))
         {
             ShowCustomAlertPanel($"This action has already been queued up.");
 
@@ -474,7 +474,7 @@ public class GameManager : MonoBehaviour
         } 
         else 
         {
-            var selectedStructure = SelectedUnit;
+            var selectedUnit = SelectedUnit;
             DeselectMovement();
             ClearSelectableModules();
             List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModule?.moduleGuid).ToList();
@@ -484,7 +484,7 @@ public class GameManager : MonoBehaviour
                 foreach (var module in availableModules)
                 {
                     var moduleObject = Instantiate(modulePrefab, SelectedModuleGrid);
-                    moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module, selectedStructure, actionType, dettachGuid));
+                    moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module, selectedUnit, actionType, dettachGuid));
                     moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
                     moduleObject.transform.Find("Queued").gameObject.SetActive(false);
                     currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
@@ -496,7 +496,7 @@ public class GameManager : MonoBehaviour
     private void SetSelectedModule(Module module, Unit structure, ActionType action, Guid? dettachGuid)
     {
         //if not already queued up
-        if (MyStation.actions.Any(x => x.selectedModule?.moduleGuid == module.moduleGuid) || MyStation.actions.Any(x => x.generatedGuid == dettachGuid))
+        if (MyStation.actions.Any(x => x.selectedModule?.moduleGuid == module.moduleGuid))
         {
             ShowCustomAlertPanel("This action is already queued up.");
         }
@@ -1269,7 +1269,7 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.AttachModule)
                     {
-                        if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count < currentUnit.maxAttachedModules)
+                        if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
                         {
                             Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
@@ -1277,7 +1277,7 @@ public class GameManager : MonoBehaviour
                                 turnValue.text += $"{GetDescription(action.actionType)}";
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
-                                currentStation.modules.Remove(selectedModule);
+                                currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x=>x.moduleGuid == selectedModule.moduleGuid));
                             }
                             else
                             {
@@ -1306,11 +1306,11 @@ public class GameManager : MonoBehaviour
                                 //dettach old
                                 currentStation.modules.Add(dettachedModule);
                                 currentUnit.EditModule(dettachedModule.moduleId, -1);
-                                currentUnit.attachedModules.Remove(dettachedModule);
+                                currentUnit.attachedModules.Remove(currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
                                 //attach new
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
-                                currentStation.modules.Remove(selectedModule);
+                                currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                             }
                             else
                             {
