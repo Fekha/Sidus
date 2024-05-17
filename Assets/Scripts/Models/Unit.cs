@@ -31,7 +31,7 @@ public class Unit : Node
     internal Direction facing;
     internal Transform unitImage;
     internal int maxAttachedModules = 1; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _structureName, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _unitGuid, int _mining, Direction _direction)
+    public void InitializeStructure(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _unitGuid, int _mining, Direction _direction)
     {
         facing = _direction;
         unitGuid = _unitGuid;
@@ -45,7 +45,6 @@ public class Unit : Node
         kineticAttack = _electricAttack;
         thermalAttack = _thermalAttack;
         explosiveAttack = _voidAttack;
-        unitName = _structureName;
         mining = _mining;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;

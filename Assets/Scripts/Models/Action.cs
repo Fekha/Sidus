@@ -15,6 +15,7 @@ public class Action : MonoBehaviour
     public Guid? generatedGuid;
     internal int costOfAction;
     internal int actionOrder;
+    internal int playerId;
 
     public Action(ActionType _actionType, Unit _selectedFleet, int _cost, Module? _selectedModule = null, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null)
     {
@@ -35,6 +36,7 @@ public class Action : MonoBehaviour
             selectedPath = _action.SelectedCoords.Select(x=> GridManager.i.grid[x.X,x.Y]).ToList();
             generatedGuid = _action.GeneratedGuid;
             actionOrder = _action.ActionOrder;
+            playerId = _action.PlayerId;
         }
     }
 }
