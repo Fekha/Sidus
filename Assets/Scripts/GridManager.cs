@@ -168,8 +168,8 @@ public class GridManager : MonoBehaviour
                 {
                     obstacleCount++;
                     startCredits = 8;
-                    maxCredits = 15;
-                    creditRegin = 2;
+                    maxCredits = 16;
+                    creditRegin = 4;
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);

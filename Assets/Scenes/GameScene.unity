@@ -11181,7 +11181,7 @@ MonoBehaviour:
     Damage Taken) only applies if a unit loses a phase.\n\nMining:\nMoving into an
     asteroid will mine it.\nAdditionally, before or after queuing a move action,
     selecting a neighboring asteroid queues a mine action. \nAsteriods that reach
-    0 minerals will be destroyed, otherwise will regin 2 per turn to a max of 15.\n\nRunning
+    0 minerals will be destroyed, otherwise will regin 4 per turn to a max of 16.\n\nRunning
     out of actions:\nIf you end your turn early, without filling your action queue,
     you will gain 1 credit per unused action."
   m_isRightToLeft: 0
