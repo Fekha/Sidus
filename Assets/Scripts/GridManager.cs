@@ -167,8 +167,8 @@ public class GridManager : MonoBehaviour
                 if (isAsteroid)
                 {
                     obstacleCount++;
-                    startCredits = 8;
-                    maxCredits = 15;
+                    startCredits = 6;
+                    maxCredits = 12;
                     creditRegin = 3;
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
