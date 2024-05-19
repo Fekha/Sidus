@@ -24,9 +24,9 @@ public class GridManager : MonoBehaviour
     {
         i = this;
         //Got colors from https://rgbcolorpicker.com/0-1
-        //Blue, Purple, Yellow, Red
-        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(.776f, 0, 1, 1), new Color(1, 0.5f, 0, 1), new Color(1, 0, 0, 1), };
-        tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), new Color(0.98f, 0.561f, 0.561f, 1),  };
+        //Blue, Red, Purple, Orange, 
+        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0, 1), new Color(1, 0.5f, 0, 1), new Color(.776f, 0, 1, 1), };
+        tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(1, .714f, .42f, 1), new Color(0.871f, 0.514f, 1f, 1), };
     }
     void Start()
     {
@@ -60,21 +60,21 @@ public class GridManager : MonoBehaviour
         Direction facing = Direction.BottomLeft;
         if (team == 1)
         {
-            teamColor = "Purple";
+            teamColor = "Red";
             spawnX = 6;
             spawnY = 2;
             facing = Direction.TopRight;
         }
         else if (team == 2)
         {
-            teamColor = "Yellow";
+            teamColor = "Orange";
             spawnX = 2;
             spawnY = 1;
             facing = Direction.BottomRight;
         }
         else if (team == 3)
         {
-            teamColor = "Red";
+            teamColor = "Purple";
             spawnX = 5;
             spawnY = 6;
             facing = Direction.TopLeft;
@@ -156,7 +156,7 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < gridSize.y; y++)
             {
                 // Calculate the world position based on the size of the cellPrefab
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .98f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.5f * cellPrefabSize.x);
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
                 bool isAsteroid = false;
                 int maxCredits = 0;
                 int startCredits = 0;
@@ -168,8 +168,8 @@ public class GridManager : MonoBehaviour
                 {
                     obstacleCount++;
                     startCredits = 8;
-                    maxCredits = 16;
-                    creditRegin = 4;
+                    maxCredits = 15;
+                    creditRegin = 3;
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);

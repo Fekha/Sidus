@@ -12,7 +12,7 @@ public class Unit : Node
     internal Guid unitGuid;
     internal int stationId;
     internal int maxHp;
-    internal int hp;
+    internal int shield;
     internal int maxRange;
     internal int range;
     internal int kineticAttack;
@@ -25,7 +25,8 @@ public class Unit : Node
     internal int level;
     //internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
-    internal TextMeshPro hpText;
+    internal TextMeshPro shieldText;
+    internal TextMeshPro statText;
     internal GameObject selectIcon;
     internal GameObject inCombatIcon;
     internal Direction facing;
@@ -38,7 +39,7 @@ public class Unit : Node
         location = new Coords(_x, _y);
         color = _color;
         maxHp = _hp;
-        hp = _hp;
+        shield = _hp;
         maxRange = _range;
         range = _range;
         level = _level;
@@ -50,7 +51,8 @@ public class Unit : Node
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
         SetNodeColor();
-        hpText = transform.Find("HP").GetComponent<TextMeshPro>();
+        shieldText = transform.Find("Shield").GetComponent<TextMeshPro>();
+        statText = transform.Find("Shield/Stats").GetComponent<TextMeshPro>();
         selectIcon = transform.Find("Select").gameObject;
         inCombatIcon = transform.Find("InCombat").gameObject;
         unitImage = this.transform.Find("Unit");
@@ -60,7 +62,7 @@ public class Unit : Node
 
     public void TakeDamage(int damage)
     {
-        hp -= damage;
+        shield -= damage;
     }
     public void SetNodeColor()
     {
@@ -113,7 +115,7 @@ public class Unit : Node
             case 3:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                explosiveAttack += (-3 * modifer);
+                explosiveAttack += (-2 * modifer);
                 break;
             case 4:
                 mining += (3 * modifer);
@@ -161,7 +163,7 @@ public class Unit : Node
             case 14:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticAttack += (-3 * modifer);
+                kineticAttack += (-2 * modifer);
                 break;
             case 15:
                 mining += (3 * modifer);
@@ -190,19 +192,19 @@ public class Unit : Node
             case 20:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                explosiveAttack += (-2 * modifer);
+                explosiveAttack += (-1 * modifer);
                 kineticArmor += (-2 * modifer); 
                 break;
             case 21:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticAttack += (-2 * modifer);
+                kineticAttack += (-1 * modifer);
                 explosiveArmor += (-2 * modifer);
                 break;
             case 22:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticAttack += (-2 * modifer);
+                kineticAttack += (-1 * modifer);
                 thermalArmor += (-2 * modifer);
                 break;
             case 23:
@@ -225,10 +227,11 @@ public class Unit : Node
         }
     }
 
-    internal void ShowHPText(bool value)
+    internal void ShowShieldText(bool value)
     {
-        hpText.text = $"{hp}";
-        hpText.gameObject.SetActive(value);
+        shieldText.text = $"{level}-{shield}";
+        statText.text = $"{kineticAttack}~{thermalAttack}~{explosiveAttack}";
+        shieldText.gameObject.SetActive(value);
     }
     internal ServerUnit ToServerUnit()
     {

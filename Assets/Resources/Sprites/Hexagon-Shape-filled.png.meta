@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 91497ad8c73dfcd48a1846726f30b362
+guid: e667555e1b4c8c3468ce7af07d6f7fbe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3479061504300586076
-    second: add_0
+      213: 3054228938945602925
+    second: Hexagon-Shape-filled_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 256
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -134,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: add_0
+      name: Hexagon-Shape-filled_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 11
         y: 0
-        width: 511
-        height: 511
+        width: 234
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4ab6d64aef3e7bfc0800000000000000
-      internalID: -3479061504300586076
+      spriteID: d652298b90dc26a20800000000000000
+      internalID: 3054228938945602925
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      add_0: -3479061504300586076
+      Hexagon-Shape-filled_0: 3054228938945602925
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
