@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public GameObject helpPanel;
     public GameObject readyToSeeTurnsPanel;
     public GameObject moduleMarket;
+    public GameObject asteroidPanel;
     public Sprite UISprite;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
@@ -150,11 +151,11 @@ public class GameManager : MonoBehaviour
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
         customAlertText = customAlertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
     }
-    public void SetTextValues(Unit unit)
+    public void SetUnitTextValues(Unit unit)
     {
         nameValue.text = unit.unitName;
         levelValue.text = unit.level.ToString();
-        shieldValue.text = unit.shield + "/" + unit.maxHp;
+        shieldValue.text = unit.shield + "/" + unit.maxShield;
         rangeValue.text = unit.maxRange.ToString();
         var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.stationId == unit.stationId);
         var kineticSupport = 0;
@@ -162,16 +163,22 @@ public class GameManager : MonoBehaviour
         var explosiveSupport = 0;
         if (supportingFleets.Any())
         {
-            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticAttack * .5)));
-            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalAttack * .5)));
-            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosiveAttack * .5)));
+            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * .5)));
+            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * .5)));
+            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * .5)));
         }
         var kineticArmorText = (unit.kineticArmor == 0 ? "" : unit.kineticArmor > 0 ? "-" : "+")+MathF.Abs(unit.kineticArmor);
         var thermalArmorText = (unit.thermalArmor == 0 ? "" : unit.thermalArmor > 0 ? "-" : "+")+MathF.Abs(unit.thermalArmor);
-        var explosiveArmorText = (unit.explosiveArmor == 0 ? "" : unit.explosiveArmor > 0 ? "-" : "+")+MathF.Abs(unit.explosiveArmor);
-        PowerValueText.text = $"{unit.kineticAttack}~{unit.thermalAttack}~{unit.explosiveAttack}";
-        SupportValueText.text = $"{kineticSupport}~{thermalSupport}~{explosiveSupport}";
-        DamageTakenValueText.text = $"{kineticArmorText}~{thermalArmorText}~{explosiveArmorText}";
+        PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
+        SupportValueText.text = $"{kineticSupport}|{thermalSupport}|{explosiveSupport}";
+        DamageTakenValueText.text = "None";
+        if (unit.attachedModules.Count > 0) {
+            DamageTakenValueText.text = unit.attachedModules[0].effectText.Replace("\n", ",");
+            for(int i = 1;i<unit.attachedModules.Count;i++)
+            {
+                DamageTakenValueText.text += $"\n {unit.attachedModules[i].effectText.Replace(" \n",",")}";
+            }
+        }
         miningValue.text = unit.mining.ToString();
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
@@ -205,8 +212,8 @@ public class GameManager : MonoBehaviour
                 creditsText.text = $"Player Credits: {currentCredits}";
             }
             ToggleMineralText(true);
-            ToggleShieldText(true);
         }
+        ToggleShieldText(true);
         SetModuleBar(unit);
         infoPanel.gameObject.SetActive(true);
         
@@ -235,14 +242,10 @@ public class GameManager : MonoBehaviour
                     if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
                     {
                         SelectedUnit = targetUnit;
-                        SetTextValues(SelectedUnit);
+                        SetUnitTextValues(SelectedUnit);
                         if (HasQueuedMovement(SelectedUnit))
                         {
-                            SelectedUnit.subtractMovement(99);
-                            var movementAction = MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == targetUnit.unitGuid);
-                            DrawPath(movementAction.selectedPath);
-                            Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
-                            HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
+                            HighlightQueuedMovement(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == SelectedUnit.unitGuid));
                         }
                         else
                         {
@@ -297,12 +300,21 @@ public class GameManager : MonoBehaviour
                         //Clicked on invalid tile
                         else
                         {
-                            if (targetUnit != null)
+                            if (SelectedUnit == null)
                             {
-                                if (SelectedUnit == null)
+                                if (targetUnit != null)
                                 {
-                                    SetTextValues(targetUnit);
+                                    SetUnitTextValues(targetUnit);
                                     ViewUnitInformation(true);
+                                }
+                                else if (targetNode.isAsteroid)
+                                {
+                                    SetAsteroidTextValues(targetNode);
+                                    ViewAsteroidInformation(true);
+                                }
+                                else
+                                {
+                                    DeselectMovement();
                                 }
                             }
                             else
@@ -318,6 +330,27 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void SetAsteroidTextValues(PathNode targetNode)
+    {
+        asteroidPanel.transform.Find("CurrentValue").GetComponent<TextMeshProUGUI>().text = $"Current Value: {targetNode.currentCredits}";
+        asteroidPanel.transform.Find("MaxValue").GetComponent<TextMeshProUGUI>().text = $"Max Value: {targetNode.maxCredits}";
+        asteroidPanel.transform.Find("RegenValue").GetComponent<TextMeshProUGUI>().text = $"Regen Per Turn: {targetNode.creditsRegin}";
+    }
+
+    public void ShowQueuedAction(int i)
+    {
+        if(MyStation.actions[i].actionType == ActionType.MoveUnit || MyStation.actions[i].actionType == ActionType.MoveAndMine)
+            HighlightQueuedMovement(MyStation.actions[i]);
+    }
+    private void HighlightQueuedMovement(Action movementAction)
+    {
+        SelectedUnit = movementAction.selectedUnit;
+        SelectedUnit.subtractMovement(99);
+        DrawPath(movementAction.selectedPath);
+        Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
+        HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
     }
 
     private void DrawPath(List<PathNode> selectedPath)
@@ -350,6 +383,7 @@ public class GameManager : MonoBehaviour
         moduleMarket.SetActive(active);
         if (active)
         {
+            DeselectMovement();
             ClearAuctionObjects();
             for(int j = 0; j < AuctionModules.Count; j++)
             {
@@ -396,6 +430,7 @@ public class GameManager : MonoBehaviour
 
     private void BidOn(int index)
     {
+        ViewModuleMarket(false);
         QueueAction(ActionType.BidOnModule, AuctionModules[index]);
     }
 
@@ -419,7 +454,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ShowAlertPanel(int unlock)
+    public void ShowUnlockPanel(int unlock)
     {
         alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} hexes.";
         alertPanel.SetActive(true);
@@ -442,6 +477,11 @@ public class GameManager : MonoBehaviour
     public void ViewUnitInformation(bool active)
     {
         infoPanel.SetActive(active);
+    } 
+    public void ViewAsteroidInformation(bool active)
+    {
+        ToggleMineralText(active);
+        asteroidPanel.SetActive(active);
     }
     private void UpdateAuctionModules(int i)
     {
@@ -605,8 +645,9 @@ public class GameManager : MonoBehaviour
     {
         int image = (int)actionType;
         ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{image}");
+        ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
+        ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowQueuedAction(i));
         ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(true);
-        ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(false);
     }
   
     private void UpdateCreateFleetCostText()
@@ -703,8 +744,8 @@ public class GameManager : MonoBehaviour
         SelectedNode = null;
         SelectedUnit = null;
         SelectedPath = null;
+        ViewAsteroidInformation(false);
         ViewUnitInformation(false);
-        ViewModuleMarket(false);
     }
 
     private void UpdateCreditTotal()
@@ -807,15 +848,15 @@ public class GameManager : MonoBehaviour
         {
             if (supportFleet.stationId == unitMoving.stationId)
             {
-                s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
-                s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
-                s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
+                s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * .5));
+                s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * .5));
+                s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * .5));
             }
             else if (supportFleet.stationId == unitOnPath.stationId)
             {
-                s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticAttack * .5));
-                s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalAttack * .5));
-                s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosiveAttack * .5));
+                s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * .5));
+                s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * .5));
+                s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * .5));
             }
         }
         fightText.text = "";
@@ -883,29 +924,29 @@ public class GameManager : MonoBehaviour
 
     private string DoCombat(Unit s1, Unit s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
     {
-        int s1Dmg = (s2.explosiveAttack+s2sExplosive) - (s1.explosiveAttack+s1sExplosive);
-        int s2Dmg = (s1.explosiveAttack+s1sExplosive) - (s2.explosiveAttack+s2sExplosive);
+        int s1Dmg = (s2.explosivePower+s2sExplosive) - (s1.explosivePower+s1sExplosive);
+        int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
         int s1Amr = s1.explosiveArmor;
         int s2Amr = s2.explosiveArmor;
-        string power1Text = s1.explosiveAttack + (s1sExplosive > 0 ? $"(+{s1sExplosive})" : "");
-        string power2Text = s2.explosiveAttack + (s2sExplosive > 0 ? $"(+{s2sExplosive})" : "");
+        string power1Text = s1.explosivePower + (s1sExplosive > 0 ? $"(+{s1sExplosive})" : "");
+        string power2Text = s2.explosivePower + (s2sExplosive > 0 ? $"(+{s2sExplosive})" : "");
         if (type == AttackType.Kinetic)
         {
-            s1Dmg = (s2.kineticAttack+s2sKinetic) - (s1.kineticAttack+s1sKinetic);
-            s2Dmg = (s1.kineticAttack+s1sKinetic) - (s2.kineticAttack+s2sKinetic);
+            s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
+            s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
             s1Amr = s1.kineticArmor;
             s2Amr = s2.kineticArmor;
-            power1Text = s1.kineticAttack + (s1sKinetic > 0 ? $"(+{s1sKinetic})" : "");
-            power2Text = s2.kineticAttack + (s2sKinetic > 0 ? $"(+{s2sKinetic})" : "");
+            power1Text = s1.kineticPower + (s1sKinetic > 0 ? $"(+{s1sKinetic})" : "");
+            power2Text = s2.kineticPower + (s2sKinetic > 0 ? $"(+{s2sKinetic})" : "");
         }
         else if (type == AttackType.Thermal)
         {
-            s1Dmg = (s2.thermalAttack+s2sThermal) - (s1.thermalAttack+s1sThermal);
-            s2Dmg = (s1.thermalAttack+s1sThermal) - (s2.thermalAttack+s2sThermal);
+            s1Dmg = (s2.thermalPower+s2sThermal) - (s1.thermalPower+s1sThermal);
+            s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
             s1Amr = s1.thermalArmor;
             s2Amr = s2.thermalArmor;
-            power1Text = s1.thermalAttack + (s1sThermal > 0 ? $"(+{s1sThermal})" : "");
-            power2Text = s2.thermalAttack + (s2sThermal > 0 ? $"(+{s2sThermal})" : "");
+            power1Text = s1.thermalPower + (s1sThermal > 0 ? $"(+{s1sThermal})" : "");
+            power2Text = s2.thermalPower + (s2sThermal > 0 ? $"(+{s2sThermal})" : "");
         }
         var returnText = $"\nPhase {(int)type+1}-{type}: \n{s1.color} has {power1Text} Power.\n{s2.color} has {power2Text} Power.\n";
         if (s1Dmg > 0)
@@ -1077,7 +1118,6 @@ public class GameManager : MonoBehaviour
                 {
                     ClearModules();
                     ToggleMineralText(true);
-                    //ToggleShieldText(true);
                     var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
                     foreach (var serverAction in serverActions)
                     {
@@ -1111,6 +1151,14 @@ public class GameManager : MonoBehaviour
         endTurnButton.color = Color.black;
         winner = GridManager.i.CheckForWin();
         UpdateAuctionModules(TurnNumber);
+        foreach (var unit in AllUnits)
+        {
+            if (!unit.hasMoved)
+            {
+                unit.RegenShield(1);
+            }
+            unit.hasMoved = false;
+        }
         foreach (var station in Stations)
         {
             station.actions.Clear();
@@ -1157,16 +1205,19 @@ public class GameManager : MonoBehaviour
                         isMoving = true;
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
                         {
+                            currentUnit.hasMoved = true;
+                            ToggleShieldText(true);
                             turnValue.text += $"{GetDescription(action.actionType)}";
                             Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
                             yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
+                            ToggleShieldText(false);
                         }
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                             Debug.Log("Out of range or no longer exists.");
+                            yield return new WaitForSeconds(1f);
                         }
-                        yield return new WaitForSeconds(.1f);
                         isMoving = false;
                         currentUnit.resetMovementRange();
                     }
@@ -1181,6 +1232,7 @@ public class GameManager : MonoBehaviour
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                             Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
+                            yield return new WaitForSeconds(1f);
                         }
                     }
                     else if (action.actionType == ActionType.UpgradeFleet)
@@ -1192,7 +1244,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}"; 
+                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                             Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
                         }
                         currentUnit.selectIcon.SetActive(true);
@@ -1242,7 +1294,7 @@ public class GameManager : MonoBehaviour
                                 turnValue.text += $"{GetDescription(action.actionType)}";
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
-                                currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x=>x.moduleGuid == selectedModule.moduleGuid));
+                                currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
                             }
                             else
                             {
@@ -1303,21 +1355,29 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, asteroid not nearby";
+                            yield return new WaitForSeconds(1f);
                         }
                     }
                     else if (action.actionType == ActionType.GainCredit)
                     {
-                        turnValue.text += $"{GetDescription(action.actionType)}"; 
+                        turnValue.text += $"{GetDescription(action.actionType)}";
                         Debug.Log($"Gained 1 credit");
                         currentUnit.selectIcon.SetActive(true);
                         yield return new WaitForSeconds(1f);
                         currentUnit.selectIcon.SetActive(false);
+                    }
+                    else
+                    {
+                        turnValue.text += $"Unknown Error";
+                        Debug.Log("Unknown Error");
+                        yield return new WaitForSeconds(1f);
                     }
                 }
                 else
                 {
                     turnValue.text += $"Could not perform {GetDescription(action.actionType)}, could not afford";
                     Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {GetDescription(action.actionType)}");
+                    yield return new WaitForSeconds(1f);
                 }
             }
         }
@@ -1383,6 +1443,7 @@ public class GameManager : MonoBehaviour
         }
         currentCredits = MyStation.credits;
         infoToggle = false;
+        ViewModuleMarket(false);
         ResetAfterSelection();
         isEndingTurn = false;
         Debug.Log($"New Turn {TurnNumber} Starting");
@@ -1394,11 +1455,11 @@ public class GameManager : MonoBehaviour
         {
             structure.level++;
             structure.maxAttachedModules++;
-            structure.maxHp += 4;
-            structure.shield += 4;
-            structure.kineticAttack++;
-            structure.explosiveAttack++;
-            structure.thermalAttack++;
+            structure.maxShield += 3;
+            structure.shield += 3;
+            structure.kineticPower++;
+            structure.explosivePower++;
+            structure.thermalPower++;
             if (structure is Station)
             {
                 (structure as Station).maxFleets++;
@@ -1458,9 +1519,16 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
-            ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = i < MyStation.maxActions ? emptyModuleBar : lockActionBar;
+            ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
+            if (i < MyStation.maxActions) {
+                ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar;
+                
+            } else {
+                ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
+                int k = i-2;
+                ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(k));
+            }
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
-            ActionBar.Find($"Action{i}/UnlockInfo").gameObject.SetActive(i >= MyStation.maxActions);
         }
     }
     internal int GetUnitMaxAttachmentCount(Unit unit)

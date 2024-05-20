@@ -11,18 +11,19 @@ public class Unit : Node
     internal string color;
     internal Guid unitGuid;
     internal int stationId;
-    internal int maxHp;
+    internal int maxShield;
     internal int shield;
     internal int maxRange;
     internal int range;
-    internal int kineticAttack;
-    internal int thermalAttack;
-    internal int explosiveAttack;
+    internal int kineticPower;
+    internal int thermalPower;
+    internal int explosivePower;
     internal int kineticArmor;
     internal int thermalArmor;
     internal int explosiveArmor;
     internal int mining;
     internal int level;
+    internal bool hasMoved = false;
     //internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
     internal TextMeshPro shieldText;
@@ -38,14 +39,14 @@ public class Unit : Node
         unitGuid = _unitGuid;
         location = new Coords(_x, _y);
         color = _color;
-        maxHp = _hp;
+        maxShield = _hp;
         shield = _hp;
         maxRange = _range;
         range = _range;
         level = _level;
-        kineticAttack = _electricAttack;
-        thermalAttack = _thermalAttack;
-        explosiveAttack = _voidAttack;
+        kineticPower = _electricAttack;
+        thermalPower = _thermalAttack;
+        explosivePower = _voidAttack;
         mining = _mining;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
@@ -59,10 +60,15 @@ public class Unit : Node
         unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }
-
+    public void RegenShield(int regen)
+    {
+        shield += regen;
+        shield = Mathf.Min(maxShield, shield);
+    }
     public void TakeDamage(int damage)
     {
         shield -= damage;
+        shield = Mathf.Max(0, shield);
     }
     public void SetNodeColor()
     {
@@ -99,126 +105,117 @@ public class Unit : Node
         switch (id)
         {
             case 0:
-                kineticAttack += (1 * modifer);
-                explosiveAttack += (2 * modifer);
+                explosivePower += (2 * modifer);
                 thermalArmor += (2 * modifer);
                 break;
             case 1:
-                thermalAttack += (2 * modifer);
-                kineticAttack += (1 * modifer);
+                thermalPower += (2 * modifer);
                 explosiveArmor += (2 * modifer);
                 break;
             case 2:
-                explosiveAttack += (4 * modifer);
+                explosivePower += (3 * modifer);
                 kineticArmor += (-1 * modifer);
                 break;
             case 3:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                explosiveAttack += (-2 * modifer);
+                explosivePower += (-1 * modifer);
                 break;
             case 4:
                 mining += (3 * modifer);
-                explosiveAttack += (-1 * modifer);
+                explosiveArmor += (1 * modifer);
                 break;
             case 5:
-                kineticAttack += (1 * modifer);
-                thermalAttack += (1 * modifer);
-                explosiveAttack += (2 * modifer);
+                thermalPower += (1 * modifer);
+                explosivePower += (2 * modifer);
                 break;
             case 6:
-                kineticAttack += (2 * modifer);
-                thermalAttack += (1 * modifer); 
-                explosiveAttack += (1 * modifer);
+                kineticPower += (2 * modifer);
+                explosivePower += (1 * modifer);
                 break;
             case 7:
-                kineticAttack += (1 * modifer);
-                thermalAttack += (2 * modifer); 
-                explosiveAttack += (1 * modifer);
+                kineticPower += (1 * modifer);
+                thermalPower += (2 * modifer);
                 break;
             case 8:
-                explosiveAttack += (3 * modifer);
-                kineticArmor += (2 * modifer);
+                explosivePower += (4 * modifer);
+                kineticPower += (1 * modifer);
                 break;
             case 9:
-                kineticAttack += (3 * modifer);
-                thermalArmor += (2 * modifer);
+                kineticPower += (3 * modifer);
+                thermalArmor += (-1 * modifer);
                 break;
             case 10:
-                thermalAttack += (3 * modifer);
-                explosiveArmor += (2 * modifer);
+                thermalPower += (3 * modifer);
                 break;
             case 11:
-                kineticAttack += (2 * modifer);
-                explosiveAttack += (2 * modifer);
+                kineticPower += (1 * modifer);
+                explosivePower += (2 * modifer);
                 break;
             case 12:
-                thermalAttack += (2 * modifer);
-                explosiveAttack += (2 * modifer);
+                thermalPower += (1 * modifer);
+                explosivePower += (2 * modifer);
                 break;
             case 13:
-                explosiveAttack += (4 * modifer);
+                explosivePower += (3 * modifer);
                 thermalArmor += (-1 * modifer);
                 break;
             case 14:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticAttack += (-2 * modifer);
+                kineticPower += (-1 * modifer);
                 break;
             case 15:
                 mining += (3 * modifer);
-                kineticAttack += (-1 * modifer);
+                kineticArmor += (1 * modifer);
                 break;
             case 16:
-                kineticAttack += (3 * modifer);
-                explosiveAttack += (3 * modifer);
-                thermalAttack += (-2 * modifer);
+                kineticPower += (3 * modifer);
+                explosivePower += (2 * modifer);
+                thermalPower += (-2 * modifer);
                 break;
             case 17:
-                kineticAttack += (3 * modifer);
-                thermalAttack += (3 * modifer);
-                explosiveAttack += (-2 * modifer);
+                kineticPower += (3 * modifer);
+                thermalPower += (2 * modifer);
+                explosivePower += (-2 * modifer);
                 break;
             case 18:
-                thermalAttack += (3 * modifer);
-                explosiveAttack += (3 * modifer);
-                kineticAttack += (-2 * modifer); 
+                thermalPower += (2 * modifer);
+                explosivePower += (3 * modifer);
+                kineticPower += (-2 * modifer); 
                 break;
             case 19:
-                explosiveAttack += (6 * modifer);
-                thermalAttack += (-2 * modifer);
+                explosivePower += (5 * modifer);
+                thermalPower += (-2 * modifer);
                 kineticArmor += (-1 * modifer);
                 break;
             case 20:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                explosiveAttack += (-1 * modifer);
                 kineticArmor += (-2 * modifer); 
                 break;
             case 21:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticAttack += (-1 * modifer);
                 explosiveArmor += (-2 * modifer);
                 break;
             case 22:
                 maxRange += (1 * modifer);
                 range += (1 * modifer);
-                kineticAttack += (-1 * modifer);
                 thermalArmor += (-2 * modifer);
                 break;
             case 23:
-                explosiveAttack += (2 * modifer);
+                explosivePower += (1 * modifer);
                 thermalArmor += (2 * modifer);
                 kineticArmor += (2 * modifer);
                 break;
             case 24:
-                kineticAttack += (2 * modifer);
+                kineticPower += (1 * modifer);
                 thermalArmor += (2 * modifer);
                 explosiveArmor += (2 * modifer);
                 break;
             case 25:
-                thermalAttack += (2 * modifer);
+                thermalPower += (1 * modifer);
                 explosiveArmor += (2 * modifer);
                 kineticArmor += (2 * modifer);
                 break;
@@ -229,8 +226,8 @@ public class Unit : Node
 
     internal void ShowShieldText(bool value)
     {
-        shieldText.text = $"{level}-{shield}";
-        statText.text = $"{kineticAttack}~{thermalAttack}~{explosiveAttack}";
+        shieldText.text = $"{shield}";
+        statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
         shieldText.gameObject.SetActive(value);
     }
     internal ServerUnit ToServerUnit()
