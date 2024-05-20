@@ -6,10 +6,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -233,6 +235,7 @@ public class GameManager : MonoBehaviour
                 PathNode targetNode = hit.collider.GetComponent<PathNode>();
                 if (targetNode != null)
                 {
+                    moduleMarket.SetActive(false); 
                     Unit targetUnit = null;
                     if (targetNode.structureOnPath != null)
                     {
@@ -698,15 +701,15 @@ public class GameManager : MonoBehaviour
         {
             if (station.fleets.Count <= 0)
                 return 0;
-            return (5 + ((station.fleets.Count-1 + countingQueue) * 3)); //5,8,11,14,17
+            return (5 + ((station.fleets.Count-1 + countingQueue) * 3)); //5,8,11
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return (3 + ((structure.level-1 + countingQueue) * 2)); //3,5,7,9,11
+            return (6 + ((structure.level-1 + countingQueue) * 4)); //6,10,14
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return (7 + ((structure.level-1 + countingQueue) * 5)); //7,12,19,24,29
+            return (10 + ((structure.level-1 + countingQueue) * 5)); //10,15,20
         }
         else if (actionType == ActionType.GenerateModule)
         {
@@ -1135,6 +1138,7 @@ public class GameManager : MonoBehaviour
                         yield return StartCoroutine(PerformAction(new Action(serverAction)));
                         yield return new WaitForSeconds(.1f);
                     }
+                    turnValue.text = $"Turn {TurnNumber} over.\nAsteroids Regenerating\n";
                     foreach (var asteroid in GridManager.i.AllNodes)
                     {
                         asteroid.ReginCredits();
@@ -1459,12 +1463,18 @@ public class GameManager : MonoBehaviour
             structure.maxAttachedModules++;
             structure.maxHP += 3;
             structure.HP += 3;
-            structure.kineticPower++;
-            structure.explosivePower++;
-            structure.thermalPower++;
             if (structure is Station)
             {
                 (structure as Station).maxFleets++;
+                structure.kineticPower += 2;
+                structure.explosivePower += 2;
+                structure.thermalPower += 2;
+            }
+            else
+            {
+                structure.kineticPower++;
+                structure.explosivePower++;
+                structure.thermalPower++;
             }
         }
     }
