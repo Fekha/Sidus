@@ -232,7 +232,7 @@ public class GridManager : MonoBehaviour
             //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
             return (node.ownedById == -1 || node.ownedById == stationId) ? 1 : 2; // || node.structureOnPath != null
         }
-        return 1;
+        return node.isAsteroid ? 0 : 1;
     }
     internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit, bool forMining)
     {

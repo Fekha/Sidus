@@ -762,70 +762,81 @@ public class GameManager : MonoBehaviour
         foreach (var node in path)
         {
             i++;
-            bool blockedMovement = false;
-            unitMoving.subtractMovement(GridManager.i.GetGCost(node, unitMoving.stationId));
-            //if ally, and theres room after, move through.
-            if (node.structureOnPath != null && node.structureOnPath.stationId == unitMoving.stationId)
+            if (GridManager.i.GetNeighbors(unitMoving.currentPathNode).Contains(node))
             {
-                blockedMovement = true;
-                //Example: you move 3, first spot is ally, second is enemy, third is open : you should not move
-                if (path.Count != i)
+                bool blockedMovement = false;
+                unitMoving.subtractMovement(GridManager.i.GetGCost(node, unitMoving.stationId));
+                //if ally, and theres room after, move through.
+                if (node.structureOnPath != null && node.structureOnPath.stationId == unitMoving.stationId)
                 {
-                    for (int j = i; j < path.Count; j++)
+                    blockedMovement = true;
+                    //Example: you move 3, first spot is ally, second is enemy, third is open : you should not move
+                    if (path.Count != i)
                     {
-                        //If next spot after ally is empty move
-                        if (path[j].structureOnPath == null && !path[j].isAsteroid)
+                        for (int j = i; j < path.Count; j++)
                         {
-                            blockedMovement = false;
-                            break;
+                            //If next spot after ally is empty move
+                            if (path[j].structureOnPath == null && !path[j].isAsteroid)
+                            {
+                                blockedMovement = false;
+                                break;
+                            }
+                            //if next spot after ally is enemy, stop
+                            else if (path[j].structureOnPath != null && path[j].structureOnPath.stationId != MyStation.stationId)
+                            {
+                                break;
+                            }
+                            //If next spot after ally is ally, keep looking
                         }
-                        //if next spot after ally is enemy, stop
-                        else if (path[j].structureOnPath != null && path[j].structureOnPath.stationId != MyStation.stationId)
-                        {
-                            break;
-                        }
-                        //If next spot after ally is ally, keep looking
                     }
                 }
-            }
-            if (unitMoving.range < 0 || node.isAsteroid)
-            {
-                blockedMovement = true;
-            }
-            float elapsedTime = 0f;
-            float totalTime = .5f;
-            var toRot = GetDirection(unitMoving, node);
-            var unitImage = unitMoving.transform.Find("Unit");
-            while (elapsedTime <= totalTime)
-            {
-                unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
+                if (unitMoving.range < 0)
+                {
+                    blockedMovement = true;
+                }
+                float elapsedTime = 0f;
+                float totalTime = .5f;
+                var toRot = GetDirection(unitMoving, node);
+                var unitImage = unitMoving.transform.Find("Unit");
+                while (elapsedTime <= totalTime)
+                {
+                    unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
+                    if (!blockedMovement)
+                        unitMoving.transform.position = Vector3.Lerp(unitMoving.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
+                    elapsedTime += Time.deltaTime;
+                    yield return null;
+                }
+                unitImage.rotation = toRot;
+                if (node.isAsteroid)
+                {
+                    yield return StartCoroutine(PerformMine(unitMoving, node));
+                    blockedMovement = node.isAsteroid;
+                }
+                //if enemy, attack, if you didn't destroy them, stay blocked and move back
+                if (unitMoving.range >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
+                {
+                    yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
+                    blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
+                }
                 if (!blockedMovement)
-                    unitMoving.transform.position = Vector3.Lerp(unitMoving.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
+                {
+                    unitMoving.hasMoved = true;
+                    unitMoving.currentPathNode = node;
+                }
+                if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
+                    || unitMoving.currentPathNode.ownedById == -1
+                    || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId)))
+                {
+                    unitMoving.SetNodeColor();
+                }
+                if (blockedMovement)
+                    break;
+                yield return new WaitForSeconds(.25f);
             }
-            unitImage.rotation = toRot;
-            if (node.isAsteroid)
+            else
             {
-                yield return StartCoroutine(PerformMine(unitMoving, node));
-            }
-            //if enemy, attack, if you didn't destroy them, stay blocked and move back
-            if (unitMoving.range >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
-            {
-                yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
-                blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
-            }
-            if (!blockedMovement)
-                unitMoving.currentPathNode = node;
-            if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
-                || unitMoving.currentPathNode.ownedById == -1
-                || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId)))
-            {
-                unitMoving.SetNodeColor();
-            }
-            if (blockedMovement)
-                break;
-            yield return new WaitForSeconds(.25f);
+                Debug.Log("Next Hex was not a neighbor");
+            }  
         }
         unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
         unitMoving.currentPathNode.structureOnPath = unitMoving;
@@ -1124,6 +1135,11 @@ public class GameManager : MonoBehaviour
                         yield return StartCoroutine(PerformAction(new Action(serverAction)));
                         yield return new WaitForSeconds(.1f);
                     }
+                    foreach (var asteroid in GridManager.i.AllNodes)
+                    {
+                        asteroid.ReginCredits();
+                    }
+                    yield return new WaitForSeconds(.5f);
                     FinishTurns();
                 }
             }
@@ -1178,10 +1194,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            foreach (var asteroid in GridManager.i.AllNodes)
-            {
-                asteroid.ReginCredits();
-            }
             StartTurn();
         }
     }
@@ -1199,18 +1211,15 @@ public class GameManager : MonoBehaviour
                 var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
                 if (currentStation.credits >= actionCost)
                 {
-                    currentStation.credits -= actionCost;
-                    if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
+                    if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine|| action.actionType == ActionType.MineAsteroid)
                     {
                         isMoving = true;
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
                         {
-                            currentUnit.hasMoved = true;
-                            ToggleShieldText(true);
+                            
                             turnValue.text += $"{GetDescription(action.actionType)}";
                             Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
                             yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
-                            ToggleShieldText(false);
                         }
                         else
                         {
@@ -1225,6 +1234,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (IsUnderMaxFleets(currentStation, false))
                         {
+                            currentStation.credits -= actionCost;
                             turnValue.text += $"{GetDescription(action.actionType)}";
                             yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
                         }
@@ -1239,6 +1249,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (CanLevelUp(currentUnit, action.actionType, false))
                         {
+                            currentStation.credits -= actionCost;
                             turnValue.text += $"{GetDescription(action.actionType)}";
                             LevelUpUnit(currentUnit as Fleet);
                         }
@@ -1255,6 +1266,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (CanLevelUp(currentUnit, action.actionType, false))
                         {
+                            currentStation.credits -= actionCost;
                             turnValue.text += $"{GetDescription(action.actionType)}";
                             LevelUpUnit(currentUnit);
                         }
@@ -1271,6 +1283,7 @@ public class GameManager : MonoBehaviour
                     {
                         if (action.selectedModule is object)
                         {
+                            currentStation.credits -= actionCost;
                             turnValue.text += $"Won bid, paid {action.selectedModule.currentBid} credits";
                             currentStation.modules.Add(new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid));
                         }
@@ -1344,27 +1357,16 @@ public class GameManager : MonoBehaviour
                         yield return new WaitForSeconds(1f);
                         currentUnit.selectIcon.SetActive(false);
                     }
-                    else if (action.actionType == ActionType.MineAsteroid)
-                    {
-                        var targetNode = action.selectedPath.Last();
-                        if (GridManager.i.GetNeighbors(currentUnit.currentPathNode).Contains(targetNode))
-                        {
-                            turnValue.text += $"{GetDescription(action.actionType)}";
-                            yield return StartCoroutine(PerformMine(currentUnit, targetNode));
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}, asteroid not nearby";
-                            yield return new WaitForSeconds(1f);
-                        }
-                    }
                     else if (action.actionType == ActionType.GainCredit)
                     {
+                        currentStation.credits -= actionCost;
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         Debug.Log($"Gained 1 credit");
+#if !UNITY_EDITOR
                         currentUnit.selectIcon.SetActive(true);
                         yield return new WaitForSeconds(1f);
                         currentUnit.selectIcon.SetActive(false);
+#endif
                     }
                     else
                     {
@@ -1448,7 +1450,7 @@ public class GameManager : MonoBehaviour
         isEndingTurn = false;
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
-    #endregion
+#endregion
     private void LevelUpUnit(Unit structure)
     {
         if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false))
