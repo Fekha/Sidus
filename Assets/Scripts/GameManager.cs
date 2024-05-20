@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI levelValue;
-    private TextMeshProUGUI shieldValue;
+    private TextMeshProUGUI HPValue;
     private TextMeshProUGUI miningValue;
     private TextMeshProUGUI rangeValue;
     private TextMeshProUGUI PowerValueText;
@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
         highlightParent = GameObject.Find("Highlights").transform;
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
         levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
-        shieldValue = infoPanel.transform.Find("ShieldValue").GetComponent<TextMeshProUGUI>();
+        HPValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         miningValue = infoPanel.transform.Find("MiningValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
         PowerValueText = infoPanel.transform.Find("PowerValue").GetComponent<TextMeshProUGUI>();
@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
     {
         nameValue.text = unit.unitName;
         levelValue.text = unit.level.ToString();
-        shieldValue.text = unit.shield + "/" + unit.maxShield;
+        HPValue.text = unit.HP + "/" + unit.maxHP;
         rangeValue.text = unit.maxRange.ToString();
         var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.stationId == unit.stationId);
         var kineticSupport = 0;
@@ -213,7 +213,7 @@ public class GameManager : MonoBehaviour
             }
             ToggleMineralText(true);
         }
-        ToggleShieldText(true);
+        ToggleHPText(true);
         SetModuleBar(unit);
         infoPanel.gameObject.SetActive(true);
         
@@ -628,11 +628,11 @@ public class GameManager : MonoBehaviour
             asteroid.ShowMineralText(value);
         }
     }
-    private void ToggleShieldText(bool value)
+    private void ToggleHPText(bool value)
     {
         foreach (var station in AllUnits)
         {
-            station.ShowShieldText(value);
+            station.ShowHPText(value);
         }
     }
 
@@ -735,7 +735,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"Resetting UI");
         ToggleMineralText(false);
-        ToggleShieldText(false);
+        ToggleHPText(false);
         UpdateCreateFleetCostText();
         UpdateCreditTotal();
         SetModuleGrid();
@@ -873,7 +873,7 @@ public class GameManager : MonoBehaviour
         fightText.text = "";
         for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
         {
-            if (unitMoving.shield > 0 && unitOnPath.shield > 0)
+            if (unitMoving.HP > 0 && unitOnPath.HP > 0)
                 fightText.text += DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
         }
         ViewFightPanel(true);
@@ -883,7 +883,7 @@ public class GameManager : MonoBehaviour
         }
         unitOnPath.inCombatIcon.SetActive(false);
         unitMoving.selectIcon.SetActive(false);
-        if (unitMoving.shield <= 0)
+        if (unitMoving.HP <= 0)
         {
             Debug.Log($"{unitOnPath.unitName} destroyed {unitMoving.unitName}");
             if (unitMoving is Station)
@@ -900,7 +900,7 @@ public class GameManager : MonoBehaviour
             unitMoving.currentPathNode.structureOnPath = null;
             Destroy(unitMoving.gameObject);
         }
-        if (unitOnPath.shield > 0)
+        if (unitOnPath.HP > 0)
         {
             //even if allied don't move through, don't feel like doing recursive checks right now
             Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
@@ -959,36 +959,36 @@ public class GameManager : MonoBehaviour
             power1Text = s1.thermalPower + (s1sThermal > 0 ? $"(+{s1sThermal})" : "");
             power2Text = s2.thermalPower + (s2sThermal > 0 ? $"(+{s2sThermal})" : "");
         }
-        var returnText = $"\nPhase {(int)type+1}-{type}: \n{s1.color} has {power1Text} Power.\n{s2.color} has {power2Text} Power.\n";
+        var returnText = $"\n<b>Phase {(int)type+1}-{type}:</b> \n{s1.color} has {power1Text} Power and {s2.color} has {power2Text} Power.\n";
         if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
-            s1.shield -= damage;
-            s1.shield = Math.Max(s1.shield, 0);
-            returnText += $"{s1.color} took {damage} damage";
+            s1.HP -= damage;
+            s1.HP = Math.Max(s1.HP, 0);
+            returnText += $"<u>{s1.color}</u> took {damage} damage";
             if (s1Amr != 0)
             {
                 var modifierSymbol = s1Amr > 0 ? "-" : "+";
                 returnText += $", after modules applied {s1Dmg}({modifierSymbol}{Mathf.Abs(s1Amr)}),";
             }
-            returnText += $" and has {s1.shield} shield left. \n";
+            returnText += $" and <u>has {s1.HP} HP</u> left. \n";
         }
         else if (s2Dmg > 0)
         {
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
-            s2.shield -= damage;
-            s2.shield = Math.Max(s2.shield, 0);
-            returnText += $"{s2.color} took {damage} damage";
+            s2.HP -= damage;
+            s2.HP = Math.Max(s2.HP, 0);
+            returnText += $"<u>{s2.color}</u> took {damage} damage";
             if (s2Amr != 0)
             {
                 var modifierSymbol = s2Amr > 0 ? "-" : "+";
                 returnText += $", after modules applied {s2Dmg}({modifierSymbol}{Mathf.Abs(s2Amr)}),";
             }
-            returnText += $" and has {s2.shield} shield left.\n";
+            returnText += $" and <u>has {s2.HP} HP</u> left.\n";
         }
         else
         {
-            returnText += $"Stalemate.\n";
+            returnText += $"<u>Stalemate.</u>\n";
         }
         return returnText;
     }
@@ -1052,7 +1052,7 @@ public class GameManager : MonoBehaviour
         {
             infoToggle = !infoToggle;
             ToggleMineralText(infoToggle);
-            ToggleShieldText(infoToggle);
+            ToggleHPText(infoToggle);
         }
     }
 #region Complete Turn
@@ -1139,7 +1139,7 @@ public class GameManager : MonoBehaviour
                     {
                         asteroid.ReginCredits();
                     }
-                    yield return new WaitForSeconds(.5f);
+                    yield return new WaitForSeconds(1f);
                     FinishTurns();
                 }
             }
@@ -1171,7 +1171,7 @@ public class GameManager : MonoBehaviour
         {
             if (!unit.hasMoved)
             {
-                unit.RegenShield(1);
+                unit.RegenHP(1);
             }
             unit.hasMoved = false;
         }
@@ -1457,8 +1457,8 @@ public class GameManager : MonoBehaviour
         {
             structure.level++;
             structure.maxAttachedModules++;
-            structure.maxShield += 3;
-            structure.shield += 3;
+            structure.maxHP += 3;
+            structure.HP += 3;
             structure.kineticPower++;
             structure.explosivePower++;
             structure.thermalPower++;

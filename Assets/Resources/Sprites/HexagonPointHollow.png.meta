@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f503450615b60eb42975b6616a46e85b
+guid: b2542ed0e040fca49b545bcfd88f4450
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 318592304499528247
-    second: HexagonPointTopWhiteFill_0
+      213: 6518984858732351911
+    second: HexagonPointHollow_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,12 +134,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HexagonPointTopWhiteFill_0
+      name: HexagonPointHollow_0
       rect:
         serializedVersion: 2
-        x: 20
+        x: 11
         y: 0
-        width: 216
+        width: 234
         height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7321ed1530edb6400800000000000000
-      internalID: 318592304499528247
+      spriteID: 7a154e0a036187a50800000000000000
+      internalID: 6518984858732351911
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      HexagonPointTopWhiteFill_0: 318592304499528247
+      HexagonPointHollow_0: 6518984858732351911
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

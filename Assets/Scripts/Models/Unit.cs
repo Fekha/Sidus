@@ -11,8 +11,8 @@ public class Unit : Node
     internal string color;
     internal Guid unitGuid;
     internal int stationId;
-    internal int maxShield;
-    internal int shield;
+    internal int maxHP;
+    internal int HP;
     internal int maxRange;
     internal int range;
     internal int kineticPower;
@@ -26,7 +26,7 @@ public class Unit : Node
     internal bool hasMoved = false;
     //internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
-    internal TextMeshPro shieldText;
+    internal TextMeshPro HPText;
     internal TextMeshPro statText;
     internal GameObject selectIcon;
     internal GameObject inCombatIcon;
@@ -39,8 +39,8 @@ public class Unit : Node
         unitGuid = _unitGuid;
         location = new Coords(_x, _y);
         color = _color;
-        maxShield = _hp;
-        shield = _hp;
+        maxHP = _hp;
+        HP = _hp;
         maxRange = _range;
         range = _range;
         level = _level;
@@ -52,23 +52,23 @@ public class Unit : Node
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
         SetNodeColor();
-        shieldText = transform.Find("Shield").GetComponent<TextMeshPro>();
-        statText = transform.Find("Shield/Stats").GetComponent<TextMeshPro>();
+        HPText = transform.Find("HP").GetComponent<TextMeshPro>();
+        statText = transform.Find("HP/Stats").GetComponent<TextMeshPro>();
         selectIcon = transform.Find("Select").gameObject;
         inCombatIcon = transform.Find("InCombat").gameObject;
         unitImage = this.transform.Find("Unit");
         unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }
-    public void RegenShield(int regen)
+    public void RegenHP(int regen)
     {
-        shield += regen;
-        shield = Mathf.Min(maxShield, shield);
+        HP += regen;
+        HP = Mathf.Min(maxHP, HP);
     }
     public void TakeDamage(int damage)
     {
-        shield -= damage;
-        shield = Mathf.Max(0, shield);
+        HP -= damage;
+        HP = Mathf.Max(0, HP);
     }
     public void SetNodeColor()
     {
@@ -224,11 +224,11 @@ public class Unit : Node
         }
     }
 
-    internal void ShowShieldText(bool value)
+    internal void ShowHPText(bool value)
     {
-        shieldText.text = $"{shield}";
+        HPText.text = $"{HP}";
         statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
-        shieldText.gameObject.SetActive(value);
+        HPText.gameObject.SetActive(value);
     }
     internal ServerUnit ToServerUnit()
     {

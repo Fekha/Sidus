@@ -68,16 +68,16 @@ public class GridManager : MonoBehaviour
         else if (team == 2)
         {
             teamColor = "Orange";
-            spawnX = 2;
+            spawnX = 3;
             spawnY = 1;
-            facing = Direction.BottomRight;
+            facing = Direction.BottomLeft;
         }
         else if (team == 3)
         {
             teamColor = "Purple";
-            spawnX = 5;
+            spawnX = 4;
             spawnY = 6;
-            facing = Direction.TopLeft;
+            facing = Direction.TopRight;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
@@ -162,7 +162,6 @@ public class GridManager : MonoBehaviour
                 int startCredits = 0;
                 int creditRegin = 0;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
-                    if(!((x == 3 && (y == 3 || y == 4)) || (x == 4 && (y == 3 || y == 4))))
                         isAsteroid = (x+y+y)%3 == 0;
                 if (isAsteroid)
                 {
