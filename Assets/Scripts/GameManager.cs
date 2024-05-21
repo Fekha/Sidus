@@ -6,12 +6,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -798,7 +796,7 @@ public class GameManager : MonoBehaviour
                     blockedMovement = true;
                 }
                 float elapsedTime = 0f;
-                float totalTime = .5f;
+                float totalTime = .6f;
                 var toRot = GetDirection(unitMoving, node);
                 var unitImage = unitMoving.transform.Find("Unit");
                 while (elapsedTime <= totalTime)
@@ -821,7 +819,18 @@ public class GameManager : MonoBehaviour
                     yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
                     blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
                 }
-                if (!blockedMovement)
+                if (blockedMovement)
+                {
+                    elapsedTime = 0f;
+                    totalTime = .4f;
+                    while (elapsedTime <= totalTime)
+                    {
+                        unitMoving.transform.position = Vector3.Lerp(node.transform.position, unitMoving.currentPathNode.transform.position, elapsedTime / totalTime);
+                        elapsedTime += Time.deltaTime;
+                        yield return null;
+                    }
+                }
+                else
                 {
                     unitMoving.hasMoved = true;
                     unitMoving.currentPathNode = node;
@@ -1138,7 +1147,7 @@ public class GameManager : MonoBehaviour
                         yield return StartCoroutine(PerformAction(new Action(serverAction)));
                         yield return new WaitForSeconds(.1f);
                     }
-                    turnValue.text = $"Turn {TurnNumber} over.\nAsteroids Regenerating\n";
+                    turnValue.text = $"Turn {TurnNumber} over.";
                     foreach (var asteroid in GridManager.i.AllNodes)
                     {
                         asteroid.ReginCredits();
