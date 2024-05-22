@@ -99,7 +99,6 @@ public class GameManager : MonoBehaviour
     private int currentCredits;
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
-    private bool gameWon = false;
     private bool SubmittedTurn = false;
     //Got game icons from https://game-icons.net/
     private void Awake()
@@ -222,10 +221,10 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !isEndingTurn)
         {
-            if (gameWon)
-            {
-                SceneManager.LoadScene((int)Scene.Lobby);
-            }
+            //if (gameWon)
+            //{
+            //    SceneManager.LoadScene((int)Scene.Lobby);
+            //}
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
             if (hit.collider != null && !isMoving)
@@ -1201,9 +1200,9 @@ public class GameManager : MonoBehaviour
         }
         if (winner != -1)
         {
-            turnValue.text = $"{Stations[winner].color} player won after {TurnNumber + 1} turns";
-            Debug.Log($"{Stations[winner].color} player won after {TurnNumber + 1} turns");
-            gameWon = true;
+            ToggleHPText(true);
+            turnValue.text = $"{Stations[winner].color} player won after {TurnNumber} turns";
+            Debug.Log($"{Stations[winner].color} player won after {TurnNumber} turns");
         }
         else
         {
