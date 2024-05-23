@@ -1264,7 +1264,7 @@ public class GameManager : MonoBehaviour
                         {
                             currentStation.credits -= actionCost;
                             turnValue.text += $"{GetDescription(action.actionType)}";
-                            LevelUpUnit(currentUnit as Fleet);
+                            LevelUpUnit(currentUnit);
                         }
                         else
                         {
@@ -1461,18 +1461,12 @@ public class GameManager : MonoBehaviour
             structure.maxAttachedModules++;
             structure.maxHP += 3;
             structure.HP += 3;
+            structure.kineticPower++;
+            structure.explosivePower++;
+            structure.thermalPower++;
             if (structure is Station)
             {
                 (structure as Station).maxFleets++;
-                structure.kineticPower += 2;
-                structure.explosivePower += 2;
-                structure.thermalPower += 2;
-            }
-            else
-            {
-                structure.kineticPower++;
-                structure.explosivePower++;
-                structure.thermalPower++;
             }
         }
     }

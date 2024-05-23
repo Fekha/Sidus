@@ -33,7 +33,7 @@ public class Unit : Node
     internal Direction facing;
     internal Transform unitImage;
     internal int maxAttachedModules = 1; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, int _level, Guid _unitGuid, int _mining, Direction _direction)
+    public void InitializeStructure(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
     {
         facing = _direction;
         unitGuid = _unitGuid;
@@ -43,7 +43,7 @@ public class Unit : Node
         HP = _hp;
         maxRange = _range;
         range = _range;
-        level = _level;
+        level = 1;
         kineticPower = _electricAttack;
         thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
