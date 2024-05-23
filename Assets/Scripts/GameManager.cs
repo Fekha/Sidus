@@ -1333,9 +1333,6 @@ public class GameManager : MonoBehaviour
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
                             Debug.Log($"No modules on station or max attached modules");
                         }
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
-                        currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.SwapModule)
                     {
@@ -1366,20 +1363,12 @@ public class GameManager : MonoBehaviour
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not attached";
                             Debug.Log($"No Modules attached");
                         }
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
-                        currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.GainCredit)
                     {
                         currentStation.credits -= actionCost;
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         Debug.Log($"Gained 1 credit");
-#if !UNITY_EDITOR
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
-                        currentUnit.selectIcon.SetActive(false);
-#endif
                     }
                     else
                     {
