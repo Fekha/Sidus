@@ -1189,6 +1189,7 @@ public class GameManager : MonoBehaviour
         }
         foreach (var station in Stations)
         {
+            station.credits++;
             station.actions.Clear();
             for (int i = 1; i <= 3; i++)
             {
