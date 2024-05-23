@@ -10,7 +10,7 @@ public class Station : Unit
     internal int maxActions = 2;
     internal int maxFleets = 1; // 1+ station.level
     internal int score = 0;
-    internal int credits = 5;
+    internal int credits = 6;
     internal bool defeated = false;
     internal int fleetCount = 0;
 
@@ -19,6 +19,6 @@ public class Station : Unit
         stationId = GameManager.i.Stations.Count;
         unitName = $"{_color} Station";
         GameManager.i.Stations.Add(this);
-        InitializeStructure(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 4, _direction);
+        InitializeStructure(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _direction);
     }
 }

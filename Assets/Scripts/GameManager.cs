@@ -172,7 +172,7 @@ public class GameManager : MonoBehaviour
         SupportValueText.text = $"{kineticSupport}|{thermalSupport}|{explosiveSupport}";
         DamageTakenValueText.text = "None";
         if (unit.attachedModules.Count > 0) {
-            DamageTakenValueText.text = unit.attachedModules[0].effectText.Replace("\n", ",");
+            DamageTakenValueText.text = unit.attachedModules[0].effectText.Replace(" \n", ",");
             for(int i = 1;i<unit.attachedModules.Count;i++)
             {
                 DamageTakenValueText.text += $"\n {unit.attachedModules[i].effectText.Replace(" \n",",")}";
@@ -698,15 +698,15 @@ public class GameManager : MonoBehaviour
         {
             if (station.fleets.Count <= 0)
                 return 0;
-            return (5 + ((station.fleets.Count-1 + countingQueue) * 3)); //5,8,11
+            return (station.fleets.Count + countingQueue) * (6 - (station.fleets.Count + countingQueue)); //5,8,9
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return (6 + ((structure.level-1 + countingQueue) * 4)); //6,10,14
+            return (structure.level + countingQueue) * (7 - (structure.level + countingQueue)); //6,10,12
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return (10 + ((structure.level-1 + countingQueue) * 5)); //10,15,20
+            return (structure.level + countingQueue) * (9 - (structure.level + countingQueue)); //8,14,18
         }
         else if (actionType == ActionType.GenerateModule)
         {
