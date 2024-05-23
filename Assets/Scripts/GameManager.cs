@@ -1535,7 +1535,7 @@ public class GameManager : MonoBehaviour
                 
             } else {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
-                int k = i-2;
+                int k = i-1;
                 ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(k));
             }
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
