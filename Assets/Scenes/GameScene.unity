@@ -375,7 +375,6 @@ MonoBehaviour:
   readyToSeeTurnsPanel: {fileID: 1100006666}
   moduleMarket: {fileID: 866062589}
   asteroidPanel: {fileID: 1898863585}
-  UISprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   ActionBar: {fileID: 1538388384}
   StructureModuleBar: {fileID: 2084846243}
   ModuleGrid: {fileID: 1330887038}
@@ -13372,10 +13371,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodePrefab: {fileID: 7058775101325988351, guid: 44f977c7fda6b36439c2aa32ad336618, type: 3}
-  playerPrefab: {fileID: 6217036810452598218, guid: 47d65aa2e09c80c4dbdf1949c32c970c, type: 3}
-  playerStationPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
+  unitPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
   playerColors: []
   tileColors: []
+  stationlvl1: {fileID: 21300000, guid: c464a92b5c585f249b7b433e7c9c8fe7, type: 3}
+  fleetlvl1: {fileID: 21300000, guid: df1c42e0bc2dd7b45b1b449f1320724b, type: 3}
+  fleetlvl2: {fileID: 21300000, guid: 5aeb23cdc29f2ec46abc77ba6a20f8ab, type: 3}
+  fleetlvl3: {fileID: 21300000, guid: ff06a7f808a422b4e899854ec662de8d, type: 3}
+  fleetlvl4: {fileID: 21300000, guid: e594e1c6e132c1d4f840f741721af5f4, type: 3}
 --- !u!1 &1765080334
 GameObject:
   m_ObjectHideFlags: 0

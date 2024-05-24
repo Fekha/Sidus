@@ -33,7 +33,6 @@ public class GameManager : MonoBehaviour
     public GameObject readyToSeeTurnsPanel;
     public GameObject moduleMarket;
     public GameObject asteroidPanel;
-    public Sprite UISprite;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
     private List<PathNode> SelectedPath;
@@ -1457,20 +1456,36 @@ public class GameManager : MonoBehaviour
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
 #endregion
-    private void LevelUpUnit(Unit structure)
+    private void LevelUpUnit(Unit unit)
     {
-        if (CanLevelUp(structure, structure is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false))
+        if (CanLevelUp(unit, unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false))
         {
-            structure.level++;
-            structure.maxAttachedModules++;
-            structure.maxHP += 3;
-            structure.HP += 3;
-            structure.kineticPower++;
-            structure.explosivePower++;
-            structure.thermalPower++;
-            if (structure is Station)
+            unit.level++;
+            unit.maxAttachedModules++;
+            unit.maxHP += 3;
+            unit.HP += 3;
+            unit.kineticPower++;
+            unit.explosivePower++;
+            unit.thermalPower++;
+            if (unit is Station)
             {
-                (structure as Station).maxFleets++;
+                (unit as Station).maxFleets++;
+            }
+            else
+            {
+                var spriteRenderer = unit.transform.Find("Unit").GetComponent<SpriteRenderer>();
+                if (unit.level == 2)
+                {
+                    spriteRenderer.sprite = GridManager.i.fleetlvl2;
+                }
+                else if (unit.level == 3)
+                {
+                    spriteRenderer.sprite = GridManager.i.fleetlvl3;
+                }
+                else if (unit.level == 4)
+                {
+                    spriteRenderer.sprite = GridManager.i.fleetlvl4;
+                }
             }
         }
     }

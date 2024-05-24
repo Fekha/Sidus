@@ -8,8 +8,7 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager i;
     public GameObject nodePrefab;
-    public GameObject playerPrefab;
-    public GameObject playerStationPrefab;
+    public GameObject unitPrefab;
     private Vector3 cellPrefabSize;
     private Transform characterParent;
     internal PathNode[,] grid;
@@ -19,7 +18,11 @@ public class GridManager : MonoBehaviour
     public List<Color> tileColors;
     internal List<PathNode> AllNodes = new List<PathNode>();
     internal bool DoneLoading = false;
-
+    public Sprite stationlvl1;
+    public Sprite fleetlvl1;
+    public Sprite fleetlvl2;
+    public Sprite fleetlvl3;
+    public Sprite fleetlvl4;
     private void Awake()
     {
         i = this;
@@ -46,8 +49,10 @@ public class GridManager : MonoBehaviour
     {
         var stationOfClient = team == Globals.localStationIndex;
         string teamColor = "Blue";
-        GameObject stationPrefab = playerStationPrefab;
-        stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>().color = playerColors[team];
+        GameObject stationPrefab = unitPrefab;
+        SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
+        unitSprite.sprite = stationlvl1;
+        unitSprite.color = playerColors[team];
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
         if (!Globals.IsCPUGame || team == 0)
@@ -88,10 +93,10 @@ public class GridManager : MonoBehaviour
 
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn, Coords coords = null)
     {
-        GameObject fleetPrefab = playerPrefab;
-        fleetPrefab.transform.Find("Unit/Unit1").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
-        fleetPrefab.transform.Find("Unit/Unit2").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
-        fleetPrefab.transform.Find("Unit/Unit3").GetComponent<SpriteRenderer>().color = playerColors[stationNode.stationId];
+        GameObject fleetPrefab = unitPrefab;
+        SpriteRenderer unitSprite = fleetPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
+        unitSprite.sprite = fleetlvl1;
+        unitSprite.color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
         var startIndex = 0;
         if (coords == null)

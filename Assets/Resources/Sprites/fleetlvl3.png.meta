@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 6251767dc54937c419f9f75a39a4209c
+guid: ff06a7f808a422b4e899854ec662de8d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1825700319286870186
-    second: station_0
+      213: -1799051500465509683
+    second: shiplvl3_0
+  - first:
+      213: 4136232801881592852
+    second: shiplvl3_1
+  - first:
+      213: -3724141421539757461
+    second: shiplvl3_2
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -46,12 +52,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 256
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -134,13 +140,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: station_0
+      name: shiplvl3_0
       rect:
         serializedVersion: 2
-        x: 9
-        y: 9
-        width: 524
-        height: 517
+        x: 75
+        y: 128
+        width: 108
+        height: 109
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +154,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aa0496574c0365910800000000000000
-      internalID: 1825700319286870186
+      spriteID: dcaae1e213c7807e0800000000000000
+      internalID: -1799051500465509683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shiplvl3_1
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 15
+        width: 108
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 414987091d9d66930800000000000000
+      internalID: 4136232801881592852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: shiplvl3_2
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 14
+        width: 109
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b62fdc3cb11315cc0800000000000000
+      internalID: -3724141421539757461
       vertices: []
       indices: 
       edges: []
@@ -157,7 +205,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -165,7 +213,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      station_0: 1825700319286870186
+      shiplvl3_0: -1799051500465509683
+      shiplvl3_1: 4136232801881592852
+      shiplvl3_2: -3724141421539757461
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
