@@ -1207,6 +1207,7 @@ public class GameManager : MonoBehaviour
             ToggleHPText(true);
             turnValue.text = $"{Stations[winner].color} player won after {TurnNumber} turns";
             Debug.Log($"{Stations[winner].color} player won after {TurnNumber} turns");
+            //Add EOG Stats
         }
         else
         {
@@ -1227,7 +1228,7 @@ public class GameManager : MonoBehaviour
                 var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
                 if (currentStation.credits >= actionCost)
                 {
-                    if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine|| action.actionType == ActionType.MineAsteroid)
+                    if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid)
                     {
                         isMoving = true;
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())

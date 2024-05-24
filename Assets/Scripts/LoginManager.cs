@@ -138,7 +138,7 @@ public class LoginManager : MonoBehaviour
             Globals.GameMatch = game;
             MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
-            UpdateGameStatus(game);
+            UpdateGameStatus(game.GameTurns[0]);
             StartCoroutine(CheckIfGameHasStarted());
         }
     }
@@ -152,7 +152,7 @@ public class LoginManager : MonoBehaviour
     {
         while (PlayersNeeded() != 0)
         {
-            yield return StartCoroutine(sql.GetRoutine<GameMatch>($"Game/HasGameStarted?GameGuid={Globals.GameMatch.GameGuid}", UpdateGameStatus));
+            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber=0", UpdateGameStatus));
         }
     }
 
@@ -161,9 +161,9 @@ public class LoginManager : MonoBehaviour
         return Globals.GameMatch.MaxPlayers - (Globals.GameMatch?.GameTurns?[0]?.Players?.Count(x => x != null) ?? 0);
     }
 
-    private void UpdateGameStatus(GameMatch gameMatch)
+    private void UpdateGameStatus(GameTurn gameTurn)
     {
-        Globals.GameMatch = gameMatch;
+        Globals.GameMatch.GameTurns[0] = gameTurn;
         if (PlayersNeeded() == 0) {
             for (int i = 0; i < Globals.GameMatch.GameTurns[0].Players.Length; i++)
             {

@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using static GameManager;
 
 public class PathNode : MonoBehaviour
 {
@@ -27,7 +26,7 @@ public class PathNode : MonoBehaviour
     public PathNode parent;
 
     public int ownedById;
-    public void InitializeNode(int _x, int _y, bool _isAsteroid, int _startCredits, int _maxCredits, int _creditRegin)
+    public void InitializeNode(int _x, int _y, int _startCredits, int _maxCredits, int _creditRegin)
     {
         maxCredits = _maxCredits;
         currentCredits = _startCredits;

@@ -34,7 +34,7 @@ public class Unit : Node
     internal Direction facing;
     internal Transform unitImage;
     internal int maxAttachedModules = 1; // 1+ station.level
-    public void InitializeStructure(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
+    public void InitializeUnit(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
     {
         facing = _direction;
         unitGuid = _unitGuid;
@@ -99,7 +99,12 @@ public class Unit : Node
     {
         movement -= i;
     }
-
+    internal void ShowHPText(bool value)
+    {
+        HPText.text = $"{HP}";
+        statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+        HPText.gameObject.SetActive(value);
+    }
     internal void EditModule(int id, int modifer = 1)
     {
         switch (id)
@@ -298,12 +303,6 @@ public class Unit : Node
         }
     }
 
-    internal void ShowHPText(bool value)
-    {
-        HPText.text = $"{HP}";
-        statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
-        HPText.gameObject.SetActive(value);
-    }
     internal ServerUnit ToServerUnit()
     {
         return new ServerUnit()

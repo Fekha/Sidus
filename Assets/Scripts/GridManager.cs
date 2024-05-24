@@ -50,7 +50,6 @@ public class GridManager : MonoBehaviour
     }
     private void CreateStation(int team)
     {
-        var stationOfClient = team == Globals.localStationIndex;
         string teamColor = "Blue";
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
@@ -181,7 +180,7 @@ public class GridManager : MonoBehaviour
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
                 grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, isAsteroid, startCredits, maxCredits, creditRegin);
+                grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin);
             }
         }
     }

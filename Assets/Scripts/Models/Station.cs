@@ -19,6 +19,6 @@ public class Station : Unit
         stationId = GameManager.i.Stations.Count;
         unitName = $"{_color} Station";
         GameManager.i.Stations.Add(this);
-        InitializeStructure(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _direction);
+        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _direction);
     }
 }
