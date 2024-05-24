@@ -1467,13 +1467,25 @@ public class GameManager : MonoBehaviour
             unit.kineticPower++;
             unit.explosivePower++;
             unit.thermalPower++;
+            var spriteRenderer = unit.transform.Find("Unit").GetComponent<SpriteRenderer>();
             if (unit is Station)
             {
                 (unit as Station).maxFleets++;
+                if (unit.level == 2)
+                {
+                    spriteRenderer.sprite = GridManager.i.stationlvl2;
+                }
+                else if (unit.level == 3)
+                {
+                    spriteRenderer.sprite = GridManager.i.stationlvl3;
+                }
+                else if (unit.level == 4)
+                {
+                    spriteRenderer.sprite = GridManager.i.stationlvl4;
+                }
             }
             else
             {
-                var spriteRenderer = unit.transform.Find("Unit").GetComponent<SpriteRenderer>();
                 if (unit.level == 2)
                 {
                     spriteRenderer.sprite = GridManager.i.fleetlvl2;

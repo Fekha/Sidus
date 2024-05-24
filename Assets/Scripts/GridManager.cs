@@ -19,6 +19,9 @@ public class GridManager : MonoBehaviour
     internal List<PathNode> AllNodes = new List<PathNode>();
     internal bool DoneLoading = false;
     public Sprite stationlvl1;
+    public Sprite stationlvl2;
+    public Sprite stationlvl3;
+    public Sprite stationlvl4;
     public Sprite fleetlvl1;
     public Sprite fleetlvl2;
     public Sprite fleetlvl3;

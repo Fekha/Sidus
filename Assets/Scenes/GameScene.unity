@@ -13374,7 +13374,10 @@ MonoBehaviour:
   unitPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
   playerColors: []
   tileColors: []
-  stationlvl1: {fileID: 21300000, guid: c464a92b5c585f249b7b433e7c9c8fe7, type: 3}
+  stationlvl1: {fileID: 21300000, guid: 70176c54dbf41024ea22dae400ddbec8, type: 3}
+  stationlvl2: {fileID: 21300000, guid: 4d196c133cc9b8d46b41ba8203a4774e, type: 3}
+  stationlvl3: {fileID: 21300000, guid: 64b3b380f66d3f54681f34bd14d3a4bf, type: 3}
+  stationlvl4: {fileID: 21300000, guid: 668237ce132b312449d6f9eb69bc5aee, type: 3}
   fleetlvl1: {fileID: 21300000, guid: df1c42e0bc2dd7b45b1b449f1320724b, type: 3}
   fleetlvl2: {fileID: 21300000, guid: 5aeb23cdc29f2ec46abc77ba6a20f8ab, type: 3}
   fleetlvl3: {fileID: 21300000, guid: ff06a7f808a422b4e899854ec662de8d, type: 3}
