@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bb7d438b81940874eadb70dbfbfc0985
+guid: 415f5c343f774734a8b9aeb77e1d4698
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -794825011739804795
-    second: mecha-head_0
+      213: -5833737085837587961
+    second: summits_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: mecha-head_0
+      name: summits_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 58b37acecd638f4f0800000000000000
-      internalID: -794825011739804795
+      spriteID: 70ac0a567076a0fa0800000000000000
+      internalID: -5833737085837587961
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      mecha-head_0: -794825011739804795
+      summits_0: -5833737085837587961
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

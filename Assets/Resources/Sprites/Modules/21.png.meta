@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b6e13ead7c5c52845b1ff5ad36b6dd78
+guid: 298483f8687be5c42be2f67b38593ea9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4044069508101983032
-    second: materials-science_0
+      213: 5116624461249155431
+    second: hawk-emblem_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: materials-science_0
+      name: hawk-emblem_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 83b486d8acb6f1830800000000000000
-      internalID: 4044069508101983032
+      spriteID: 76194d5a6d6e10740800000000000000
+      internalID: 5116624461249155431
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      materials-science_0: 4044069508101983032
+      hawk-emblem_0: 5116624461249155431
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dbb62f6a79faebe469bc486b9a52a04f
+guid: ee293c033208632418714e8743521e29
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -205246777197809458
-    second: sea-urchin_0
+      213: 3278798246893570284
+    second: stone-pile_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sea-urchin_0
+      name: stone-pile_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ec0b4d1c421d62df0800000000000000
-      internalID: -205246777197809458
+      spriteID: ce8c34c32a1a08d20800000000000000
+      internalID: 3278798246893570284
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      sea-urchin_0: -205246777197809458
+      stone-pile_0: 3278798246893570284
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

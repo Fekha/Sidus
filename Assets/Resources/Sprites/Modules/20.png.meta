@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f409c49681c41344f975884eac79aa51
+guid: 6a7938d32505b0942926849ac04afdef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8418972618800335264
-    second: cryo-chamber_0
+      213: -5710252729855511063
+    second: distraction_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cryo-chamber_0
+      name: distraction_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0667aa2420dc92b80800000000000000
-      internalID: -8418972618800335264
+      spriteID: 9e5f14b756b11c0b0800000000000000
+      internalID: -5710252729855511063
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      cryo-chamber_0: -8418972618800335264
+      distraction_0: -5710252729855511063
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

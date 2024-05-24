@@ -790,7 +790,7 @@ public class GameManager : MonoBehaviour
                         }
                     }
                 }
-                if (unitMoving.range < 0)
+                if (unitMoving.movement < 0)
                 {
                     blockedMovement = true;
                 }
@@ -813,7 +813,7 @@ public class GameManager : MonoBehaviour
                     blockedMovement = node.isAsteroid;
                 }
                 //if enemy, attack, if you didn't destroy them, stay blocked and move back
-                if (unitMoving.range >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
+                if (unitMoving.movement >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
                 {
                     yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
                     blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
@@ -833,6 +833,10 @@ public class GameManager : MonoBehaviour
                 {
                     unitMoving.hasMoved = true;
                     unitMoving.currentPathNode = node;
+                    if (node.structureOnPath != null && node.structureOnPath.unitGuid != unitMoving.unitGuid && node.structureOnPath.stationId == unitMoving.stationId)
+                    {
+                        node.structureOnPath.RegenHP(1);
+                    }
                 }
                 if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
                     || unitMoving.currentPathNode.ownedById == -1
@@ -1189,7 +1193,7 @@ public class GameManager : MonoBehaviour
         }
         foreach (var station in Stations)
         {
-            station.credits++;
+            station.credits += 1+station.fleets.Sum(x=>x.globalCreditGain);
             station.actions.Clear();
             for (int i = 1; i <= 3; i++)
             {

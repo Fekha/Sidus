@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d6964a1caa0391d4384c5855f304dda6
+guid: dea5ec1be2ca302408f19333f5361ad9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3229644926043961861
-    second: space-shuttle_0
+      213: 4651942541743997801
+    second: hummingbird_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: space-shuttle_0
+      name: hummingbird_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bf5c1881d0ffd23d0800000000000000
-      internalID: -3229644926043961861
+      spriteID: 963cd2c38150f8040800000000000000
+      internalID: 4651942541743997801
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      space-shuttle_0: -3229644926043961861
+      hummingbird_0: 4651942541743997801
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6a6d0e297f44dfd45809804485379a9e
+guid: bb7d438b81940874eadb70dbfbfc0985
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4193660145333575312
-    second: tesla-coil_0
+      213: -794825011739804795
+    second: mecha-head_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tesla-coil_0
+      name: mecha-head_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 09e1257eeafd23a30800000000000000
-      internalID: 4193660145333575312
+      spriteID: 58b37acecd638f4f0800000000000000
+      internalID: -794825011739804795
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      tesla-coil_0: 4193660145333575312
+      mecha-head_0: -794825011739804795
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

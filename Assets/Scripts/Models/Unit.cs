@@ -14,7 +14,7 @@ public class Unit : Node
     internal int maxHP;
     internal int HP;
     internal int maxRange;
-    internal int range;
+    internal int movement;
     internal int kineticPower;
     internal int thermalPower;
     internal int explosivePower;
@@ -22,7 +22,8 @@ public class Unit : Node
     internal int thermalArmor;
     internal int explosiveArmor;
     internal int mining;
-    internal int level;
+    internal int level = 1;
+    internal int globalCreditGain = 0;
     internal bool hasMoved = false;
     //internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
@@ -42,8 +43,7 @@ public class Unit : Node
         maxHP = _hp;
         HP = _hp;
         maxRange = _range;
-        range = _range;
-        level = 1;
+        movement = _range;
         kineticPower = _electricAttack;
         thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
@@ -77,17 +77,17 @@ public class Unit : Node
     }
     internal void resetMovementRange()
     {
-        range = maxRange;
+        movement = maxRange;
     }
 
     internal void clearMovementRange()
     {
-        range = 0;
+        movement = 0;
     }
 
     internal int getMovementRange()
     {
-        return range;
+        return movement;
     }
 
     internal int getMaxMovementRange()
@@ -97,7 +97,7 @@ public class Unit : Node
 
     internal void subtractMovement(int i)
     {
-        range -= i;
+        movement -= i;
     }
 
     internal void EditModule(int id, int modifer = 1)
@@ -105,29 +105,32 @@ public class Unit : Node
         switch (id)
         {
             case 0:
-                explosivePower += (2 * modifer);
-                thermalArmor += (2 * modifer);
+                kineticPower += (3 * modifer);
+                thermalArmor += (-1 * modifer);
                 break;
             case 1:
-                thermalPower += (2 * modifer);
-                explosiveArmor += (2 * modifer);
+                thermalPower += (3 * modifer);
+                maxHP += (1 * modifer);
+                HP += (1 * modifer);
                 break;
             case 2:
                 explosivePower += (3 * modifer);
-                kineticArmor += (-1 * modifer);
+                kineticArmor += (1 * modifer);
                 break;
             case 3:
                 maxRange += (1 * modifer);
-                range += (1 * modifer);
-                explosivePower += (-1 * modifer);
+                movement += (1 * modifer);
+                kineticPower += (-1 * modifer);
                 break;
             case 4:
-                mining += (3 * modifer);
-                explosiveArmor += (1 * modifer);
+                maxRange += (1 * modifer);
+                movement += (1 * modifer);
+                thermalPower += (-1 * modifer);
                 break;
             case 5:
-                thermalPower += (1 * modifer);
-                explosivePower += (2 * modifer);
+                maxRange += (1 * modifer);
+                movement += (1 * modifer);
+                explosivePower += (-1 * modifer);
                 break;
             case 6:
                 kineticPower += (2 * modifer);
@@ -138,86 +141,157 @@ public class Unit : Node
                 thermalPower += (2 * modifer);
                 break;
             case 8:
+                kineticPower += (-1 * modifer);
                 explosivePower += (4 * modifer);
-                kineticPower += (1 * modifer);
                 break;
             case 9:
                 kineticPower += (3 * modifer);
-                thermalArmor += (-1 * modifer);
+                explosiveArmor += (-1 * modifer);
                 break;
             case 10:
-                thermalPower += (3 * modifer);
+                explosivePower += (3 * modifer);
+                kineticArmor += (1 * modifer);
                 break;
             case 11:
                 kineticPower += (1 * modifer);
-                explosivePower += (2 * modifer);
+                thermalPower += (1 * modifer);
+                explosivePower += (1 * modifer);
                 break;
             case 12:
-                thermalPower += (1 * modifer);
-                explosivePower += (2 * modifer);
+                thermalPower += (2 * modifer);
+                explosivePower += (1 * modifer);
                 break;
             case 13:
-                explosivePower += (3 * modifer);
-                thermalArmor += (-1 * modifer);
+                mining += (3 * modifer);
+                kineticArmor += (2 * modifer);
                 break;
             case 14:
-                maxRange += (1 * modifer);
-                range += (1 * modifer);
-                kineticPower += (-1 * modifer);
+                mining += (3 * modifer);
+                thermalArmor += (2 * modifer);
                 break;
             case 15:
                 mining += (3 * modifer);
-                kineticArmor += (1 * modifer);
+                explosiveArmor += (2 * modifer);
                 break;
             case 16:
                 kineticPower += (3 * modifer);
-                explosivePower += (2 * modifer);
                 thermalPower += (-2 * modifer);
+                explosivePower += (2 * modifer);
                 break;
             case 17:
-                kineticPower += (3 * modifer);
-                thermalPower += (2 * modifer);
+                kineticPower += (2 * modifer);
+                thermalPower += (3 * modifer);
                 explosivePower += (-2 * modifer);
                 break;
             case 18:
-                thermalPower += (2 * modifer);
-                explosivePower += (3 * modifer);
-                kineticPower += (-2 * modifer); 
+                kineticPower += (-2 * modifer);
+                thermalPower += (4 * modifer);
+                explosivePower += (1 * modifer);
                 break;
             case 19:
-                explosivePower += (5 * modifer);
                 thermalPower += (-2 * modifer);
-                kineticArmor += (-1 * modifer);
+                explosivePower += (4 * modifer);
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
                 break;
             case 20:
                 maxRange += (1 * modifer);
-                range += (1 * modifer);
+                movement += (1 * modifer);
                 kineticArmor += (-2 * modifer); 
                 break;
             case 21:
                 maxRange += (1 * modifer);
-                range += (1 * modifer);
-                explosiveArmor += (-2 * modifer);
+                movement += (1 * modifer);
+                thermalArmor += (-2 * modifer);
                 break;
             case 22:
                 maxRange += (1 * modifer);
-                range += (1 * modifer);
-                thermalArmor += (-2 * modifer);
+                movement += (1 * modifer);
+                explosiveArmor += (-2 * modifer);
                 break;
             case 23:
-                explosivePower += (1 * modifer);
-                thermalArmor += (2 * modifer);
-                kineticArmor += (2 * modifer);
-                break;
-            case 24:
                 kineticPower += (1 * modifer);
                 thermalArmor += (2 * modifer);
                 explosiveArmor += (2 * modifer);
                 break;
-            case 25:
+            case 24:
                 thermalPower += (1 * modifer);
                 explosiveArmor += (2 * modifer);
                 kineticArmor += (2 * modifer);
+                break;
+            case 25:
+                explosivePower += (1 * modifer);
+                kineticArmor += (2 * modifer);
+                thermalArmor += (2 * modifer);
+                break;
+            case 26:
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
+                kineticArmor += (-2 * modifer);
+                break;
+            case 27:
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
+                thermalArmor += (-2 * modifer);
+                break;
+            case 28:
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
+                explosiveArmor += (-2 * modifer);
+                break;
+            case 29:
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
+                kineticPower += (1 * modifer);
+                break;
+            case 30:
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
+                thermalPower += (1 * modifer);
+                break;
+            case 31:
+                maxHP += (3 * modifer);
+                HP += (3 * modifer);
+                explosivePower += (1 * modifer);
+                break;  
+            case 32:
+                globalCreditGain += (1 * modifer);
+                explosivePower += (-2 * modifer);
+                break; 
+            case 33:
+                globalCreditGain += (2 * modifer);
+                mining += (-2 * modifer);
+                break; 
+            case 34:
+                globalCreditGain += (3 * modifer);
+                movement += (-2 * modifer);
+                break;
+            case 35:
+                mining += (3 * modifer);
+                kineticPower += (1 * modifer);
+                break; 
+            case 36:
+                mining += (3 * modifer);
+                thermalPower += (1 * modifer);
+                break; 
+            case 37:
+                mining += (3 * modifer);
+                explosivePower += (1 * modifer);
+                break;
+            case 38:
+                kineticPower += (5 * modifer);
+                thermalPower += (-2 * modifer);
+                explosiveArmor += (-4 * modifer);
+                break;
+            case 39:
+                thermalPower += (5 * modifer);
+                explosivePower += (-2 * modifer);
+                kineticArmor += (-3 * modifer);
+                break;
+            case 40:
+                kineticPower += (-2 * modifer);
+                explosivePower += (5 * modifer);
+                thermalArmor += (-2 * modifer);
                 break;
             default:
                 break;
