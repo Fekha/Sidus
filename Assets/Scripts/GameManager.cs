@@ -914,17 +914,16 @@ public class GameManager : MonoBehaviour
                 s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * .5));
             }
         }
-        fightText.text = "";
+        var beforeText = turnValue.text;
         for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
         {
             if (unitMoving.HP > 0 && unitOnPath.HP > 0)
             {
-                fightText.text = DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
-                ViewFightPanel(true);
+                turnValue.text = DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
                 yield return StartCoroutine(WaitforSecondsOrTap(1));
             }
         }
-        ViewFightPanel(false);
+        turnValue.text = beforeText;
         unitOnPath.inCombatIcon.SetActive(false);
         unitMoving.selectIcon.SetActive(false);
         if (unitMoving.HP <= 0)
@@ -1010,36 +1009,47 @@ public class GameManager : MonoBehaviour
             power1Text = $"{s1.thermalPower + s1sThermal}";
             power2Text = $"{s2.thermalPower + s2sThermal}";
         }
-        var returnText = $"\n<b>Phase {(int)type+1}-{type}:</b> \n\n{s1.color} has {power1Text} Power{support1Text}.\n{s2.color} has {power2Text} Power{support2Text}.\n\n";
+        var returnText = "";
         if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
             s1.HP -= damage;
             s1.HP = Math.Max(s1.HP, 0);
-            returnText += $"<u>{s1.color} took {damage} damage</u>";
+            returnText += $"<u><b>{s1.color} took {damage} damage</u></b> and has {s1.HP} HP left.";
             if (s1Amr != 0)
             {
                 var modifierSymbol = s1Amr > 0 ? "-" : "+";
-                returnText += $"({s1Dmg} base {modifierSymbol}{Mathf.Abs(s1Amr)} from modules)";
+                returnText += $"\n({s1Dmg} base damage {modifierSymbol}{Mathf.Abs(s1Amr)} from modules)";
             }
-            returnText += $" and has {s1.HP} HP left.\n";
         }
         else if (s2Dmg > 0)
         {
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
             s2.HP -= damage;
             s2.HP = Math.Max(s2.HP, 0);
-            returnText += $"<u>{s2.color} took {damage} damage</u>";
+            returnText += $"<u><b>{s2.color} took {damage} damage</u></b> and has {s2.HP} HP left.";
             if (s2Amr != 0)
             {
                 var modifierSymbol = s2Amr > 0 ? "-" : "+";
-                returnText += $"({s2Dmg} base {modifierSymbol}{Mathf.Abs(s2Amr)} from modules)";
+                returnText += $"\n({s2Dmg} base damage {modifierSymbol}{Mathf.Abs(s2Amr)} from modules)";
             }
-            returnText += $" and has {s2.HP} HP left.\n";
         }
         else
         {
-            returnText += $"<u>Stalemate.</u>\n";
+            returnText += $"<u><b>Niether unit took damage.</u></b>";
+        }
+        returnText += $"\n\n{s1.color} had {power1Text} Power{support1Text}.\n{s2.color} had {power2Text} Power{support2Text}.\n\nPhase:\n";
+        if (type is AttackType.Kinetic)
+        {
+            returnText += $"<b>Kinetic</b> Thermal Explosive";
+        }
+        else if (type is AttackType.Thermal)
+        {
+            returnText += $"Kinetic <b>Thermal</b> Explosive";
+        }
+        else
+        {
+            returnText += $"Kinetic Thermal <b>Explosive</b>";
         }
         return returnText;
     }
@@ -1281,7 +1291,7 @@ public class GameManager : MonoBehaviour
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                             Debug.Log("Out of range or no longer exists.");
                         }
-                        turnTapText.SetActive(true);
+                        
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         isMoving = false;
                         if(currentUnit != null && AllUnits.Contains(currentUnit))
@@ -1444,6 +1454,7 @@ public class GameManager : MonoBehaviour
     {
         float elapsedTime = 0f;
         float totalTime = time;
+        turnTapText.SetActive(true);
         tapped = false;
         while (!tapped)
         {
