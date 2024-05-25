@@ -41,11 +41,14 @@ public class GameManager : MonoBehaviour
     public Transform StructureModuleBar;
     public Transform ModuleGrid;
     public Transform SelectedModuleGrid;
+    public Transform turnOrder;
 
     public Sprite lockActionBar;
     public Sprite lockModuleBar;
     public Sprite attachModuleBar;
     public Sprite emptyModuleBar;
+    public Sprite unReadyCircle;
+    public Sprite readyCircle;
 
     private PathNode SelectedNode;
     private Unit SelectedUnit;
@@ -124,6 +127,30 @@ public class GameManager : MonoBehaviour
         ColorText.text = $"You are {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
         StartTurn();
+        StartCoroutine(GetTurnReadiness());
+    }
+
+    private IEnumerator GetTurnReadiness()
+    {
+        while (!Globals.IsCPUGame)
+        {
+            while (!isEndingTurn)
+            {
+                yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", UpdateGameTurnStatus));
+                yield return new WaitForSeconds(.1f);
+            }
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+    private void UpdateGameTurnStatus(GameTurn turn)
+    {
+        if (turn != null) {
+            for(int i = 0; i < turn.Players.Length; i++)
+            {
+                turnOrder.Find($"TurnOrder{i}").GetComponent<Image>().sprite = turn.Players[(TurnNumber - 1 + i) % turn.Players.Length] == null ? unReadyCircle : readyCircle;
+            }
+        }
     }
 
     private void FindUI()
@@ -815,6 +842,8 @@ public class GameManager : MonoBehaviour
                 if (unitMoving.movement >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
                 {
                     yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
+                    if (unitMoving == null || !AllUnits.Contains(unitMoving))
+                        break;
                     blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
                 }
                 if (blockedMovement)
@@ -850,10 +879,13 @@ public class GameManager : MonoBehaviour
             else
             {
                 Debug.Log("Next Hex was not a neighbor");
-            }  
+            }
         }
-        unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
-        unitMoving.currentPathNode.structureOnPath = unitMoving;
+        if (unitMoving != null && AllUnits.Contains(unitMoving))
+        {
+            unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
+            unitMoving.currentPathNode.structureOnPath = unitMoving;
+        }
     }
 
     internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
@@ -1134,6 +1166,7 @@ public class GameManager : MonoBehaviour
         if (SubmittedTurn)
         {
             SubmittedTurn = false;
+            //turnOrder.Find($"TurnOrder{(Stations.Count-1 - ((TurnNumber - 1 + MyStation.stationId) % Stations.Count) % (Stations.Count - 1))}").GetComponent<Image>().sprite = readyCircle;
             endTurnButton.color = Color.blue;
             if (!isWaitingForTurns)
             {
@@ -1245,7 +1278,8 @@ public class GameManager : MonoBehaviour
                             yield return new WaitForSeconds(1f);
                         }
                         isMoving = false;
-                        currentUnit.resetMovementRange();
+                        if(currentUnit != null && AllUnits.Contains(currentUnit))
+                            currentUnit.resetMovementRange();
                     }
                     else if (action.actionType == ActionType.CreateFleet)
                     {
@@ -1444,10 +1478,14 @@ public class GameManager : MonoBehaviour
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
         TurnOrderText.text = $"Turn Order: ";
-        for (int i = 0; i < Stations.Count; i++)
+        for (int i = 0; i < 4; i++)
         {
-            TurnOrderText.text += Stations[(TurnNumber-1+i) % Stations.Count].color;
-            TurnOrderText.text += i == Stations.Count - 1 ? "." : ", ";
+            var orderObj = turnOrder.Find($"TurnOrder{i}").GetComponent<Image>();
+            orderObj.sprite = unReadyCircle;
+            if (Stations.Count > i)
+                orderObj.transform.Find($"Color").GetComponent<Image>().color = GridManager.i.playerColors[(TurnNumber - 1 + i) % Stations.Count];
+            else
+                orderObj.gameObject.SetActive(false);
         }
         currentCredits = MyStation.credits;
         infoToggle = false;

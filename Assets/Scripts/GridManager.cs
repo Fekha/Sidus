@@ -319,7 +319,7 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Count(x=>!x.defeated) * 1.2);
+        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Count(x=>!x.defeated));
     }
     internal int CheckForWin()
     {
