@@ -182,7 +182,7 @@ public class GameManager : MonoBehaviour
         levelValue.text = unit.level.ToString();
         HPValue.text = unit.HP + "/" + unit.maxHP;
         rangeValue.text = unit.maxRange.ToString();
-        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.stationId == unit.stationId);
+        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.teamId == unit.teamId);
         var kineticSupport = 0;
         var thermalSupport = 0;
         var explosiveSupport = 0;
@@ -309,13 +309,13 @@ public class GameManager : MonoBehaviour
                             int oldPathCount = SelectedPath?.Count ?? 0;
                             if (SelectedPath == null || SelectedPath.Count == 0)
                             {
-                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.stationId);
+                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.teamId);
                                 SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                                 Debug.Log($"Path created for {SelectedUnit.unitName}");
                             }
                             else
                             {
-                                var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.stationId);
+                                var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.teamId);
                                 SelectedUnit.subtractMovement(newPath.Last().gCost);
                                 SelectedPath.AddRange(newPath);
                                 Debug.Log($"Path edited for {SelectedUnit.unitName}");
@@ -791,9 +791,9 @@ public class GameManager : MonoBehaviour
             if (GridManager.i.GetNeighbors(unitMoving.currentPathNode).Contains(node))
             {
                 bool blockedMovement = false;
-                unitMoving.subtractMovement(GridManager.i.GetGCost(node, unitMoving.stationId));
+                unitMoving.subtractMovement(GridManager.i.GetGCost(node, unitMoving.teamId));
                 //if ally, and theres room after, move through.
-                if (node.structureOnPath != null && node.structureOnPath.stationId == unitMoving.stationId)
+                if (node.structureOnPath != null && node.structureOnPath.teamId == unitMoving.teamId)
                 {
                     blockedMovement = true;
                     //Example: you move 3, first spot is ally, second is enemy, third is open : you should not move
@@ -808,7 +808,7 @@ public class GameManager : MonoBehaviour
                                 break;
                             }
                             //if next spot after ally is enemy, stop
-                            else if (path[j].structureOnPath != null && path[j].structureOnPath.stationId != MyStation.stationId)
+                            else if (path[j].structureOnPath != null && path[j].structureOnPath.teamId != MyStation.teamId)
                             {
                                 break;
                             }
@@ -839,7 +839,7 @@ public class GameManager : MonoBehaviour
                     blockedMovement = node.isAsteroid;
                 }
                 //if enemy, attack, if you didn't destroy them, stay blocked and move back
-                if (unitMoving.movement >= 0 && node.structureOnPath != null && node.structureOnPath.stationId != unitMoving.stationId)
+                if (unitMoving.movement >= 0 && node.structureOnPath != null && node.structureOnPath.teamId != unitMoving.teamId)
                 {
                     yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
                     if (unitMoving == null || !AllUnits.Contains(unitMoving))
@@ -861,7 +861,7 @@ public class GameManager : MonoBehaviour
                 {
                     unitMoving.hasMoved = true;
                     unitMoving.currentPathNode = node;
-                    if (node.structureOnPath != null && node.structureOnPath.unitGuid != unitMoving.unitGuid && node.structureOnPath.stationId == unitMoving.stationId)
+                    if (node.structureOnPath != null && node.structureOnPath.unitGuid != unitMoving.unitGuid && node.structureOnPath.teamId == unitMoving.teamId)
                     {
                         node.structureOnPath.RegenHP(1);
                     }
@@ -903,13 +903,13 @@ public class GameManager : MonoBehaviour
         int s2sExplosive = 0;
         foreach (var supportFleet in supportingFleets)
         {
-            if (supportFleet.stationId == unitMoving.stationId)
+            if (supportFleet.teamId == unitMoving.teamId)
             {
                 s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * .5));
                 s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * .5));
                 s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * .5));
             }
-            else if (supportFleet.stationId == unitOnPath.stationId)
+            else if (supportFleet.teamId == unitOnPath.teamId)
             {
                 s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * .5));
                 s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * .5));

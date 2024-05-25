@@ -11,6 +11,7 @@ public class Unit : Node
     internal string color;
     internal Guid unitGuid;
     internal int stationId;
+    internal int teamId;
     internal int maxHP;
     internal int HP;
     internal int maxRange;
@@ -36,6 +37,7 @@ public class Unit : Node
     internal int maxAttachedModules = 1; // 1+ station.level
     public void InitializeUnit(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
     {
+        teamId = stationId % Globals.Teams;
         facing = _direction;
         unitGuid = _unitGuid;
         location = new Coords(_x, _y);

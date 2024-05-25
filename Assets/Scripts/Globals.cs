@@ -9,4 +9,5 @@ public static class Globals{
     internal static bool Online = true;
     internal static bool HasBeenToLobby = false;
     internal static bool IsCPUGame = false;
+    internal static int Teams = 2;
 }

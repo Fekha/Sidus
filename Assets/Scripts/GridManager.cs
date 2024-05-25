@@ -30,9 +30,9 @@ public class GridManager : MonoBehaviour
     {
         i = this;
         //Got colors from https://rgbcolorpicker.com/0-1
-        //Blue, Red, Purple, Orange, 
-        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0, 1), new Color(1, 0.5f, 0, 1), new Color(.776f, 0, 1, 1), };
-        tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(1, .714f, .42f, 1), new Color(0.871f, 0.514f, 1f, 1), };
+        //Blue, Red, Orange, Purple,
+        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0, 1), new Color(.776f, 0, 1, 1), new Color(1, 0.5f, 0, 1), };
+        tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), };
     }
     void Start()
     {
@@ -48,40 +48,40 @@ public class GridManager : MonoBehaviour
         GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
         DoneLoading = true;
     }
-    private void CreateStation(int team)
+    private void CreateStation(int stationId)
     {
-        string teamColor = "Blue";
+        string playerColor = "Blue";
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = stationlvl1;
-        unitSprite.color = playerColors[team];
+        unitSprite.color = playerColors[stationId];
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
-        if (!Globals.IsCPUGame || team == 0)
+        if (!Globals.IsCPUGame || stationId == 0)
         {
-            stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Station.UnitGuid;
-            fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[team].Fleets[0].UnitGuid;
+            stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Station.UnitGuid;
+            fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Fleets[0].UnitGuid;
         }
         int spawnX = 1;
         int spawnY = 5;
         Direction facing = Direction.BottomLeft;
-        if (team == 1)
+        if (stationId == 1)
         {
-            teamColor = "Red";
+            playerColor = "Red";
             spawnX = 6;
             spawnY = 2;
             facing = Direction.TopRight;
         }
-        else if (team == 2)
+        else if (stationId == 2)
         {
-            teamColor = "Orange";
+            playerColor = "Purple";
             spawnX = 3;
             spawnY = 1;
             facing = Direction.BottomLeft;
         }
-        else if (team == 3)
+        else if (stationId == 3)
         {
-            teamColor = "Purple";
+            playerColor = "Orange";
             spawnX = 4;
             spawnY = 6;
             facing = Direction.TopRight;
@@ -89,7 +89,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, teamColor, 15, 2, 5, 6, 7, stationGuid, facing);
+        stationNode.InitializeStation(spawnX, spawnY, playerColor, 15, 2, 5, 6, 7, stationGuid, facing);
         StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
     }
 
@@ -185,7 +185,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, int stationId)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, int teamId)
     {
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
@@ -216,7 +216,7 @@ public class GridManager : MonoBehaviour
                 if (neighbor != targetNode && (neighbor.isAsteroid || closedSet.Contains(neighbor)))
                     continue;
 
-                int newCostToNeighbor = currentNode.gCost + GetGCost(neighbor,stationId);
+                int newCostToNeighbor = currentNode.gCost + GetGCost(neighbor,teamId);
                 if (newCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
                     neighbor.gCost = newCostToNeighbor;
@@ -231,12 +231,12 @@ public class GridManager : MonoBehaviour
         }
         return new List<PathNode>();
     }
-    public int GetGCost(PathNode node, int stationId )
+    public int GetGCost(PathNode node, int teamId)
     {
         if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString()))
         {
             //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
-            return (node.ownedById == -1 || node.ownedById == stationId) ? 1 : 2; // || node.structureOnPath != null
+            return (node.ownedById == -1 || node.ownedById == teamId) ? 1 : 2; // || node.structureOnPath != null
         }
         return 1;
     }
@@ -260,7 +260,7 @@ public class GridManager : MonoBehaviour
                 foreach (PathNode neighbor in GetNeighbors(currentNode))
                 {
                     // Check if enemy owned tile and adjust cost
-                    int moveCost = currentNode.gCost + GetGCost(neighbor, unit.stationId); 
+                    int moveCost = currentNode.gCost + GetGCost(neighbor, unit.teamId); 
                     if (!visited.Contains(neighbor) && (moveCost <= range || (forMining && neighbor.isAsteroid)))
                     {
                         neighbor.gCost = moveCost;
@@ -319,22 +319,22 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Count(x=>!x.defeated));
+        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Where(x=>!x.defeated).Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
     }
     internal int CheckForWin()
     {
         GetScores();
         scoreToWin = GetScoreToWin();
-        for (int i = 0; i < GameManager.i.Stations.Count; i++)
+        for (int i = 0; i < Globals.Teams; i++)
         {
-            if (GameManager.i.Stations[i].score >= scoreToWin)
+            if (GameManager.i.Stations.Where(x=>x.teamId == i).Sum(x=>x.score) >= scoreToWin)
             {
                 return i;
             }
         }
-        if (GameManager.i.Stations.Where(x => x.defeated == false).Count() == 1)
+        if (GameManager.i.Stations.Where(x => !x.defeated).Select(x => x.teamId).Distinct().Count() == 1)
         {
-            return GameManager.i.Stations.FirstOrDefault(x => x.defeated == false).stationId;
+            return GameManager.i.Stations.FirstOrDefault(x => !x.defeated).stationId;
         }
         return -1;
     }
@@ -356,7 +356,11 @@ public class GridManager : MonoBehaviour
         }
         for (int i = 0; i < GameManager.i.Stations.Count; i++)
         {
-            GameManager.i.Stations[i].score = scores[i];
+            var teamMembers = GameManager.i.Stations.Where(x => x.teamId == GameManager.i.Stations[i].teamId).Select(x => x.stationId);
+            foreach (var team in teamMembers)
+            {
+                GameManager.i.Stations[i].score = scores[team];
+            }
         }
     }
 }

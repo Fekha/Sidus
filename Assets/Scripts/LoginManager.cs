@@ -17,6 +17,7 @@ public class LoginManager : MonoBehaviour
     public Transform findContent;
     public GameObject openGamePrefab;
     public Toggle toggle1;
+    public Toggle teamToggle;
     private TextMeshProUGUI waitingText;
     private TextMeshProUGUI playersText;
     private List<GameObject> openGamesObjects = new List<GameObject>();
@@ -34,6 +35,8 @@ public class LoginManager : MonoBehaviour
     public void CreateGame(bool cpuGame)
     {
         Globals.IsCPUGame = cpuGame;
+        if (teamToggle.isOn && MaxPlayers == 4 && !Globals.IsCPUGame)
+            GameSettings.Add(GameSettingType.Teams.ToString());
         if (toggle1.isOn)
             GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
         if (Globals.IsCPUGame)
@@ -81,6 +84,17 @@ public class LoginManager : MonoBehaviour
         else if (!plus && MaxPlayers > 2)
         {
             MaxPlayers--;
+        }
+        if (MaxPlayers == 4)
+        {
+            teamToggle.interactable = true;
+            teamToggle.gameObject.SetActive(true);
+        }
+        else
+        {
+            teamToggle.gameObject.SetActive(false);
+            teamToggle.interactable = false;
+            teamToggle.isOn = false;
         }
         playersText.text = $"{MaxPlayers}";
     }
@@ -171,7 +185,8 @@ public class LoginManager : MonoBehaviour
                 {
                     Globals.localStationIndex = i;
                 }
-            }  
+            }
+            Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.IsCPUGame ? 4 : Globals.GameMatch.MaxPlayers;
             SceneManager.LoadScene((int)Scene.Game);
         } else {
             UpdateWaitingText();
