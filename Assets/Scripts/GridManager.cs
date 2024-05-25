@@ -118,7 +118,7 @@ public class GridManager : MonoBehaviour
                 if (!originalSpawn)
                 {
                     fleetNode.selectIcon.SetActive(true);
-                    yield return new WaitForSeconds(1f);
+                    yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
                     fleetNode.selectIcon.SetActive(false);
                 }
                 break;

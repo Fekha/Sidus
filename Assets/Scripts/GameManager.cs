@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
     private List<Module> currentModulesForSelection = new List<Module>();
     internal List<Station> Stations = new List<Station>();
 
+    private bool tapped = false;
     private bool isMoving = false;
     private bool isEndingTurn = false;
     private Button upgradeButton;
@@ -77,10 +78,10 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI SupportValueText;
     private TextMeshProUGUI DamageTakenValueText;
     private TextMeshProUGUI turnValue;
+    public GameObject turnTapText;
     private TextMeshProUGUI moduleInfoValue;
     private TextMeshProUGUI fightText;
     public TextMeshProUGUI ScoreToWinText;
-    public TextMeshProUGUI TurnOrderText;
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI CreditText;
     private TextMeshProUGUI alertText;
@@ -245,15 +246,12 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !isEndingTurn)
+        if (Input.GetMouseButtonDown(0))
         {
-            //if (gameWon)
-            //{
-            //    SceneManager.LoadScene((int)Scene.Lobby);
-            //}
+            tapped = true;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
-            if (hit.collider != null && !isMoving)
+            if (!isEndingTurn && hit.collider != null && !isMoving)
             {
                 PathNode targetNode = hit.collider.GetComponent<PathNode>();
                 if (targetNode != null)
@@ -820,10 +818,10 @@ public class GameManager : MonoBehaviour
                 {
                     blockedMovement = true;
                 }
+                var toRot = GetDirection(unitMoving, node);
+                var unitImage = unitMoving.transform.Find("Unit"); 
                 float elapsedTime = 0f;
                 float totalTime = .6f;
-                var toRot = GetDirection(unitMoving, node);
-                var unitImage = unitMoving.transform.Find("Unit");
                 while (elapsedTime <= totalTime)
                 {
                     unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
@@ -920,13 +918,13 @@ public class GameManager : MonoBehaviour
         for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
         {
             if (unitMoving.HP > 0 && unitOnPath.HP > 0)
-                fightText.text += DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
+            {
+                fightText.text = DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
+                ViewFightPanel(true);
+                yield return StartCoroutine(WaitforSecondsOrTap(1));
+            }
         }
-        ViewFightPanel(true);
-        while (fightPanel.activeInHierarchy)
-        {
-            yield return new WaitForSeconds(.5f);
-        }
+        ViewFightPanel(false);
         unitOnPath.inCombatIcon.SetActive(false);
         unitMoving.selectIcon.SetActive(false);
         if (unitMoving.HP <= 0)
@@ -985,16 +983,21 @@ public class GameManager : MonoBehaviour
         int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
         int s1Amr = s1.explosiveArmor;
         int s2Amr = s2.explosiveArmor;
-        string power1Text = s1.explosivePower + (s1sExplosive > 0 ? $"(+{s1sExplosive})" : "");
-        string power2Text = s2.explosivePower + (s2sExplosive > 0 ? $"(+{s2sExplosive})" : "");
+        string support1Text = (s1sExplosive > 0 ? $"({s1.explosivePower} base +{s1sExplosive} from support)" : "");
+        string support2Text = (s2sExplosive > 0 ? $"({s2.explosivePower} base +{s2sExplosive} from support)" : "");
+        string power1Text = $"{s1.explosivePower + s1sExplosive}";
+        string power2Text = $"{s2.explosivePower + s2sExplosive}";
+
         if (type == AttackType.Kinetic)
         {
             s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
             s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
             s1Amr = s1.kineticArmor;
             s2Amr = s2.kineticArmor;
-            power1Text = s1.kineticPower + (s1sKinetic > 0 ? $"(+{s1sKinetic})" : "");
-            power2Text = s2.kineticPower + (s2sKinetic > 0 ? $"(+{s2sKinetic})" : "");
+            support1Text = (s1sKinetic > 0 ? $"({s1.kineticPower} base +{s1sKinetic} from support)" : "");
+            support2Text = (s2sKinetic > 0 ? $"({s2.kineticPower} base +{s2sKinetic} from support)" : "");
+            power1Text = $"{s1.kineticPower + s1sKinetic}";
+            power2Text = $"{s2.kineticPower + s2sKinetic}";
         }
         else if (type == AttackType.Thermal)
         {
@@ -1002,35 +1005,37 @@ public class GameManager : MonoBehaviour
             s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
             s1Amr = s1.thermalArmor;
             s2Amr = s2.thermalArmor;
-            power1Text = s1.thermalPower + (s1sThermal > 0 ? $"(+{s1sThermal})" : "");
-            power2Text = s2.thermalPower + (s2sThermal > 0 ? $"(+{s2sThermal})" : "");
+            support1Text = (s1sThermal > 0 ? $"({s1.thermalPower} base +{s1sThermal} from support)" : "");
+            support2Text = (s2sThermal > 0 ? $"({s2.thermalPower} base +{s2sThermal} from support)" : "");
+            power1Text = $"{s1.thermalPower + s1sThermal}";
+            power2Text = $"{s2.thermalPower + s2sThermal}";
         }
-        var returnText = $"\n<b>Phase {(int)type+1}-{type}:</b> \n{s1.color} has {power1Text} Power and {s2.color} has {power2Text} Power.\n";
+        var returnText = $"\n<b>Phase {(int)type+1}-{type}:</b> \n\n{s1.color} has {power1Text} Power{support1Text}.\n{s2.color} has {power2Text} Power{support2Text}.\n\n";
         if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
             s1.HP -= damage;
             s1.HP = Math.Max(s1.HP, 0);
-            returnText += $"<u>{s1.color}</u> took {damage} damage";
+            returnText += $"<u>{s1.color} took {damage} damage</u>";
             if (s1Amr != 0)
             {
                 var modifierSymbol = s1Amr > 0 ? "-" : "+";
-                returnText += $", after modules applied {s1Dmg}({modifierSymbol}{Mathf.Abs(s1Amr)}),";
+                returnText += $"({s1Dmg} base {modifierSymbol}{Mathf.Abs(s1Amr)} from modules)";
             }
-            returnText += $" and <u>has {s1.HP} HP</u> left. \n";
+            returnText += $" and has {s1.HP} HP left.\n";
         }
         else if (s2Dmg > 0)
         {
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
             s2.HP -= damage;
             s2.HP = Math.Max(s2.HP, 0);
-            returnText += $"<u>{s2.color}</u> took {damage} damage";
+            returnText += $"<u>{s2.color} took {damage} damage</u>";
             if (s2Amr != 0)
             {
                 var modifierSymbol = s2Amr > 0 ? "-" : "+";
-                returnText += $", after modules applied {s2Dmg}({modifierSymbol}{Mathf.Abs(s2Amr)}),";
+                returnText += $"({s2Dmg} base {modifierSymbol}{Mathf.Abs(s2Amr)} from modules)";
             }
-            returnText += $" and <u>has {s2.HP} HP</u> left.\n";
+            returnText += $" and has {s2.HP} HP left.\n";
         }
         else
         {
@@ -1066,7 +1071,7 @@ public class GameManager : MonoBehaviour
             if (i == 1)
             {
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your turn was submitted! \n\n Tap to continue strategizing while you wait for the other player{plural}. \n\n Your last submitted turn will be used.";
+                customAlertText.text = $"Your turn was submitted! \n\n If you change your mind, your last submitted turn will be used.";
                 customAlertPanel.SetActive(true);
             }
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
@@ -1075,7 +1080,7 @@ public class GameManager : MonoBehaviour
         while (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber));
         customAlertPanel.SetActive(false);
         isEndingTurn = true;
-        turnValue.text = $"Turn #{TurnNumber} complete! \n (Tap to continue) ";
+        turnValue.text = $"Turn #{TurnNumber} Complete!";
         turnLabel.SetActive(true);
         readyToSeeTurnsPanel.SetActive(true);
         while (readyToSeeTurnsPanel.activeInHierarchy)
@@ -1182,19 +1187,19 @@ public class GameManager : MonoBehaviour
                         yield return StartCoroutine(PerformAction(new Action(serverAction)));
                         yield return new WaitForSeconds(.1f);
                     }
-                    turnValue.text = $"Turn {TurnNumber} over.";
+                    //turnValue.text = $"Turn #{TurnNumber} over.";
                     foreach (var asteroid in GridManager.i.AllNodes)
                     {
                         asteroid.ReginCredits();
                     }
-                    yield return new WaitForSeconds(1f);
+                    //yield return StartCoroutine(WaitforSecondsOrTap(1));
                     FinishTurns();
                 }
             }
             else
             {
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your new turn was submitted, overriding your previous one. \n\n Tap to continue strategizing while you wait for the other player{plural}.";
+                customAlertText.text = $"Your new turn was submitted, overriding your previous one.";
                 customAlertPanel.SetActive(true);
             }
         }
@@ -1251,7 +1256,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator PerformAction(Action action)
     {
         Debug.Log($"Perfoming {Stations[action.playerId].color}'s action {action.actionOrder}:\n{GetDescription(action.actionType)}"); 
-        turnValue.text = $"Action {action.actionOrder}:\n{action.selectedUnit.unitName}\n";
+        turnValue.text = $"{action.selectedUnit.unitName}:\n";
         if (action.selectedUnit != null && AllUnits.Contains(action.selectedUnit))
         {
             var currentUnit = action.selectedUnit;
@@ -1266,7 +1271,7 @@ public class GameManager : MonoBehaviour
                         isMoving = true;
                         if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
                         {
-                            
+                            turnTapText.SetActive(false);
                             turnValue.text += $"{GetDescription(action.actionType)}";
                             Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
                             yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
@@ -1275,8 +1280,9 @@ public class GameManager : MonoBehaviour
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                             Debug.Log("Out of range or no longer exists.");
-                            yield return new WaitForSeconds(1f);
                         }
+                        turnTapText.SetActive(true);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
                         isMoving = false;
                         if(currentUnit != null && AllUnits.Contains(currentUnit))
                             currentUnit.resetMovementRange();
@@ -1293,7 +1299,7 @@ public class GameManager : MonoBehaviour
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                             Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
-                            yield return new WaitForSeconds(1f);
+                            yield return StartCoroutine(WaitforSecondsOrTap(1));
                         }
                     }
                     else if (action.actionType == ActionType.UpgradeFleet)
@@ -1310,7 +1316,7 @@ public class GameManager : MonoBehaviour
                             Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
                         }
                         currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.UpgradeStation)
@@ -1327,7 +1333,7 @@ public class GameManager : MonoBehaviour
                             Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
                         }
                         currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.BidOnModule)
@@ -1345,7 +1351,7 @@ public class GameManager : MonoBehaviour
                             Debug.Log($"{currentUnit.unitName} lost the bid, gained 1 credit");
                         }
                         currentUnit.selectIcon.SetActive(true);
-                        yield return new WaitForSeconds(1f);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.AttachModule)
@@ -1365,6 +1371,9 @@ public class GameManager : MonoBehaviour
                                 turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                                 Debug.Log($"Module not available");
                             }
+                            currentUnit.selectIcon.SetActive(true);
+                            yield return StartCoroutine(WaitforSecondsOrTap(1));
+                            currentUnit.selectIcon.SetActive(false);
                         }
                         else
                         {
@@ -1395,6 +1404,9 @@ public class GameManager : MonoBehaviour
                                 turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                                 Debug.Log($"Module not available");
                             }
+                            currentUnit.selectIcon.SetActive(true);
+                            yield return StartCoroutine(WaitforSecondsOrTap(1));
+                            currentUnit.selectIcon.SetActive(false);
                         }
                         else
                         {
@@ -1407,23 +1419,39 @@ public class GameManager : MonoBehaviour
                         currentStation.credits -= actionCost;
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         Debug.Log($"Gained 1 credit");
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
+                        currentUnit.selectIcon.SetActive(false);
                     }
                     else
                     {
                         turnValue.text += $"Unknown Error";
                         Debug.Log("Unknown Error");
-                        yield return new WaitForSeconds(1f);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
                     }
                 }
                 else
                 {
                     turnValue.text += $"Could not perform {GetDescription(action.actionType)}, could not afford";
                     Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {GetDescription(action.actionType)}");
-                    yield return new WaitForSeconds(1f);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
                 }
             }
         }
     }
+
+    internal IEnumerator WaitforSecondsOrTap(float time)
+    {
+        float elapsedTime = 0f;
+        float totalTime = time;
+        tapped = false;
+        while (!tapped)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
     public string GetDescription(ActionType value)
     {
         Type type = value.GetType();
@@ -1453,10 +1481,10 @@ public class GameManager : MonoBehaviour
             currentStation.credits += minedAmount;
             currentUnit.selectIcon.SetActive(true);
             asteroidToMine.ShowMineIcon(true);
-            float elapsedTime = 0f;
-            float totalTime = 1f;
             var toRot = GetDirection(currentUnit, asteroidToMine);
             var unitImage = currentUnit.transform.Find("Unit");
+            float elapsedTime = 0f;
+            float totalTime = 1f;
             while (elapsedTime <= totalTime)
             {
                 unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
@@ -1477,7 +1505,6 @@ public class GameManager : MonoBehaviour
         ClearActionBar();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
-        TurnOrderText.text = $"Turn Order: ";
         for (int i = 0; i < 4; i++)
         {
             var orderObj = turnOrder.Find($"TurnOrder{i}").GetComponent<Image>();
