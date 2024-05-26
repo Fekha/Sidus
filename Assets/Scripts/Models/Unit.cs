@@ -19,15 +19,17 @@ public class Unit : Node
     internal int kineticPower;
     internal int thermalPower;
     internal int explosivePower;
-    internal int kineticArmor;
-    internal int thermalArmor;
-    internal int explosiveArmor;
+    internal int kineticDamageModifier;
+    internal int thermalDamageModifier;
+    internal int explosiveDamageModifier;
     internal int mining;
+    internal double supportValue = .5;
     internal int level = 1;
     internal int globalCreditGain = 0;
     internal bool hasMoved = false;
     //internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
+    internal List<ModuleEffect> moduleEffects = new List<ModuleEffect>();
     internal TextMeshPro HPText;
     internal TextMeshPro statText;
     internal GameObject selectIcon;
@@ -64,13 +66,19 @@ public class Unit : Node
     }
     public void RegenHP(int regen)
     {
+        if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
+            regen *= 2;
         HP += regen;
         HP = Mathf.Min(maxHP, HP);
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage,bool maxHpDamage = false)
     {
-        HP -= damage;
+        HP -= Mathf.Max(damage,0);
         HP = Mathf.Max(0, HP);
+        if (maxHpDamage)
+        {
+            maxHP -= Mathf.Max(damage, 0);
+        }
     }
     public void SetNodeColor()
     {
@@ -103,8 +111,17 @@ public class Unit : Node
     }
     internal void ShowHPText(bool value)
     {
-        HPText.text = $"{HP}";
-        statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+        if (teamId != GameManager.i.MyStation.teamId && moduleEffects.Contains(ModuleEffect.HiddenStats))
+        {
+            HPText.text = $"?";
+            statText.text = $"?|?|?";
+        }
+        else
+        {
+            HPText.text = $"{HP}";
+            statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+        }
+        
         HPText.gameObject.SetActive(value);
     }
     internal void EditModule(int id, int modifer = 1)
@@ -113,7 +130,7 @@ public class Unit : Node
         {
             case 0:
                 kineticPower += (3 * modifer);
-                thermalArmor += (-1 * modifer);
+                thermalDamageModifier += (-1 * modifer);
                 break;
             case 1:
                 thermalPower += (3 * modifer);
@@ -122,7 +139,7 @@ public class Unit : Node
                 break;
             case 2:
                 explosivePower += (3 * modifer);
-                kineticArmor += (1 * modifer);
+                kineticDamageModifier += (1 * modifer);
                 break;
             case 3:
                 maxRange += (1 * modifer);
@@ -153,11 +170,11 @@ public class Unit : Node
                 break;
             case 9:
                 kineticPower += (3 * modifer);
-                explosiveArmor += (-1 * modifer);
+                explosiveDamageModifier += (-1 * modifer);
                 break;
             case 10:
                 explosivePower += (3 * modifer);
-                kineticArmor += (1 * modifer);
+                kineticDamageModifier += (1 * modifer);
                 break;
             case 11:
                 kineticPower += (1 * modifer);
@@ -170,15 +187,15 @@ public class Unit : Node
                 break;
             case 13:
                 mining += (3 * modifer);
-                kineticArmor += (2 * modifer);
+                kineticDamageModifier += (2 * modifer);
                 break;
             case 14:
                 mining += (3 * modifer);
-                thermalArmor += (2 * modifer);
+                thermalDamageModifier += (2 * modifer);
                 break;
             case 15:
                 mining += (3 * modifer);
-                explosiveArmor += (2 * modifer);
+                explosiveDamageModifier += (2 * modifer);
                 break;
             case 16:
                 kineticPower += (3 * modifer);
@@ -204,47 +221,47 @@ public class Unit : Node
             case 20:
                 maxRange += (1 * modifer);
                 movement += (1 * modifer);
-                kineticArmor += (-2 * modifer); 
+                kineticDamageModifier += (-2 * modifer); 
                 break;
             case 21:
                 maxRange += (1 * modifer);
                 movement += (1 * modifer);
-                thermalArmor += (-2 * modifer);
+                thermalDamageModifier += (-2 * modifer);
                 break;
             case 22:
                 maxRange += (1 * modifer);
                 movement += (1 * modifer);
-                explosiveArmor += (-2 * modifer);
+                explosiveDamageModifier += (-2 * modifer);
                 break;
             case 23:
                 kineticPower += (1 * modifer);
-                thermalArmor += (2 * modifer);
-                explosiveArmor += (2 * modifer);
+                thermalDamageModifier += (2 * modifer);
+                explosiveDamageModifier += (2 * modifer);
                 break;
             case 24:
                 thermalPower += (1 * modifer);
-                explosiveArmor += (2 * modifer);
-                kineticArmor += (2 * modifer);
+                explosiveDamageModifier += (2 * modifer);
+                kineticDamageModifier += (2 * modifer);
                 break;
             case 25:
                 explosivePower += (1 * modifer);
-                kineticArmor += (2 * modifer);
-                thermalArmor += (2 * modifer);
+                kineticDamageModifier += (2 * modifer);
+                thermalDamageModifier += (2 * modifer);
                 break;
             case 26:
                 maxHP += (3 * modifer);
                 HP += (3 * modifer);
-                kineticArmor += (-2 * modifer);
+                kineticDamageModifier += (-2 * modifer);
                 break;
             case 27:
                 maxHP += (3 * modifer);
                 HP += (3 * modifer);
-                thermalArmor += (-2 * modifer);
+                thermalDamageModifier += (-2 * modifer);
                 break;
             case 28:
                 maxHP += (3 * modifer);
                 HP += (3 * modifer);
-                explosiveArmor += (-2 * modifer);
+                explosiveDamageModifier += (-2 * modifer);
                 break;
             case 29:
                 maxHP += (3 * modifer);
@@ -288,17 +305,60 @@ public class Unit : Node
             case 38:
                 kineticPower += (5 * modifer);
                 thermalPower += (-2 * modifer);
-                explosiveArmor += (-4 * modifer);
+                explosiveDamageModifier += (-4 * modifer);
                 break;
             case 39:
                 thermalPower += (5 * modifer);
                 explosivePower += (-2 * modifer);
-                kineticArmor += (-3 * modifer);
+                kineticDamageModifier += (-3 * modifer);
                 break;
             case 40:
                 kineticPower += (-2 * modifer);
                 explosivePower += (5 * modifer);
-                thermalArmor += (-2 * modifer);
+                thermalDamageModifier += (-2 * modifer);
+                break; 
+            case 41:
+                supportValue = modifer == 1 ? 1 : .5;
+                break;
+            case 42:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.ReduceMaxHp); }
+                else { moduleEffects.Remove(ModuleEffect.ReduceMaxHp); }
+                break;
+            case 43:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.DoubleHeal); }
+                else { moduleEffects.Remove(ModuleEffect.DoubleHeal); }
+                break;
+            case 44:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatHeal3); }
+                else { moduleEffects.Remove(ModuleEffect.CombatHeal3); }
+                break;
+            case 45:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatKinetic1); }
+                else { moduleEffects.Remove(ModuleEffect.CombatKinetic1); }
+                break;
+            case 46:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatThermal1); }
+                else { moduleEffects.Remove(ModuleEffect.CombatThermal1); }
+                break;
+            case 47:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatExplosive1); }
+                else { moduleEffects.Remove(ModuleEffect.CombatExplosive1); }
+                break;
+            case 48:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidMining1); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidMining1); }
+                break;
+            case 49:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.HiddenStats); }
+                else { moduleEffects.Remove(ModuleEffect.HiddenStats); }
+                break;
+            case 50:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.SelfDestruct); }
+                else { moduleEffects.Remove(ModuleEffect.SelfDestruct); }
+                break; 
+            case 51:
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidHP2); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidHP2); }
                 break;
             default:
                 break;

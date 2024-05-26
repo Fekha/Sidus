@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ef81b9aecc196cd499fff381746f5d20
+guid: 8daf4a31d49a19b409fcb3fa33986e4f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1538301967439932114
-    second: trefoil-shuriken_0
+      213: -5727939783692864678
+    second: tarot-03-the-empress_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: trefoil-shuriken_0
+      name: tarot-03-the-empress_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2daaa863d75295510800000000000000
-      internalID: 1538301967439932114
+      spriteID: a53b82a5d154280b0800000000000000
+      internalID: -5727939783692864678
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      trefoil-shuriken_0: 1538301967439932114
+      tarot-03-the-empress_0: -5727939783692864678
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ef81b9aecc196cd499fff381746f5d20
+guid: bb903b38a540b2849b2cbbd229443be0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1538301967439932114
-    second: trefoil-shuriken_0
+      213: 6825870013907818335
+    second: heart-battery_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: trefoil-shuriken_0
+      name: heart-battery_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2daaa863d75295510800000000000000
-      internalID: 1538301967439932114
+      spriteID: f5757f5dc9c5abe50800000000000000
+      internalID: 6825870013907818335
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      trefoil-shuriken_0: 1538301967439932114
+      heart-battery_0: 6825870013907818335
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

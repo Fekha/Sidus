@@ -89,7 +89,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, playerColor, 15, 2, 5, 6, 7, stationGuid, facing);
+        stationNode.InitializeStation(spawnX, spawnY, playerColor, 12, 2, 5, 6, 7, stationGuid, facing);
         StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
     }
 
@@ -114,7 +114,7 @@ public class GridManager : MonoBehaviour
                 var fleet = Instantiate(fleetPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 9, 3, 3, 4, 5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 3, 3, 4, 5, fleetGuid);
                 if (!originalSpawn)
                 {
                     fleetNode.selectIcon.SetActive(true);

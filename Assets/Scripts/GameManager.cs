@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     private List<PathNode> SelectedPath;
 
     public Transform ActionBar;
-    public Transform StructureModuleBar;
+    public Transform UnitModuleBar;
     public Transform ModuleGrid;
     public Transform SelectedModuleGrid;
     public Transform turnOrder;
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI rangeValue;
     private TextMeshProUGUI PowerValueText;
     private TextMeshProUGUI SupportValueText;
-    private TextMeshProUGUI DamageTakenValueText;
+    private TextMeshProUGUI ModuleEffectText;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
     public GameObject turnTapText;
@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
         PowerValueText = infoPanel.transform.Find("PowerValue").GetComponent<TextMeshProUGUI>();
         SupportValueText = infoPanel.transform.Find("SupportValue").GetComponent<TextMeshProUGUI>();
-        DamageTakenValueText = infoPanel.transform.Find("DamageTakenValue").GetComponent<TextMeshProUGUI>();
+        ModuleEffectText = infoPanel.transform.Find("DamageTakenValue").GetComponent<TextMeshProUGUI>();
         creditsText = infoPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
         hexesOwnedText = infoPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
@@ -175,31 +175,41 @@ public class GameManager : MonoBehaviour
     {
         nameValue.text = unit.unitName;
         levelValue.text = unit.level.ToString();
-        HPValue.text = unit.HP + "/" + unit.maxHP;
-        rangeValue.text = unit.maxRange.ToString();
+        if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats))
+        {
+            HPValue.text = "?/?";
+            rangeValue.text = "?";
+            PowerValueText.text = "?|?|?";
+            ModuleEffectText.text = "?";
+            miningValue.text = "?";
+        }
+        else
+        {
+            HPValue.text = unit.HP + "/" + unit.maxHP;
+            rangeValue.text = unit.maxRange.ToString();
+            PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
+            ModuleEffectText.text = "None";
+            if (unit.attachedModules.Count > 0)
+            {
+                ModuleEffectText.text = unit.attachedModules[0].effectText.Replace(" \n", ",");
+                for (int i = 1; i < unit.attachedModules.Count; i++)
+                {
+                    ModuleEffectText.text += $"\n {unit.attachedModules[i].effectText.Replace(" \n", ",")}";
+                }
+            }
+            miningValue.text = unit.mining.ToString();
+        }
         var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.teamId == unit.teamId);
         var kineticSupport = 0;
         var thermalSupport = 0;
         var explosiveSupport = 0;
         if (supportingFleets.Any())
         {
-            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * .5)));
-            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * .5)));
-            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * .5)));
+            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * x.supportValue)));
+            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
+            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
         }
-        var kineticArmorText = (unit.kineticArmor == 0 ? "" : unit.kineticArmor > 0 ? "-" : "+")+MathF.Abs(unit.kineticArmor);
-        var thermalArmorText = (unit.thermalArmor == 0 ? "" : unit.thermalArmor > 0 ? "-" : "+")+MathF.Abs(unit.thermalArmor);
-        PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
         SupportValueText.text = $"{kineticSupport}|{thermalSupport}|{explosiveSupport}";
-        DamageTakenValueText.text = "None";
-        if (unit.attachedModules.Count > 0) {
-            DamageTakenValueText.text = unit.attachedModules[0].effectText.Replace(" \n", ",");
-            for(int i = 1;i<unit.attachedModules.Count;i++)
-            {
-                DamageTakenValueText.text += $"\n {unit.attachedModules[i].effectText.Replace(" \n",",")}";
-            }
-        }
-        miningValue.text = unit.mining.ToString();
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
         upgradeButton.gameObject.SetActive(false);
@@ -824,6 +834,10 @@ public class GameManager : MonoBehaviour
                 if (node.isAsteroid)
                 {
                     yield return StartCoroutine(PerformMine(unitMoving, node));
+                    if (!node.isAsteroid)
+                    {
+                        CheckDestroyAsteroidModules(unitMoving);
+                    }
                     blockedMovement = node.isAsteroid;
                 }
                 //if enemy, attack, if you didn't destroy them, stay blocked and move back
@@ -880,6 +894,8 @@ public class GameManager : MonoBehaviour
     {
         var unitOnPath = node.structureOnPath;
         Debug.Log($"{unitMoving.unitName} is attacking {unitOnPath.unitName}");
+        CheckEnterCombatModules(unitMoving);
+        CheckEnterCombatModules(unitOnPath);
         unitMoving.selectIcon.SetActive(true);
         unitOnPath.inCombatIcon.SetActive(true);
         var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
@@ -893,15 +909,15 @@ public class GameManager : MonoBehaviour
         {
             if (supportFleet.teamId == unitMoving.teamId)
             {
-                s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * .5));
-                s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * .5));
-                s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * .5));
+                s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * supportFleet.supportValue));
+                s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * supportFleet.supportValue));
+                s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * supportFleet.supportValue));
             }
             else if (supportFleet.teamId == unitOnPath.teamId)
             {
-                s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * .5));
-                s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * .5));
-                s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * .5));
+                s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * supportFleet.supportValue));
+                s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * supportFleet.supportValue));
+                s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * supportFleet.supportValue));
             }
         }
         var beforeText = turnValue.text;
@@ -935,12 +951,7 @@ public class GameManager : MonoBehaviour
             unitMoving.currentPathNode.structureOnPath = null;
             Destroy(unitMoving.gameObject);
         }
-        if (unitOnPath.HP > 0)
-        {
-            //even if allied don't move through, don't feel like doing recursive checks right now
-            Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
-        }
-        else
+        if (unitOnPath.HP <= 0)
         {
             Debug.Log($"{unitMoving.unitName} destroyed {unitOnPath.unitName}");
             if (unitOnPath is Station)
@@ -951,11 +962,54 @@ public class GameManager : MonoBehaviour
             }
             else if (unitOnPath is Fleet)
             {
+                if (unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct))
+                {
+                    Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
+                    AllUnits.Remove(unitMoving);
+                    unitMoving.currentPathNode.structureOnPath = null;
+                    Destroy(unitMoving.gameObject);
+                }
                 Stations[unitOnPath.stationId].fleets.Remove(unitOnPath as Fleet);
             }
             AllUnits.Remove(unitOnPath);
             node.structureOnPath = null;
             Destroy(unitOnPath.gameObject); //they are dead
+        }
+        else
+        {
+            Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
+        }
+    }
+
+    private void CheckEnterCombatModules(Unit unit)
+    {
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatHeal3))
+        {
+            unit.RegenHP(3);
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic1))
+        {
+            unit.kineticPower++;
+        }  
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal1))
+        {
+            unit.thermalPower++;
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive1))
+        {
+            unit.explosivePower++;
+        }
+    }
+    private void CheckDestroyAsteroidModules(Unit unit)
+    {
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP2))
+        {
+            unit.maxHP += 2;
+            unit.HP += 2;
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining1))
+        {
+            unit.mining++;
         }
     }
 
@@ -972,8 +1026,8 @@ public class GameManager : MonoBehaviour
     {
         int s1Dmg = (s2.explosivePower+s2sExplosive) - (s1.explosivePower+s1sExplosive);
         int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
-        int s1Amr = s1.explosiveArmor;
-        int s2Amr = s2.explosiveArmor;
+        int s1Amr = s1.explosiveDamageModifier;
+        int s2Amr = s2.explosiveDamageModifier;
         string support1Text = (s1sExplosive > 0 ? $"({s1.explosivePower} base +{s1sExplosive} from support)" : "");
         string support2Text = (s2sExplosive > 0 ? $"({s2.explosivePower} base +{s2sExplosive} from support)" : "");
         string power1Text = $"{s1.explosivePower + s1sExplosive}";
@@ -983,8 +1037,8 @@ public class GameManager : MonoBehaviour
         {
             s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
             s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
-            s1Amr = s1.kineticArmor;
-            s2Amr = s2.kineticArmor;
+            s1Amr = s1.kineticDamageModifier;
+            s2Amr = s2.kineticDamageModifier;
             support1Text = (s1sKinetic > 0 ? $"({s1.kineticPower} base +{s1sKinetic} from support)" : "");
             support2Text = (s2sKinetic > 0 ? $"({s2.kineticPower} base +{s2sKinetic} from support)" : "");
             power1Text = $"{s1.kineticPower + s1sKinetic}";
@@ -994,8 +1048,8 @@ public class GameManager : MonoBehaviour
         {
             s1Dmg = (s2.thermalPower+s2sThermal) - (s1.thermalPower+s1sThermal);
             s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
-            s1Amr = s1.thermalArmor;
-            s2Amr = s2.thermalArmor;
+            s1Amr = s1.thermalDamageModifier;
+            s2Amr = s2.thermalDamageModifier;
             support1Text = (s1sThermal > 0 ? $"({s1.thermalPower} base +{s1sThermal} from support)" : "");
             support2Text = (s2sThermal > 0 ? $"({s2.thermalPower} base +{s2sThermal} from support)" : "");
             power1Text = $"{s1.thermalPower + s1sThermal}";
@@ -1005,8 +1059,7 @@ public class GameManager : MonoBehaviour
         if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
-            s1.HP -= damage;
-            s1.HP = Math.Max(s1.HP, 0);
+            s1.TakeDamage(damage, s2.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
             returnText += $"<u><b>{s1.color} took {damage} damage</u></b> and has {s1.HP} HP left.";
             if (s1Amr != 0)
             {
@@ -1017,8 +1070,7 @@ public class GameManager : MonoBehaviour
         else if (s2Dmg > 0)
         {
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
-            s2.HP -= damage;
-            s2.HP = Math.Max(s2.HP, 0);
+            s2.TakeDamage(damage, s1.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
             returnText += $"<u><b>{s2.color} took {damage} damage</u></b> and has {s2.HP} HP left.";
             if (s2Amr != 0)
             {
@@ -1324,7 +1376,6 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                            Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
                         }
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
@@ -1335,14 +1386,14 @@ public class GameManager : MonoBehaviour
                         if (action.selectedModule is object)
                         {
                             currentStation.credits -= actionCost;
-                            turnValue.text += $"Won bid, paid {action.selectedModule.currentBid} credits";
-                            currentStation.modules.Add(new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid));
+                            var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
+                            turnValue.text += $"Won bid on {wonModule.effectText}.\nPaid {action.selectedModule.currentBid} credits.";
+                            currentStation.modules.Add(wonModule);
                         }
                         else
                         {
-                            turnValue.text += "Lost bid, gained 1 credit";
+                            turnValue.text += "Lost bid\nGained 1 credit.";
                             currentStation.credits++;
-                            Debug.Log($"{currentUnit.unitName} lost the bid, gained 1 credit");
                         }
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
@@ -1355,7 +1406,7 @@ public class GameManager : MonoBehaviour
                             Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
                             {
-                                turnValue.text += $"{GetDescription(action.actionType)}";
+                                turnValue.text += $"{GetDescription(action.actionType)}.\n{selectedModule.effectText}.";
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
                                 currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
@@ -1363,7 +1414,6 @@ public class GameManager : MonoBehaviour
                             else
                             {
                                 turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
-                                Debug.Log($"Module not available");
                             }
                             currentUnit.selectIcon.SetActive(true);
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
@@ -1372,7 +1422,6 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
-                            Debug.Log($"No modules on station or max attached modules");
                         }
                     }
                     else if (action.actionType == ActionType.SwapModule)
@@ -1383,7 +1432,7 @@ public class GameManager : MonoBehaviour
                             Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
                             if (selectedModule is object && dettachedModule is object)
                             {
-                                turnValue.text += $"{GetDescription(action.actionType)}";
+                                turnValue.text += $"{GetDescription(action.actionType)}.\n{selectedModule.effectText}.";
                                 //dettach old
                                 currentStation.modules.Add(dettachedModule);
                                 currentUnit.EditModule(dettachedModule.moduleId, -1);
@@ -1396,7 +1445,6 @@ public class GameManager : MonoBehaviour
                             else
                             {
                                 turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
-                                Debug.Log($"Module not available");
                             }
                             currentUnit.selectIcon.SetActive(true);
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
@@ -1405,7 +1453,6 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not attached";
-                            Debug.Log($"No Modules attached");
                         }
                     }
                     else if (action.actionType == ActionType.GainCredit)
@@ -1420,7 +1467,6 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         turnValue.text += $"Unknown Error";
-                        Debug.Log("Unknown Error");
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                     }
                 }
@@ -1644,38 +1690,46 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
-            StructureModuleBar.Find($"Module{i}/Remove").GetComponent<Button>().onClick.RemoveAllListeners();
+            UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
+            UnitModuleBar.Find($"Module{i}/Remove").GetComponent<Button>().onClick.RemoveAllListeners();
             var maxAttached = GetUnitMaxAttachmentCount(unit);
             if (i < maxAttached)
             {
                 if (i < unit.attachedModules.Count)
                 {
-                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = unit.attachedModules[i].icon;
-                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId);
-                    int j = i;
-                    var module = unit.attachedModules[i];
-                    StructureModuleBar.Find($"Module{i}/Remove").GetComponent<Button>().onClick.AddListener(() => ModifyModule(ActionType.SwapModule, module.moduleGuid));
-                    StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
-                }
-                else
-                {
-                    StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
-                    if (unit.stationId == MyStation.stationId)
+                   
+                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId);
+                    if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != 49)
                     {
-                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
-                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => ModifyModule(ActionType.AttachModule));
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel("This units modules are hidden."));
                     }
                     else
                     {
-                        StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = emptyModuleBar;
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = unit.attachedModules[i].icon;
+                        var module = unit.attachedModules[i];
+                        UnitModuleBar.Find($"Module{i}/Remove").GetComponent<Button>().onClick.AddListener(() => ModifyModule(ActionType.SwapModule, module.moduleGuid));
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
+                    }
+                }
+                else
+                {
+                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+                    if (unit.stationId == MyStation.stationId)
+                    {
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => ModifyModule(ActionType.AttachModule));
+                    }
+                    else
+                    {
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = emptyModuleBar;
                     }
                 }
             }
             else
             {
-                StructureModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
-                StructureModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
+                UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
+                UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
             }
         }
     }

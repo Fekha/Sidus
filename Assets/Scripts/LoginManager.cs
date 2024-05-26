@@ -48,7 +48,7 @@ public class LoginManager : MonoBehaviour
         {
             GameGuid = gameGuid,
             MaxPlayers = MaxPlayers,
-            NumberOfModules = 41,
+            NumberOfModules = 52,
             GameSettings = GameSettings,
             GameTurns = new List<GameTurn>()
             {

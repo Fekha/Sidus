@@ -374,7 +374,7 @@ MonoBehaviour:
   moduleMarket: {fileID: 866062589}
   asteroidPanel: {fileID: 1898863585}
   ActionBar: {fileID: 1538388384}
-  StructureModuleBar: {fileID: 2084846243}
+  UnitModuleBar: {fileID: 2084846243}
   ModuleGrid: {fileID: 1330887038}
   SelectedModuleGrid: {fileID: 917515234}
   turnOrder: {fileID: 1471345598}
@@ -16246,7 +16246,7 @@ GameObject:
   - component: {fileID: 2084846243}
   - component: {fileID: 2084846244}
   m_Layer: 5
-  m_Name: StructureModuleBar
+  m_Name: UnitModuleBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16471,8 +16471,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.12050128, y: -202.8349}
-  m_SizeDelta: {x: 436.4852, y: 379.5902}
+  m_AnchoredPosition: {x: -0.034726, y: -202.68}
+  m_SizeDelta: {x: 448.71, y: 390.28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2096095989
 MonoBehaviour:

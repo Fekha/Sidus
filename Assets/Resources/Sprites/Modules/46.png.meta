@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ef81b9aecc196cd499fff381746f5d20
+guid: 2c7621f9aa4c57b46ad59a139ed784bf
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1538301967439932114
-    second: trefoil-shuriken_0
+      213: 7964960350484700803
+    second: glowing-artifact_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: trefoil-shuriken_0
+      name: glowing-artifact_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2daaa863d75295510800000000000000
-      internalID: 1538301967439932114
+      spriteID: 38e16b41d39398e60800000000000000
+      internalID: 7964960350484700803
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      trefoil-shuriken_0: 1538301967439932114
+      glowing-artifact_0: 7964960350484700803
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

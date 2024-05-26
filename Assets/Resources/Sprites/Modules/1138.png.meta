@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ef81b9aecc196cd499fff381746f5d20
+guid: b492e4eebf951ce41a50ba287a9c1253
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1538301967439932114
-    second: trefoil-shuriken_0
+      213: 8796122258372356139
+    second: mushroom-cloud_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: trefoil-shuriken_0
+      name: mushroom-cloud_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2daaa863d75295510800000000000000
-      internalID: 1538301967439932114
+      spriteID: b28e033179a121a70800000000000000
+      internalID: 8796122258372356139
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      trefoil-shuriken_0: 1538301967439932114
+      mushroom-cloud_0: 8796122258372356139
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
