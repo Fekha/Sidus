@@ -63,8 +63,6 @@ public class GameManager : MonoBehaviour
     public Button generateModuleButton;
     public Image endTurnButton;
     private TextMeshProUGUI createFleetCost;
-    private TextMeshProUGUI mineRestrictedText;
-    private TextMeshProUGUI generateModuleCost;
     private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
     private TextMeshProUGUI levelValue;
@@ -75,9 +73,9 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI SupportValueText;
     private TextMeshProUGUI DamageTakenValueText;
     private TextMeshProUGUI turnValue;
+    private TextMeshProUGUI phaseText;
     public GameObject turnTapText;
     private TextMeshProUGUI moduleInfoValue;
-    private TextMeshProUGUI fightText;
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI CreditText;
@@ -165,9 +163,9 @@ public class GameManager : MonoBehaviour
         creditsText = infoPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
         hexesOwnedText = infoPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
+        phaseText = turnLabel.transform.Find("PhaseText").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
-        generateModuleCost = generateModuleButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
@@ -907,6 +905,7 @@ public class GameManager : MonoBehaviour
             }
         }
         var beforeText = turnValue.text;
+        phaseText.gameObject.SetActive(true);
         for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
         {
             if (unitMoving.HP > 0 && unitOnPath.HP > 0)
@@ -915,6 +914,7 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(WaitforSecondsOrTap(1));
             }
         }
+        phaseText.gameObject.SetActive(false);
         turnValue.text = beforeText;
         unitOnPath.inCombatIcon.SetActive(false);
         unitMoving.selectIcon.SetActive(false);
@@ -1030,18 +1030,19 @@ public class GameManager : MonoBehaviour
         {
             returnText += $"<u><b>Niether unit took damage.</u></b>";
         }
-        returnText += $"\n\n{s1.color} had {power1Text} Power{support1Text}.\n{s2.color} had {power2Text} Power{support2Text}.\n\nPhase:\n";
+        returnText += $"\n\n{s1.color} had {power1Text} Power{support1Text}.\n{s2.color} had {power2Text} Power{support2Text}.\n";
+        phaseText.text = "Phase:\n";
         if (type is AttackType.Kinetic)
         {
-            returnText += $"<b>Kinetic</b> Thermal Explosive";
+            phaseText.text += $"<b>Kinetic</b> Thermal Explosive";
         }
         else if (type is AttackType.Thermal)
         {
-            returnText += $"Kinetic <b>Thermal</b> Explosive";
+            phaseText.text += $"Kinetic <b>Thermal</b> Explosive";
         }
         else
         {
-            returnText += $"Kinetic Thermal <b>Explosive</b>";
+            phaseText.text += $"Kinetic Thermal <b>Explosive</b>";
         }
         return returnText;
     }
