@@ -24,13 +24,11 @@ public class GameManager : MonoBehaviour
     public GameObject auctionPrefab;
     public GameObject moduleInfoPanel;
     public GameObject infoPanel;
-    public GameObject fightPanel;
     public GameObject alertPanel;
     public GameObject customAlertPanel;
     public GameObject areYouSurePanel;
     public GameObject selectModulePanel;
     public GameObject helpPanel;
-    public GameObject readyToSeeTurnsPanel;
     public GameObject moduleMarket;
     public GameObject asteroidPanel;
 
@@ -61,7 +59,6 @@ public class GameManager : MonoBehaviour
     private bool isMoving = false;
     private bool isEndingTurn = false;
     private Button upgradeButton;
-    //public Button mineButton;
     public Button createFleetButton;
     public Button generateModuleButton;
     public Image endTurnButton;
@@ -173,7 +170,6 @@ public class GameManager : MonoBehaviour
         generateModuleCost = generateModuleButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
-        fightText = fightPanel.transform.Find("Panel/FightText").GetComponent<TextMeshProUGUI>();
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
         customAlertText = customAlertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
     }
@@ -397,11 +393,7 @@ public class GameManager : MonoBehaviour
             SelectedUnit.resetMovementRange();
         }
         ResetAfterSelection();
-    }
-    public void ViewFightPanel(bool active)
-    {
-        fightPanel.SetActive(active);
-    }      
+    }    
     public void ViewModuleMarket(bool active)
     {
         moduleMarket.SetActive(active);
@@ -1067,11 +1059,6 @@ public class GameManager : MonoBehaviour
             currentMovementRange.Add(rangeComponent);
         }
     }
-   
-    public void HideReadyToSeeTurnsPanel()
-    {
-        readyToSeeTurnsPanel.SetActive(false);
-    }
     private IEnumerator GetTurnsFromServer()
     {
         isWaitingForTurns = true;
@@ -1092,11 +1079,7 @@ public class GameManager : MonoBehaviour
         isEndingTurn = true;
         turnValue.text = $"Turn #{TurnNumber} Complete!";
         turnLabel.SetActive(true);
-        readyToSeeTurnsPanel.SetActive(true);
-        while (readyToSeeTurnsPanel.activeInHierarchy)
-        {
-            yield return new WaitForSeconds(.5f);
-        }
+        yield return StartCoroutine(WaitforSecondsOrTap(1));
         isWaitingForTurns = false;
     }
 
