@@ -783,9 +783,12 @@ public class GameManager : MonoBehaviour
         unitMoving.currentPathNode.structureOnPath = null;
         ClearMovementRange();
         unitMoving.resetMovementRange();
+        var beforeText = turnValue.text;
+        bool didFightLastMove = false;
         foreach (var node in path)
         {
             i++;
+            didFightLastMove = false;
             if (GridManager.i.GetNeighbors(unitMoving.currentPathNode).Contains(node))
             {
                 bool blockedMovement = false;
@@ -844,9 +847,12 @@ public class GameManager : MonoBehaviour
                 if (unitMoving.movement >= 0 && node.structureOnPath != null && node.structureOnPath.teamId != unitMoving.teamId)
                 {
                     yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
+                    didFightLastMove = true;
                     if (unitMoving == null || !AllUnits.Contains(unitMoving))
                         break;
                     blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
+                    if (i != path.Count() && !blockedMovement)
+                        turnValue.text = beforeText;
                 }
                 if (blockedMovement)
                 {
@@ -888,6 +894,10 @@ public class GameManager : MonoBehaviour
             unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
             unitMoving.currentPathNode.structureOnPath = unitMoving;
         }
+        if (!didFightLastMove)
+        {
+            yield return StartCoroutine(WaitforSecondsOrTap(1));
+        }
     }
 
     internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
@@ -920,7 +930,7 @@ public class GameManager : MonoBehaviour
                 s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * supportFleet.supportValue));
             }
         }
-        var beforeText = turnValue.text;
+        
         phaseText.gameObject.SetActive(true);
         for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
         {
@@ -931,7 +941,6 @@ public class GameManager : MonoBehaviour
             }
         }
         phaseText.gameObject.SetActive(false);
-        turnValue.text = beforeText;
         unitOnPath.inCombatIcon.SetActive(false);
         unitMoving.selectIcon.SetActive(false);
         if (unitMoving.HP <= 0)
@@ -1325,10 +1334,8 @@ public class GameManager : MonoBehaviour
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                            Debug.Log("Out of range or no longer exists.");
+                            yield return StartCoroutine(WaitforSecondsOrTap(1));
                         }
-                        
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
                         isMoving = false;
                         if(currentUnit != null && AllUnits.Contains(currentUnit))
                             currentUnit.resetMovementRange();
@@ -1387,7 +1394,7 @@ public class GameManager : MonoBehaviour
                         {
                             currentStation.credits -= actionCost;
                             var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
-                            turnValue.text += $"Won bid on {wonModule.effectText}.\nPaid {action.selectedModule.currentBid} credits.";
+                            turnValue.text += $"Won bid\n({wonModule.effectText})\nPaid {action.selectedModule.currentBid} credits.";
                             currentStation.modules.Add(wonModule);
                         }
                         else
@@ -1406,7 +1413,7 @@ public class GameManager : MonoBehaviour
                             Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
                             {
-                                turnValue.text += $"{GetDescription(action.actionType)}.\n{selectedModule.effectText}.";
+                                turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
                                 currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
@@ -1432,7 +1439,7 @@ public class GameManager : MonoBehaviour
                             Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
                             if (selectedModule is object && dettachedModule is object)
                             {
-                                turnValue.text += $"{GetDescription(action.actionType)}.\n{selectedModule.effectText}.";
+                                turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
                                 //dettach old
                                 currentStation.modules.Add(dettachedModule);
                                 currentUnit.EditModule(dettachedModule.moduleId, -1);

@@ -174,47 +174,47 @@ public class Module : MonoBehaviour
                 effectText = "-2 Kinetic Power \n +5 Explosive Power \n +2 Thermal Damage Taken";
                 break;
             case 41:
-                effectText = "Support allies at full Power";
+                effectText = "Support allies at full Power.";
                 rarity = Rarity.Rare;
                 break;
             case 42:
-                effectText = "Damage dealt reduces max HP";
+                effectText = "Damage dealt reduces max HP.";
                 rarity = Rarity.Rare;
                 break;
             case 43:
-                effectText = "Heals at twice the rate";
+                effectText = "Double all repairing.";
                 rarity = Rarity.Rare;
                 break;
             case 44:
-                effectText = "Heal 3 HP when entering combat";
+                effectText = "Repair 3 HP when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 45:
-                effectText = "Gain 1 Kinetic Power when entering combat";
+                effectText = "Gain 1 Kinetic Power when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 46:
-                effectText = "Gain 1 Thermal Power when entering combat";
+                effectText = "Gain 1 Thermal Power when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 47:
-                effectText = "Gain 1 Explosive Power when entering combat";
+                effectText = "Gain 1 Explosive Power when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 48:
-                effectText = "Gain 1 Mining Power after destroying an asteroid";
+                effectText = "Gain 1 Mining Power after destroying an asteroid.";
                 rarity = Rarity.Rare;
                 break;
             case 49:
-                effectText = "Stats are hidden from enemies";
+                effectText = "Stats are hidden from enemies.";
                 rarity = Rarity.Rare;
                 break;
             case 50:
-                effectText = "If destroyed in combat while defending, destroy the attacking fleet as well";
+                effectText = "If destroyed in combat while defending, destroy the attacking fleet as well.";
                 rarity = Rarity.Rare;
                 break;
             case 51:
-                effectText = "Gain 2 HP after destroying an asteroid";
+                effectText = "Gain 2 HP after destroying an asteroid.";
                 rarity = Rarity.Rare;
                 break;
             default:
