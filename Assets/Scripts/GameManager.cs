@@ -10,11 +10,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager i;
-    //prefabs
     private Transform highlightParent;
     public GameObject selectPrefab;
     public GameObject pathPrefab;
@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
-        ColorText.text = $"You are {MyStation.color}";
+        ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
         StartTurn();
         StartCoroutine(GetTurnReadiness());
@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
         else
         {
             HPValue.text = unit.HP + "/" + unit.maxHP;
-            rangeValue.text = unit.maxRange.ToString();
+            rangeValue.text = unit.maxMovement.ToString();
             PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
             ModuleEffectText.text = "None";
             if (unit.attachedModules.Count > 0)
@@ -262,11 +262,12 @@ public class GameManager : MonoBehaviour
                 {
                     moduleMarket.SetActive(false); 
                     Unit targetUnit = null;
+                    //Check if you clicked on unit
                     if (targetNode.structureOnPath != null)
                     {
                         targetUnit = targetNode.structureOnPath;
                     }
-                    //Original click on fleet
+                    //Original click on unit
                     if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
                     {
                         SelectedUnit = targetUnit;
@@ -281,74 +282,55 @@ public class GameManager : MonoBehaviour
                             HighlightRangeOfMovement(SelectedUnit.currentPathNode, SelectedUnit);
                         }
                     }
-                    else
+                    //Double click confirm to movement early
+                    else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && !HasQueuedMovement(SelectedUnit))
                     {
-                        //Mine after move
-                        if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && HasQueuedMovement(SelectedUnit) && targetNode.isAsteroid)
+                        if (SelectedPath.Any(x => x.isAsteroid))
+                            QueueAction(ActionType.MoveAndMine);
+                        else
+                            QueueAction(ActionType.MoveUnit);
+                    }
+                    //Create Movement
+                    else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
+                    {
+                        SelectedNode = targetNode;
+                        if (SelectedPath == null || SelectedPath.Count == 0)
                         {
-                            QueueAction(ActionType.MineAsteroid, null, null, new List<PathNode>() { targetNode });
+                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit);
+                            Debug.Log($"Path created for {SelectedUnit.unitName}");
                         }
-                        //Double click confirm to movement
-                        else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null)
-                        {
-                            if (SelectedPath.Count == 1 && SelectedNode.isAsteroid)
-                            {
-                                SelectedUnit.resetMovementRange();
-                                QueueAction(ActionType.MineAsteroid);
-                            }
-                            else if (!HasQueuedMovement(SelectedUnit))
-                            {
-                                if(SelectedPath.Last().isAsteroid)
-                                    QueueAction(ActionType.MoveAndMine);
-                                else
-                                    QueueAction(ActionType.MoveUnit);
-                            }
-                        }
-                        //Create movement
-                        else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
-                        {
-                            SelectedNode = targetNode;
-                            int oldPathCount = SelectedPath?.Count ?? 0;
-                            if (SelectedPath == null || SelectedPath.Count == 0)
-                            {
-                                SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit.teamId);
-                                SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
-                                Debug.Log($"Path created for {SelectedUnit.unitName}");
-                            }
-                            else
-                            {
-                                var newPath = GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit.teamId);
-                                SelectedUnit.subtractMovement(newPath.Last().gCost);
-                                SelectedPath.AddRange(newPath);
-                                Debug.Log($"Path edited for {SelectedUnit.unitName}");
-                            }
-                            DrawPath(SelectedPath);
-                            HighlightRangeOfMovement(targetNode, SelectedUnit);
-                        }
-                        //Clicked on invalid tile
                         else
                         {
-                            if (SelectedUnit == null)
+                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit));
+                            Debug.Log($"Path edited for {SelectedUnit.unitName}");
+                        }
+                        SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
+                        DrawPath(SelectedPath);
+                        HighlightRangeOfMovement(targetNode, SelectedUnit);
+                    }
+                    //Clicked on invalid tile, clear
+                    else
+                    {
+                        if (SelectedUnit == null)
+                        {
+                            if (targetUnit != null)
                             {
-                                if (targetUnit != null)
-                                {
-                                    SetUnitTextValues(targetUnit);
-                                    ViewUnitInformation(true);
-                                }
-                                else if (targetNode.isAsteroid)
-                                {
-                                    SetAsteroidTextValues(targetNode);
-                                    ViewAsteroidInformation(true);
-                                }
-                                else
-                                {
-                                    DeselectMovement();
-                                }
+                                SetUnitTextValues(targetUnit);
+                                ViewUnitInformation(true);
+                            }
+                            else if (targetNode.isAsteroid)
+                            {
+                                SetAsteroidTextValues(targetNode);
+                                ViewAsteroidInformation(true);
                             }
                             else
                             {
                                 DeselectMovement();
                             }
+                        }
+                        else
+                        {
+                            DeselectMovement();
                         }
                     }
                 }
@@ -378,7 +360,7 @@ public class GameManager : MonoBehaviour
         SelectedUnit.subtractMovement(99);
         DrawPath(movementAction.selectedPath);
         Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
-        HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(x => !x.isAsteroid), SelectedUnit, true);
+        HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(), SelectedUnit);
     }
 
     private void DrawPath(List<PathNode> selectedPath)
@@ -785,108 +767,90 @@ public class GameManager : MonoBehaviour
         unitMoving.resetMovementRange();
         var beforeText = turnValue.text;
         bool didFightLastMove = false;
-        foreach (var node in path)
+        PathNode currentNode = unitMoving.currentPathNode;
+        foreach (var nextNode in path)
         {
             i++;
             didFightLastMove = false;
-            if (GridManager.i.GetNeighbors(unitMoving.currentPathNode).Contains(node))
+            unitMoving.subtractMovement(GridManager.i.GetGCost(nextNode));
+            if (GridManager.i.GetNeighbors(currentNode).Contains(nextNode) && unitMoving.movement >= 0)
             {
+                turnValue.text = beforeText;
+                unitMoving.hasMoved = true; 
                 bool blockedMovement = false;
-                unitMoving.subtractMovement(GridManager.i.GetGCost(node, unitMoving.teamId));
-                //if ally, and theres room after, move through.
-                if (node.structureOnPath != null && node.structureOnPath.teamId == unitMoving.teamId)
-                {
-                    blockedMovement = true;
-                    //Example: you move 3, first spot is ally, second is enemy, third is open : you should not move
-                    if (path.Count != i)
-                    {
-                        for (int j = i; j < path.Count; j++)
-                        {
-                            //If next spot after ally is empty move
-                            if (path[j].structureOnPath == null && !path[j].isAsteroid)
-                            {
-                                blockedMovement = false;
-                                break;
-                            }
-                            //if next spot after ally is enemy, stop
-                            else if (path[j].structureOnPath != null && path[j].structureOnPath.teamId != MyStation.teamId)
-                            {
-                                break;
-                            }
-                            //If next spot after ally is ally, keep looking
-                        }
-                    }
-                }
-                if (unitMoving.movement < 0)
-                {
-                    blockedMovement = true;
-                }
-                var toRot = GetDirection(unitMoving, node);
-                var unitImage = unitMoving.transform.Find("Unit"); 
+                bool isValidHex = true;
+                //Move and turn toward node
+                var toRot = GetDirection(unitMoving,currentNode, nextNode);
                 float elapsedTime = 0f;
-                float totalTime = .6f;
-                while (elapsedTime <= totalTime)
+                float totalTime = .8f;
+                tapped = false;
+                while (elapsedTime <= totalTime && !tapped)
                 {
-                    unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
-                    if (!blockedMovement)
-                        unitMoving.transform.position = Vector3.Lerp(unitMoving.currentPathNode.transform.position, node.transform.position, elapsedTime / totalTime);
+                    unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+                    unitMoving.transform.position = Vector3.Lerp(currentNode.transform.position, nextNode.transform.position, elapsedTime / totalTime);
                     elapsedTime += Time.deltaTime;
                     yield return null;
                 }
-                unitImage.rotation = toRot;
-                if (node.isAsteroid)
+                unitMoving.unitImage.rotation = toRot;
+                //Asteroid on Path
+                if (nextNode.isAsteroid)
                 {
-                    yield return StartCoroutine(PerformMine(unitMoving, node));
-                    if (!node.isAsteroid)
+                    if (AllUnits.Contains(unitMoving))
+                    {
+                        var minedAmount = nextNode.MineCredits(unitMoving.mining);
+                        Stations[unitMoving.stationId].credits += minedAmount;
+                    }
+                    StartCoroutine(MineAnimation(nextNode));
+                    if (!nextNode.isAsteroid)
                     {
                         CheckDestroyAsteroidModules(unitMoving);
                     }
-                    blockedMovement = node.isAsteroid;
+                    isValidHex = !nextNode.isAsteroid;
                 }
-                //if enemy, attack, if you didn't destroy them, stay blocked and move back
-                if (unitMoving.movement >= 0 && node.structureOnPath != null && node.structureOnPath.teamId != unitMoving.teamId)
+                //Unit on Path
+                if (nextNode.structureOnPath != null)
                 {
-                    yield return StartCoroutine(FightEnemyUnit(unitMoving, node));
-                    didFightLastMove = true;
-                    if (unitMoving == null || !AllUnits.Contains(unitMoving))
-                        break;
-                    blockedMovement = node.structureOnPath != null && AllUnits.Contains(node.structureOnPath);
-                    if (i != path.Count() && !blockedMovement)
-                        turnValue.text = beforeText;
+                    isValidHex = false;
+                    //if enemy, attack, if you didn't destroy them, stay blocked and move back
+                    if (nextNode.structureOnPath.teamId != unitMoving.teamId)
+                    {
+                        yield return StartCoroutine(FightEnemyUnit(unitMoving, nextNode));
+                        didFightLastMove = true;
+                        if (unitMoving == null || !AllUnits.Contains(unitMoving))
+                            break;
+                        blockedMovement = nextNode.structureOnPath != null && AllUnits.Contains(nextNode.structureOnPath);
+                        isValidHex = nextNode.structureOnPath == null;
+                        if (i != path.Count() && !blockedMovement)
+                            turnValue.text = beforeText;
+                    }
+                    //if ally reapir, not yourself
+                    else if (nextNode.structureOnPath.teamId == unitMoving.teamId && nextNode.structureOnPath.unitGuid != unitMoving.unitGuid)
+                    {
+                        nextNode.structureOnPath.RegenHP(1);
+                    } 
                 }
-                if (blockedMovement)
+                if(isValidHex)
+                    unitMoving.currentPathNode = nextNode;
+                if (nextNode.structureOnPath == null && isValidHex && (nextNode.ownedById == -1 || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(nextNode).Any(x => x.ownedById == unitMoving.stationId))))
+                    unitMoving.SetNodeColor();
+                if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
                     elapsedTime = 0f;
-                    totalTime = .4f;
-                    while (elapsedTime <= totalTime)
+                    totalTime = .8f;
+                    tapped = false;
+                    while (elapsedTime <= totalTime && !tapped)
                     {
-                        unitMoving.transform.position = Vector3.Lerp(node.transform.position, unitMoving.currentPathNode.transform.position, elapsedTime / totalTime);
+                        unitMoving.transform.position = Vector3.Lerp(nextNode.transform.position, unitMoving.currentPathNode.transform.position, elapsedTime / totalTime);
                         elapsedTime += Time.deltaTime;
                         yield return null;
                     }
-                }
-                else
-                {
-                    unitMoving.hasMoved = true;
-                    unitMoving.currentPathNode = node;
-                    if (node.structureOnPath != null && node.structureOnPath.unitGuid != unitMoving.unitGuid && node.structureOnPath.teamId == unitMoving.teamId)
-                    {
-                        node.structureOnPath.RegenHP(1);
-                    }
-                }
-                if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString())
-                    || unitMoving.currentPathNode.ownedById == -1
-                    || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId)))
-                {
-                    unitMoving.SetNodeColor();
-                }
-                if (blockedMovement)
                     break;
-                yield return new WaitForSeconds(.25f);
+                }
+                currentNode = nextNode;
             }
             else
             {
-                Debug.Log("Next Hex was not a neighbor");
+                turnValue.text = "Next Hex was not a neighbor or out of range, movement cancelled";
             }
         }
         if (unitMoving != null && AllUnits.Contains(unitMoving))
@@ -1022,12 +986,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private Quaternion GetDirection(Unit unit, PathNode node)
+    private Quaternion GetDirection(Unit unit, PathNode fromNode, PathNode toNode)
     {
-        int x = node.coords.x - unit.currentPathNode.coords.x;
-        int y = node.coords.y - unit.currentPathNode.coords.y;
-        var offSetCoords = unit.currentPathNode.offSet.FirstOrDefault(c=>c.x == x && c.y == y);
-        unit.facing = (Direction)Array.IndexOf(unit.currentPathNode.offSet, offSetCoords);
+        int x = toNode.coords.x - fromNode.coords.x;
+        int y = toNode.coords.y - fromNode.coords.y;
+        var offSetCoords = fromNode.offSet.FirstOrDefault(c=>c.x == x && c.y == y);
+        unit.facing = (Direction)Array.IndexOf(fromNode.offSet, offSetCoords);
         return Quaternion.Euler(unit.transform.rotation.x, unit.transform.rotation.y, 270 - (unit.facing == Direction.TopRight ? -60 : (int)unit.facing * 60));
     }
 
@@ -1108,10 +1072,10 @@ public class GameManager : MonoBehaviour
         return returnText;
     }
 
-    public void HighlightRangeOfMovement(PathNode currentNode, Unit unit, bool forMining = false)
+    public void HighlightRangeOfMovement(PathNode currentNode, Unit unit)
     {
         ClearMovementRange();
-        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, unit, forMining);
+        List<PathNode> nodesWithinRange = GridManager.i.GetNodesWithinRange(currentNode, unit);
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(node.isAsteroid ? movementMinePrefab : movementRangePrefab, node.transform.position, Quaternion.identity);
@@ -1520,29 +1484,11 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
-    private IEnumerator PerformMine(Unit currentUnit, PathNode asteroidToMine)
+    private IEnumerator MineAnimation(PathNode asteroidToMine)
     {
-        Station currentStation = Stations[currentUnit.stationId];
-        if (AllUnits.Contains(currentUnit))
-        {
-            var minedAmount = asteroidToMine.MineCredits(currentUnit.mining);
-            currentStation.credits += minedAmount;
-            currentUnit.selectIcon.SetActive(true);
-            asteroidToMine.ShowMineIcon(true);
-            var toRot = GetDirection(currentUnit, asteroidToMine);
-            var unitImage = currentUnit.transform.Find("Unit");
-            float elapsedTime = 0f;
-            float totalTime = 1f;
-            while (elapsedTime <= totalTime)
-            {
-                unitImage.rotation = Quaternion.Lerp(unitImage.rotation, toRot, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            unitImage.rotation = toRot;
-            asteroidToMine.ShowMineIcon(false);
-            currentUnit.selectIcon.SetActive(false);
-        }
+        asteroidToMine.ShowMineIcon(true);
+        yield return new WaitForSeconds(1f);
+        asteroidToMine.ShowMineIcon(false);
     }
 
     private void StartTurn()

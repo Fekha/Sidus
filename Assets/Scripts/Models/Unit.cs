@@ -14,7 +14,7 @@ public class Unit : Node
     internal int teamId;
     internal int maxHP;
     internal int HP;
-    internal int maxRange;
+    internal int maxMovement;
     internal int movement;
     internal int kineticPower;
     internal int thermalPower;
@@ -46,7 +46,7 @@ public class Unit : Node
         color = _color;
         maxHP = _hp;
         HP = _hp;
-        maxRange = _range;
+        maxMovement = _range;
         movement = _range;
         kineticPower = _electricAttack;
         thermalPower = _thermalAttack;
@@ -60,7 +60,7 @@ public class Unit : Node
         statText = transform.Find("HP/Stats").GetComponent<TextMeshPro>();
         selectIcon = transform.Find("Select").gameObject;
         inCombatIcon = transform.Find("InCombat").gameObject;
-        unitImage = this.transform.Find("Unit");
+        unitImage = transform.Find("Unit");
         unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }
@@ -87,7 +87,7 @@ public class Unit : Node
     }
     internal void resetMovementRange()
     {
-        movement = maxRange;
+        movement = maxMovement;
     }
 
     internal void clearMovementRange()
@@ -102,7 +102,7 @@ public class Unit : Node
 
     internal int getMaxMovementRange()
     {
-        return maxRange;
+        return maxMovement;
     }
 
     internal void subtractMovement(int i)
@@ -142,17 +142,17 @@ public class Unit : Node
                 kineticDamageModifier += (1 * modifer);
                 break;
             case 3:
-                maxRange += (1 * modifer);
+                maxMovement += (1 * modifer);
                 movement += (1 * modifer);
                 kineticPower += (-1 * modifer);
                 break;
             case 4:
-                maxRange += (1 * modifer);
+                maxMovement += (1 * modifer);
                 movement += (1 * modifer);
                 thermalPower += (-1 * modifer);
                 break;
             case 5:
-                maxRange += (1 * modifer);
+                maxMovement += (1 * modifer);
                 movement += (1 * modifer);
                 explosivePower += (-1 * modifer);
                 break;
@@ -219,17 +219,17 @@ public class Unit : Node
                 HP += (3 * modifer);
                 break;
             case 20:
-                maxRange += (1 * modifer);
+                maxMovement += (1 * modifer);
                 movement += (1 * modifer);
                 kineticDamageModifier += (-2 * modifer); 
                 break;
             case 21:
-                maxRange += (1 * modifer);
+                maxMovement += (1 * modifer);
                 movement += (1 * modifer);
                 thermalDamageModifier += (-2 * modifer);
                 break;
             case 22:
-                maxRange += (1 * modifer);
+                maxMovement += (1 * modifer);
                 movement += (1 * modifer);
                 explosiveDamageModifier += (-2 * modifer);
                 break;

@@ -185,7 +185,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, int teamId)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit)
     {
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
@@ -194,53 +194,31 @@ public class GridManager : MonoBehaviour
         while (openSet.Count > 0)
         {
             PathNode currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++)
-            {
-                if (openSet[i].gCost < currentNode.gCost)
-                {
-                    currentNode = openSet[i];
-                }
-            }
-
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
-
             if (currentNode == targetNode)
             {
                 return RetracePath(startNode, targetNode);
             }
-
-            foreach (PathNode neighbor in GetNeighbors(currentNode))
+            List<PathNode> neighbors = GetNeighbors(currentNode);
+            foreach (PathNode neighbor in neighbors)
             {
-                //If not the target, and is an asteriod or already checked it
-                if (neighbor != targetNode && (neighbor.isAsteroid || closedSet.Contains(neighbor)))
-                    continue;
-
-                int newCostToNeighbor = currentNode.gCost + GetGCost(neighbor,teamId);
-                if (newCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
+                if (!openSet.Contains(neighbor) && !closedSet.Contains(neighbor))
                 {
-                    neighbor.gCost = newCostToNeighbor;
-                    //neighbor.hCost = GetDistance(neighbor, targetNode);
-                    neighbor.coordsText.text = $"G:{neighbor.gCost} \n H:{neighbor.hCost} \n F:{neighbor.fCost}";
+                    neighbor.gCost = currentNode.gCost + GetGCost(neighbor);
                     neighbor.parent = currentNode;
-
-                    if (!openSet.Contains(neighbor))
-                        openSet.Add(neighbor);
+                    neighbor.coordsText.text = $"G:{neighbor.gCost} \n H:{neighbor.hCost} \n F:{neighbor.fCost}";
+                    openSet.Add(neighbor);
                 }
             }
         }
         return new List<PathNode>();
     }
-    public int GetGCost(PathNode node, int teamId)
+    public int GetGCost(PathNode node)
     {
-        if (Globals.GameMatch.GameSettings.Contains(GameSettingType.TakeoverCosts2.ToString()))
-        {
-            //Costs 1 if nuetral, owned by you, or has a fleet on it. Costs 2 if owned by enemy without fleet on it.
-            return (node.ownedById == -1 || node.ownedById == teamId) ? 1 : 2; // || node.structureOnPath != null
-        }
         return 1;
     }
-    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit, bool forMining)
+    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
     {
         var range = unit.getMovementRange();
         List<PathNode> nodesWithinRange = new List<PathNode>();
@@ -255,18 +233,17 @@ public class GridManager : MonoBehaviour
             PathNode currentNode = queue.Dequeue();
             if (currentNode != clickedNode)
                 nodesWithinRange.Add(currentNode);
-            if (!currentNode.isAsteroid)
+            List<PathNode> neighbors = GetNeighbors(currentNode);
+            foreach (PathNode neighbor in neighbors)
             {
-                foreach (PathNode neighbor in GetNeighbors(currentNode))
+                // Check if enemy owned tile and adjust cost
+                int moveCost = currentNode.gCost + GetGCost(neighbor); 
+                if (!visited.Contains(neighbor) && moveCost <= range)
                 {
-                    // Check if enemy owned tile and adjust cost
-                    int moveCost = currentNode.gCost + GetGCost(neighbor, unit.teamId); 
-                    if (!visited.Contains(neighbor) && (moveCost <= range || (forMining && neighbor.isAsteroid)))
-                    {
-                        neighbor.gCost = moveCost;
-                        queue.Enqueue(neighbor);
-                        visited.Add(neighbor);
-                    }
+                    neighbor.gCost = moveCost;
+                    neighbor.parent = currentNode;
+                    queue.Enqueue(neighbor);
+                    visited.Add(neighbor);
                 }
             }
         }
@@ -303,7 +280,7 @@ public class GridManager : MonoBehaviour
     //}
 
 
-    internal List<PathNode> GetNeighbors(PathNode node)
+    internal List<PathNode> GetNeighbors(PathNode node, bool first = true)
     {
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
@@ -314,6 +291,11 @@ public class GridManager : MonoBehaviour
             {
                 neighbors.Add(grid[checkX, checkY]);
             }
+        }
+        if (node.isAsteroid && first)
+        {
+            neighbors = GetNeighbors(node.parent, false).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.Equals(x.coords))).ToList();
+            neighbors.Add(node.parent);
         }
         return neighbors;
     }
