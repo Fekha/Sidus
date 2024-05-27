@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class GameManager : MonoBehaviour
@@ -209,7 +210,7 @@ public class GameManager : MonoBehaviour
                     ModuleEffectText.text += $"\n {unit.attachedModules[i].effectText.Replace(" \n", ",")}";
                 }
             }
-            miningValue.text = unit.mining.ToString();
+            miningValue.text = unit.maxMining.ToString();
         }
         var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.teamId == unit.teamId);
         var kineticSupport = 0;
@@ -297,7 +298,7 @@ public class GameManager : MonoBehaviour
                             QueueAction(ActionType.MoveUnit);
                     }
                     //Create Movement
-                    else if (SelectedUnit != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
+                    else if (SelectedUnit != null && targetNode != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
                     {
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)
@@ -401,15 +402,32 @@ public class GameManager : MonoBehaviour
             {
                 int i = j;
                 var tech = MyStation.technology[i];
-                var hasQueued = tech.simulatedAmount >= tech.neededAmount;
+                var canQueue = true;
+                if (i == (int)ResearchType.ResearchFleetLvl)
+                {
+                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+                }
+                if (i == (int)ResearchType.ResearchMaxFleets)
+                {
+                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+                }
+                if (i == (int)ResearchType.ResearchHP)
+                {
+                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                }
+                if (i == (int)ResearchType.ResearchMining)
+                {
+                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                }
                 var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
                 TechnologyObjects.Add(techObject);
-                techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(tech.effectText));
+                var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
+                techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
                 techObject.transform.Find("AmountNeeded").GetComponent<TextMeshProUGUI>().text = $"{tech.simulatedAmount}/{tech.neededAmount}";
                 var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
-                researchButton.interactable = !hasQueued;
+                researchButton.interactable = canQueue;
                 researchButton.onClick.AddListener(() => Research(i));
-                techObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
+                techObject.transform.Find("Queued").gameObject.SetActive(!canQueue);
                 techObject.transform.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{i+11}");
             }
         }
@@ -631,6 +649,10 @@ public class GameManager : MonoBehaviour
             {
                 action.selectedUnit.resetMovementRange();
             }
+            if ((int)action.actionType > 10 && (int)action.actionType < 19)
+            {
+                MyStation.technology[(int)action.actionType-11].simulatedAmount--;
+            }    
             currentCredits += action.costOfAction;
             ClearActionBar();
             MyStation.actions.RemoveAt(slot);
@@ -711,24 +733,31 @@ public class GameManager : MonoBehaviour
 
     private bool CanLevelUp(Unit structure, ActionType actionType, bool countQueue)
     {
-        var nextLevel = structure.level;
+        var station = Stations[structure.stationId];
+        var currentLevel = structure.level;
+        var maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].level;
+        var maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
         if (countQueue) {
-            nextLevel += Stations[structure.stationId].actions.Count(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType);
+            currentLevel += Stations[structure.stationId].actions.Count(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType);
+            maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+            maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
         } 
         if (actionType == ActionType.UpgradeFleet)
-            return nextLevel < Stations[structure.stationId].maxFleetLevel;
+            return currentLevel <= maxFleetLvl;
         else
-            return nextLevel < Stations[structure.stationId].maxStationLevel;
+            return currentLevel <= maxStationLvl;
     }
 
     private bool IsUnderMaxFleets(Station station, bool countQueue)
     {
         var currentFleets = station.fleets.Count;
+        var maxNumFleets = station.technology[(int)ResearchType.ResearchMaxFleets].level + 1;
         if (countQueue)
         {
             currentFleets += station.actions.Count(x => x.actionType == ActionType.CreateFleet);
+            maxNumFleets = station.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel + 1;
         }
-        return currentFleets < station.maxNumberOfFleets;
+        return currentFleets < maxNumFleets;
     }
     private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Module? auctionModule = null)
     {
@@ -807,14 +836,14 @@ public class GameManager : MonoBehaviour
             i++;
             didFightLastMove = false;
             unitMoving.subtractMovement(GridManager.i.GetGCost(nextNode));
-            if (GridManager.i.GetNeighbors(currentNode).Contains(nextNode) && unitMoving.movement >= 0)
+            if (GridManager.i.GetNeighbors(currentNode,false).Contains(nextNode) && unitMoving.movement >= 0)
             {
                 turnValue.text = beforeText;
                 unitMoving.hasMoved = true; 
                 bool blockedMovement = false;
                 bool isValidHex = true;
                 //Move and turn toward node
-                var toRot = GetDirection(unitMoving,currentNode, nextNode);
+                var toRot = GetDirection(unitMoving, currentNode, nextNode);
                 float elapsedTime = 0f;
                 float totalTime = .8f;
                 tapped = false;
@@ -831,7 +860,8 @@ public class GameManager : MonoBehaviour
                 {
                     if (AllUnits.Contains(unitMoving))
                     {
-                        var minedAmount = nextNode.MineCredits(unitMoving.mining);
+                        var minedAmount = nextNode.MineCredits(unitMoving.miningLeft);
+                        unitMoving.miningLeft -= minedAmount;
                         Stations[unitMoving.stationId].credits += minedAmount;
                     }
                     StartCoroutine(MineAnimation(nextNode));
@@ -884,7 +914,8 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                turnValue.text = "Next Hex was not a neighbor or out of range, movement cancelled";
+                turnValue.text = "Next hex was not a neighbor or out of range, movement cancelled";
+                Debug.Log($"Current: {currentNode.coordsText}, Next: {nextNode.coordsText}");
             }
         }
         if (unitMoving != null && AllUnits.Contains(unitMoving))
@@ -1015,7 +1046,7 @@ public class GameManager : MonoBehaviour
         }
         if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining1))
         {
-            unit.mining++;
+            unit.maxMining++;
         }
     }
 
@@ -1269,29 +1300,7 @@ public class GameManager : MonoBehaviour
 
     private void FinishTurns()
     {
-        endTurnButton.color = Color.black;
         winner = GridManager.i.CheckForWin();
-        UpdateAuctionModules(TurnNumber);
-        foreach (var unit in AllUnits)
-        {
-            if (!unit.hasMoved)
-            {
-                unit.RegenHP(1);
-            }
-            unit.hasMoved = false;
-        }
-        foreach (var station in Stations)
-        {
-            station.credits += 1+station.fleets.Sum(x=>x.globalCreditGain);
-            station.actions.Clear();
-            for (int i = 1; i <= 3; i++)
-            {
-                if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
-                {
-                    station.maxActions = 2 + i;
-                }
-            }
-        }
         if (winner != -1)
         {
             ToggleHPText(true);
@@ -1471,7 +1480,7 @@ public class GameManager : MonoBehaviour
                     {
                         var tech = currentStation.technology[(int)action.actionType - 11];
                         tech.Research(currentStation);
-                        turnValue.text += $"{GetDescription(action.actionType)}\n{tech.effectText}";
+                        turnValue.text += $"{GetDescription(action.actionType)}\n({tech.effectText})";
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
@@ -1536,6 +1545,28 @@ public class GameManager : MonoBehaviour
     {
         UpdateAuctionModules(TurnNumber);
         TurnNumber++;
+        endTurnButton.color = Color.black;
+        foreach (var unit in AllUnits)
+        {
+            if (!unit.hasMoved)
+            {
+                unit.RegenHP(1);
+            }
+            unit.hasMoved = false;
+            unit.miningLeft = unit.maxMining;
+        }
+        foreach (var station in Stations)
+        {
+            station.credits += 1 + station.fleets.Sum(x => x.globalCreditGain);
+            station.actions.Clear();
+            for (int i = 1; i <= 3; i++)
+            {
+                if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
+                {
+                    station.maxActions = 2 + i;
+                }
+            }
+        }
         turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
@@ -1550,6 +1581,10 @@ public class GameManager : MonoBehaviour
                 orderObj.gameObject.SetActive(false);
         }
         currentCredits = MyStation.credits;
+        foreach (var tech in MyStation.technology)
+        {
+            tech.simulatedAmount = tech.currentAmount;
+        }
         infoToggle = false;
         ViewModuleMarket(false);
         ViewTechnology(false);
@@ -1574,7 +1609,6 @@ public class GameManager : MonoBehaviour
             var spriteRenderer = unit.transform.Find("Unit").GetComponent<SpriteRenderer>();
             if (unit is Station)
             {
-                (unit as Station).maxNumberOfFleets++;
                 if (unit.level == 2)
                 {
                     spriteRenderer.sprite = GridManager.i.stationlvl2;

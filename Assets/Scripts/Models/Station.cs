@@ -9,9 +9,6 @@ public class Station : Unit
     internal List<Module> modules = new List<Module>();
     internal List<Technology> technology = new List<Technology>();
     internal int maxActions = 2;
-    internal int maxNumberOfFleets = 1;
-    internal int maxStationLevel = 1;
-    internal int maxFleetLevel = 1;
     internal int score = 0;
     internal int credits = 6;
     internal bool defeated = false;
@@ -26,7 +23,7 @@ public class Station : Unit
         stationId = GameManager.i.Stations.Count;
         unitName = $"{_color} Station";
         GameManager.i.Stations.Add(this);
-        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _direction);
+        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 5, _direction);
     }
 
     internal void researchKinetic()
@@ -49,14 +46,14 @@ public class Station : Unit
     }
     internal void researchHP()
     {
-        bonusHP++;
-        GainHP(1);
-        fleets.ForEach(x => x.GainHP(1));
+        bonusHP+=2;
+        GainHP(2);
+        fleets.ForEach(x => x.GainHP(2));
     }
     internal void researchMining()
     {
         bonusExplosive++;
-        explosivePower++;
-        fleets.ForEach(x => x.explosivePower++);
+        maxMining++;
+        fleets.ForEach(x => x.maxMining++);
     }
 }

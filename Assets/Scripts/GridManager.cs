@@ -194,6 +194,13 @@ public class GridManager : MonoBehaviour
         while (openSet.Count > 0)
         {
             PathNode currentNode = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].gCost < currentNode.gCost)
+                {
+                    currentNode = openSet[i];
+                }
+            }
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
             if (currentNode == targetNode)

@@ -6,10 +6,13 @@ public class Technology : MonoBehaviour
 {
     public int researchId { get; set; }
     public int level { get; set; }
+    public int simulatedLevel { get { return level + ((simulatedAmount >= neededAmount) ? 1 : 0); } }
     public int neededAmount { get; set; }
     public int currentAmount { get; set; }
     public int simulatedAmount { get; set; }
     public string effectText { get; set; }
+    public string currentEffectText { get; set; }
+    public string requirementText { get; set; }
 
     public Technology(int _researchId)
     {
@@ -22,35 +25,47 @@ public class Technology : MonoBehaviour
         switch (researchId)
         {
             case 0:
-                effectText = $"+1 max station level. (Current max level: {1 + level})";
+                effectText = $"+1 max station level.";
+                currentEffectText = $"\n(Current max level: {1 + level})";
                 neededAmount = 1 + level;
                 break;
             case 1:
-                effectText = $"+1 max fleet level. (Current max level: {1 + level})";
+                effectText = $"+1 max fleet level.";
+                currentEffectText = $"\n(Current max level: {1 + level})";
+                requirementText = "<b>Must research max <u>station level</u> first</b>\n\n";
                 neededAmount = 1 + level;
                 break;
             case 2:
-                effectText = $"+1 max number of fleets. (Current max fleets: {1 + level})";
+                effectText = $"+1 max number of fleets.";
+                currentEffectText = $"\n(Current max fleets: {1 + level})";
+                requirementText = "<b>Must research max <u>station level</u> first</b>\n\n";
                 neededAmount = 2 + level;
                 break;
             case 3:
-                effectText = $"+2 HP for all units. (Current bonus: +{level})";
+                effectText = $"+2 HP for all units.";
+                currentEffectText = $"\n(Current bonus: +{level})";
+                requirementText = "<b>Must research max <u>fleet level</u> first</b>\n\n";
                 neededAmount = 1 + level;
                 break;
             case 4:
-                effectText = $"+1 kinetic power for all units. (Current bonus: +{level})";
+                effectText = $"+1 kinetic power for all units.";
+                currentEffectText = $"\n(Current bonus: +{level})";
                 neededAmount = 3 + level;
                 break;
             case 5:
-                effectText = $"+1 thermal power for all units. (Current bonus: +{level})";
+                effectText = $"+1 thermal power for all units.";
+                currentEffectText = $"\n(Current bonus: +{level})";
                 neededAmount = 2 + level;
                 break;
             case 6:
-                effectText = $"+1 explosive power for all units. (Current bonus: +{level})";
+                effectText = $"+1 explosive power for all units.";
+                currentEffectText = $"\n(Current bonus: +{level})";
                 neededAmount = 1 + level;
                 break;
             case 7:
-                effectText = $"+1 mining power for all units. (Current bonus: +{level})";
+                effectText = $"+1 mining power for all units.";
+                currentEffectText = $"\n(Current bonus: +{level})";
+                requirementText = "<b>Must research max <u>fleet level</u> first</b>\n\n";
                 neededAmount = 2 + level;
                 break;
             default:
@@ -64,30 +79,21 @@ public class Technology : MonoBehaviour
         if (currentAmount >= neededAmount) {
             currentAmount -= neededAmount;
             level++;
-            switch (researchId)
+            switch ((ResearchType)researchId)
             {
-                case 0:
-                    station.maxStationLevel++;
-                    break;
-                case 1:
-                    station.maxFleetLevel++;
-                    break;
-                case 2:
-                    station.maxNumberOfFleets++;
-                    break;
-                case 3:
+                case ResearchType.ResearchHP:
                     station.researchHP();
                     break;
-                case 4:
+                case ResearchType.ResearchKinetic:
                     station.researchKinetic();
                     break;
-                case 5:
+                case ResearchType.ResearchThermal:
                     station.researchThermal();
                     break;
-                case 6:
+                case ResearchType.ResearchExplosive:
                     station.researchExplosive();
                     break;
-                case 7:
+                case ResearchType.ResearchMining:
                     station.researchMining();
                     break;
                 default:

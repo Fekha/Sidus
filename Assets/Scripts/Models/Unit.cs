@@ -22,7 +22,8 @@ public class Unit : Node
     internal int kineticDamageModifier;
     internal int thermalDamageModifier;
     internal int explosiveDamageModifier;
-    internal int mining;
+    internal int maxMining;
+    internal int miningLeft;
     internal double supportValue = .5;
     internal int level = 1;
     internal int globalCreditGain = 0;
@@ -51,7 +52,8 @@ public class Unit : Node
         kineticPower = _electricAttack;
         thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
-        mining = _mining;
+        maxMining = _mining;
+        miningLeft = maxMining;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
         resetMovementRange();
@@ -191,15 +193,15 @@ public class Unit : Node
                 explosivePower += (1 * modifer);
                 break;
             case 13:
-                mining += (3 * modifer);
+                maxMining += (3 * modifer);
                 kineticDamageModifier += (2 * modifer);
                 break;
             case 14:
-                mining += (3 * modifer);
+                maxMining += (3 * modifer);
                 thermalDamageModifier += (2 * modifer);
                 break;
             case 15:
-                mining += (3 * modifer);
+                maxMining += (3 * modifer);
                 explosiveDamageModifier += (2 * modifer);
                 break;
             case 16:
@@ -289,22 +291,22 @@ public class Unit : Node
                 break; 
             case 33:
                 globalCreditGain += (2 * modifer);
-                mining += (-2 * modifer);
+                maxMining += (-2 * modifer);
                 break; 
             case 34:
                 globalCreditGain += (3 * modifer);
                 movement += (-2 * modifer);
                 break;
             case 35:
-                mining += (3 * modifer);
+                maxMining += (3 * modifer);
                 kineticPower += (1 * modifer);
                 break; 
             case 36:
-                mining += (3 * modifer);
+                maxMining += (3 * modifer);
                 thermalPower += (1 * modifer);
                 break; 
             case 37:
-                mining += (3 * modifer);
+                maxMining += (3 * modifer);
                 explosivePower += (1 * modifer);
                 break;
             case 38:
