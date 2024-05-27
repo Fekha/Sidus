@@ -80,6 +80,11 @@ public class Unit : Node
             maxHP -= Mathf.Max(damage, 0);
         }
     }
+    internal void GainHP(int hp)
+    {
+        HP += hp;
+        maxHP += hp;
+    }
     public void SetNodeColor()
     {
         currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[stationId];

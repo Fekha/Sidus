@@ -39,8 +39,8 @@ namespace StartaneousAPI.ServerModels
         public int ActionOrder { get; set; }
         public int? ActionTypeId { get; set; }
         public Guid? SelectedUnitGuid { get; set; }
-        public List<ServerCoords>? SelectedCoords { get; set; }
-        public ServerModule? SelectedModule { get; set; }
+        public List<ServerCoords> SelectedCoords { get; set; }
+        public ServerModule SelectedModule { get; set; }
         public Guid? GeneratedGuid { get; set; }
     }
 
@@ -66,5 +66,15 @@ namespace StartaneousAPI.ServerModels
     {
         public int X { get; set; }
         public int Y { get; set; }
+    }
+
+    [Serializable]
+    public class ServerTechnology
+    {
+        public int ResearchId { get; set; }
+        public int Level { get; set; }
+        public int NeededAmount { get; set; }
+        public int CurrentAmount { get; set; }
+
     }
 }
