@@ -3765,7 +3765,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &487505193
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7494,22 +7494,23 @@ MonoBehaviour:
     option to create more fleets when you upgrade your station.
 
 
-    Upgrades cost
-    credits, which you get from mining asteroids.
+    Upgrades require
+    better technology and cost credits. You get credits from mining asteroids.
 
 
-    Once all players have submitted
-    their actions, each action will be taken in the order displayed at the top left.
+    Once
+    all players have submitted their actions, each action will be taken in the order
+    displayed at the top left.
 
 
-    If
-    one unit moves into another, combat will occur. Combat happens in three phases,
-    Kinetic, Thermal, then Explosive. Power levels are compared and the unit that
-    has the lower amount will take the difference in HP.
+    If one unit moves into another, combat will
+    occur. Combat happens in three phases, Kinetic, Thermal, then Explosive. Power
+    levels are compared and the unit that has the lower amount will take the difference
+    in HP.
 
 
-    Gain an advantage
-    in combat by leveling up your units and attaching modules.'
+    Gain an advantage in combat by leveling up your units and attaching
+    modules.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7536,7 +7537,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.15
+  m_fontSize: 19.45
   m_fontSizeBase: 19
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -11596,18 +11597,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Movement:\nYou may move each unit once per turn.\nYou immediatly claim
-    any nuetral hexes that you move over. \nFor enemy owned hexes, your unit must
-    end its movement on the hex, and you must already own a neighboring hex to claim
-    it.\nUnits that don't move on a turn self repair 1 HP.\nMoving over allied units
-    repairs 1 of their HP.\n\nCombat:\nAll fleets neighboring an attacked fleet participate
+  m_text: "Movement:\nYou may move each unit once per turn.\nMoving into an asteroid
+    will mine it. \nMoving over allied units repairs 1 of their HP.\nUnits that don't
+    move on a turn self repair 1 HP.\n\nClaiming Hexes:\nYou immediatly claim any
+    nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
+    its movement on the hex, and you must already own a neighboring hex to claim
+    it.\n\nMining:\nAsteriods that reach 0 minerals will be destroyed, opening a
+    nuetral hex.\n\nCombat:\nAll fleets neighboring an attacked fleet participate
     in the combat by adding 50% of their power.\n+- Damage Taken only applies if
-    a unit loses a combat phase.\n\nMining:\nThere is no limit to mining per unit
-    per turn.\nMoving into an asteroid will mine it. Additionally, you may queue
-    mine actions without moving from your original location or the moved to location.\nAsteriods
-    that reach 0 minerals will be destroyed, opening a nuetral hex.\n\nRunning out
-    of actions:\nIf you end your turn early, without filling your action queue, you
-    will gain 1 credit per unused action."
+    a unit loses a combat phase.\n\nRunning out of actions:\nIf you end your turn
+    early, without filling your action queue, you will gain 1 credit per unused action."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11642,7 +11641,7 @@ MonoBehaviour:
   m_fontSizeMax: 24
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
