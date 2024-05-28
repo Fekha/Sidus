@@ -9,6 +9,6 @@ public class Fleet : Unit
         _station.fleets.Add(this);
         _station.fleetCount++;
         unitName = $"{_color} Fleet {_station.fleetCount}";
-        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 4, _station.facing);
+        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _station.facing);
     }
 }

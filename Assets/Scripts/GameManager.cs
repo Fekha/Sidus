@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
@@ -6,13 +7,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class GameManager : MonoBehaviour
 {
@@ -127,13 +125,12 @@ public class GameManager : MonoBehaviour
         }
         ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
-        List<Technology> technologyList = new List<Technology>();
-        for(int i = 0; i < 8; i++){
-            technologyList.Add(new Technology(i));
-        }
         foreach (var station in Stations)
         {
-            station.technology = technologyList;
+            for (int i = 0; i < 8; i++)
+            {
+                station.technology.Add(new Technology(i));
+            }
         }
         StartTurn();
         StartCoroutine(GetTurnReadiness());
@@ -318,6 +315,7 @@ public class GameManager : MonoBehaviour
                     //Clicked on invalid tile, clear
                     else
                     {
+                        DeselectUnitIcons();
                         if (SelectedUnit == null)
                         {
                             if (targetUnit != null)
@@ -358,13 +356,18 @@ public class GameManager : MonoBehaviour
 
     public void ShowQueuedAction(int i)
     {
-        if(MyStation.actions[i].actionType == ActionType.MoveUnit || MyStation.actions[i].actionType == ActionType.MoveAndMine)
+        DeselectUnitIcons();
+        if (MyStation.actions[i].actionType == ActionType.MoveUnit || MyStation.actions[i].actionType == ActionType.MoveAndMine)
             HighlightQueuedMovement(MyStation.actions[i]);
+        else
+            MyStation.actions[i].selectedUnit.selectIcon.SetActive(true);
     }
     private void HighlightQueuedMovement(Action movementAction)
     {
         SelectedUnit = movementAction.selectedUnit;
         SelectedUnit.subtractMovement(99);
+        SetUnitTextValues(SelectedUnit);
+        ViewUnitInformation(true);
         DrawPath(movementAction.selectedPath);
         Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
         HighlightRangeOfMovement(movementAction.selectedPath.LastOrDefault(), SelectedUnit);
@@ -696,12 +699,18 @@ public class GameManager : MonoBehaviour
     }
     private void ToggleHPText(bool value)
     {
-        foreach (var station in AllUnits)
+        foreach (var unit in AllUnits)
         {
-            station.ShowHPText(value);
+            unit.ShowHPText(value);
         }
     }
-
+    private void DeselectUnitIcons()
+    {
+        foreach (var unit in AllUnits)
+        {
+            unit.selectIcon.SetActive(false);
+        }
+    }
     private string GetCostText(int cost)
     {
         string plural = cost == 1 ? "" : "s";
@@ -805,6 +814,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Resetting UI");
         ToggleMineralText(false);
         ToggleHPText(false);
+        DeselectUnitIcons();
         UpdateCreateFleetCostText();
         UpdateCreditTotal();
         SetModuleGrid();
@@ -895,7 +905,7 @@ public class GameManager : MonoBehaviour
                 }
                 if(isValidHex)
                     unitMoving.currentPathNode = nextNode;
-                if (nextNode.structureOnPath == null && isValidHex && (nextNode.ownedById == -1 || ((i == path.Count || blockedMovement) && GridManager.i.GetNeighbors(nextNode).Any(x => x.ownedById == unitMoving.stationId))))
+                if (!nextNode.isAsteroid && nextNode.ownedById == -1)
                     unitMoving.SetNodeColor();
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
@@ -922,6 +932,8 @@ public class GameManager : MonoBehaviour
         {
             unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
             unitMoving.currentPathNode.structureOnPath = unitMoving;
+            if(GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId))
+                unitMoving.SetNodeColor();
         }
         if (!didFightLastMove)
         {
@@ -1557,7 +1569,7 @@ public class GameManager : MonoBehaviour
         }
         foreach (var station in Stations)
         {
-            station.credits += 1 + station.fleets.Sum(x => x.globalCreditGain);
+            station.credits += station.globalCreditGain + station.fleets.Sum(x => x.globalCreditGain);
             station.actions.Clear();
             for (int i = 1; i <= 3; i++)
             {
@@ -1609,6 +1621,7 @@ public class GameManager : MonoBehaviour
             var spriteRenderer = unit.transform.Find("Unit").GetComponent<SpriteRenderer>();
             if (unit is Station)
             {
+                unit.globalCreditGain++;
                 if (unit.level == 2)
                 {
                     spriteRenderer.sprite = GridManager.i.stationlvl2;

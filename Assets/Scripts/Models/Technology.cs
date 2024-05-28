@@ -25,45 +25,45 @@ public class Technology : MonoBehaviour
         switch (researchId)
         {
             case 0:
-                effectText = $"+1 max station level.";
+                effectText = $"+1 max station level";
                 currentEffectText = $"\n(Current max level: {1 + level})";
                 neededAmount = 1 + level;
                 break;
             case 1:
-                effectText = $"+1 max fleet level.";
+                effectText = $"+1 max fleet level";
                 currentEffectText = $"\n(Current max level: {1 + level})";
                 requirementText = "<b>Must research max <u>station level</u> first</b>\n\n";
                 neededAmount = 1 + level;
                 break;
             case 2:
-                effectText = $"+1 max number of fleets.";
+                effectText = $"+1 max number of fleets";
                 currentEffectText = $"\n(Current max fleets: {1 + level})";
                 requirementText = "<b>Must research max <u>station level</u> first</b>\n\n";
                 neededAmount = 2 + level;
                 break;
             case 3:
-                effectText = $"+2 HP for all units.";
+                effectText = $"+2 HP for all units";
                 currentEffectText = $"\n(Current bonus: +{level})";
                 requirementText = "<b>Must research max <u>fleet level</u> first</b>\n\n";
                 neededAmount = 1 + level;
                 break;
             case 4:
-                effectText = $"+1 kinetic power for all units.";
-                currentEffectText = $"\n(Current bonus: +{level})";
-                neededAmount = 3 + level;
-                break;
-            case 5:
-                effectText = $"+1 thermal power for all units.";
+                effectText = $"+1 kinetic power for all units";
                 currentEffectText = $"\n(Current bonus: +{level})";
                 neededAmount = 2 + level;
                 break;
+            case 5:
+                effectText = $"+1 thermal power for all units";
+                currentEffectText = $"\n(Current bonus: +{level})";
+                neededAmount = 1 + level;
+                break;
             case 6:
-                effectText = $"+1 explosive power for all units.";
+                effectText = $"+1 explosive power for all units";
                 currentEffectText = $"\n(Current bonus: +{level})";
                 neededAmount = 1 + level;
                 break;
             case 7:
-                effectText = $"+1 mining power for all units.";
+                effectText = $"+1 mining power for all units";
                 currentEffectText = $"\n(Current bonus: +{level})";
                 requirementText = "<b>Must research max <u>fleet level</u> first</b>\n\n";
                 neededAmount = 2 + level;

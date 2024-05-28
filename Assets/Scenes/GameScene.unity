@@ -1756,7 +1756,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -101, y: -59.000023}
+  m_AnchoredPosition: {x: -101, y: -76}
   m_SizeDelta: {x: 160, y: 62.26}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &320696980
@@ -2830,10 +2830,10 @@ RectTransform:
   - {fileID: 1463715008}
   m_Father: {fileID: 356994078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.1987915, y: -201.84045}
-  m_SizeDelta: {x: -15.3431, y: -419.206}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1.1987915, y: -202.16026}
+  m_SizeDelta: {x: 432.6569, y: 378.1543}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &410015561
 MonoBehaviour:
@@ -3765,7 +3765,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &487505193
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11603,10 +11603,9 @@ MonoBehaviour:
     nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
     its movement on the hex, and you must already own a neighboring hex to claim
     it.\n\nMining:\nAsteriods that reach 0 minerals will be destroyed, opening a
-    nuetral hex.\n\nCombat:\nAll fleets neighboring an attacked fleet participate
-    in the combat by adding 50% of their power.\n+- Damage Taken only applies if
-    a unit loses a combat phase.\n\nRunning out of actions:\nIf you end your turn
-    early, without filling your action queue, you will gain 1 credit per unused action."
+    nuetral hex.\nUnits can only mine the amount of mining power they have per turn.\n\nCombat:\nAll
+    fleets neighboring an attacked fleet participate in the combat by adding 50%
+    of their power.\n+- Damage Taken only applies if a unit loses a combat phase."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11633,7 +11632,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18.75
+  m_fontSize: 19.9
   m_fontSizeBase: 19
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12634,7 +12633,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.0000047684, y: -41.1}
+  m_AnchoredPosition: {x: 0.0000047684, y: -43}
   m_SizeDelta: {x: 427.0237, y: 65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1538388385
@@ -12819,7 +12818,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 105, y: -59}
+  m_AnchoredPosition: {x: 105, y: -75.99998}
   m_SizeDelta: {x: 160, y: 62.26}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1549553867
@@ -13481,10 +13480,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 410015560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.13128662, y: -0.49020386}
-  m_SizeDelta: {x: -15.672703, y: -17.134705}
+  m_SizeDelta: {x: 418.3273, y: 362.8653}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1624495073
 MonoBehaviour:
@@ -13692,7 +13691,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.13129, y: 47.861}
+  m_AnchoredPosition: {x: 0.13129, y: 57}
   m_SizeDelta: {x: 432.006, y: 159.28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1686983820
@@ -13715,7 +13714,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Are you sure you want to end your turn without filling your action queue?
+  m_text: "Are you sure you want to end your turn without filling your action queue?\n
+    (You will be given 1 credit per unused action)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -15305,10 +15305,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2096095988}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -14, y: -14.000001}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.58180237, y: 0.50857544}
+  m_SizeDelta: {x: 418.3273, y: 362.8653}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1890592674
 MonoBehaviour:
@@ -15330,8 +15330,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -17233,8 +17233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.034726, y: -202.68}
-  m_SizeDelta: {x: 448.71, y: 390.28}
+  m_AnchoredPosition: {x: 1.0553, y: -201.79123}
+  m_SizeDelta: {x: 432.6569, y: 378.1543}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2096095989
 MonoBehaviour:
