@@ -1428,13 +1428,14 @@ public class GameManager : MonoBehaviour
                     {
                         if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
                         {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                            Module selectedModule = currentStation.modules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule is object)
                             {
                                 turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
-                                currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                                var index = currentStation.modules.Select(x=>x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid);
+                                currentStation.modules.RemoveAt(index);
                             }
                             else
                             {
@@ -1453,19 +1454,21 @@ public class GameManager : MonoBehaviour
                     {
                         if (currentUnit.attachedModules.Count > 0)
                         {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
-                            Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
+                            Module selectedModule = currentStation.modules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                            Module dettachedModule = currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
                             if (selectedModule is object && dettachedModule is object)
                             {
                                 turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
                                 //dettach old
                                 currentStation.modules.Add(dettachedModule);
                                 currentUnit.EditModule(dettachedModule.moduleId, -1);
-                                currentUnit.attachedModules.Remove(currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
+                                var index = currentUnit.attachedModules.Select(x => x.moduleGuid).ToList().IndexOf(dettachedModule.moduleGuid);
+                                currentUnit.attachedModules.RemoveAt(index);
                                 //attach new
                                 currentUnit.attachedModules.Add(selectedModule);
                                 currentUnit.EditModule(selectedModule.moduleId);
-                                currentStation.modules.Remove(currentStation.modules.FirstOrDefault(x => x.moduleGuid == selectedModule.moduleGuid));
+                                index = currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid);
+                                currentStation.modules.RemoveAt(index);
                             }
                             else
                             {
