@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -89,24 +90,26 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, playerColor, 12, 2, 5, 6, 7, stationGuid, facing);
+        stationNode.InitializeStation(spawnX, spawnY, playerColor, 12, 1, 5, 6, 7, stationGuid, facing);
         StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
     }
 
-    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn, Coords coords = null)
+    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
     {
         GameObject fleetPrefab = unitPrefab;
         SpriteRenderer unitSprite = fleetPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = fleetlvl1;
         unitSprite.color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
-        var startIndex = 0;
-        if (coords == null)
+        var startIndex = -1;
+        Coords coords = null;
+        int k = 0;
+        while (startIndex == -1)
         {
-            //Get spawn from station direction
-            coords = stationNode.currentPathNode.coords.Add(stationNode.currentPathNode.offSet[(int)stationNode.facing]);
+            coords = stationNode.currentPathNode.coords.Add(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
+            startIndex = hexesNearby.FindIndex(x => x.coords.Equals(coords));
+            k++;
         }
-        startIndex = hexesNearby.FindIndex(x => x.coords.Equals(coords));
         for (int i = 0; i < hexesNearby.Count; i++) {
             int j = (i + startIndex)%hexesNearby.Count;
             if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
@@ -114,7 +117,7 @@ public class GridManager : MonoBehaviour
                 var fleet = Instantiate(fleetPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 3, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
                     fleetNode.selectIcon.SetActive(true);

@@ -846,7 +846,7 @@ public class GameManager : MonoBehaviour
             i++;
             didFightLastMove = false;
             unitMoving.subtractMovement(GridManager.i.GetGCost(nextNode));
-            if (GridManager.i.GetNeighbors(currentNode,false).Contains(nextNode) && unitMoving.movement >= 0)
+            if (GridManager.i.GetNeighbors(currentNode,false).Contains(nextNode) && unitMoving.movementLeft >= 0)
             {
                 turnValue.text = beforeText;
                 unitMoving.hasMoved = true; 
@@ -1616,6 +1616,16 @@ public class GameManager : MonoBehaviour
             if (unit.maxAttachedModules < 4)
             {
                 unit.maxAttachedModules++;
+            }
+            if (unit.level%2==0)
+            {
+                unit.maxMovement++;
+                unit.movementLeft++;
+            }
+            if (unit.level%2!=0)
+            {
+                unit.maxMining++;
+                unit.miningLeft++;
             }
             unit.GainHP(3);
             unit.kineticPower++;

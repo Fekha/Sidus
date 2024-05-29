@@ -39,7 +39,7 @@ public class Technology : MonoBehaviour
                 effectText = $"+1 max number of fleets";
                 currentEffectText = $"\n(Current max fleets: {1 + level})";
                 requirementText = "<b>Must research max <u>station level</u> first</b>\n\n";
-                neededAmount = 2 + level;
+                neededAmount = 1 + level;
                 break;
             case 3:
                 effectText = $"+2 HP for all units";
@@ -50,7 +50,7 @@ public class Technology : MonoBehaviour
             case 4:
                 effectText = $"+1 kinetic power for all units";
                 currentEffectText = $"\n(Current bonus: +{level})";
-                neededAmount = 2 + level;
+                neededAmount = 1 + level;
                 break;
             case 5:
                 effectText = $"+1 thermal power for all units";
@@ -66,7 +66,7 @@ public class Technology : MonoBehaviour
                 effectText = $"+1 mining power for all units";
                 currentEffectText = $"\n(Current bonus: +{level})";
                 requirementText = "<b>Must research max <u>fleet level</u> first</b>\n\n";
-                neededAmount = 2 + level;
+                neededAmount = 1 + level;
                 break;
             default:
                 break;

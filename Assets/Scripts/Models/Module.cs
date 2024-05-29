@@ -87,13 +87,13 @@ public class Module : MonoBehaviour
                 effectText = "+2 Thermal Power \n +1 Explosive Power";
                 break;
             case 13:
-                effectText = "+3 Mining Power \n -2 Kinetic Damage Taken";
+                effectText = "+2 Mining Power \n -2 Kinetic Damage Taken";
                 break;
             case 14:
-                effectText = "+3 Mining Power \n -2 Thermal Damage Taken";
+                effectText = "+2 Mining Power \n -2 Thermal Damage Taken";
                 break;
             case 15:
-                effectText = "+3 Mining Power \n -2 Explosive Damage Taken";
+                effectText = "+2 Mining Power \n -2 Explosive Damage Taken";
                 break;
             case 16:
                 effectText = "+3 Kinetic Power \n -2 Thermal Power \n +2 Explosive Power";
@@ -156,13 +156,13 @@ public class Module : MonoBehaviour
                 rarity = Rarity.Rare;
                 break;
             case 35:
-                effectText = "+3 Mining Power \n +1 Kinetic Power";
+                effectText = "+2 Mining Power \n +1 Kinetic Power";
                 break;
             case 36:
-                effectText = "+3 Mining Power \n +1 Thermal Power";
+                effectText = "+2 Mining Power \n +1 Thermal Power";
                 break;
             case 37:
-                effectText = "+3 Mining Power \n +1 Explosive Power";
+                effectText = "+2 Mining Power \n +1 Explosive Power";
                 break;
             case 38:
                 effectText = "+5 Kinetic Power \n -2 Thermal Power \n +4 Explosive Damage Taken";
