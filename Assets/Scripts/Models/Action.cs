@@ -17,7 +17,7 @@ public class Action : MonoBehaviour
     internal int actionOrder;
     internal int playerId;
 
-    public Action(ActionType _actionType, Unit _selectedFleet, int _cost, Module? _selectedModule = null, List<PathNode> _selectedPath = null, Guid? _selectedGuid = null, int? _selectedId = null)
+    public Action(ActionType _actionType, Unit _selectedFleet, int _cost, Module? _selectedModule = null, List<PathNode> _selectedPath = null, Guid? _selectedGuid = null)
     {
         actionType = _actionType;
         selectedUnit = _selectedFleet;

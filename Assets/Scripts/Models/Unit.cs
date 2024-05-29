@@ -299,6 +299,7 @@ public class Unit : Node
                 break; 
             case 34:
                 globalCreditGain += (3 * modifer);
+                maxMovement += (-2 * modifer);
                 movementLeft += (-2 * modifer);
                 break;
             case 35:

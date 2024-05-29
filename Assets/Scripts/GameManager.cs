@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -357,10 +358,25 @@ public class GameManager : MonoBehaviour
     public void ShowQueuedAction(int i)
     {
         DeselectUnitIcons();
-        if (MyStation.actions[i].actionType == ActionType.MoveUnit || MyStation.actions[i].actionType == ActionType.MoveAndMine)
-            HighlightQueuedMovement(MyStation.actions[i]);
+        var action = MyStation.actions[i];
+        action.selectedUnit.selectIcon.SetActive(true);
+        if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
+        {
+            HighlightQueuedMovement(action);
+        }
         else
-            MyStation.actions[i].selectedUnit.selectIcon.SetActive(true);
+        {
+            var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Mining Power" : "+1 Movement";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+3 HP\n+1 Kinetic Power\n+1 Thermal Power\n+1 Explosive Power\n{extraBonus}";
+            if (action.actionType == ActionType.UpgradeFleet)
+            {
+                ShowCustomAlertPanel(message);
+            }
+            else if (action.actionType == ActionType.UpgradeStation)
+            {
+                ShowCustomAlertPanel(message+"\n+1 Credit per turn");
+            }
+        }
     }
     private void HighlightQueuedMovement(Action movementAction)
     {
@@ -406,21 +422,30 @@ public class GameManager : MonoBehaviour
                 int i = j;
                 var tech = MyStation.technology[i];
                 var canQueue = true;
-                if (i == (int)ResearchType.ResearchFleetLvl)
+                switch ((ResearchType)i)
                 {
-                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
-                }
-                if (i == (int)ResearchType.ResearchMaxFleets)
-                {
-                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
-                }
-                if (i == (int)ResearchType.ResearchHP)
-                {
-                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
-                }
-                if (i == (int)ResearchType.ResearchMining)
-                {
-                    canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                    case ResearchType.ResearchFleetLvl:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+                        break;
+                    case ResearchType.ResearchMaxFleets:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+                        break;
+                    case ResearchType.ResearchHP:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                        break;
+                    case ResearchType.ResearchMining:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                        break;
+                    case ResearchType.ResearchKinetic:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel;
+                        break;
+                    case ResearchType.ResearchThermal:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel;
+                        break;
+                    case ResearchType.ResearchExplosive:
+                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel;
+                        break;
+                    default: break;
                 }
                 var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
                 TechnologyObjects.Add(techObject);
@@ -652,6 +677,7 @@ public class GameManager : MonoBehaviour
             {
                 action.selectedUnit.resetMovementRange();
             }
+            SetModuleUpdates(action,-1);
             if ((int)action.actionType > 10 && (int)action.actionType < 19)
             {
                 MyStation.technology[(int)action.actionType-11].simulatedAmount--;
@@ -666,15 +692,15 @@ public class GameManager : MonoBehaviour
         }
         ResetAfterSelection();
     }
-    private void QueueAction(ActionType actionType, Module selectedModule = null, Unit _structure = null, List<PathNode> _selectedPath = null, Guid? selectedGuid = null, int? selectedId = null)
+    private void QueueAction(ActionType actionType, Module selectedModule = null, Unit _unit = null, List<PathNode> _selectedPath = null, Guid? generatedGuid = null)
     {
         if (MyStation.actions.Count >= MyStation.maxActions)
         {
             ShowCustomAlertPanel($"No action slots available to queue action: {actionType}.");
         } else {
-            var structure = _structure ?? SelectedUnit ?? MyStation;
+            var unit = _unit ?? SelectedUnit ?? MyStation;
             var selectedPath = _selectedPath ?? SelectedPath;
-            var costOfAction = GetCostOfAction(actionType, structure, true, selectedModule);
+            var costOfAction = GetCostOfAction(actionType, unit, true, selectedModule);
             if (costOfAction > currentCredits)
             {
                 ShowCustomAlertPanel($"Can not afford to queue action: {actionType}.");
@@ -683,8 +709,10 @@ public class GameManager : MonoBehaviour
             {
                 currentCredits -= costOfAction;
                 Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
-                MyStation.actions.Add(new Action(actionType, structure, costOfAction, selectedModule, selectedPath, selectedGuid, selectedId));
+                var action = new Action(actionType, unit, costOfAction, selectedModule, selectedPath, generatedGuid);
+                MyStation.actions.Add(action);
                 AddActionBarImage(actionType, MyStation.actions.Count()-1);
+                SetModuleUpdates(action,1);
                 ResetAfterSelection();
             }
         }
@@ -1274,6 +1302,10 @@ public class GameManager : MonoBehaviour
                 var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
                 if (turnFromServer != null)
                 {
+                    foreach (var action in MyStation.actions)
+                    {
+                        SetModuleUpdates(action,-1);
+                    }
                     ClearModules();
                     ToggleMineralText(true);
                     var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
@@ -1305,6 +1337,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SetModuleUpdates(Action action, int modifier)
+    {
+        if (action.actionType == ActionType.AttachModule)
+        {
+            action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+        }
+        if (action.actionType == ActionType.SwapModule)
+        {
+            action.selectedUnit.EditModule(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid).moduleId, modifier * -1);
+            action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+        }
+    }
     private void SubmitResponse(bool response)
     {
         SubmittedTurn = response;

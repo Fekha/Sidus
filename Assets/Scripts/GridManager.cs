@@ -177,7 +177,7 @@ public class GridManager : MonoBehaviour
                 {
                     obstacleCount++;
                     startCredits = 6;
-                    maxCredits = 12;
+                    maxCredits = 10;
                     creditRegin = 2;
                 }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
