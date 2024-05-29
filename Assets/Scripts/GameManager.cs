@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
