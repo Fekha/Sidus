@@ -2,7 +2,7 @@ using StartaneousAPI.ServerModels;
 using System;
 using UnityEngine;
 
-public class Module : MonoBehaviour
+public class Module
 {
     internal Guid moduleGuid;
     internal int moduleId;

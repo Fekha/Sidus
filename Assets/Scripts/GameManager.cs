@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -53,8 +54,8 @@ public class GameManager : MonoBehaviour
     private PathNode SelectedNode;
     private Unit SelectedUnit;
     private List<Node> currentMovementRange = new List<Node>();
-    private List<Module> currentModules = new List<Module>();
-    private List<Module> currentModulesForSelection = new List<Module>();
+    private List<GameObject> currentModules = new List<GameObject>();
+    private List<GameObject> currentModulesForSelection = new List<GameObject>();
     internal List<Station> Stations = new List<Station>();
 
     private bool tapped = false;
@@ -78,6 +79,8 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI phaseText;
     public GameObject turnTapText;
     private TextMeshProUGUI moduleInfoValue;
+    public Image moduleInfoIcon;
+
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI CreditText;
@@ -86,6 +89,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI creditsText;
     private TextMeshProUGUI hexesOwnedText;
  
+    internal List<ActionType> TechActions = new List<ActionType>();
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
     internal List<Module> AuctionModules = new List<Module>();
@@ -97,7 +101,6 @@ public class GameManager : MonoBehaviour
     private SqlManager sql;
     private int TurnNumber = 0;
     private bool infoToggle = false;
-    private int currentCredits;
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
     private bool SubmittedTurn = false;
@@ -127,10 +130,14 @@ public class GameManager : MonoBehaviour
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
         foreach (var station in Stations)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i <= Constants.TechAmount; i++)
             {
                 station.technology.Add(new Technology(i));
             }
+        }
+        for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
+        {
+            TechActions.Add((ActionType)i);
         }
         StartTurn();
         StartCoroutine(GetTurnReadiness());
@@ -175,6 +182,7 @@ public class GameManager : MonoBehaviour
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         phaseText = turnLabel.transform.Find("PhaseText").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
+        moduleInfoIcon = moduleInfoPanel.transform.Find("Image").GetComponent<Image>();
         createFleetCost = createFleetButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
@@ -232,7 +240,7 @@ public class GameManager : MonoBehaviour
             {
                 var cost = GetCostOfAction(actionType, unit, true);
                 upgradeCost.text = GetCostText(cost);
-                upgradeButton.interactable = currentCredits >= cost;
+                upgradeButton.interactable = MyStation.credits >= cost;
             }
             else
             {
@@ -242,7 +250,6 @@ public class GameManager : MonoBehaviour
             if (unit is Station)
             {
                 createFleetButton.gameObject.SetActive(true);
-                creditsText.text = $"Player Credits: {currentCredits}";
             }
             ToggleMineralText(true);
         }
@@ -363,18 +370,19 @@ public class GameManager : MonoBehaviour
         {
             HighlightQueuedMovement(action);
         }
-        else
+        else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
             var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Mining Power" : "+1 Movement";
             var message = $"{action.selectedUnit.unitName} will gain:\n+3 HP\n+1 Kinetic Power\n+1 Thermal Power\n+1 Explosive Power\n{extraBonus}";
-            if (action.actionType == ActionType.UpgradeFleet)
+            if (action.actionType == ActionType.UpgradeStation)
             {
-                ShowCustomAlertPanel(message);
+                message += "\n+1 Credit per turn";
             }
-            else if (action.actionType == ActionType.UpgradeStation)
-            {
-                ShowCustomAlertPanel(message+"\n+1 Credit per turn");
-            }
+            ShowCustomAlertPanel(message);
+        }
+        else if (action.actionType == ActionType.BidOnModule)
+        {
+            SetModuleInfo(action.selectedModule);
         }
     }
     private void HighlightQueuedMovement(Action movementAction)
@@ -406,6 +414,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log($"Invalid tile selected, reseting path and selection.");
             SelectedUnit.resetMovementRange();
+            SelectedUnit.selectIcon.SetActive(false);
         }
         ResetAfterSelection();
     }
@@ -424,25 +433,25 @@ public class GameManager : MonoBehaviour
                 switch ((ResearchType)i)
                 {
                     case ResearchType.ResearchFleetLvl:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
                         break;
                     case ResearchType.ResearchMaxFleets:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
                         break;
                     case ResearchType.ResearchHP:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchMaxFleets].level;
                         break;
                     case ResearchType.ResearchMining:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchMaxFleets].level;
                         break;
                     case ResearchType.ResearchKinetic:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
                     case ResearchType.ResearchThermal:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
                     case ResearchType.ResearchExplosive:
-                        canQueue = tech.simulatedLevel < MyStation.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
                     default: break;
                 }
@@ -450,20 +459,19 @@ public class GameManager : MonoBehaviour
                 TechnologyObjects.Add(techObject);
                 var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
                 techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
-                techObject.transform.Find("AmountNeeded").GetComponent<TextMeshProUGUI>().text = $"{tech.simulatedAmount}/{tech.neededAmount}";
+                techObject.transform.Find("AmountNeeded").GetComponent<TextMeshProUGUI>().text = $"{tech.currentAmount}/{tech.neededAmount}";
                 var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
                 researchButton.interactable = canQueue;
                 researchButton.onClick.AddListener(() => Research(i));
                 techObject.transform.Find("Queued").gameObject.SetActive(!canQueue);
-                techObject.transform.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{i+11}");
+                techObject.transform.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{i+Constants.MinTech}");
             }
         }
     }
 
     private void Research(int i)
     {
-        MyStation.technology[i].simulatedAmount++;
-        QueueAction((ActionType)i+11);
+        QueueAction((ActionType)i+Constants.MinTech);
         technologyPanel.SetActive(false);
     }
 
@@ -482,15 +490,15 @@ public class GameManager : MonoBehaviour
                 if (!hasQueued) { module.currentBid = module.minBid; }
                 var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
                 AuctionObjects.Add(moduleObject);
-                moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
+                moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module));
                 var addButton = moduleObject.transform.Find("Add").GetComponent<Button>();
                 addButton.onClick.AddListener(() => ModifyBid(true, i));
-                addButton.interactable = !hasQueued && currentCredits > module.currentBid;
+                addButton.interactable = !hasQueued && MyStation.credits > module.currentBid;
                 var subtractButton = moduleObject.transform.Find("Subtract").GetComponent<Button>();
                 subtractButton.interactable = !hasQueued && module.minBid < module.currentBid;
                 subtractButton.onClick.AddListener(() => ModifyBid(false,i));
                 var bidButton = moduleObject.transform.Find("Bid").GetComponent<Button>();
-                bidButton.interactable = !hasQueued && currentCredits >= module.currentBid;
+                bidButton.interactable = !hasQueued && MyStation.credits >= module.currentBid;
                 bidButton.onClick.AddListener(() => BidOn(i));
                 moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
                 moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
@@ -512,9 +520,9 @@ public class GameManager : MonoBehaviour
             module.currentBid--;
         }
         moduleObj.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
-        moduleObj.transform.Find("Add").GetComponent<Button>().interactable = currentCredits > module.currentBid;
+        moduleObj.transform.Find("Add").GetComponent<Button>().interactable = MyStation.credits > module.currentBid;
         moduleObj.transform.Find("Subtract").GetComponent<Button>().interactable = module.minBid < module.currentBid;
-        moduleObj.transform.Find("Bid").GetComponent<Button>().interactable = currentCredits >= module.currentBid;
+        moduleObj.transform.Find("Bid").GetComponent<Button>().interactable = MyStation.credits >= module.currentBid;
     }
 
     private void BidOn(int index)
@@ -589,15 +597,11 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("No action slots available to queue this action.");
         }
-        else if (MyStation.modules.Count <= 0)
-        {
-            ShowCustomAlertPanel("No modules available to attach.");
-        }
         else if (actionType == ActionType.SwapModule && MyStation.actions.Any(x => x.actionType == ActionType.SwapModule && x.generatedGuid == dettachGuid))
         {
             ShowCustomAlertPanel($"The action {ActionType.SwapModule} for this module has already been queued up");
         }
-        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= GetUnitMaxAttachmentCount(SelectedUnit))
+        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= SelectedUnit.maxAttachedModules)
         {
             ShowCustomAlertPanel($"This action has already been queued up.");
 
@@ -611,8 +615,12 @@ public class GameManager : MonoBehaviour
             var selectedUnit = SelectedUnit;
             DeselectMovement();
             ClearSelectableModules();
+            List<Module> availableModules = new List<Module>(MyStation.modules);
+            if(selectedUnit.unitGuid != MyStation.unitGuid)
+                availableModules.AddRange(MyStation.attachedModules);
+            availableModules.AddRange(MyStation.fleets.Where(x=>x.unitGuid != selectedUnit.unitGuid).SelectMany(x=>x.attachedModules).ToList());
             List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModule?.moduleGuid).ToList();
-            var availableModules = MyStation.modules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
+            availableModules = availableModules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
             if (availableModules.Count > 0)
             {
                 foreach (var module in availableModules)
@@ -621,9 +629,13 @@ public class GameManager : MonoBehaviour
                     moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module, selectedUnit, actionType, dettachGuid));
                     moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
                     moduleObject.transform.Find("Queued").gameObject.SetActive(false);
-                    currentModulesForSelection.Add(moduleObject.GetComponent<Module>());
+                    currentModulesForSelection.Add(moduleObject);
                 }
                 ViewModuleSelection(true);
+            }
+            else
+            {
+                ShowCustomAlertPanel("No modules available to attach.");
             }
         }
     }
@@ -670,18 +682,9 @@ public class GameManager : MonoBehaviour
     {
         var action = MyStation.actions[slot];
         Debug.Log($"{MyStation.unitName} removed action {GetDescription(action.actionType)} from queue");
-        if (action is object)
+        if (action != null)
         {
-            if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
-            {
-                action.selectedUnit.resetMovementRange();
-            }
-            SetModuleUpdates(action,-1);
-            if ((int)action.actionType > 10 && (int)action.actionType < 19)
-            {
-                MyStation.technology[(int)action.actionType-11].simulatedAmount--;
-            }    
-            currentCredits += action.costOfAction;
+            PerformUpdates(action, Constants.Remove);           
             ClearActionBar();
             MyStation.actions.RemoveAt(slot);
             for (int i = 0; i < MyStation.actions.Count; i++)
@@ -700,18 +703,17 @@ public class GameManager : MonoBehaviour
             var unit = _unit ?? SelectedUnit ?? MyStation;
             var selectedPath = _selectedPath ?? SelectedPath;
             var costOfAction = GetCostOfAction(actionType, unit, true, selectedModule);
-            if (costOfAction > currentCredits)
+            if (costOfAction > MyStation.credits)
             {
                 ShowCustomAlertPanel($"Can not afford to queue action: {actionType}.");
             }
             else
             {
-                currentCredits -= costOfAction;
                 Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
                 var action = new Action(actionType, unit, costOfAction, selectedModule, selectedPath, generatedGuid);
                 MyStation.actions.Add(action);
                 AddActionBarImage(actionType, MyStation.actions.Count()-1);
-                SetModuleUpdates(action,1);
+                PerformUpdates(action, Constants.Create);
                 ResetAfterSelection();
             }
         }
@@ -758,7 +760,7 @@ public class GameManager : MonoBehaviour
         {
             var cost = GetCostOfAction(ActionType.CreateFleet, MyStation, true);
             createFleetCost.text = GetCostText(cost);
-            createFleetButton.interactable = (currentCredits >= cost);
+            createFleetButton.interactable = (MyStation.credits >= cost);
         }
         else
         {
@@ -775,8 +777,8 @@ public class GameManager : MonoBehaviour
         var maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
         if (countQueue) {
             currentLevel += Stations[structure.stationId].actions.Count(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType);
-            maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].simulatedLevel;
-            maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].simulatedLevel;
+            maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].level;
+            maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
         } 
         if (actionType == ActionType.UpgradeFleet)
             return currentLevel <= maxFleetLvl;
@@ -791,7 +793,7 @@ public class GameManager : MonoBehaviour
         if (countQueue)
         {
             currentFleets += station.actions.Count(x => x.actionType == ActionType.CreateFleet);
-            maxNumFleets = station.technology[(int)ResearchType.ResearchMaxFleets].simulatedLevel + 1;
+            maxNumFleets = station.technology[(int)ResearchType.ResearchMaxFleets].level + 1;
         }
         return currentFleets < maxNumFleets;
     }
@@ -856,7 +858,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateCreditTotal()
     {
-        CreditText.text = $"{currentCredits} Credits";
+        CreditText.text = $"{MyStation.credits} Credits";
     }
 
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
@@ -868,6 +870,7 @@ public class GameManager : MonoBehaviour
         var beforeText = turnValue.text;
         bool didFightLastMove = false;
         PathNode currentNode = unitMoving.currentPathNode;
+        tapped = false;
         foreach (var nextNode in path)
         {
             i++;
@@ -883,7 +886,6 @@ public class GameManager : MonoBehaviour
                 var toRot = GetDirection(unitMoving, currentNode, nextNode);
                 float elapsedTime = 0f;
                 float totalTime = .8f;
-                tapped = false;
                 while (elapsedTime <= totalTime && !tapped)
                 {
                     unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
@@ -892,6 +894,7 @@ public class GameManager : MonoBehaviour
                     yield return null;
                 }
                 unitMoving.unitImage.rotation = toRot;
+                unitMoving.transform.position = nextNode.transform.position;
                 //Asteroid on Path
                 if (nextNode.isAsteroid)
                 {
@@ -938,7 +941,6 @@ public class GameManager : MonoBehaviour
                 {
                     elapsedTime = 0f;
                     totalTime = .8f;
-                    tapped = false;
                     while (elapsedTime <= totalTime && !tapped)
                     {
                         unitMoving.transform.position = Vector3.Lerp(nextNode.transform.position, unitMoving.currentPathNode.transform.position, elapsedTime / totalTime);
@@ -1301,9 +1303,9 @@ public class GameManager : MonoBehaviour
                 var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
                 if (turnFromServer != null)
                 {
-                    foreach (var action in MyStation.actions)
+                    for(int i = MyStation.actions.Count()-1; i >= 0; i--)
                     {
-                        SetModuleUpdates(action,-1);
+                        PerformUpdates(MyStation.actions[i], Constants.Remove);
                     }
                     ClearModules();
                     ToggleMineralText(true);
@@ -1336,16 +1338,72 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SetModuleUpdates(Action action, int modifier)
+    private void PerformUpdates(Action action, int modifier)
     {
+        var station = Stations[action.selectedUnit.stationId];
+        station.credits -= (action.costOfAction * modifier);
         if (action.actionType == ActionType.AttachModule)
         {
+            var unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid))?.attachedModules;
+            if (unitToRemoveFrom == null)
+            {
+                unitToRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+            }
             action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+            if (modifier == Constants.Create)
+            {
+                action.selectedUnit.attachedModules.Add(action.selectedModule);
+                unitToRemoveFrom.Remove(unitToRemoveFrom.FirstOrDefault(x=>x.moduleGuid == action.selectedModule.moduleGuid));
+            }
+            else
+            {
+                unitToRemoveFrom.Add(action.selectedModule);
+                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+            }
         }
-        if (action.actionType == ActionType.SwapModule)
+        else if (action.actionType == ActionType.SwapModule)
         {
-            action.selectedUnit.EditModule(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid).moduleId, modifier * -1);
+            Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
+            var unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid))?.attachedModules;
+            if (unitToRemoveFrom == null)
+            {
+                unitToRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+            }
+            action.selectedUnit.EditModule(dettachedModule.moduleId, modifier * -1);
             action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+            if (modifier == Constants.Create)
+            {
+                //attach new
+                action.selectedUnit.attachedModules.Add(action.selectedModule);
+                unitToRemoveFrom.Remove(unitToRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                //dettach old
+                unitToRemoveFrom.Add(dettachedModule);
+                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
+            }
+            else
+            {
+                //attach old
+                action.selectedUnit.attachedModules.Add(dettachedModule);
+                unitToRemoveFrom.Remove(unitToRemoveFrom.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
+                //deattach new
+                unitToRemoveFrom.Add(action.selectedModule);
+                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+            }
+        }
+        else if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
+        {
+            if (modifier == Constants.Remove)
+                action.selectedUnit.resetMovementRange();
+            if (action.actionType == ActionType.MoveAndMine)
+                station.credits += (Mathf.Min(action.selectedPath.Sum(x=>x.currentCredits),action.selectedUnit.maxMining) * modifier);
+        }
+        else if (TechActions.Contains(action.actionType)) //Research Actions
+        {
+            station.technology[(int)action.actionType-Constants.MinTech].Research(station, modifier);
+        }
+        else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
+        {
+            LevelUpUnit(action.selectedUnit, modifier);
         }
     }
     private void SubmitResponse(bool response)
@@ -1379,8 +1437,8 @@ public class GameManager : MonoBehaviour
             if (currentUnit != null)
             {
                 var currentStation = Stations[currentUnit.stationId];
-                var actionCost = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
-                if (currentStation.credits >= actionCost)
+                action.costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
+                if (currentStation.credits >= action.costOfAction)
                 {
                     if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid)
                     {
@@ -1398,15 +1456,13 @@ public class GameManager : MonoBehaviour
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
                         }
                         isMoving = false;
-                        if(currentUnit != null && AllUnits.Contains(currentUnit))
-                            currentUnit.resetMovementRange();
                     }
                     else if (action.actionType == ActionType.CreateFleet)
                     {
                         if (IsUnderMaxFleets(currentStation, false))
                         {
-                            currentStation.credits -= actionCost;
                             turnValue.text += $"{GetDescription(action.actionType)}";
+                            currentStation.credits -= action.costOfAction;
                             yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
                         }
                         else
@@ -1416,30 +1472,12 @@ public class GameManager : MonoBehaviour
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
                         }
                     }
-                    else if (action.actionType == ActionType.UpgradeFleet)
+                    else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
                     {
                         if (CanLevelUp(currentUnit, action.actionType, false))
                         {
-                            currentStation.credits -= actionCost;
                             turnValue.text += $"{GetDescription(action.actionType)}";
-                            LevelUpUnit(currentUnit);
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                            Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
-                        }
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
-                    }
-                    else if (action.actionType == ActionType.UpgradeStation)
-                    {
-                        if (CanLevelUp(currentUnit, action.actionType, false))
-                        {
-                            currentStation.credits -= actionCost;
-                            turnValue.text += $"{GetDescription(action.actionType)}";
-                            LevelUpUnit(currentUnit);
+                            PerformUpdates(action, Constants.Create);
                         }
                         else
                         {
@@ -1451,11 +1489,11 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.BidOnModule)
                     {
-                        if (action.selectedModule is object)
+                        if (action.selectedModule != null)
                         {
-                            currentStation.credits -= actionCost;
                             var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
                             turnValue.text += $"Won bid\n({wonModule.effectText})\nPaid {action.selectedModule.currentBid} credits.";
+                            PerformUpdates(action, Constants.Create);
                             currentStation.modules.Add(wonModule);
                         }
                         else
@@ -1471,14 +1509,11 @@ public class GameManager : MonoBehaviour
                     {
                         if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
                         {
-                            Module selectedModule = currentStation.modules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
-                            if (selectedModule is object)
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                            if (selectedModule != null)
                             {
                                 turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
-                                currentUnit.attachedModules.Add(selectedModule);
-                                currentUnit.EditModule(selectedModule.moduleId);
-                                var index = currentStation.modules.Select(x=>x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid);
-                                currentStation.modules.RemoveAt(index);
+                                PerformUpdates(action, Constants.Create);
                             }
                             else
                             {
@@ -1497,21 +1532,12 @@ public class GameManager : MonoBehaviour
                     {
                         if (currentUnit.attachedModules.Count > 0)
                         {
-                            Module selectedModule = currentStation.modules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
-                            Module dettachedModule = currentUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
-                            if (selectedModule is object && dettachedModule is object)
+                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                            Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
+                            if (selectedModule != null && dettachedModule != null)
                             {
                                 turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
-                                //dettach old
-                                currentStation.modules.Add(dettachedModule);
-                                currentUnit.EditModule(dettachedModule.moduleId, -1);
-                                var index = currentUnit.attachedModules.Select(x => x.moduleGuid).ToList().IndexOf(dettachedModule.moduleGuid);
-                                currentUnit.attachedModules.RemoveAt(index);
-                                //attach new
-                                currentUnit.attachedModules.Add(selectedModule);
-                                currentUnit.EditModule(selectedModule.moduleId);
-                                index = currentStation.modules.Select(x => x.moduleGuid).ToList().IndexOf(selectedModule.moduleGuid);
-                                currentStation.modules.RemoveAt(index);
+                                PerformUpdates(action, Constants.Create);
                             }
                             else
                             {
@@ -1528,17 +1554,16 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.GainCredit)
                     {
-                        currentStation.credits -= actionCost;
                         turnValue.text += $"{GetDescription(action.actionType)}";
+                        PerformUpdates(action, Constants.Create);
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
-                    else if ((int)action.actionType > 10 && (int)action.actionType < 19)
+                    else if (TechActions.Contains(action.actionType))
                     {
-                        var tech = currentStation.technology[(int)action.actionType - 11];
-                        tech.Research(currentStation);
-                        turnValue.text += $"{GetDescription(action.actionType)}\n({tech.effectText})";
+                        turnValue.text += $"{GetDescription(action.actionType)}\n({currentStation.technology[(int)action.actionType-Constants.MinTech].effectText})";
+                        PerformUpdates(action, Constants.Create);
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
@@ -1612,12 +1637,13 @@ public class GameManager : MonoBehaviour
             }
             unit.hasMoved = false;
             unit.miningLeft = unit.maxMining;
+            unit.resetMovementRange();
         }
         foreach (var station in Stations)
         {
             station.credits += station.globalCreditGain + station.fleets.Sum(x => x.globalCreditGain);
             station.actions.Clear();
-            for (int i = 1; i <= 3; i++)
+            for (int i = 1; i < Constants.MaxPlayers; i++)
             {
                 if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
                 {
@@ -1629,7 +1655,7 @@ public class GameManager : MonoBehaviour
         ClearActionBar();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < Constants.MaxPlayers; i++)
         {
             var orderObj = turnOrder.Find($"TurnOrder{i}").GetComponent<Image>();
             orderObj.sprite = unReadyCircle;
@@ -1637,11 +1663,6 @@ public class GameManager : MonoBehaviour
                 orderObj.transform.Find($"Color").GetComponent<Image>().color = GridManager.i.playerColors[(TurnNumber - 1 + i) % Stations.Count];
             else
                 orderObj.gameObject.SetActive(false);
-        }
-        currentCredits = MyStation.credits;
-        foreach (var tech in MyStation.technology)
-        {
-            tech.simulatedAmount = tech.currentAmount;
         }
         infoToggle = false;
         ViewModuleMarket(false);
@@ -1651,60 +1672,80 @@ public class GameManager : MonoBehaviour
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
 #endregion
-    private void LevelUpUnit(Unit unit)
+    private void LevelUpUnit(Unit unit, int modifier)
     {
-        if (CanLevelUp(unit, unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, false))
+        unit.level += modifier;
+        unit.maxAttachedModules += modifier;
+        unit.maxAttachedModules = Mathf.Min(unit.maxAttachedModules, Constants.MaxModules);
+        unit.maxAttachedModules = Mathf.Max(unit.maxAttachedModules, Constants.MinModules);
+        if (modifier == 1)
         {
-            unit.level++;
-            if (unit.maxAttachedModules < 4)
+            if (unit.level % 2 == 0)
             {
-                unit.maxAttachedModules++;
+                unit.maxMovement += modifier;
+                unit.movementLeft += modifier;
             }
-            if (unit.level%2==0)
+            if (unit.level % 2 != 0)
             {
-                unit.maxMovement++;
-                unit.movementLeft++;
+                unit.maxMining += modifier;
+                unit.miningLeft += modifier;
             }
-            if (unit.level%2!=0)
+        }
+        else
+        {
+            if (unit.level % 2 == 0)
             {
-                unit.maxMining++;
-                unit.miningLeft++;
+                unit.maxMining += modifier;
+                unit.miningLeft += modifier;
             }
-            unit.GainHP(3);
-            unit.kineticPower++;
-            unit.explosivePower++;
-            unit.thermalPower++;
-            var spriteRenderer = unit.transform.Find("Unit").GetComponent<SpriteRenderer>();
-            if (unit is Station)
+            if (unit.level % 2 != 0)
             {
-                unit.globalCreditGain++;
-                if (unit.level == 2)
-                {
-                    spriteRenderer.sprite = GridManager.i.stationlvl2;
-                }
-                else if (unit.level == 3)
-                {
-                    spriteRenderer.sprite = GridManager.i.stationlvl3;
-                }
-                else if (unit.level == 4)
-                {
-                    spriteRenderer.sprite = GridManager.i.stationlvl4;
-                }
+                unit.maxMovement += modifier;
+                unit.movementLeft += modifier;
+            }
+        }
+        unit.GainHP(3 * modifier);
+        unit.kineticPower += modifier;
+        unit.explosivePower += modifier;
+        unit.thermalPower += modifier;
+        var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
+        if (unit is Station)
+        {
+            unit.globalCreditGain += modifier;
+            if (unit.level == 1)
+            {
+                spriteRenderer.sprite = GridManager.i.stationlvl1;
+            }
+            else if (unit.level == 2)
+            {
+                spriteRenderer.sprite = GridManager.i.stationlvl2;
+            }
+            else if (unit.level == 3)
+            {
+                spriteRenderer.sprite = GridManager.i.stationlvl3;
             }
             else
             {
-                if (unit.level == 2)
-                {
-                    spriteRenderer.sprite = GridManager.i.fleetlvl2;
-                }
-                else if (unit.level == 3)
-                {
-                    spriteRenderer.sprite = GridManager.i.fleetlvl3;
-                }
-                else if (unit.level == 4)
-                {
-                    spriteRenderer.sprite = GridManager.i.fleetlvl4;
-                }
+                spriteRenderer.sprite = GridManager.i.stationlvl4;
+            }
+        }
+        else
+        {
+            if (unit.level == 1)
+            {
+                spriteRenderer.sprite = GridManager.i.fleetlvl1;
+            }
+            else if (unit.level == 2)
+            {
+                spriteRenderer.sprite = GridManager.i.fleetlvl2;
+            }
+            else if (unit.level == 3)
+            {
+                spriteRenderer.sprite = GridManager.i.fleetlvl3;
+            }
+            else
+            {
+                spriteRenderer.sprite = GridManager.i.fleetlvl4;
             }
         }
     }
@@ -1714,16 +1755,17 @@ public class GameManager : MonoBehaviour
         foreach (var module in MyStation.modules)
         {
             var moduleObject = Instantiate(modulePrefab, ModuleGrid);
-            moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
+            moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
-            moduleObject.transform.Find("Queued").gameObject.SetActive(MyStation.actions.Any(x=>x.selectedModule?.moduleGuid == module.moduleGuid));
-            currentModules.Add(moduleObject.GetComponent<Module>());
+            moduleObject.transform.Find("Queued").gameObject.SetActive(false);
+            currentModules.Add(moduleObject);
         }
     }
 
-    private void SetModuleInfo(string effectText)
+    private void SetModuleInfo(Module module)
     {
-        moduleInfoValue.text = effectText;
+        moduleInfoValue.text = module.effectText;
+        moduleInfoIcon.sprite = module.icon;
         ViewModuleInfo(true);
     } 
     
@@ -1763,7 +1805,7 @@ public class GameManager : MonoBehaviour
 
     private void ClearActionBar()
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < Constants.MaxActions; i++)
         {
             ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
             if (i < MyStation.maxActions) {
@@ -1777,33 +1819,19 @@ public class GameManager : MonoBehaviour
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
         }
     }
-    internal int GetUnitMaxAttachmentCount(Unit unit)
-    {
-        var maxAttached = unit.maxAttachedModules;
-        if (unit is Fleet)
-        {
-            maxAttached += Stations[unit.stationId].actions.Count(x => x.actionType == ActionType.UpgradeFleet);
-        }
-        else
-        {
-            maxAttached += Stations[unit.stationId].actions.Count(x => x.actionType == ActionType.UpgradeStation);
-        }
-        return maxAttached;
-    }
     private void SetModuleBar(Unit unit)
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < Constants.MaxModules; i++)
         {
             UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
             UnitModuleBar.Find($"Module{i}/Remove").GetComponent<Button>().onClick.RemoveAllListeners();
-            var maxAttached = GetUnitMaxAttachmentCount(unit);
-            if (i < maxAttached)
+            if (i < unit.maxAttachedModules)
             {
                 if (i < unit.attachedModules.Count)
                 {
                    
-                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId);
-                    if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != 49)
+                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId && !MyStation.actions.Any(x=>x.selectedModule?.moduleGuid == unit.attachedModules[i]?.moduleGuid));
+                    if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != Constants.SpyModule)
                     {
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel("This units modules are hidden."));
@@ -1813,7 +1841,7 @@ public class GameManager : MonoBehaviour
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = unit.attachedModules[i].icon;
                         var module = unit.attachedModules[i];
                         UnitModuleBar.Find($"Module{i}/Remove").GetComponent<Button>().onClick.AddListener(() => ModifyModule(ActionType.SwapModule, module.moduleGuid));
-                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module.effectText));
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module));
                     }
                 }
                 else

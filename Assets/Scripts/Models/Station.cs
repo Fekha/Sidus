@@ -27,34 +27,34 @@ public class Station : Unit
         globalCreditGain = 1;
     }
 
-    internal void researchKinetic()
+    internal void researchKinetic(int modifier)
     {
-        bonusKinetic++;
-        kineticPower++;
-        fleets.ForEach(x => x.kineticPower++);
+        bonusKinetic += modifier;
+        kineticPower += modifier;
+        fleets.ForEach(x => x.kineticPower += modifier);
     }
-    internal void researchThermal()
+    internal void researchThermal(int modifier)
     {
-        bonusThermal++;
-        thermalPower++;
-        fleets.ForEach(x => x.thermalPower++);
+        bonusThermal += modifier;
+        thermalPower += modifier;
+        fleets.ForEach(x => x.thermalPower += modifier);
     }
-    internal void researchExplosive()
+    internal void researchExplosive(int modifier)
     {
-        bonusExplosive++;
-        explosivePower++;
-        fleets.ForEach(x => x.explosivePower++);
+        bonusExplosive += modifier;
+        explosivePower += modifier;
+        fleets.ForEach(x => x.explosivePower += modifier);
     }
-    internal void researchHP()
+    internal void researchHP(int modifier)
     {
-        bonusHP+=2;
-        GainHP(2);
-        fleets.ForEach(x => x.GainHP(2));
+        bonusHP+=(2 * modifier);
+        GainHP(2 * modifier);
+        fleets.ForEach(x => x.GainHP(2* modifier));
     }
-    internal void researchMining()
+    internal void researchMining(int modifier)
     {
-        bonusExplosive++;
-        maxMining++;
-        fleets.ForEach(x => x.maxMining++);
+        bonusExplosive += modifier;
+        maxMining += modifier;
+        fleets.ForEach(x => x.maxMining += modifier);
     }
 }

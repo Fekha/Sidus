@@ -5,8 +5,7 @@ using System.Linq;
 using UnityEngine;
 using static GameManager;
 
-public class Action : MonoBehaviour
-{
+public class Action {
     public ActionType actionType;
     public Unit selectedUnit;
     public Module? selectedModule;
