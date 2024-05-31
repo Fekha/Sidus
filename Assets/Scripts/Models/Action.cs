@@ -8,7 +8,7 @@ using static GameManager;
 public class Action {
     public ActionType actionType;
     public Unit selectedUnit;
-    public Module? selectedModule;
+    public Module selectedModule;
     public List<PathNode> selectedPath;
     public int generatedModuleId;
     public bool _statonInventory = false;
@@ -18,14 +18,14 @@ public class Action {
     internal int actionOrder;
     internal int playerId;
 
-    public Action(ActionType _actionType, Unit _selectedFleet, int _cost, Module? _selectedModule = null, List<PathNode> _selectedPath = null, Guid? _selectedGuid = null)
+    public Action(ActionType _actionType, Unit _selectedUnit = null, Module? _selectedModule = null, int _cost = 0, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null)
     {
         actionType = _actionType;
-        selectedUnit = _selectedFleet;
+        selectedUnit = _selectedUnit;
         costOfAction = _cost;
         selectedModule = _selectedModule;
         selectedPath = _selectedPath ?? new List<PathNode>();
-        generatedGuid = _selectedGuid;
+        generatedGuid = _generatedGuid;
     }
     public Action(ServerAction _action)
     {

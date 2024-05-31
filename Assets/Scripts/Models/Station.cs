@@ -1,6 +1,7 @@
 using StartaneousAPI.ServerModels;
 using System;
 using System.Collections.Generic;
+using static System.Collections.Specialized.BitVector32;
 
 public class Station : Unit
 {
@@ -20,11 +21,15 @@ public class Station : Unit
     internal int bonusMining = 0;
     public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _structureId, Direction _direction)
     {
+        for (int i = 0; i <= Constants.TechAmount; i++)
+        {
+            technology.Add(new Technology(i));
+        }
         stationId = GameManager.i.Stations.Count;
         unitName = $"{_color} Station";
         GameManager.i.Stations.Add(this);
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _direction);
-        globalCreditGain = 1;
+        globalCreditGain = 1;   
     }
 
     internal void researchKinetic(int modifier)

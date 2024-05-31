@@ -128,13 +128,6 @@ public class GameManager : MonoBehaviour
         }
         ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
-        foreach (var station in Stations)
-        {
-            for (int i = 0; i <= Constants.TechAmount; i++)
-            {
-                station.technology.Add(new Technology(i));
-            }
-        }
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
@@ -299,10 +292,7 @@ public class GameManager : MonoBehaviour
                     //Double click confirm to movement early
                     else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && !HasQueuedMovement(SelectedUnit))
                     {
-                        if (SelectedPath.Any(x => x.isAsteroid))
-                            QueueAction(ActionType.MoveAndMine);
-                        else
-                            QueueAction(ActionType.MoveUnit);
+                        QueueAction(new Action(SelectedPath.Any(x => x.isAsteroid) ? ActionType.MoveAndMine : ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     }
                     //Create Movement
                     else if (SelectedUnit != null && targetNode != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
@@ -478,7 +468,7 @@ public class GameManager : MonoBehaviour
 
     private void Research(int i)
     {
-        QueueAction((ActionType)i+Constants.MinTech);
+        QueueAction(new Action((ActionType)i+Constants.MinTech));
         technologyPanel.SetActive(false);
     }
 
@@ -535,7 +525,7 @@ public class GameManager : MonoBehaviour
     private void BidOn(int index)
     {
         ViewModuleMarket(false);
-        QueueAction(ActionType.BidOnModule, AuctionModules[index]);
+        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index]));
     }
 
     public void ViewHelpPanel(bool active)
@@ -656,36 +646,25 @@ public class GameManager : MonoBehaviour
         else
         {
             ViewModuleSelection(false);
-            QueueAction(action, module, unit, null, dettachGuid);
+            QueueAction(new Action(action, unit, module, 0, null, dettachGuid));
             ClearSelectableModules();
         }
     }
     public void CreateFleet()
     {
-        if (!IsUnderMaxFleets(MyStation,true))
-        {
-            ShowCustomAlertPanel("Can not create new fleet, you will hit max fleets for your station level");
-        }
-        else
-        {
-            QueueAction(ActionType.CreateFleet,null,null,null,Guid.NewGuid());
-        }
+        QueueAction(new Action(ActionType.CreateFleet,null,null,0,null,Guid.NewGuid()));
     }
 
     public void UpgradeStructure()
     {
-        ActionType actionType = SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
-        if (!CanLevelUp(SelectedUnit, actionType, true))
-        {
-            ShowCustomAlertPanel("Unit is already max level, or has it's max level queued.");
-        }
-        else
-        {
-            QueueAction(actionType);
-        }
+        QueueAction(new Action(SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, SelectedUnit));
     }
 
     public void CancelAction(int slot)
+    {
+        CancelAction(slot, false);
+    }
+    internal void CancelAction(int slot, bool isRequeuing)
     {
         var action = MyStation.actions[slot];
         Debug.Log($"{MyStation.unitName} removed action {GetDescription(action.actionType)} from queue");
@@ -698,28 +677,61 @@ public class GameManager : MonoBehaviour
             {
                 AddActionBarImage(MyStation.actions[i].actionType, i);
             }
+            if (!isRequeuing)
+                ReQueueActions();
         }
         ResetAfterSelection();
     }
-    private void QueueAction(ActionType actionType, Module selectedModule = null, Unit _unit = null, List<PathNode> _selectedPath = null, Guid? generatedGuid = null)
+    public void ReQueueActions()
     {
-        if (MyStation.actions.Count >= MyStation.maxActions)
+        List<Action> actions = new List<Action>(MyStation.actions);
+        for (int i = MyStation.actions.Count() - 1; i >= 0; i--)
         {
-            ShowCustomAlertPanel($"No action slots available to queue action: {actionType}.");
-        } else {
-            var unit = _unit ?? SelectedUnit ?? MyStation;
-            var selectedPath = _selectedPath ?? SelectedPath;
-            var costOfAction = GetCostOfAction(actionType, unit, true, selectedModule);
+            CancelAction(i, true);
+        }
+        foreach (var action in actions)
+        {
+            QueueAction(action, true);
+        }
+    }
+    private void QueueAction(Action action, bool requeing = false)
+    {
+        if (action.actionType == ActionType.AttachModule && action.selectedUnit.attachedModules.Count >= action.selectedUnit.maxAttachedModules)
+        {
+            if (!requeing) ShowCustomAlertPanel("Unit already has maximum attached modules.");
+        }
+        else if ((action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine) && action.selectedPath.Count > action.selectedUnit.getMaxMovementRange())
+        {
+            if (!requeing) ShowCustomAlertPanel("The selected hex is out of range.");
+        }
+        else if ((action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation) && !CanLevelUp(action.selectedUnit, action.actionType, true))
+        {
+            if (!requeing) ShowCustomAlertPanel("Unit is already max level, or has it's max level queued.");
+        }
+        else if (action.actionType == ActionType.CreateFleet && !IsUnderMaxFleets(MyStation, true))
+        {
+            if (!requeing) ShowCustomAlertPanel("Can not create new fleet, you will hit max fleets for your station level");
+        }
+        else if (MyStation.actions.Count >= MyStation.maxActions)
+        {
+            if(!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {action.actionType}.");
+        } 
+        else 
+        {
+            action.selectedUnit = action.selectedUnit ?? SelectedUnit ?? MyStation;
+            action.selectedPath = SelectedPath ?? action.selectedPath;
+            var costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.selectedModule);
             if (costOfAction > MyStation.credits)
             {
-                ShowCustomAlertPanel($"Can not afford to queue action: {actionType}.");
+                if(!requeing)
+                    ShowCustomAlertPanel($"Can not afford to queue action: {action.actionType}.");
             }
             else
             {
-                Debug.Log($"{MyStation.unitName} queuing up action {actionType}");
-                var action = new Action(actionType, unit, costOfAction, selectedModule, selectedPath, generatedGuid);
+                Debug.Log($"{MyStation.unitName} queuing up action {action.actionType}");
+                action.costOfAction = costOfAction;
                 MyStation.actions.Add(action);
-                AddActionBarImage(actionType, MyStation.actions.Count()-1);
+                AddActionBarImage(action.actionType, MyStation.actions.Count()-1);
                 PerformUpdates(action, Constants.Create);
                 ResetAfterSelection();
             }
@@ -1354,7 +1366,7 @@ public class GameManager : MonoBehaviour
                 ShowAreYouSurePanel(false);
                 while (MyStation.actions.Count < MyStation.maxActions)
                 {
-                    QueueAction(ActionType.GainCredit);
+                    QueueAction(new Action(ActionType.GainCredit));
                 }
                 List<int> actionOrders = new List<int>();
                 for (int i = 0; i <= Stations.Count * 5; i += Stations.Count)
