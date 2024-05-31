@@ -27,6 +27,7 @@ public class GridManager : MonoBehaviour
     public Sprite fleetlvl2;
     public Sprite fleetlvl3;
     public Sprite fleetlvl4;
+    public Sprite nebulaSprite;
     private void Awake()
     {
         i = this;
@@ -154,12 +155,12 @@ public class GridManager : MonoBehaviour
             {
                 // Calculate the world position based on the size of the cellPrefab
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
-                bool isAsteroid = false;
                 int maxCredits = 0;
                 int startCredits = 0;
                 int creditRegin = 0;
+                bool isAsteroid = false;
                 if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
-                        isAsteroid = (x+y+y)%3 == 0;
+                    isAsteroid = (x + y + y) % 3 == 0;
                 if (isAsteroid)
                 {
                     obstacleCount++;
@@ -167,10 +168,19 @@ public class GridManager : MonoBehaviour
                     maxCredits = 10;
                     creditRegin = 2;
                 }
+                bool isRift = false;
+                if ((x == 7 && y == 0) || (x == 0 && y == 7) || (x == 3 && y == 4) || (x == 4 && y == 3))
+                {
+                    isRift = true;
+                }
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
+                if (isRift)
+                {
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite;
+                }
                 grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin);
+                grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
             }
         }
     }
@@ -269,7 +279,9 @@ public class GridManager : MonoBehaviour
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
         {
-            neighbors.Add(grid[WrapAround(node.coords.x + node.offSet[i].x), WrapAround(node.coords.y + node.offSet[i].y)]);
+            var gridNode = grid[WrapAround(node.coords.x + node.offSet[i].x), WrapAround(node.coords.y + node.offSet[i].y)];
+            if (!gridNode.isRift)
+                neighbors.Add(gridNode);
         }
         if (node.isAsteroid && first)
         {

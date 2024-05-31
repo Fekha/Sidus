@@ -5,6 +5,7 @@ using UnityEngine;
 public class PathNode : MonoBehaviour
 {
     public bool isAsteroid { get { return currentCredits > 0; } }
+    public bool isRift = false;
     internal int maxCredits = 0;
     internal int currentCredits = 0;
     internal int creditsRegin = 0;
@@ -14,9 +15,7 @@ public class PathNode : MonoBehaviour
     private SpriteRenderer asteriodSprite;
     private GameObject mineIcon;
     public int gCost;
-    public int hCost;
     public Coords coords;
-    public int fCost { get { return gCost + hCost; } }
     private Coords[] evenOffsets = { new Coords(1, 0), new Coords(1, -1), new Coords(0, -1), new Coords(-1, 0), new Coords(0, 1), new Coords(1, 1) }; // Clockwise from right
     private Coords[] oddOffsets = { new Coords(1, 0), new Coords(0, -1), new Coords(-1, -1), new Coords(-1, 0), new Coords(-1, 1), new Coords(0, 1) }; // Clockwise from right
     public bool isEvenCol { get { return coords.y % 2 == 0; } }
@@ -26,8 +25,9 @@ public class PathNode : MonoBehaviour
     public PathNode parent;
 
     public int ownedById;
-    public void InitializeNode(int _x, int _y, int _startCredits, int _maxCredits, int _creditRegin)
+    public void InitializeNode(int _x, int _y, int _startCredits, int _maxCredits, int _creditRegin, bool _isRift)
     {
+        isRift = _isRift;
         maxCredits = _maxCredits;
         currentCredits = _startCredits;
         creditsRegin = _creditRegin;

@@ -14003,6 +14003,7 @@ MonoBehaviour:
   fleetlvl2: {fileID: 21300000, guid: 5aeb23cdc29f2ec46abc77ba6a20f8ab, type: 3}
   fleetlvl3: {fileID: 21300000, guid: ff06a7f808a422b4e899854ec662de8d, type: 3}
   fleetlvl4: {fileID: 21300000, guid: e594e1c6e132c1d4f840f741721af5f4, type: 3}
+  nebulaSprite: {fileID: 21300000, guid: 16c229f4c1248234194cc186e62fb3e9, type: 3}
 --- !u!1 &1754914333
 GameObject:
   m_ObjectHideFlags: 0
@@ -17114,7 +17115,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -39.108826}
+  m_AnchoredPosition: {x: 0, y: -46}
   m_SizeDelta: {x: 427.0237, y: 70.3926}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2084846244

@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
     private bool SubmittedTurn = false;
+    private List<Action> lastSubmittedTurn = new List<Action>();
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -336,6 +337,10 @@ public class GameManager : MonoBehaviour
                             {
                                 SetAsteroidTextValues(targetNode);
                                 ViewAsteroidInformation(true);
+                            }
+                            else if (targetNode.isRift)
+                            {
+                                ShowCustomAlertPanel("This toxic cloud of gas is impassable terrain.");
                             }
                             else
                             {
@@ -1404,7 +1409,7 @@ public class GameManager : MonoBehaviour
         if (SubmittedTurn)
         {
             SubmittedTurn = false;
-            //turnOrder.Find($"TurnOrder{(Stations.Count-1 - ((TurnNumber - 1 + MyStation.stationId) % Stations.Count) % (Stations.Count - 1))}").GetComponent<Image>().sprite = readyCircle;
+            lastSubmittedTurn = MyStation.actions;
             endTurnButton.color = Color.blue;
             if (!isWaitingForTurns)
             {
@@ -1412,10 +1417,9 @@ public class GameManager : MonoBehaviour
                 var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
                 if (turnFromServer != null)
                 {
-                    //replace in morning
-                    for(int i = turnFromServer[Globals.localStationIndex].Actions.Count()-1; i >= 0; i--)
+                    for(int i = lastSubmittedTurn.Count()-1; i >= 0; i--)
                     {
-                        PerformUpdates(new Action(turnFromServer[Globals.localStationIndex].Actions[i]), Constants.Remove);
+                        PerformUpdates(lastSubmittedTurn[i], Constants.Remove);
                     }
                     ClearModules();
                     ToggleMineralText(true);
@@ -1501,7 +1505,7 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.SwapModule)
         {
             Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
-            var unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid))?.attachedModules;
+            var unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == (modifier == Constants.Create ? action.selectedModule.moduleGuid : action.generatedGuid)))?.attachedModules;
             if (unitToRemoveFrom == null)
             {
                 unitToRemoveFrom = Stations[action.selectedUnit.stationId].modules;
