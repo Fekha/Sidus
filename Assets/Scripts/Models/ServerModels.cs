@@ -18,6 +18,7 @@ namespace StartaneousAPI.ServerModels
     {
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
+        public List<int> ModulesForMarket { get; set; }
         public List<ServerModule>? MarketModules { get; set; }
         public Player[]? Players { get; set; }
     }

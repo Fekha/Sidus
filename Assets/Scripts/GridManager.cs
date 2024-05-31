@@ -65,28 +65,28 @@ public class GridManager : MonoBehaviour
             fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Fleets[0].UnitGuid;
         }
         int spawnX = 1;
-        int spawnY = 5;
+        int spawnY = 6;
         Direction facing = Direction.BottomLeft;
         if (stationId == 1)
         {
             playerColor = "Red";
             spawnX = 6;
-            spawnY = 2;
+            spawnY = 1;
             facing = Direction.TopRight;
         }
         else if (stationId == 2)
         {
             playerColor = "Purple";
-            spawnX = 3;
+            spawnX = 2;
             spawnY = 1;
-            facing = Direction.BottomLeft;
+            facing = Direction.Right;
         }
         else if (stationId == 3)
         {
             playerColor = "Orange";
-            spawnX = 4;
+            spawnX = 5;
             spawnY = 6;
-            facing = Direction.TopRight;
+            facing = Direction.Left;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
@@ -145,38 +145,31 @@ public class GridManager : MonoBehaviour
 
     void CreateGrid()
     {
-        var obstacleCount = 0;
         var nodeParent = GameObject.Find("Nodes").transform;
         grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
+        List<Coords> asteroids = new List<Coords>() { new Coords(1,4),new Coords(2,5),new Coords(3,6),new Coords(1,1),new Coords(2,2),new Coords(3,3),new Coords(4,4),new Coords(5,5),new Coords(6,6),new Coords(4,1),new Coords(5,2),new Coords(6,3), };
+        List<Coords> rifts = new List<Coords>() { new Coords(7,0),new Coords(0,7),new Coords(3,4),new Coords(4,3),new Coords(0,3),new Coords(7,4), };
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
             {
+                var coords = new Coords(x, y);
                 // Calculate the world position based on the size of the cellPrefab
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
+                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
+                cell.transform.SetParent(nodeParent);
                 int maxCredits = 0;
                 int startCredits = 0;
                 int creditRegin = 0;
-                bool isAsteroid = false;
-                if (y != 0 && y != gridSize.y - 1 && x != 0 && x != gridSize.x - 1)
-                    isAsteroid = (x + y + y) % 3 == 0;
-                if (isAsteroid)
+                bool isRift = false;
+                if (asteroids.Any(x=>x.Equals(coords)))
                 {
-                    obstacleCount++;
                     startCredits = 6;
                     maxCredits = 10;
                     creditRegin = 2;
-                }
-                bool isRift = false;
-                if ((x == 7 && y == 0) || (x == 0 && y == 7) || (x == 3 && y == 4) || (x == 4 && y == 3))
-                {
+                } else if (rifts.Any(x => x.Equals(coords))) {
                     isRift = true;
-                }
-                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
-                cell.transform.SetParent(nodeParent);
-                if (isRift)
-                {
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite;
                 }
                 grid[x, y] = cell.AddComponent<PathNode>();

@@ -594,15 +594,6 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("No action slots available to queue this action.");
         }
-        else if (actionType == ActionType.SwapModule && MyStation.actions.Any(x => x.actionType == ActionType.SwapModule && x.generatedGuid == dettachGuid))
-        {
-            ShowCustomAlertPanel($"The action {ActionType.SwapModule} for this module has already been queued up");
-        }
-        else if (actionType == ActionType.AttachModule && (SelectedUnit.attachedModules.Count + MyStation.actions.Count(x => x.actionType == ActionType.AttachModule && x.selectedUnit.unitGuid == SelectedUnit.unitGuid)) >= SelectedUnit.maxAttachedModules)
-        {
-            ShowCustomAlertPanel($"This action has already been queued up.");
-
-        }
         else if (MyStation.stationId != SelectedUnit.stationId)
         {
             ShowCustomAlertPanel("This is not your unit!");
@@ -1382,6 +1373,7 @@ public class GameManager : MonoBehaviour
                 {
                     GameGuid = Globals.GameMatch.GameGuid,
                     TurnNumber = TurnNumber,
+                    ModulesForMarket = Globals.GameMatch.GameTurns.LastOrDefault().ModulesForMarket,
                     MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
                     Players = new Player[Globals.GameMatch.MaxPlayers]
                 };
@@ -1661,7 +1653,7 @@ public class GameManager : MonoBehaviour
                     }
                     else if (action.actionType == ActionType.AttachModule)
                     {
-                        if (currentStation.modules.Count > 0 && currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
+                        if (currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
                         {
                             Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule != null)
@@ -1673,14 +1665,14 @@ public class GameManager : MonoBehaviour
                             {
                                 turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                             }
-                            currentUnit.selectIcon.SetActive(true);
-                            yield return StartCoroutine(WaitforSecondsOrTap(1));
-                            currentUnit.selectIcon.SetActive(false);
                         }
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
                         }
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
+                        currentUnit.selectIcon.SetActive(false);
                     }
                     else if (action.actionType == ActionType.SwapModule)
                     {
@@ -1985,7 +1977,7 @@ public class GameManager : MonoBehaviour
                 if (i < unit.attachedModules.Count)
                 {
                    
-                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId && !MyStation.actions.Any(x=>x.selectedModule?.moduleGuid == unit.attachedModules[i]?.moduleGuid));
+                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId && !MyStation.actions.Any(x=>x.selectedModule?.moduleGuid == unit.attachedModules[i]?.moduleGuid || x.generatedGuid == unit.attachedModules[i]?.moduleGuid));
                     if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != Constants.SpyModule)
                     {
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
