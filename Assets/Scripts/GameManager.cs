@@ -259,9 +259,12 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonUp(0))
         {
             tapped = true;
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
             if (!isEndingTurn && hit.collider != null && !isMoving)
@@ -379,7 +382,7 @@ public class GameManager : MonoBehaviour
             }
             ShowCustomAlertPanel(message);
         }
-        else if (action.actionType == ActionType.BidOnModule)
+        else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
         {
             SetModuleInfo(action.selectedModule);
         }
@@ -882,18 +885,7 @@ public class GameManager : MonoBehaviour
                 bool blockedMovement = false;
                 bool isValidHex = true;
                 //Move and turn toward node
-                var toRot = GetDirection(unitMoving, currentNode, nextNode);
-                float elapsedTime = 0f;
-                float totalTime = .8f;
-                while (elapsedTime <= totalTime && !tapped)
-                {
-                    unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
-                    unitMoving.transform.position = Vector3.Lerp(currentNode.transform.position, nextNode.transform.position, elapsedTime / totalTime);
-                    elapsedTime += Time.deltaTime;
-                    yield return null;
-                }
-                unitMoving.unitImage.rotation = toRot;
-                unitMoving.transform.position = nextNode.transform.position;
+                yield return StartCoroutine(MoveUnit(unitMoving, currentNode, nextNode));
                 //Asteroid on Path
                 if (nextNode.isAsteroid)
                 {
@@ -938,8 +930,8 @@ public class GameManager : MonoBehaviour
                     unitMoving.SetNodeColor();
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
-                    elapsedTime = 0f;
-                    totalTime = .8f;
+                    float elapsedTime = 0f;
+                    float totalTime = .8f;
                     while (elapsedTime <= totalTime && !tapped)
                     {
                         unitMoving.transform.position = Vector3.Lerp(nextNode.transform.position, unitMoving.currentPathNode.transform.position, elapsedTime / totalTime);
@@ -968,7 +960,118 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
     }
+    IEnumerator MoveUnit(Unit unitMoving, PathNode currentNode, PathNode nextNode)
+    {
+        // Determine the direction and detect if wrap-around is needed
+        Direction direction;
+        var toRot = GetDirection(unitMoving, currentNode, nextNode);
+        float elapsedTime = 0f;
+        float totalTime = Constants.MovementSpeed;
+        Vector3 startPos = unitMoving.transform.position;
+        Vector3 endPos = nextNode.transform.position;
+        // Grid size
+        float HexSize = .5f;
+        // Check for wrap-around on the X-axis
+        if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1 && currentNode.coords.y == nextNode.coords.y)
+        {
+            direction = (startPos.x < endPos.x) ? Direction.Left : Direction.Right;
+            toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
+            Vector3 intermediatePosX = new Vector3(
+                (startPos.x < endPos.x) ? startPos.x - HexSize : startPos.x + HexSize,
+                startPos.y,
+                startPos.z);
 
+            // Move to intermediate position
+            totalTime = Constants.MovementSpeed / 2;
+            while (elapsedTime <= totalTime && !tapped)
+            {
+                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+                unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosX, elapsedTime / totalTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            // Teleport to the opposite edge
+            unitMoving.transform.position = new Vector3(
+                (startPos.x < endPos.x) ? endPos.x + HexSize : endPos.x - HexSize,
+                endPos.y,
+                endPos.z);
+        }
+        else if (Mathf.Abs(currentNode.coords.y - nextNode.coords.y) > 1)
+        {
+            if (startPos.x < endPos.x)
+            {
+                direction = (startPos.y < endPos.y) ? Direction.BottomRight : Direction.TopRight;
+            }
+            else
+            {
+                direction = (startPos.y < endPos.y) ? Direction.BottomLeft : Direction.TopLeft;
+            }
+            toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
+            Vector3 intermediatePosY = new Vector3(
+                (startPos.x < endPos.x) ? startPos.x + (HexSize / 2) : startPos.x - (HexSize / 2),
+                (startPos.y < endPos.y) ? startPos.y - HexSize : startPos.y + HexSize,
+                startPos.z);
+            // Move to intermediate position
+            totalTime = Constants.MovementSpeed / 2;
+            while (elapsedTime <= totalTime && !tapped)
+            {
+                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+                unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            // Teleport to the opposite edge
+            unitMoving.transform.position = new Vector3(
+                (startPos.x < endPos.x) ? endPos.x - (HexSize / 2) : endPos.x + (HexSize / 2),
+                (startPos.y < endPos.y) ? endPos.y + HexSize : endPos.y - HexSize,
+                endPos.z);
+        }
+        // Check for wrap-around on the Y-axis
+        else if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1)
+        {
+            if (startPos.x < endPos.x) 
+            {
+                direction = (startPos.y < endPos.y) ? Direction.TopLeft : Direction.BottomLeft;
+            }
+            else 
+            {
+                direction = (startPos.y < endPos.y) ? Direction.TopRight : Direction.BottomRight;
+            }
+            toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
+            Vector3 intermediatePosY = new Vector3(
+                (startPos.x < endPos.x) ? startPos.x - (HexSize / 2) : startPos.x + (HexSize / 2),
+                (startPos.y < endPos.y) ? startPos.y + HexSize : startPos.y - HexSize,
+                startPos.z);
+            // Move to intermediate position
+            totalTime = Constants.MovementSpeed / 2;
+            while (elapsedTime <= totalTime && !tapped)
+            {
+                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+                unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            // Teleport to the opposite edge
+            unitMoving.transform.position = new Vector3(
+                (startPos.x < endPos.x) ? endPos.x + (HexSize / 2) : endPos.x - (HexSize / 2),
+                (startPos.y < endPos.y) ? endPos.y - HexSize : endPos.y + HexSize,
+                endPos.z);
+        }
+        totalTime = Constants.MovementSpeed;
+        elapsedTime = 0f;
+        startPos = unitMoving.transform.position;
+        // Move to final position
+        while (elapsedTime <= totalTime && !tapped)
+        {
+            unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+            unitMoving.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / totalTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        unitMoving.unitImage.rotation = toRot;
+        unitMoving.transform.position = endPos;
+    }
     internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
     {
         var unitOnPath = node.structureOnPath;
@@ -1090,12 +1193,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private Quaternion GetDirection(Unit unit, PathNode fromNode, PathNode toNode)
+    private Quaternion GetDirection(Unit unit, PathNode fromNode, PathNode toNode, Direction? direction = null)
     {
-        int x = toNode.coords.x - fromNode.coords.x;
-        int y = toNode.coords.y - fromNode.coords.y;
-        var offSetCoords = fromNode.offSet.FirstOrDefault(c=>c.x == x && c.y == y);
-        unit.facing = (Direction)Array.IndexOf(fromNode.offSet, offSetCoords);
+        if (direction == null)
+        {
+            int x = toNode.coords.x - fromNode.coords.x;
+            int y = toNode.coords.y - fromNode.coords.y;
+            var offSetCoords = fromNode.offSet.FirstOrDefault(c => c.x == x && c.y == y);
+            unit.facing = (Direction)Array.IndexOf(fromNode.offSet, offSetCoords);
+        }
+        else
+        {
+            unit.facing = (Direction)direction;
+        }
         return Quaternion.Euler(unit.transform.rotation.x, unit.transform.rotation.y, 270 - (unit.facing == Direction.TopRight ? -60 : (int)unit.facing * 60));
     }
 
@@ -1302,9 +1412,10 @@ public class GameManager : MonoBehaviour
                 var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
                 if (turnFromServer != null)
                 {
-                    for(int i = MyStation.actions.Count()-1; i >= 0; i--)
+                    //replace in morning
+                    for(int i = turnFromServer[Globals.localStationIndex].Actions.Count()-1; i >= 0; i--)
                     {
-                        PerformUpdates(MyStation.actions[i], Constants.Remove);
+                        PerformUpdates(new Action(turnFromServer[Globals.localStationIndex].Actions[i]), Constants.Remove);
                     }
                     ClearModules();
                     ToggleMineralText(true);
@@ -1343,21 +1454,48 @@ public class GameManager : MonoBehaviour
         station.credits -= (action.costOfAction * modifier);
         if (action.actionType == ActionType.AttachModule)
         {
-            var unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid))?.attachedModules;
-            if (unitToRemoveFrom == null)
+            Unit UnitToRemoveFrom;
+            List<Module> InventoryRemoveFrom;
+            if (action._parentGuid == null)
             {
-                unitToRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+                UnitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                if (UnitToRemoveFrom != null)
+                {
+                    InventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
+                }
+                else
+                {
+                    UnitToRemoveFrom = Stations[action.selectedUnit.stationId];
+                    InventoryRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+                    action._statonInventory = true;
+                }
+            }
+            else
+            {
+                UnitToRemoveFrom = AllUnits.FirstOrDefault(x => x.unitGuid == action._parentGuid);
+                if (action._statonInventory)
+                {
+                    InventoryRemoveFrom = ((Station)UnitToRemoveFrom).modules;
+                }
+                else
+                {
+                    InventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
+                }
+                
             }
             action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
             if (modifier == Constants.Create)
             {
+                action._parentGuid = UnitToRemoveFrom.unitGuid;
                 action.selectedUnit.attachedModules.Add(action.selectedModule);
-                unitToRemoveFrom.Remove(unitToRemoveFrom.FirstOrDefault(x=>x.moduleGuid == action.selectedModule.moduleGuid));
+                InventoryRemoveFrom.Remove(InventoryRemoveFrom.FirstOrDefault(x=>x.moduleGuid == action.selectedModule.moduleGuid));
             }
             else
             {
-                unitToRemoveFrom.Add(action.selectedModule);
+                InventoryRemoveFrom.Add(action.selectedModule);
                 action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                action._statonInventory = false;
+                action._parentGuid = null;
             }
         }
         else if (action.actionType == ActionType.SwapModule)
@@ -1430,6 +1568,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"Perfoming {Stations[action.playerId].color}'s action {action.actionOrder}:\n{GetDescription(action.actionType)}"); 
         turnValue.text = $"{action.selectedUnit.unitName}:\n";
+        tapped = false;
         if (action.selectedUnit != null && AllUnits.Contains(action.selectedUnit))
         {
             var currentUnit = action.selectedUnit;
@@ -1491,7 +1630,7 @@ public class GameManager : MonoBehaviour
                         if (action.selectedModule != null)
                         {
                             var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
-                            turnValue.text += $"Won bid\n({wonModule.effectText})\nPaid {action.selectedModule.currentBid} credits.";
+                            turnValue.text += $"Won bid\n\nPaid {action.selectedModule.currentBid} credits for:\n{wonModule.effectText}";
                             PerformUpdates(action, Constants.Create);
                             currentStation.modules.Add(wonModule);
                         }
@@ -1511,7 +1650,7 @@ public class GameManager : MonoBehaviour
                             Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
                             if (selectedModule != null)
                             {
-                                turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
+                                turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n{selectedModule.effectText}";
                                 PerformUpdates(action, Constants.Create);
                             }
                             else
@@ -1535,7 +1674,7 @@ public class GameManager : MonoBehaviour
                             Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
                             if (selectedModule != null && dettachedModule != null)
                             {
-                                turnValue.text += $"{GetDescription(action.actionType)}.\n({selectedModule.effectText})";
+                                turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n{selectedModule.effectText}";
                                 PerformUpdates(action, Constants.Create);
                             }
                             else
@@ -1561,7 +1700,8 @@ public class GameManager : MonoBehaviour
                     }
                     else if (TechActions.Contains(action.actionType))
                     {
-                        turnValue.text += $"{GetDescription(action.actionType)}\n({currentStation.technology[(int)action.actionType-Constants.MinTech].effectText})";
+                        var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
+                        turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount+1}/{tech.neededAmount})";
                         PerformUpdates(action, Constants.Create);
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));

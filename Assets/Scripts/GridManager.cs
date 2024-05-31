@@ -13,7 +13,7 @@ public class GridManager : MonoBehaviour
     private Vector3 cellPrefabSize;
     private Transform characterParent;
     internal PathNode[,] grid;
-    private Vector2 gridSize = new Vector2(8, 8);
+    private Vector2 gridSize = new Vector2(Constants.GridSize, Constants.GridSize);
     internal int scoreToWin = 99;
     public List<Color> playerColors;
     public List<Color> tileColors;
@@ -40,7 +40,7 @@ public class GridManager : MonoBehaviour
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         CreateGrid();
         characterParent = GameObject.Find("Characters").transform;
-        var stationsCount = Globals.IsCPUGame ? 4 : Globals.GameMatch.GameTurns[0].Players.Length;
+        var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.GameTurns[0].Players.Length;
         for (int i = 0; i < stationsCount; i++)
         {
             CreateStation(i);
@@ -130,29 +130,16 @@ public class GridManager : MonoBehaviour
     }
     bool CanSpawnFleet(int x, int y)
     {
-        if (IsInGridBounds(x, y)) {
-            if (grid[x, y].structureOnPath == null && !grid[x, y].isAsteroid)
-            {
-                Debug.Log($"Can Spawn at {x},{y}");
-                return true;
-            }
-            else
-            {
-                Debug.Log($"{x},{y} is blocked");
-                return false;
-            }
-        }
-        Debug.Log($"{x},{y} is out of bounds");
-        return false;
-        
-    }
-    bool IsInGridBounds(int x, int y)
-    {
-        if (x >= 0 && y >= 0 && x < gridSize.x && y < gridSize.y)
+        if (grid[x, y].structureOnPath == null && !grid[x, y].isAsteroid)
         {
+            Debug.Log($"Can Spawn at {x},{y}");
             return true;
         }
-        return false;
+        else
+        {
+            Debug.Log($"{x},{y} is blocked");
+            return false;
+        }   
     }
 
     void CreateGrid()
@@ -217,7 +204,7 @@ public class GridManager : MonoBehaviour
                 {
                     neighbor.gCost = currentNode.gCost + GetGCost(neighbor);
                     neighbor.parent = currentNode;
-                    neighbor.coordsText.text = $"G:{neighbor.gCost} \n H:{neighbor.hCost} \n F:{neighbor.fCost}";
+                    //neighbor.coordsText.text = $"G:{neighbor.gCost} \n H:{neighbor.hCost} \n F:{neighbor.fCost}";
                     openSet.Add(neighbor);
                 }
             }
@@ -273,34 +260,16 @@ public class GridManager : MonoBehaviour
         path.Reverse();
         return path;
     }
-
-    //int GetDistance(PathNode nodeA, PathNode nodeB)
-    //{
-    //    bool sameParity = (Math.Abs(nodeA.coords.y) % 2 == Math.Abs(nodeB.coords.y) % 2);
-    //    if (sameParity)
-    //    {
-    //        return Math.Abs(nodeA.coords.x - nodeB.coords.x) + Math.Abs(nodeA.coords.y - nodeB.coords.y);
-    //    }
-    //    else
-    //    {
-    //        int hCost = Math.Abs(nodeA.coords.x - nodeB.coords.x) + Math.Abs(nodeA.coords.y - nodeB.coords.y);
-    //        hCost += Math.Abs(nodeA.coords.y - nodeB.coords.y) / 2;
-    //        return hCost;
-    //    }
-    //}
-
-
+    int WrapAround(int coord)
+    {
+        return ((coord % Constants.GridSize) + Constants.GridSize) % Constants.GridSize;
+    }
     internal List<PathNode> GetNeighbors(PathNode node, bool first = true)
     {
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
         {
-            int checkX = node.coords.x + node.offSet[i].x;
-            int checkY = node.coords.y + node.offSet[i].y;
-            if (IsInGridBounds(checkX, checkY))
-            {
-                neighbors.Add(grid[checkX, checkY]);
-            }
+            neighbors.Add(grid[WrapAround(node.coords.x + node.offSet[i].x), WrapAround(node.coords.y + node.offSet[i].y)]);
         }
         if (node.isAsteroid && first)
         {

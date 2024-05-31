@@ -11,6 +11,8 @@ public class Action {
     public Module? selectedModule;
     public List<PathNode> selectedPath;
     public int generatedModuleId;
+    public bool _statonInventory = false;
+    public Guid? _parentGuid = null;
     public Guid? generatedGuid;
     internal int costOfAction;
     internal int actionOrder;
