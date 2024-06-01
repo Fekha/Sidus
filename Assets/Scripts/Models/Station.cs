@@ -62,4 +62,17 @@ public class Station : Unit
         maxMining += modifier;
         fleets.ForEach(x => x.maxMining += modifier);
     }
+
+    internal void AOERegen(int v)
+    {
+        RegenHP(v);
+        var neighbors = GridManager.i.GetNeighbors(currentPathNode, false);
+        foreach (var neighbor in neighbors)
+        {
+            if (neighbor.structureOnPath != null && neighbor.structureOnPath.stationId == stationId)
+            {
+                neighbor.structureOnPath.RegenHP(v);
+            }
+        }
+    }
 }

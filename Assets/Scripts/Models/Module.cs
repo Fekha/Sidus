@@ -51,7 +51,7 @@ public class Module
                 effectText = "+3 Kinetic Power \n +1 Thermal Damage Taken";
                 break;
             case 1:
-                effectText = "+3 Thermal Power \n +1 HP";
+                effectText = "+3 Thermal Power \n +1 Max HP";
                 break;
             case 2:
                 effectText = "+3 Explosive Power \n -1 Thermal Damage Taken";
@@ -105,7 +105,7 @@ public class Module
                 effectText = "-2 Kinetic Power \n +4 Thermal Power \n +1 Explosive Power";
                 break;
             case 19:
-                effectText = "-2 Kinetic Power \n +4 Explosive Power \n +3 HP";
+                effectText = "-2 Kinetic Power \n +4 Explosive Power \n +3 Max HP";
                 break;
             case 20:
                 effectText = "+1 Movement \n +2 Kinetic Damage Taken";
@@ -126,22 +126,22 @@ public class Module
                 effectText = "+1 Explosive Power \n -2 Kinetic Damage Taken \n -2 Thermal Damage Taken";
                 break; 
             case 26:
-                effectText = "+3 HP \n -2 Kinetic Damage Taken";
+                effectText = "+3 Max HP \n -2 Kinetic Damage Taken";
                 break;
             case 27:
-                effectText = "+3 HP \n -2 Thermal Damage Taken";
+                effectText = "+3 Max HP \n -2 Thermal Damage Taken";
                 break;
             case 28:
-                effectText = "+3 HP \n -2 Explosive Damage Taken";
+                effectText = "+3 Max HP \n -2 Explosive Damage Taken";
                 break;
             case 29:
-                effectText = "+3 HP \n +1 Kinetic Power";
+                effectText = "+3 Max HP \n +1 Kinetic Power";
                 break;
             case 30:
-                effectText = "+3 HP \n +1 Thermal Power";
+                effectText = "+3 Max HP \n +1 Thermal Power";
                 break;
             case 31:
-                effectText = "+3 HP \n +1 Explosive Power";
+                effectText = "+3 Max HP \n +1 Explosive Power";
                 break; 
             case 32:
                 effectText = "+1 credit per turn \n -2 Explosive Power";
@@ -178,7 +178,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 42:
-                effectText = "Damage dealt reduces max HP.";
+                effectText = "Damage dealt reduces Max HP.";
                 rarity = Rarity.Rare;
                 break;
             case 43:
@@ -214,7 +214,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 51:
-                effectText = "Gain 2 HP after destroying an asteroid.";
+                effectText = "Gain 2 Max HP after destroying an asteroid.";
                 rarity = Rarity.Rare;
                 break;
             default:

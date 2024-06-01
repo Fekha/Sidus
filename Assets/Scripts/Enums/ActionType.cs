@@ -2,8 +2,8 @@ using System.ComponentModel;
 
 public enum ActionType
 {
-    [Description("Generate Module")]
-    GenerateModule,
+    [Description("Repair Fleet")]
+    RepairFleet,
     [Description("Move Unit")]
     MoveUnit,
     [Description("Create Fleet")]

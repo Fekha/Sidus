@@ -84,7 +84,6 @@ public class Unit : Node
     }
     internal void GainHP(int hp)
     {
-        HP += hp;
         maxHP += hp;
     }
     public void SetNodeColor()
@@ -141,8 +140,7 @@ public class Unit : Node
                 break;
             case 1:
                 thermalPower += (3 * modifer);
-                maxHP += (1 * modifer);
-                HP += (1 * modifer);
+                GainHP(1 * modifer);
                 break;
             case 2:
                 explosivePower += (3 * modifer);
@@ -225,8 +223,7 @@ public class Unit : Node
             case 19:
                 thermalPower += (-2 * modifer);
                 explosivePower += (4 * modifer);
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 break;
             case 20:
                 maxMovement += (1 * modifer);
@@ -259,33 +256,27 @@ public class Unit : Node
                 thermalDamageModifier += (2 * modifer);
                 break;
             case 26:
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 kineticDamageModifier += (-2 * modifer);
                 break;
             case 27:
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 thermalDamageModifier += (-2 * modifer);
                 break;
             case 28:
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 explosiveDamageModifier += (-2 * modifer);
                 break;
             case 29:
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 kineticPower += (1 * modifer);
                 break;
             case 30:
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 thermalPower += (1 * modifer);
                 break;
             case 31:
-                maxHP += (3 * modifer);
-                HP += (3 * modifer);
+                GainHP(3 * modifer);
                 explosivePower += (1 * modifer);
                 break;  
             case 32:

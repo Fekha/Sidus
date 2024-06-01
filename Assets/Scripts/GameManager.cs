@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
     private bool isEndingTurn = false;
     private Button upgradeButton;
     public Button createFleetButton;
+    public Button repairFleetButton;
     public Button generateModuleButton;
     public Image endTurnButton;
     private TextMeshProUGUI createFleetCost;
@@ -225,6 +226,7 @@ public class GameManager : MonoBehaviour
         upgradeButton.interactable = false;
         upgradeButton.gameObject.SetActive(false);
         createFleetButton.gameObject.SetActive(false);
+        repairFleetButton.gameObject.SetActive(false);
         creditsText.text = $"Player Credits: {Stations[unit.stationId].credits}";
         hexesOwnedText.text = $"Hexes Owned: {Stations[unit.stationId].score}";
         if (unit.stationId == MyStation.stationId)
@@ -244,12 +246,15 @@ public class GameManager : MonoBehaviour
             {
                 createFleetButton.gameObject.SetActive(true);
             }
+            else
+            {
+                repairFleetButton.gameObject.SetActive(true);
+            }
             ToggleMineralText(true);
         }
         ToggleHPText(true);
         SetModuleBar(unit);
         infoPanel.gameObject.SetActive(true);
-        
     }
     void Update()
     {
@@ -357,7 +362,7 @@ public class GameManager : MonoBehaviour
         asteroidPanel.transform.Find("MaxValue").GetComponent<TextMeshProUGUI>().text = $"Max Value: {targetNode.maxCredits}";
         asteroidPanel.transform.Find("RegenValue").GetComponent<TextMeshProUGUI>().text = $"Regen Per Turn: {targetNode.creditsRegin}";
     }
-
+    //ViewQueuedAction
     public void ShowQueuedAction(int i)
     {
         DeselectUnitIcons();
@@ -370,7 +375,7 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
             var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Mining Power" : "+1 Movement";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 HP\n+1 Kinetic Power\n+1 Thermal Power\n+1 Explosive Power\n{extraBonus}";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic Power\n+1 Thermal Power\n+1 Explosive Power\n{extraBonus}";
             if (action.actionType == ActionType.UpgradeStation)
             {
                 message += "\n+1 Credit per turn";
@@ -380,6 +385,11 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
         {
             SetModuleInfo(action.selectedModule);
+        }
+        else
+        {
+            SetUnitTextValues(action.selectedUnit);
+            ViewUnitInformation(true);
         }
     }
     private void HighlightQueuedMovement(Action movementAction)
@@ -433,23 +443,23 @@ public class GameManager : MonoBehaviour
                         canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
                         break;
                     case ResearchType.ResearchMaxFleets:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
                     case ResearchType.ResearchHP:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchMaxFleets].level;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
                     case ResearchType.ResearchMining:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchMaxFleets].level;
-                        break;
-                    case ResearchType.ResearchKinetic:
                         canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
-                    case ResearchType.ResearchThermal:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                        break;
-                    case ResearchType.ResearchExplosive:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                        break;
+                    //case ResearchType.ResearchKinetic:
+                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+                    //    break;
+                    //case ResearchType.ResearchThermal:
+                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+                    //    break;
+                    //case ResearchType.ResearchExplosive:
+                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+                    //    break;
                     default: break;
                 }
                 var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
@@ -824,10 +834,6 @@ public class GameManager : MonoBehaviour
         else if (actionType == ActionType.UpgradeStation)
         {
             return (structure.level + countingQueue) * (9 - (structure.level + countingQueue)); //8,14,18
-        }
-        else if (actionType == ActionType.GenerateModule)
-        {
-            return 3;
         }
         else if (actionType == ActionType.BidOnModule)
         {
@@ -1489,14 +1495,14 @@ public class GameManager : MonoBehaviour
                 {
                     InventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
                 }
-                
+
             }
             action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
             if (modifier == Constants.Create)
             {
                 action._parentGuid = UnitToRemoveFrom.unitGuid;
                 action.selectedUnit.attachedModules.Add(action.selectedModule);
-                InventoryRemoveFrom.Remove(InventoryRemoveFrom.FirstOrDefault(x=>x.moduleGuid == action.selectedModule.moduleGuid));
+                InventoryRemoveFrom.Remove(InventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
             }
             else
             {
@@ -1540,11 +1546,11 @@ public class GameManager : MonoBehaviour
             if (modifier == Constants.Remove)
                 action.selectedUnit.resetMovementRange();
             if (action.actionType == ActionType.MoveAndMine)
-                station.credits += (Mathf.Min(action.selectedPath.Sum(x=>x.currentCredits),action.selectedUnit.maxMining) * modifier);
+                station.credits += (Mathf.Min(action.selectedPath.Sum(x => x.currentCredits), action.selectedUnit.maxMining) * modifier);
         }
         else if (TechActions.Contains(action.actionType)) //Research Actions
         {
-            station.technology[(int)action.actionType-Constants.MinTech].Research(station, modifier);
+            station.technology[(int)action.actionType - Constants.MinTech].Research(station, modifier);
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
@@ -1705,6 +1711,15 @@ public class GameManager : MonoBehaviour
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
+                    } 
+                    else if (action.actionType == ActionType.RepairFleet)
+                    {
+                        turnValue.text += $"{GetDescription(action.actionType)}\n\n";
+                        action.selectedUnit.RegenHP(3);
+                        turnValue.text += $"New HP/Max: {currentUnit.HP}/{currentUnit.maxHP}";
+                        currentUnit.selectIcon.SetActive(true);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
+                        currentUnit.selectIcon.SetActive(false);
                     }
                     else if (TechActions.Contains(action.actionType))
                     {
@@ -1788,6 +1803,7 @@ public class GameManager : MonoBehaviour
         }
         foreach (var station in Stations)
         {
+            station.AOERegen(1);
             station.credits += station.globalCreditGain + station.fleets.Sum(x => x.globalCreditGain);
             station.actions.Clear();
             for (int i = 1; i < Constants.MaxPlayers; i++)
@@ -1894,6 +1910,13 @@ public class GameManager : MonoBehaviour
             {
                 spriteRenderer.sprite = GridManager.i.fleetlvl4;
             }
+        }
+    }
+    public void RepairFleet()
+    {
+        if (SelectedUnit != null)
+        {
+            QueueAction(new Action(ActionType.RepairFleet, SelectedUnit));
         }
     }
     private void SetModuleGrid()

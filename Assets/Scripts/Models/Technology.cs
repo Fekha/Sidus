@@ -36,37 +36,34 @@ public class Technology : MonoBehaviour
             case 2:
                 effectText = $"Increase max number of fleets to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max fleets: {modifier + level})";
-                requirementText = "<b>Must increase max <u>station level</u> first</b>\n\n";
+                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 neededAmount = modifier + level;
                 break;
             case 3:
                 effectText = $"+2 HP for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>number of fleets</u> first<b>\n\n";
+                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 neededAmount = modifier + level;
                 break;
             case 4:
                 effectText = $"+1 kinetic power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 neededAmount = modifier + level;
                 break;
             case 5:
                 effectText = $"+1 thermal power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>fleet level</u> first</b><b>\n\n";
                 neededAmount = modifier + level;
                 break;
             case 6:
                 effectText = $"+1 explosive power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 neededAmount = modifier + level;
                 break;
             case 7:
                 effectText = $"+1 mining power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>number of fleets</u> first<b>\n\n";
+                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 neededAmount = modifier + level;
                 break;
             default:
