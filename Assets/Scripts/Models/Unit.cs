@@ -71,7 +71,6 @@ public class Unit : Node
         if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
             regen *= 2;
         HP += regen;
-        HP = Mathf.Min(maxHP, HP);
     }
     public void TakeDamage(int damage,bool maxHpDamage = false)
     {
@@ -124,7 +123,7 @@ public class Unit : Node
         }
         else
         {
-            HPText.text = $"{HP}";
+            HPText.text = $"{Mathf.Min(maxHP, HP)}";
             statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
         }
         

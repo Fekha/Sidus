@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -197,7 +198,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            HPValue.text = unit.HP + "/" + unit.maxHP;
+            HPValue.text = Mathf.Min(unit.maxHP, unit.HP) + "/" + unit.maxHP;
             rangeValue.text = unit.maxMovement.ToString();
             PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
             ModuleEffectText.text = "None";
@@ -1469,18 +1470,18 @@ public class GameManager : MonoBehaviour
         if (action.actionType == ActionType.AttachModule)
         {
             Unit UnitToRemoveFrom;
-            List<Module> InventoryRemoveFrom;
+            List<Module> inventoryRemoveFrom;
             if (action._parentGuid == null)
             {
                 UnitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid));
                 if (UnitToRemoveFrom != null)
                 {
-                    InventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
+                    inventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
                 }
                 else
                 {
                     UnitToRemoveFrom = Stations[action.selectedUnit.stationId];
-                    InventoryRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+                    inventoryRemoveFrom = Stations[action.selectedUnit.stationId].modules;
                     action._statonInventory = true;
                 }
             }
@@ -1489,24 +1490,26 @@ public class GameManager : MonoBehaviour
                 UnitToRemoveFrom = AllUnits.FirstOrDefault(x => x.unitGuid == action._parentGuid);
                 if (action._statonInventory)
                 {
-                    InventoryRemoveFrom = ((Station)UnitToRemoveFrom).modules;
+                    inventoryRemoveFrom = ((Station)UnitToRemoveFrom).modules;
                 }
                 else
                 {
-                    InventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
+                    inventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
                 }
 
             }
             action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+            if (!action._statonInventory)
+                UnitToRemoveFrom.EditModule(action.selectedModule.moduleId, modifier * -1);
             if (modifier == Constants.Create)
             {
                 action._parentGuid = UnitToRemoveFrom.unitGuid;
                 action.selectedUnit.attachedModules.Add(action.selectedModule);
-                InventoryRemoveFrom.Remove(InventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
             }
             else
             {
-                InventoryRemoveFrom.Add(action.selectedModule);
+                inventoryRemoveFrom.Add(action.selectedModule);
                 action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
                 action._statonInventory = false;
                 action._parentGuid = null;
@@ -1515,29 +1518,39 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.SwapModule)
         {
             Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
-            var unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == (modifier == Constants.Create ? action.selectedModule.moduleGuid : action.generatedGuid)))?.attachedModules;
+            Unit unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == (modifier == Constants.Create ? action.selectedModule.moduleGuid : action.generatedGuid)));
+            List<Module> inventoryRemoveFrom;
             if (unitToRemoveFrom == null)
             {
-                unitToRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+                inventoryRemoveFrom = Stations[action.selectedUnit.stationId].modules;
             }
-            action.selectedUnit.EditModule(dettachedModule.moduleId, modifier * -1);
-            action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
-            if (modifier == Constants.Create)
+            else
             {
+                inventoryRemoveFrom = unitToRemoveFrom?.attachedModules;
+            }
+            action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+            action.selectedUnit.EditModule(dettachedModule.moduleId, modifier * -1);
+            if (unitToRemoveFrom != null)
+            {
+                unitToRemoveFrom.EditModule(action.selectedModule.moduleId, modifier * -1);
+                unitToRemoveFrom.EditModule(dettachedModule.moduleId, modifier);
+            }
+            if (modifier == Constants.Create)
+            {              
                 //attach new
                 action.selectedUnit.attachedModules.Add(action.selectedModule);
-                unitToRemoveFrom.Remove(unitToRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
                 //dettach old
-                unitToRemoveFrom.Add(dettachedModule);
+                inventoryRemoveFrom.Add(dettachedModule);
                 action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
             }
             else
             {
                 //attach old
                 action.selectedUnit.attachedModules.Add(dettachedModule);
-                unitToRemoveFrom.Remove(unitToRemoveFrom.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
+                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
                 //deattach new
-                unitToRemoveFrom.Add(action.selectedModule);
+                inventoryRemoveFrom.Add(action.selectedModule);
                 action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
             }
         }
@@ -1555,6 +1568,10 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
             LevelUpUnit(action.selectedUnit, modifier);
+        }
+        else if (action.actionType == ActionType.RepairFleet)
+        {
+            action.selectedUnit.RegenHP(3 * modifier);
         }
     }
     private void SubmitResponse(bool response)
@@ -1715,8 +1732,8 @@ public class GameManager : MonoBehaviour
                     else if (action.actionType == ActionType.RepairFleet)
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}\n\n";
-                        action.selectedUnit.RegenHP(3);
-                        turnValue.text += $"New HP/Max: {currentUnit.HP}/{currentUnit.maxHP}";
+                        PerformUpdates(action, Constants.Create);
+                        turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
@@ -1791,16 +1808,6 @@ public class GameManager : MonoBehaviour
         UpdateAuctionModules(TurnNumber);
         TurnNumber++;
         endTurnButton.color = Color.black;
-        foreach (var unit in AllUnits)
-        {
-            if (!unit.hasMoved)
-            {
-                unit.RegenHP(1);
-            }
-            unit.hasMoved = false;
-            unit.miningLeft = unit.maxMining;
-            unit.resetMovementRange();
-        }
         foreach (var station in Stations)
         {
             station.AOERegen(1);
@@ -1813,6 +1820,17 @@ public class GameManager : MonoBehaviour
                     station.maxActions = 2 + i;
                 }
             }
+        }
+        foreach (var unit in AllUnits)
+        {
+            if (!unit.hasMoved)
+            {
+                unit.RegenHP(1);
+            }
+            unit.hasMoved = false;
+            unit.miningLeft = unit.maxMining;
+            unit.resetMovementRange();
+            unit.HP = Mathf.Min(unit.maxHP, unit.HP);
         }
         turnLabel.SetActive(false);
         ClearActionBar();
