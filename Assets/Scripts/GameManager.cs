@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +16,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager i;
     private Transform highlightParent;
+    public GameObject turnArchivePrefab;
     public GameObject selectPrefab;
     public GameObject pathPrefab;
     public GameObject movementRangePrefab;
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GameObject moduleMarket;
     public GameObject technologyPanel;
     public GameObject asteroidPanel;
+    public GameObject turnArchivePanel;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
     private List<PathNode> SelectedPath;
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
     public Transform ModuleGrid;
     public Transform SelectedModuleGrid;
     public Transform turnOrder;
+    public Transform TurnArchiveList;
 
     public Sprite lockActionBar;
     public Sprite lockModuleBar;
@@ -80,7 +82,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI phaseText;
     public GameObject turnTapText;
     private TextMeshProUGUI moduleInfoValue;
-    public Image moduleInfoIcon;
+    private Image moduleInfoIcon;
 
     public TextMeshProUGUI ScoreToWinText;
     public TextMeshProUGUI ColorText;
@@ -96,6 +98,7 @@ public class GameManager : MonoBehaviour
     internal List<Module> AuctionModules = new List<Module>();
     internal List<GameObject> AuctionObjects = new List<GameObject>();
     internal List<GameObject> TechnologyObjects = new List<GameObject>();
+    internal List<GameObject> TurnArchiveObjects = new List<GameObject>();
     internal int winner = -1;
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
@@ -106,6 +109,7 @@ public class GameManager : MonoBehaviour
     private bool isWaitingForTurns = false;
     private bool SubmittedTurn = false;
     private List<Action> lastSubmittedTurn = new List<Action>();
+    List<Tuple<string,string>> turnArchive = new List<Tuple<string, string>>();
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -1232,8 +1236,8 @@ public class GameManager : MonoBehaviour
         int s2Amr = s2.explosiveDamageModifier;
         string support1Text = (s1sExplosive > 0 ? $"({s1.explosivePower} base +{s1sExplosive} from support)" : "");
         string support2Text = (s2sExplosive > 0 ? $"({s2.explosivePower} base +{s2sExplosive} from support)" : "");
-        string power1Text = $"{s1.explosivePower + s1sExplosive}";
-        string power2Text = $"{s2.explosivePower + s2sExplosive}";
+        string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower + s1sExplosive}";
+        string power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.explosivePower + s2sExplosive}";
 
         if (type == AttackType.Kinetic)
         {
@@ -1243,8 +1247,8 @@ public class GameManager : MonoBehaviour
             s2Amr = s2.kineticDamageModifier;
             support1Text = (s1sKinetic > 0 ? $"({s1.kineticPower} base +{s1sKinetic} from support)" : "");
             support2Text = (s2sKinetic > 0 ? $"({s2.kineticPower} base +{s2sKinetic} from support)" : "");
-            power1Text = $"{s1.kineticPower + s1sKinetic}";
-            power2Text = $"{s2.kineticPower + s2sKinetic}";
+            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower + s1sKinetic}";
+            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.kineticPower + s2sKinetic}";
         }
         else if (type == AttackType.Thermal)
         {
@@ -1254,16 +1258,17 @@ public class GameManager : MonoBehaviour
             s2Amr = s2.thermalDamageModifier;
             support1Text = (s1sThermal > 0 ? $"({s1.thermalPower} base +{s1sThermal} from support)" : "");
             support2Text = (s2sThermal > 0 ? $"({s2.thermalPower} base +{s2sThermal} from support)" : "");
-            power1Text = $"{s1.thermalPower + s1sThermal}";
-            power2Text = $"{s2.thermalPower + s2sThermal}";
+            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower + s1sThermal}";
+            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower + s2sThermal}";
         }
         var returnText = "";
         if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
             s1.TakeDamage(damage, s2.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
-            returnText += $"<u><b>{s1.color} took {damage} damage</u></b> and has {s1.HP} HP left.";
-            if (s1Amr != 0)
+            string hpText = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.HP}";
+            returnText += $"<u><b>{s1.color} took {damage} damage</u></b> and has {hpText} HP left.";
+            if (s1Amr != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
                 var modifierSymbol = s1Amr > 0 ? "-" : "+";
                 returnText += $"\n({s1Dmg} base damage {modifierSymbol}{Mathf.Abs(s1Amr)} from modules)";
@@ -1273,8 +1278,9 @@ public class GameManager : MonoBehaviour
         {
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
             s2.TakeDamage(damage, s1.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
-            returnText += $"<u><b>{s2.color} took {damage} damage</u></b> and has {s2.HP} HP left.";
-            if (s2Amr != 0)
+            string hpText = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.HP}";
+            returnText += $"<u><b>{s2.color} took {damage} damage</u></b> and has {hpText} HP left.";
+            if (s2Amr != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
                 var modifierSymbol = s2Amr > 0 ? "-" : "+";
                 returnText += $"\n({s2Dmg} base damage {modifierSymbol}{Mathf.Abs(s2Amr)} from modules)";
@@ -1343,6 +1349,13 @@ public class GameManager : MonoBehaviour
         if (turns != null && !Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber))
         {
             Globals.GameMatch.GameTurns.Add(turns);
+        }
+    }
+    public void ShowTurnArchive(bool active)
+    {
+        if (!isEndingTurn)
+        {
+            turnArchivePanel.SetActive(active);
         }
     }
     public void ToggleAll()
@@ -1434,18 +1447,25 @@ public class GameManager : MonoBehaviour
                     }
                     ClearModules();
                     ToggleMineralText(true);
+                    ClearTurnArchiveObjects();
                     var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
                     foreach (var serverAction in serverActions)
                     {
                         yield return StartCoroutine(PerformAction(new Action(serverAction)));
                         yield return new WaitForSeconds(.1f);
                     }
-                    //turnValue.text = $"Turn #{TurnNumber} over.";
+                    foreach (var archive in turnArchive)
+                    {
+                        var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
+                        turnArchiveObject.GetComponentInChildren<TextMeshProUGUI>().text = archive.Item1;
+                        var archivePopUpText = archive.Item2;
+                        turnArchiveObject.GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(archivePopUpText));
+                        TurnArchiveObjects.Add(turnArchiveObject);
+                    }
                     foreach (var asteroid in GridManager.i.AllNodes)
                     {
                         asteroid.ReginCredits();
                     }
-                    //yield return StartCoroutine(WaitforSecondsOrTap(1));
                     FinishTurns();
                 }
             }
@@ -1584,6 +1604,7 @@ public class GameManager : MonoBehaviour
         winner = GridManager.i.CheckForWin();
         if (winner != -1)
         {
+            turnTapText.SetActive(false);
             ToggleHPText(true);
             turnValue.text = $"{Stations[winner].color} player won after {TurnNumber} turns";
             Debug.Log($"{Stations[winner].color} player won after {TurnNumber} turns");
@@ -1597,170 +1618,189 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PerformAction(Action action)
     {
-        Debug.Log($"Perfoming {Stations[action.playerId].color}'s action {action.actionOrder}:\n{GetDescription(action.actionType)}"); 
-        turnValue.text = $"{action.selectedUnit.unitName}:\n";
         tapped = false;
-        if (action.selectedUnit != null && AllUnits.Contains(action.selectedUnit))
+        var currentUnit = action.selectedUnit;
+        turnValue.text = $"{currentUnit.unitName}:\n";
+        if (currentUnit != null && AllUnits.Contains(currentUnit))
         {
-            var currentUnit = action.selectedUnit;
-            if (currentUnit != null)
+            var currentStation = Stations[currentUnit.stationId];
+            action.costOfAction = GetCostOfAction(action.actionType, currentUnit, false, action.selectedModule);
+            if (currentStation.credits >= action.costOfAction)
             {
-                var currentStation = Stations[currentUnit.stationId];
-                action.costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, false, action.selectedModule);
-                if (currentStation.credits >= action.costOfAction)
+                if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid)
                 {
-                    if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid)
+                    isMoving = true;
+                    if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
                     {
-                        isMoving = true;
-                        if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
-                        {
-                            turnTapText.SetActive(false);
-                            turnValue.text += $"{GetDescription(action.actionType)}";
-                            Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
-                            yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                            yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        }
-                        isMoving = false;
+                        turnTapText.SetActive(false);
+                        turnValue.text += $"{GetDescription(action.actionType)}";
+                        Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
+                        yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
                     }
-                    else if (action.actionType == ActionType.CreateFleet)
+                    else
                     {
-                        if (IsUnderMaxFleets(currentStation, false))
-                        {
-                            turnValue.text += $"{GetDescription(action.actionType)}";
-                            currentStation.credits -= action.costOfAction;
-                            yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                            Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
-                            yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        }
-                    }
-                    else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
-                    {
-                        if (CanLevelUp(currentUnit, action.actionType, false))
-                        {
-                            turnValue.text += $"{GetDescription(action.actionType)}";
-                            PerformUpdates(action, Constants.Create);
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                        }
-                        currentUnit.selectIcon.SetActive(true);
+                        turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
                     }
-                    else if (action.actionType == ActionType.BidOnModule)
+                    isMoving = false;
+                }
+                else if (action.actionType == ActionType.CreateFleet)
+                {
+                    if (IsUnderMaxFleets(currentStation, false))
                     {
-                        if (action.selectedModule != null)
-                        {
-                            var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
-                            turnValue.text += $"Won bid\n\nPaid {action.selectedModule.currentBid} credits for:\n{wonModule.effectText}";
-                            PerformUpdates(action, Constants.Create);
-                            currentStation.modules.Add(wonModule);
-                        }
-                        else
-                        {
-                            turnValue.text += "Lost bid\nGained 1 credit.";
-                            currentStation.credits++;
-                        }
-                        currentUnit.selectIcon.SetActive(true);
+                        turnValue.text += $"{GetDescription(action.actionType)}";
+                        currentStation.credits -= action.costOfAction;
+                        yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
+                    }
+                    else
+                    {
+                        turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
+                        Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
                     }
-                    else if (action.actionType == ActionType.AttachModule)
-                    {
-                        if (currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
-                        {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
-                            if (selectedModule != null)
-                            {
-                                turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n{selectedModule.effectText}";
-                                PerformUpdates(action, Constants.Create);
-                            }
-                            else
-                            {
-                                turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
-                            }
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
-                        }
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
-                    }
-                    else if (action.actionType == ActionType.SwapModule)
-                    {
-                        if (currentUnit.attachedModules.Count > 0)
-                        {
-                            Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
-                            Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
-                            if (selectedModule != null && dettachedModule != null)
-                            {
-                                turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n{selectedModule.effectText}";
-                                PerformUpdates(action, Constants.Create);
-                            }
-                            else
-                            {
-                                turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
-                            }
-                            currentUnit.selectIcon.SetActive(true);
-                            yield return StartCoroutine(WaitforSecondsOrTap(1));
-                            currentUnit.selectIcon.SetActive(false);
-                        }
-                        else
-                        {
-                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not attached";
-                        }
-                    }
-                    else if (action.actionType == ActionType.GainCredit)
+                }
+                else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
+                {
+                    if (CanLevelUp(currentUnit, action.actionType, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         PerformUpdates(action, Constants.Create);
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
-                    } 
-                    else if (action.actionType == ActionType.RepairFleet)
-                    {
-                        turnValue.text += $"{GetDescription(action.actionType)}\n\n";
-                        PerformUpdates(action, Constants.Create);
-                        turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
-                        currentUnit.selectIcon.SetActive(true);
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
                     }
-                    else if (TechActions.Contains(action.actionType))
+                    else
                     {
-                        var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
-                        turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount+1}/{tech.neededAmount})";
+                        turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
+                    }
+                    currentUnit.selectIcon.SetActive(true);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                    currentUnit.selectIcon.SetActive(false);
+                }
+                else if (action.actionType == ActionType.BidOnModule)
+                {
+                    if (action.selectedModule != null)
+                    {
+                        var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
+                        turnValue.text += $"Won bid\n\nPaid {action.selectedModule.currentBid} credits for:\n{wonModule.effectText}";
                         PerformUpdates(action, Constants.Create);
+                        currentStation.modules.Add(wonModule);
+                    }
+                    else
+                    {
+                        turnValue.text += "Lost bid\nGained 1 credit.";
+                        currentStation.credits++;
+                    }
+                    currentUnit.selectIcon.SetActive(true);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                    currentUnit.selectIcon.SetActive(false);
+                }
+                else if (action.actionType == ActionType.AttachModule)
+                {
+                    if (currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
+                    {
+                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                        if (selectedModule != null)
+                        {
+                            turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n";
+                            if (currentUnit.moduleEffects.Contains(ModuleEffect.HiddenStats))
+                            {
+                                turnValue.text += $"???";
+                            }
+                            else
+                            {
+                                turnValue.text += $"{selectedModule.effectText}";
+                            }
+                            PerformUpdates(action, Constants.Create);
+                        }
+                        else
+                        {
+                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
+                        }
+                    }
+                    else
+                    {
+                        turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
+                    }
+                    currentUnit.selectIcon.SetActive(true);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                    currentUnit.selectIcon.SetActive(false);
+                }
+                else if (action.actionType == ActionType.SwapModule)
+                {
+                    if (currentUnit.attachedModules.Count > 0)
+                    {
+                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                        Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
+                        if (selectedModule != null && dettachedModule != null)
+                        {
+                            turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n";
+                            if (currentUnit.moduleEffects.Contains(ModuleEffect.HiddenStats))
+                            {
+                                turnValue.text += $"???";
+                            }
+                            else
+                            {
+                                turnValue.text += $"{selectedModule.effectText}";
+                            }
+                            PerformUpdates(action, Constants.Create);
+                        }
+                        else
+                        {
+                            turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
+                        }
                         currentUnit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
                     else
                     {
-                        turnValue.text += $"Unknown Error";
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
+                        turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not attached";
                     }
+                }
+                else if (action.actionType == ActionType.GainCredit)
+                {
+                    turnValue.text += $"{GetDescription(action.actionType)}";
+                    PerformUpdates(action, Constants.Create);
+                    currentUnit.selectIcon.SetActive(true);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                    currentUnit.selectIcon.SetActive(false);
+                }
+                else if (action.actionType == ActionType.RepairFleet)
+                {
+                    turnValue.text += $"{GetDescription(action.actionType)}\n\n";
+                    PerformUpdates(action, Constants.Create);
+                    turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
+                    currentUnit.selectIcon.SetActive(true);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                    currentUnit.selectIcon.SetActive(false);
+                }
+                else if (TechActions.Contains(action.actionType))
+                {
+                    var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
+                    turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount + 1}/{tech.neededAmount})";
+                    PerformUpdates(action, Constants.Create);
+                    currentUnit.selectIcon.SetActive(true);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                    currentUnit.selectIcon.SetActive(false);
                 }
                 else
                 {
-                    turnValue.text += $"Could not perform {GetDescription(action.actionType)}, could not afford";
-                    Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {GetDescription(action.actionType)}");
+                    turnValue.text += $"Unknown Error";
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                 }
             }
+            else
+            {
+                turnValue.text += $"Could not perform {GetDescription(action.actionType)}, could not afford";
+                Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {GetDescription(action.actionType)}");
+                yield return StartCoroutine(WaitforSecondsOrTap(1));
+            }
         }
+        else
+        {
+            turnValue.text += $"Unit that queued {GetDescription(action.actionType)} was destroyed";
+            yield return StartCoroutine(WaitforSecondsOrTap(1));
+        }
+        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
+
     }
 
     internal IEnumerator WaitforSecondsOrTap(float time)
@@ -1985,6 +2025,11 @@ public class GameManager : MonoBehaviour
     private void ClearAuctionObjects()
     {
         while (AuctionObjects.Count > 0) { Destroy(AuctionObjects[0].gameObject); AuctionObjects.RemoveAt(0); }
+    }
+    private void ClearTurnArchiveObjects()
+    {
+        while (TurnArchiveObjects.Count > 0) { Destroy(TurnArchiveObjects[0].gameObject); TurnArchiveObjects.RemoveAt(0); }
+        turnArchive.Clear();
     }
     private void ClearTechnologyObjects()
     {

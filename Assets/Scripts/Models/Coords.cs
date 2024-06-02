@@ -15,11 +15,11 @@ public class Coords
         x = _coords.X;
         y = _coords.Y;
     }
-    public Coords Add(Coords coord)
+    public Coords AddCoords(Coords coord)
     {
-        return new Coords(x + coord.x, y + coord.y);
+        return new Coords(GridManager.i.WrapAround(x + coord.x), GridManager.i.WrapAround(y + coord.y));
     }
-    public bool Equals(Coords coord)
+    public bool CoordsEquals(Coords coord)
     {
         return x == coord.x && y == coord.y;
     }

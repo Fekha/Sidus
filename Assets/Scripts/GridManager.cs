@@ -103,12 +103,11 @@ public class GridManager : MonoBehaviour
         unitSprite.color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
         var startIndex = -1;
-        Coords coords = null;
         int k = 0;
         while (startIndex == -1)
         {
-            coords = stationNode.currentPathNode.coords.Add(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
-            startIndex = hexesNearby.FindIndex(x => x.coords.Equals(coords));
+            Coords coords = stationNode.currentPathNode.coords.AddCoords(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
+            startIndex = hexesNearby.FindIndex(x => x.coords.CoordsEquals(coords));
             k++;
         }
         for (int i = 0; i < hexesNearby.Count; i++) {
@@ -163,12 +162,12 @@ public class GridManager : MonoBehaviour
                 int startCredits = 0;
                 int creditRegin = 0;
                 bool isRift = false;
-                if (asteroids.Any(x=>x.Equals(coords)))
+                if (asteroids.Any(x=>x.CoordsEquals(coords)))
                 {
                     startCredits = 6;
                     maxCredits = 10;
                     creditRegin = 2;
-                } else if (rifts.Any(x => x.Equals(coords))) {
+                } else if (rifts.Any(x => x.CoordsEquals(coords))) {
                     isRift = true;
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite;
                 }
@@ -263,7 +262,7 @@ public class GridManager : MonoBehaviour
         path.Reverse();
         return path;
     }
-    int WrapAround(int coord)
+    internal int WrapAround(int coord)
     {
         return ((coord % Constants.GridSize) + Constants.GridSize) % Constants.GridSize;
     }
@@ -278,7 +277,7 @@ public class GridManager : MonoBehaviour
         }
         if (node.isAsteroid && first)
         {
-            neighbors = GetNeighbors(node.parent, false).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.Equals(x.coords))).ToList();
+            neighbors = GetNeighbors(node.parent, false).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
             neighbors.Add(node.parent);
         }
         return neighbors;
