@@ -1769,7 +1769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 2066191003}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -8099,7 +8099,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -48.28032}
-  m_SizeDelta: {x: 0, y: -48.2804}
+  m_SizeDelta: {x: 0, y: -58.9551}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &933227027
 MonoBehaviour:

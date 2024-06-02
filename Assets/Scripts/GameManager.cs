@@ -7,10 +7,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -1295,14 +1297,20 @@ public class GameManager : MonoBehaviour
         if (type is AttackType.Kinetic)
         {
             phaseText.text += $"<b>Kinetic</b> Thermal Explosive";
+            turnArchive.Add(new Tuple<string, string>($"    Combat: Kinetic Phase", returnText));
+
         }
         else if (type is AttackType.Thermal)
         {
             phaseText.text += $"Kinetic <b>Thermal</b> Explosive";
+            turnArchive.Add(new Tuple<string, string>($"    Combat: Thermal Phase ", returnText));
+
         }
         else
         {
             phaseText.text += $"Kinetic Thermal <b>Explosive</b>";
+            turnArchive.Add(new Tuple<string, string>($"    Combat: Explosive Phase", returnText));
+
         }
         return returnText;
     }
@@ -1634,12 +1642,14 @@ public class GameManager : MonoBehaviour
                     {
                         turnTapText.SetActive(false);
                         turnValue.text += $"{GetDescription(action.actionType)}";
+                        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
                         Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
                         yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
                     }
                     else
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
+                        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                     }
                     isMoving = false;
@@ -1799,7 +1809,8 @@ public class GameManager : MonoBehaviour
             turnValue.text += $"Unit that queued {GetDescription(action.actionType)} was destroyed";
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
-        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
+        if (!(action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid))
+            turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
 
     }
 
