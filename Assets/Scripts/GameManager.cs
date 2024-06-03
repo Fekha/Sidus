@@ -1804,7 +1804,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            turnValue.text += $"Unit that queued {GetDescription(action.actionType)} was destroyed";
+            turnValue.text = $"The unit that queued {GetDescription(action.actionType)} was destroyed";
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
         if (!(action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid))
