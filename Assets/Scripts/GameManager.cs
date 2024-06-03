@@ -7,12 +7,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -824,7 +822,7 @@ public class GameManager : MonoBehaviour
         }
         return currentFleets < maxNumFleets;
     }
-    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Module? auctionModule = null)
+    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Module auctionModule = null)
     {
         var station = Stations[structure.stationId];
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
@@ -832,15 +830,15 @@ public class GameManager : MonoBehaviour
         {
             if (station.fleets.Count <= 0)
                 return 0;
-            return (station.fleets.Count + countingQueue) * (6 - (station.fleets.Count + countingQueue)); //5,8,9
+            return (station.fleets.Count + countingQueue) * (7 - (station.fleets.Count + countingQueue)); //6,10,12
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return (structure.level + countingQueue) * (7 - (structure.level + countingQueue)); //6,10,12
+            return (structure.level + countingQueue) * (9 - (structure.level + countingQueue)); //8,14,18
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return (structure.level + countingQueue) * (9 - (structure.level + countingQueue)); //8,14,18
+            return 10 + ((structure.level + countingQueue) * 5); //10,15,20
         }
         else if (actionType == ActionType.BidOnModule)
         {

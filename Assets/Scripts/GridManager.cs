@@ -165,8 +165,8 @@ public class GridManager : MonoBehaviour
                 if (asteroids.Any(x=>x.CoordsEquals(coords)))
                 {
                     startCredits = 6;
-                    maxCredits = 10;
-                    creditRegin = 2;
+                    maxCredits = 12;
+                    creditRegin = 1;
                 } else if (rifts.Any(x => x.CoordsEquals(coords))) {
                     isRift = true;
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite;

@@ -153,6 +153,8 @@ public class LoginManager : MonoBehaviour
             Globals.GameMatch = game;
             MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
+            createGamePanel.SetActive(false);
+            joinGamePanel.SetActive(false);
             UpdateGameStatus(game.GameTurns[0]);
             StartCoroutine(CheckIfGameHasStarted());
         }
