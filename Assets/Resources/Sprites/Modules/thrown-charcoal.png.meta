@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      thrown-charcoal_0: 2542295159658536643
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
