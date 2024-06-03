@@ -2,6 +2,7 @@ using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -28,10 +29,39 @@ public class LoginManager : MonoBehaviour
     {
         sql = new SqlManager();
         Globals.HasBeenToLobby = true;
-        Globals.localStationGuid = Guid.NewGuid();
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
+        GetPlayerGuid();
     }
+
+    private void GetPlayerGuid()
+    {
+        try
+        {
+            FileStream stream = File.Open("idbfs/Sidus.json", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                string line = sr.ReadLine();
+                if (line != null)
+                {
+                    Guid.TryParse(line, out Globals.clientGuid);
+                }
+            }
+            if (Globals.clientGuid == new Guid())
+            {
+                Globals.clientGuid = Guid.NewGuid();
+                using (StreamWriter sw = new StreamWriter(stream))
+                {
+                    sw.Write(Globals.clientGuid.ToString());
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Unable to connect to cache");
+        }
+    }
+
     public void CreateGame(bool cpuGame)
     {
         Globals.IsCPUGame = cpuGame;
@@ -116,7 +146,7 @@ public class LoginManager : MonoBehaviour
         {
             Station = new ServerUnit()
             {
-                UnitGuid = Globals.localStationGuid,
+                UnitGuid = Globals.clientGuid,
             },
             Fleets = new List<ServerUnit>()
             {
@@ -184,7 +214,7 @@ public class LoginManager : MonoBehaviour
         if (PlayersNeeded() == 0) {
             for (int i = 0; i < Globals.GameMatch.GameTurns[0].Players.Length; i++)
             {
-                if (Globals.GameMatch.GameTurns[0].Players[i].Station.UnitGuid == Globals.localStationGuid)
+                if (Globals.GameMatch.GameTurns[0].Players[i].Station.UnitGuid == Globals.clientGuid)
                 {
                     Globals.localStationIndex = i;
                 }

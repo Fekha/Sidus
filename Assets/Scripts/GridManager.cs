@@ -177,7 +177,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
     {
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
