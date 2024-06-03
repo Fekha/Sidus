@@ -312,12 +312,12 @@ public class GameManager : MonoBehaviour
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)
                         {
-                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit);
+                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode);
                             Debug.Log($"Path created for {SelectedUnit.unitName}");
                         }
                         else
                         {
-                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit));
+                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode));
                             Debug.Log($"Path edited for {SelectedUnit.unitName}");
                         }
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
