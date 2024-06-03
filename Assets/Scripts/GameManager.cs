@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
     public Button repairFleetButton;
     public Button generateModuleButton;
     public Image endTurnButton;
+    public Sprite endTurnButtonNotPressed;
+    public Sprite endTurnButtonPressed;
     private TextMeshProUGUI createFleetCost;
     private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
@@ -1440,7 +1442,7 @@ public class GameManager : MonoBehaviour
         {
             SubmittedTurn = false;
             lastSubmittedTurn = MyStation.actions;
-            endTurnButton.color = Color.blue;
+            endTurnButton.sprite = endTurnButtonPressed;
             if (!isWaitingForTurns)
             {
                 yield return StartCoroutine(GetTurnsFromServer());
@@ -1856,7 +1858,7 @@ public class GameManager : MonoBehaviour
     {
         UpdateAuctionModules(TurnNumber);
         TurnNumber++;
-        endTurnButton.color = Color.black;
+        endTurnButton.sprite = endTurnButtonNotPressed;
         foreach (var station in Stations)
         {
             station.AOERegen(1);
