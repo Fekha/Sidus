@@ -77,8 +77,14 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI HPValue;
     private TextMeshProUGUI miningValue;
     private TextMeshProUGUI rangeValue;
-    private TextMeshProUGUI PowerValueText;
-    private TextMeshProUGUI SupportValueText;
+    
+    private TextMeshProUGUI KineticValueText;
+    private TextMeshProUGUI ThermalValueText;
+    private TextMeshProUGUI ExplosiveValueText;
+    private TextMeshProUGUI KineticSupportText;
+    private TextMeshProUGUI ThermalSupportText;
+    private TextMeshProUGUI ExplosiveSupportText;
+    
     private TextMeshProUGUI ModuleEffectText;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
@@ -175,8 +181,16 @@ public class GameManager : MonoBehaviour
         HPValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         miningValue = infoPanel.transform.Find("MiningValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
-        PowerValueText = infoPanel.transform.Find("PowerValue").GetComponent<TextMeshProUGUI>();
-        SupportValueText = infoPanel.transform.Find("SupportValue").GetComponent<TextMeshProUGUI>();
+        
+        KineticValueText = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
+        ThermalValueText = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
+        ExplosiveValueText = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
+        
+
+        KineticSupportText = infoPanel.transform.Find("KineticSupport").GetComponent<TextMeshProUGUI>();
+        ThermalSupportText = infoPanel.transform.Find("ThermalSupport").GetComponent<TextMeshProUGUI>();
+        ExplosiveSupportText = infoPanel.transform.Find("ExplosiveSupport").GetComponent<TextMeshProUGUI>();
+        
         ModuleEffectText = infoPanel.transform.Find("DamageTakenValue").GetComponent<TextMeshProUGUI>();
         creditsText = infoPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
         hexesOwnedText = infoPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
@@ -198,7 +212,15 @@ public class GameManager : MonoBehaviour
         {
             HPValue.text = "?/?";
             rangeValue.text = "?";
-            PowerValueText.text = "?|?|?";
+
+            KineticValueText.text = "?";
+            ThermalValueText.text = "?";
+            ExplosiveValueText.text = "?";
+
+            KineticSupportText.text = "?";
+            ThermalSupportText.text = "?";
+            ExplosiveValueText.text = "?";
+
             ModuleEffectText.text = "?";
             miningValue.text = "?";
         }
@@ -206,8 +228,11 @@ public class GameManager : MonoBehaviour
         {
             HPValue.text = Mathf.Min(unit.maxHP, unit.HP) + "/" + unit.maxHP;
             rangeValue.text = unit.maxMovement.ToString();
-            PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
-            ModuleEffectText.text = "None";
+            //PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
+
+
+
+            ModuleEffectText.text = "No Modules Installed";
             if (unit.attachedModules.Count > 0)
             {
                 ModuleEffectText.text = unit.attachedModules[0].effectText.Replace(" \n", ",");
@@ -228,7 +253,30 @@ public class GameManager : MonoBehaviour
             thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
             explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
         }
-        SupportValueText.text = $"{kineticSupport}|{thermalSupport}|{explosiveSupport}";
+        
+        if (kineticSupport > 0){
+            KineticSupportText.text = $"+{kineticSupport}";
+        }
+        else{
+            KineticSupportText.text = $"";
+        }
+        if (thermalSupport > 0){
+            ThermalSupportText.text = $"+{thermalSupport}";
+        }
+        else{
+            ThermalSupportText.text = $"";
+        }
+        if (explosiveSupport > 0){
+            ExplosiveSupportText.text = $"+{explosiveSupport}";      
+        }
+        else{
+            ExplosiveSupportText.text = $"";
+        }
+        
+        KineticValueText.text = $"{unit.kineticPower}";
+        ThermalValueText.text = $"{unit.thermalPower}";
+        ExplosiveValueText.text = $"{unit.explosivePower}";
+
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
         upgradeButton.gameObject.SetActive(false);
