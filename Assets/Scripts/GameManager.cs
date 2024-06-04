@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI customAlertText;
     private TextMeshProUGUI creditsText;
     private TextMeshProUGUI hexesOwnedText;
- 
+     
     internal List<ActionType> TechActions = new List<ActionType>();
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
@@ -255,27 +255,25 @@ public class GameManager : MonoBehaviour
         }
         
         if (kineticSupport > 0){
-            KineticSupportText.text = $"+{kineticSupport}";
+            //KineticSupportText.text = ";
+            KineticValueText.text = ($"{unit.kineticPower}" + $" (+{kineticSupport})");
         }
         else{
-            KineticSupportText.text = $"";
+            KineticValueText.text = ($"{unit.kineticPower}"); 
+           
         }
         if (thermalSupport > 0){
-            ThermalSupportText.text = $"+{thermalSupport}";
+            ThermalValueText.text = ($"{unit.thermalPower}" + $" (+{thermalSupport})");
         }
         else{
-            ThermalSupportText.text = $"";
+            ThermalValueText.text = $"{unit.thermalPower}";
         }
         if (explosiveSupport > 0){
-            ExplosiveSupportText.text = $"+{explosiveSupport}";      
+            ExplosiveValueText.text = ($"{unit.explosivePower}" + $" (+{explosiveSupport})");      
         }
         else{
-            ExplosiveSupportText.text = $"";
+            ExplosiveValueText.text = $"{unit.explosivePower}";
         }
-        
-        KineticValueText.text = $"{unit.kineticPower}";
-        ThermalValueText.text = $"{unit.thermalPower}";
-        ExplosiveValueText.text = $"{unit.explosivePower}";
 
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
@@ -283,7 +281,7 @@ public class GameManager : MonoBehaviour
         createFleetButton.gameObject.SetActive(false);
         repairFleetButton.gameObject.SetActive(false);
         creditsText.text = $"Player Credits: {Stations[unit.stationId].credits}";
-        hexesOwnedText.text = $"Hexes Owned: {Stations[unit.stationId].score}";
+        //hexesOwnedText.text = $"Hexes Owned: {Stations[unit.stationId].score}";
         if (unit.stationId == MyStation.stationId)
         {
             if (CanLevelUp(unit, actionType, true))
@@ -929,7 +927,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateCreditTotal()
     {
-        CreditText.text = $"{MyStation.credits} Credits";
+        CreditText.text = $"Player Credits: {MyStation.credits}";
     }
 
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
@@ -1935,6 +1933,8 @@ public class GameManager : MonoBehaviour
         ClearActionBar();
         GridManager.i.GetScores();
         ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
+        hexesOwnedText.text = $"Hexes Owned: {MyStation.score}";
+
         for (int i = 0; i < Constants.MaxPlayers; i++)
         {
             var orderObj = turnOrder.Find($"TurnOrder{i}").GetComponent<Image>();

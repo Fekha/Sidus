@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: ff06a7f808a422b4e899854ec662de8d
+guid: b556c3860d017374d8486bbdd277e501
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1799051500465509683
-    second: shiplvl3_0
-  - first:
-      213: 4136232801881592852
-    second: shiplvl3_1
-  - first:
-      213: -3724141421539757461
-    second: shiplvl3_2
+      213: -6940056468975041759
+    second: asteroid-final4_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -52,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -112,41 +106,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shiplvl3_0
+      name: asteroid-final4_0
       rect:
         serializedVersion: 2
-        x: 75
-        y: 128
-        width: 108
-        height: 109
+        x: 137
+        y: 146
+        width: 236
+        height: 212
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,50 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcaae1e213c7807e0800000000000000
-      internalID: -1799051500465509683
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shiplvl3_1
-      rect:
-        serializedVersion: 2
-        x: 14
-        y: 15
-        width: 108
-        height: 109
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 414987091d9d66930800000000000000
-      internalID: 4136232801881592852
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shiplvl3_2
-      rect:
-        serializedVersion: 2
-        x: 131
-        y: 14
-        width: 109
-        height: 109
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b62fdc3cb11315cc0800000000000000
-      internalID: -3724141421539757461
+      spriteID: 12347955967ffaf90800000000000000
+      internalID: -6940056468975041759
       vertices: []
       indices: 
       edges: []
@@ -205,17 +133,14 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      shiplvl3_0: -1799051500465509683
-      shiplvl3_1: 4136232801881592852
-      shiplvl3_2: -3724141421539757461
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

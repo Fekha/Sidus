@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 70176c54dbf41024ea22dae400ddbec8
+guid: 8582a886c571474439e9e9144487bc93
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4768859585415765743
-    second: stationlvl1_0
+      213: 5643095999323206722
+    second: nebula2_0
+  - first:
+      213: 690159064460977271
+    second: nebula2_1
+  - first:
+      213: 4872138666737025853
+    second: nebula2_2
+  - first:
+      213: 5869197717991085364
+    second: nebula2_3
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -37,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -46,12 +55,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -106,41 +115,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: stationlvl1_0
+      name: nebula2_0
       rect:
         serializedVersion: 2
-        x: 31
-        y: 3
-        width: 191
-        height: 249
+        x: 48
+        y: 51
+        width: 335
+        height: 430
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +133,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 111a39b397b91ddb0800000000000000
-      internalID: -4768859585415765743
+      spriteID: 2447619b9ed405e40800000000000000
+      internalID: 5643095999323206722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nebula2_1
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 25
+        width: 328
+        height: 339
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77466b33300f39900800000000000000
+      internalID: 690159064460977271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nebula2_2
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 220
+        width: 58
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d334e4fbd405d9340800000000000000
+      internalID: 4872138666737025853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nebula2_3
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 129
+        width: 16
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43554696a34937150800000000000000
+      internalID: 5869197717991085364
       vertices: []
       indices: 
       edges: []
@@ -165,7 +213,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      stationlvl1_0: -4768859585415765743
+      nebula2_0: 5643095999323206722
+      nebula2_1: 690159064460977271
+      nebula2_2: 4872138666737025853
+      nebula2_3: 5869197717991085364
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
