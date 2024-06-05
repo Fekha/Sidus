@@ -38,22 +38,12 @@ public class LoginManager : MonoBehaviour
     {
         try
         {
-            FileStream stream = File.Open("idbfs/Sidus.json", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            using (StreamReader sr = new StreamReader(stream))
-            {
-                string line = sr.ReadLine();
-                if (line != null)
-                {
-                    Guid.TryParse(line, out Globals.clientGuid);
-                }
-            }
-            if (Globals.clientGuid == new Guid())
+            Guid.TryParse(PlayerPrefs.GetString("ClientGuid"), out Globals.clientGuid);
+            if (Globals.clientGuid == Guid.Empty)
             {
                 Globals.clientGuid = Guid.NewGuid();
-                using (StreamWriter sw = new StreamWriter(stream))
-                {
-                    sw.Write(Globals.clientGuid.ToString());
-                }
+                PlayerPrefs.SetString("ClientGuid", Globals.clientGuid.ToString());
+                PlayerPrefs.Save();
             }
         }
         catch (Exception ex)

@@ -10,7 +10,6 @@ public class Station : Unit
     internal List<Module> modules = new List<Module>();
     internal List<Technology> technology = new List<Technology>();
     internal int maxActions = 2;
-    internal int score = 0;
     internal int credits = 6;
     internal bool defeated = false;
     internal int fleetCount = 0;
@@ -19,6 +18,8 @@ public class Station : Unit
     internal int bonusExplosive = 0;
     internal int bonusHP = 0;
     internal int bonusMining = 0;
+    internal int score = 0;
+
     public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _structureId, Direction _direction)
     {
         for (int i = 0; i <= Constants.TechAmount; i++)
