@@ -888,7 +888,7 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return 10 + ((structure.level + countingQueue) * 5); //10,15,20
+            return ((structure.level + 1 + countingQueue) * 5); //10,15,20
         }
         else if (actionType == ActionType.BidOnModule)
         {
@@ -1912,12 +1912,17 @@ public class GameManager : MonoBehaviour
             station.AOERegen(1);
             station.credits += station.globalCreditGain + station.fleets.Sum(x => x.globalCreditGain);
             station.actions.Clear();
-            for (int i = 1; i < Constants.MaxPlayers; i++)
+            if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.75))))
             {
-                if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * i))))
-                {
-                    station.maxActions = 2 + i;
-                }
+                station.maxActions = 5;
+            }
+            else if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.5))))
+            {
+                station.maxActions = 4;
+            }
+            else
+            {
+                station.maxActions = 3;
             }
         }
         foreach (var unit in AllUnits)
@@ -2102,7 +2107,6 @@ public class GameManager : MonoBehaviour
             ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
             if (i < MyStation.maxActions) {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar;
-                
             } else {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
                 int k = i-1;
