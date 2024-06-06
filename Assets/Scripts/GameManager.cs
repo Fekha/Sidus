@@ -1175,14 +1175,14 @@ public class GameManager : MonoBehaviour
             }
             else if (unitOnPath is Fleet)
             {
-                if (unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct))
-                {
-                    Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
-                    AllUnits.Remove(unitMoving);
-                    unitMoving.currentPathNode.structureOnPath = null;
-                    Destroy(unitMoving.gameObject);
-                }
                 Stations[unitOnPath.stationId].fleets.Remove(unitOnPath as Fleet);
+            }
+            if (unitMoving is Fleet && unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct))
+            {
+                Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
+                AllUnits.Remove(unitMoving);
+                unitMoving.currentPathNode.structureOnPath = null;
+                Destroy(unitMoving.gameObject);
             }
             AllUnits.Remove(unitOnPath);
             node.structureOnPath = null;
