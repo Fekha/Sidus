@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public static GameManager i;
     private Transform highlightParent;
     public GameObject turnArchivePrefab;
+    public GameObject floatingTextPrefab;
     public GameObject selectPrefab;
     public GameObject pathPrefab;
     public GameObject movementRangePrefab;
@@ -1859,6 +1860,7 @@ public class GameManager : MonoBehaviour
             turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
 
     }
+
 
     internal IEnumerator WaitforSecondsOrTap(float time)
     {

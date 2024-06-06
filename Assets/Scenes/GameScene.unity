@@ -1908,7 +1908,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.45516968, y: 16.424011}
+  m_AnchoredPosition: {x: 0.4552002, y: 16.424011}
   m_SizeDelta: {x: -58.0794, y: -358.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &229722092
@@ -10164,7 +10164,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.45516968, y: -48.0764}
+  m_AnchoredPosition: {x: 0.4552002, y: -48.0764}
   m_SizeDelta: {x: -58.0794, y: -294.7912}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1122413270
@@ -15265,15 +15265,15 @@ MonoBehaviour:
   unitPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
   playerColors: []
   tileColors: []
-  stationlvl1: {fileID: 21300000, guid: 70176c54dbf41024ea22dae400ddbec8, type: 3}
+  stationlvl1: {fileID: 21300000, guid: a5a79eaf15602794588cffb7e850fd37, type: 3}
   stationlvl2: {fileID: 21300000, guid: 4d196c133cc9b8d46b41ba8203a4774e, type: 3}
-  stationlvl3: {fileID: 21300000, guid: 64b3b380f66d3f54681f34bd14d3a4bf, type: 3}
-  stationlvl4: {fileID: 21300000, guid: 668237ce132b312449d6f9eb69bc5aee, type: 3}
-  fleetlvl1: {fileID: 21300000, guid: df1c42e0bc2dd7b45b1b449f1320724b, type: 3}
-  fleetlvl2: {fileID: 21300000, guid: 5aeb23cdc29f2ec46abc77ba6a20f8ab, type: 3}
-  fleetlvl3: {fileID: 21300000, guid: ff06a7f808a422b4e899854ec662de8d, type: 3}
-  fleetlvl4: {fileID: 21300000, guid: e594e1c6e132c1d4f840f741721af5f4, type: 3}
-  nebulaSprite: {fileID: 21300000, guid: 16c229f4c1248234194cc186e62fb3e9, type: 3}
+  stationlvl3: {fileID: 21300000, guid: 6d325ec98e6a6b747a38e34a457660a9, type: 3}
+  stationlvl4: {fileID: 21300000, guid: a8228c99a8f9f76439ada2e0dd407956, type: 3}
+  fleetlvl1: {fileID: 110395630786499210, guid: f386d146f89d7f743a6f2a670517f3ba, type: 3}
+  fleetlvl2: {fileID: -806274899448178475, guid: 34921cacec31dad4da0906f0b1a7936b, type: 3}
+  fleetlvl3: {fileID: -4497630800960869632, guid: 7f788ad0d73df3649a43baa0c40e5c80, type: 3}
+  fleetlvl4: {fileID: 8767816986609498437, guid: 497f51c7c64fc8145b711b9469d6ae67, type: 3}
+  nebulaSprite: {fileID: 5643095999323206722, guid: 8582a886c571474439e9e9144487bc93, type: 3}
 --- !u!1 &1743288665
 GameObject:
   m_ObjectHideFlags: 0
