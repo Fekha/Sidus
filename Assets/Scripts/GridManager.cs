@@ -47,7 +47,6 @@ public class GridManager : MonoBehaviour
             CreateStation(i);
         }
         scoreToWin = GetScoreToWin();
-        GameManager.i.ScoreToWinText.text = $"Tiles to win: 2/{scoreToWin}";
         DoneLoading = true;
     }
     private void CreateStation(int stationId)
