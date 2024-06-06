@@ -350,8 +350,8 @@ public class Unit : Node
                 else { moduleEffects.Remove(ModuleEffect.CombatExplosive1); }
                 break;
             case 48:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidMining1); }
-                else { moduleEffects.Remove(ModuleEffect.AsteroidMining1); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidMining2); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidMining2); }
                 break;
             case 49:
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.HiddenStats); }
@@ -362,8 +362,8 @@ public class Unit : Node
                 else { moduleEffects.Remove(ModuleEffect.SelfDestruct); }
                 break; 
             case 51:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidHP2); }
-                else { moduleEffects.Remove(ModuleEffect.AsteroidHP2); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidHP3); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidHP3); }
                 break;
             default:
                 break;

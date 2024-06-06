@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI ThermalValueText;
     private TextMeshProUGUI ExplosiveValueText;
     private TextMeshProUGUI ModuleEffectText;
-    private TextMeshProUGUI turnValue;
+    internal TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
     private TextMeshProUGUI moduleInfoValue;
     private TextMeshProUGUI alertText;
@@ -558,12 +558,14 @@ public class GameManager : MonoBehaviour
     public void ViewHelpPanel(bool active)
     {
         helpPageNumber++;
-        if (helpPageNumber > 3)
+        if (helpPageNumber > 4)
         {
             helpPageNumber = 0;
             helpPanel.SetActive(false);
+            helpPanel.transform.Find("Page1").gameObject.SetActive(true);
             helpPanel.transform.Find("Page2").gameObject.SetActive(false);
             helpPanel.transform.Find("Page3").gameObject.SetActive(false);
+            helpPanel.transform.Find("Page4").gameObject.SetActive(false);
         }
         else
         {
@@ -840,7 +842,7 @@ public class GameManager : MonoBehaviour
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
-            if (station.fleets.Count <= 0)
+            if (station.fleets.Count + countingQueue <= 0)
                 return 0;
             return (station.fleets.Count + countingQueue) * (7 - (station.fleets.Count + countingQueue)); //6,10,12
         }
@@ -1215,13 +1217,13 @@ public class GameManager : MonoBehaviour
     }
     private void CheckDestroyAsteroidModules(Unit unit)
     {
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP2))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP3))
         {
-            unit.GainHP(2);
+            unit.GainHP(3);
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining1))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining2))
         {
-            unit.maxMining++;
+            unit.maxMining += 2;
         }
     }
 

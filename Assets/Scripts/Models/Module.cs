@@ -202,7 +202,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 48:
-                effectText = "Gain 1 Mining Power after destroying an asteroid.";
+                effectText = "Gain 2 Mining Power after destroying an asteroid.";
                 rarity = Rarity.Rare;
                 break;
             case 49:
@@ -214,7 +214,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 51:
-                effectText = "Gain 2 Max HP after destroying an asteroid.";
+                effectText = "Gain 3 Max HP after destroying an asteroid.";
                 rarity = Rarity.Rare;
                 break;
             default:

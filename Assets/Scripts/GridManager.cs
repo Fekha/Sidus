@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -101,6 +100,8 @@ public class GridManager : MonoBehaviour
         unitSprite.sprite = fleetlvl1;
         unitSprite.color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
+        if(!originalSpawn)
+            hexesNearby = hexesNearby.Where(x => x.ownedById == stationNode.stationId).ToList();
         var startIndex = -1;
         int k = 0;
         while (startIndex == -1)
@@ -109,6 +110,7 @@ public class GridManager : MonoBehaviour
             startIndex = hexesNearby.FindIndex(x => x.coords.CoordsEquals(coords));
             k++;
         }
+        bool didSpawn = false;
         for (int i = 0; i < hexesNearby.Count; i++) {
             int j = (i + startIndex)%hexesNearby.Count;
             if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
@@ -123,8 +125,14 @@ public class GridManager : MonoBehaviour
                     yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
                     fleetNode.selectIcon.SetActive(false);
                 }
+                didSpawn = true;
                 break;
             }
+        }
+        if (!didSpawn)
+        {
+            GameManager.i.turnValue.text += "\nNo valid location to spawn fleet.";
+            yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
         }
     }
     bool CanSpawnFleet(int x, int y)

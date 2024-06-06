@@ -6,8 +6,8 @@ public enum ModuleEffect
     CombatKinetic1,
     CombatThermal1,
     CombatExplosive1,
-    AsteroidMining1,
+    AsteroidMining2,
     HiddenStats,
     SelfDestruct,
-    AsteroidHP2,
+    AsteroidHP3,
 }
