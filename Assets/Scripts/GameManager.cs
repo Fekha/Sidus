@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public static GameManager i;
     private Transform highlightParent;
     public GameObject turnArchivePrefab;
+    public GameObject floatingTextPrefab;
     public GameObject selectPrefab;
     public GameObject pathPrefab;
     public GameObject movementRangePrefab;
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
     public GameObject auctionPrefab;
     public GameObject techPrefab;
     public GameObject moduleInfoPanel;
+    public GameObject actionPanel;
     public GameObject infoPanel;
     public GameObject alertPanel;
     public GameObject customAlertPanel;
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour
     public Image endTurnButton;
     public Sprite endTurnButtonNotPressed;
     public Sprite endTurnButtonPressed;
+
     private TextMeshProUGUI createFleetCost;
     private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
@@ -77,29 +80,22 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI HPValue;
     private TextMeshProUGUI miningValue;
     private TextMeshProUGUI rangeValue;
-    
     private TextMeshProUGUI KineticValueText;
     private TextMeshProUGUI ThermalValueText;
     private TextMeshProUGUI ExplosiveValueText;
-    private TextMeshProUGUI KineticSupportText;
-    private TextMeshProUGUI ThermalSupportText;
-    private TextMeshProUGUI ExplosiveSupportText;
-    
     private TextMeshProUGUI ModuleEffectText;
     private TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
-    public GameObject turnTapText;
     private TextMeshProUGUI moduleInfoValue;
-    private Image moduleInfoIcon;
-
-    public TextMeshProUGUI ScoreToWinText;
-    public TextMeshProUGUI ColorText;
-    public TextMeshProUGUI CreditText;
     private TextMeshProUGUI alertText;
     private TextMeshProUGUI customAlertText;
     private TextMeshProUGUI creditsText;
     private TextMeshProUGUI hexesOwnedText;
- 
+    public TextMeshProUGUI ColorText;
+
+    public GameObject turnTapText;
+    private Image moduleInfoIcon;
+
     internal List<ActionType> TechActions = new List<ActionType>();
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
@@ -180,20 +176,13 @@ public class GameManager : MonoBehaviour
         levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
         HPValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         miningValue = infoPanel.transform.Find("MiningValue").GetComponent<TextMeshProUGUI>();
-        rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();
-        
+        rangeValue = infoPanel.transform.Find("MovementValue").GetComponent<TextMeshProUGUI>();        
         KineticValueText = infoPanel.transform.Find("KineticValue").GetComponent<TextMeshProUGUI>();
         ThermalValueText = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         ExplosiveValueText = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
-        
-
-        KineticSupportText = infoPanel.transform.Find("KineticSupport").GetComponent<TextMeshProUGUI>();
-        ThermalSupportText = infoPanel.transform.Find("ThermalSupport").GetComponent<TextMeshProUGUI>();
-        ExplosiveSupportText = infoPanel.transform.Find("ExplosiveSupport").GetComponent<TextMeshProUGUI>();
-        
         ModuleEffectText = infoPanel.transform.Find("DamageTakenValue").GetComponent<TextMeshProUGUI>();
-        creditsText = infoPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
-        hexesOwnedText = infoPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
+        creditsText = actionPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
+        hexesOwnedText = actionPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         phaseText = turnLabel.transform.Find("PhaseText").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
@@ -217,10 +206,6 @@ public class GameManager : MonoBehaviour
             ThermalValueText.text = "?";
             ExplosiveValueText.text = "?";
 
-            KineticSupportText.text = "?";
-            ThermalSupportText.text = "?";
-            ExplosiveValueText.text = "?";
-
             ModuleEffectText.text = "?";
             miningValue.text = "?";
         }
@@ -228,10 +213,6 @@ public class GameManager : MonoBehaviour
         {
             HPValue.text = Mathf.Min(unit.maxHP, unit.HP) + "/" + unit.maxHP;
             rangeValue.text = unit.maxMovement.ToString();
-            //PowerValueText.text = $"{unit.kineticPower}|{unit.thermalPower}|{unit.explosivePower}";
-
-
-
             ModuleEffectText.text = "No Modules Installed";
             if (unit.attachedModules.Count > 0)
             {
@@ -244,46 +225,27 @@ public class GameManager : MonoBehaviour
             miningValue.text = unit.maxMining.ToString();
         }
         var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.teamId == unit.teamId);
-        var kineticSupport = 0;
-        var thermalSupport = 0;
-        var explosiveSupport = 0;
+        var kineticPower = $"{unit.kineticPower}";
+        var thermalPower = $"{unit.thermalPower}";
+        var explosivePower = $"{unit.explosivePower}";
         if (supportingFleets.Any())
         {
-            kineticSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * x.supportValue)));
-            thermalSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
-            explosiveSupport = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
+            int kineticSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * x.supportValue)));
+            int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
+            int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
+            kineticPower += kineticSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
+            thermalPower += thermalSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
+            explosivePower += explosiveSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
         }
-        
-        if (kineticSupport > 0){
-            KineticSupportText.text = $"+{kineticSupport}";
-        }
-        else{
-            KineticSupportText.text = $"";
-        }
-        if (thermalSupport > 0){
-            ThermalSupportText.text = $"+{thermalSupport}";
-        }
-        else{
-            ThermalSupportText.text = $"";
-        }
-        if (explosiveSupport > 0){
-            ExplosiveSupportText.text = $"+{explosiveSupport}";      
-        }
-        else{
-            ExplosiveSupportText.text = $"";
-        }
-        
-        KineticValueText.text = $"{unit.kineticPower}";
-        ThermalValueText.text = $"{unit.thermalPower}";
-        ExplosiveValueText.text = $"{unit.explosivePower}";
-
+        KineticValueText.text = $"{kineticPower}"; 
+        ThermalValueText.text = $"{thermalPower}";
+        ExplosiveValueText.text = $"{explosivePower}";
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = false;
         upgradeButton.gameObject.SetActive(false);
         createFleetButton.gameObject.SetActive(false);
         repairFleetButton.gameObject.SetActive(false);
-        creditsText.text = $"Player Credits: {Stations[unit.stationId].credits}";
-        hexesOwnedText.text = $"Hexes Owned: {Stations[unit.stationId].score}";
+        UpdateCreditsAndHexesText(Stations[unit.stationId]);
         if (unit.stationId == MyStation.stationId)
         {
             if (CanLevelUp(unit, actionType, true))
@@ -770,7 +732,7 @@ public class GameManager : MonoBehaviour
         }
         else if (MyStation.actions.Count >= MyStation.maxActions)
         {
-            if(!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {action.actionType}.");
+            if(!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {GetDescription(action.actionType)}.");
         } 
         else 
         {
@@ -780,11 +742,11 @@ public class GameManager : MonoBehaviour
             if (costOfAction > MyStation.credits)
             {
                 if(!requeing)
-                    ShowCustomAlertPanel($"Can not afford to queue action: {action.actionType}.");
+                    ShowCustomAlertPanel($"Can not afford to queue action: {GetDescription(action.actionType)}.");
             }
             else
             {
-                Debug.Log($"{MyStation.unitName} queuing up action {action.actionType}");
+                Debug.Log($"{MyStation.unitName} queuing up action {GetDescription(action.actionType)}");
                 action.costOfAction = costOfAction;
                 MyStation.actions.Add(action);
                 AddActionBarImage(action.actionType, MyStation.actions.Count()-1);
@@ -916,7 +878,7 @@ public class GameManager : MonoBehaviour
         ToggleHPText(false);
         DeselectUnitIcons();
         UpdateCreateFleetCostText();
-        UpdateCreditTotal();
+        UpdateCreditsAndHexesText(MyStation);
         SetModuleGrid();
         ClearMovementPath();
         ClearMovementRange();
@@ -927,9 +889,10 @@ public class GameManager : MonoBehaviour
         ViewUnitInformation(false);
     }
 
-    private void UpdateCreditTotal()
+    private void UpdateCreditsAndHexesText(Station station)
     {
-        CreditText.text = $"{MyStation.credits} Credits";
+        creditsText.text = $"Player Credits: {station.credits}";
+        hexesOwnedText.text = $"Hexes Owned: {station.score}/{GridManager.i.scoreToWin}";
     }
 
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
@@ -1862,6 +1825,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+
     internal IEnumerator WaitforSecondsOrTap(float time)
     {
         float elapsedTime = 0f;
@@ -1939,7 +1903,6 @@ public class GameManager : MonoBehaviour
         turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
-        ScoreToWinText.text = $"Hexes to win: {MyStation.score}/{GridManager.i.scoreToWin}";
         for (int i = 0; i < Constants.MaxPlayers; i++)
         {
             var orderObj = turnOrder.Find($"TurnOrder{i}").GetComponent<Image>();

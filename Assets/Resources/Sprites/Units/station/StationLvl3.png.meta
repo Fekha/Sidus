@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: e594e1c6e132c1d4f840f741721af5f4
+guid: 6d325ec98e6a6b747a38e34a457660a9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6997049716073672302
-    second: shiplvl4_0
-  - first:
-      213: -1721498345790794788
-    second: shiplvl4_1
-  - first:
-      213: -8793843386081905415
-    second: shiplvl4_2
-  - first:
-      213: 3027317602135183872
-    second: shiplvl4_3
+      213: 1457510282520694795
+    second: StationLvl3 1_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -56,11 +47,11 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 1
-  spriteExtrude: 1
+  spriteExtrude: 2
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 220
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -82,7 +73,7 @@ TextureImporter:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 0
+    resizeAlgorithm: 1
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
@@ -115,41 +106,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shiplvl4_0
+      name: StationLvl3 1_0
       rect:
         serializedVersion: 2
-        x: 14
-        y: 133
-        width: 108
-        height: 109
+        x: 23
+        y: 0
+        width: 208
+        height: 249
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -157,71 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2915eadea5c75ee90800000000000000
-      internalID: -6997049716073672302
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shiplvl4_1
-      rect:
-        serializedVersion: 2
-        x: 132
-        y: 134
-        width: 108
-        height: 109
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cd397b910620c18e0800000000000000
-      internalID: -1721498345790794788
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shiplvl4_2
-      rect:
-        serializedVersion: 2
-        x: 14
-        y: 15
-        width: 108
-        height: 109
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9f47b2a380ef5f580800000000000000
-      internalID: -8793843386081905415
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: shiplvl4_3
-      rect:
-        serializedVersion: 2
-        x: 131
-        y: 14
-        width: 109
-        height: 109
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0021e89d151330a20800000000000000
-      internalID: 3027317602135183872
+      spriteID: b00102631ed1a3410800000000000000
+      internalID: 1457510282520694795
       vertices: []
       indices: 
       edges: []
@@ -237,10 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      shiplvl4_0: -6997049716073672302
-      shiplvl4_1: -1721498345790794788
-      shiplvl4_2: -8793843386081905415
-      shiplvl4_3: 3027317602135183872
+      StationLvl3 1_0: 1457510282520694795
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

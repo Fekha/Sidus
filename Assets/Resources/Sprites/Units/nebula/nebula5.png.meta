@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: ff06a7f808a422b4e899854ec662de8d
+guid: f2a09e0dc23a1504191ca06b25e3468a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1799051500465509683
-    second: shiplvl3_0
+      213: 1249140251176329360
+    second: nebula5_0
   - first:
-      213: 4136232801881592852
-    second: shiplvl3_1
+      213: -7901434762496340716
+    second: nebula5_1
   - first:
-      213: -3724141421539757461
-    second: shiplvl3_2
+      213: -1059229109405902773
+    second: nebula5_2
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -52,12 +52,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -112,41 +112,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shiplvl3_0
+      name: nebula5_0
       rect:
         serializedVersion: 2
-        x: 75
-        y: 128
-        width: 108
-        height: 109
+        x: 39
+        y: 19
+        width: 117
+        height: 223
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,20 +130,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcaae1e213c7807e0800000000000000
-      internalID: -1799051500465509683
+      spriteID: 090e102b076d55110800000000000000
+      internalID: 1249140251176329360
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shiplvl3_1
+      name: nebula5_1
       rect:
         serializedVersion: 2
-        x: 14
-        y: 15
-        width: 108
-        height: 109
+        x: 218
+        y: 217
+        width: 256
+        height: 258
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -175,20 +151,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 414987091d9d66930800000000000000
-      internalID: 4136232801881592852
+      spriteID: 41d8b7572f6785290800000000000000
+      internalID: -7901434762496340716
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: shiplvl3_2
+      name: nebula5_2
       rect:
         serializedVersion: 2
-        x: 131
-        y: 14
-        width: 109
-        height: 109
+        x: 34
+        y: 124
+        width: 12
+        height: 13
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -196,8 +172,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b62fdc3cb11315cc0800000000000000
-      internalID: -3724141421539757461
+      spriteID: b489b1eacbcdc41f0800000000000000
+      internalID: -1059229109405902773
       vertices: []
       indices: 
       edges: []
@@ -205,7 +181,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -213,9 +189,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      shiplvl3_0: -1799051500465509683
-      shiplvl3_1: 4136232801881592852
-      shiplvl3_2: -3724141421539757461
+      nebula5_0: 1249140251176329360
+      nebula5_1: -7901434762496340716
+      nebula5_2: -1059229109405902773
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
