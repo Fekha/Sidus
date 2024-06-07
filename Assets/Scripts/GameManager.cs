@@ -1157,6 +1157,7 @@ public class GameManager : MonoBehaviour
                 var station = (unitMoving as Station);
                 station.defeated = true;
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]);  Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
+                winner = unitOnPath.stationId;
             }
             else if (unitMoving is Fleet)
             {
@@ -1174,6 +1175,7 @@ public class GameManager : MonoBehaviour
                 var station = (unitOnPath as Station);
                 station.defeated = true;
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
+                winner = unitMoving.stationId;
             }
             else if (unitOnPath is Fleet)
             {
@@ -1195,7 +1197,15 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
         }
     }
-
+    internal IEnumerator FloatingTextAnimation(string text, Transform transform)
+    {
+        var floatingObj = Instantiate(floatingTextPrefab, transform);
+        var floatingTextObj = floatingObj.transform.Find("FloatingText");
+        floatingTextObj.GetComponent<TextMeshPro>().text = text;
+        var animationTime = floatingTextObj.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length;
+        yield return new WaitForSeconds(animationTime);
+        Destroy(floatingObj);
+    }
     private void CheckEnterCombatModules(Unit unit)
     {
         if (unit.moduleEffects.Contains(ModuleEffect.CombatHeal3))
@@ -1622,7 +1632,10 @@ public class GameManager : MonoBehaviour
 
     private void FinishTurns()
     {
-        winner = GridManager.i.CheckForWin();
+        if (winner == -1)
+        {
+            winner = GridManager.i.CheckForWin();
+        }
         if (winner != -1)
         {
             turnTapText.SetActive(false);

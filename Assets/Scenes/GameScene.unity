@@ -493,7 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnArchivePrefab: {fileID: 6979547818320996721, guid: df61d562ff727f6418ac7208d87f7f65, type: 3}
-  floatingTextPrefab: {fileID: 0}
+  floatingTextPrefab: {fileID: 6487576039336411521, guid: c2af6f32e2fbb694988b0ee5cc5e2a41, type: 3}
   selectPrefab: {fileID: 2892300046146373026, guid: 60e19938acfbede4584c9c54342348ea, type: 3}
   pathPrefab: {fileID: 2892300046146373026, guid: e66b32493abf0f94082d2090a7712982, type: 3}
   movementRangePrefab: {fileID: 5456294327097982956, guid: c54ccc24843cb744ba04b55618d0a13b, type: 3}
