@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
 public class Unit : Node
 {
@@ -28,7 +27,6 @@ public class Unit : Node
     internal int level = 1;
     internal int globalCreditGain = 0;
     internal bool hasMoved = false;
-    //internal bool hasMinedThisTurn = false;
     internal List<Module> attachedModules = new List<Module>();
     internal List<ModuleEffect> moduleEffects = new List<ModuleEffect>();
     internal TextMeshPro HPText;
@@ -38,6 +36,8 @@ public class Unit : Node
     internal Direction facing;
     internal Transform unitImage;
     internal int maxAttachedModules = 1; // 1+ station.level
+    internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
+
     public void InitializeUnit(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
     {
         teamId = stationId % Globals.Teams;
@@ -53,9 +53,9 @@ public class Unit : Node
         thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
         maxMining = _mining;
-        miningLeft = maxMining;
         currentPathNode.structureOnPath = this;
         transform.position = currentPathNode.transform.position;
+        resetMining();
         resetMovementRange();
         SetNodeColor();
         HPText = transform.Find("HP").GetComponent<TextMeshPro>();
@@ -95,6 +95,10 @@ public class Unit : Node
     internal void resetMovementRange()
     {
         movementLeft = maxMovement;
+    }
+    internal void resetMining()
+    {
+        miningLeft = maxMining;
     }
 
     internal void clearMovementRange()
@@ -380,5 +384,31 @@ public class Unit : Node
             Facing = facing,
             Location = location.ToServerCoords()
         };
+    }
+
+    internal void ClearMinedPath(List<PathNode> selectedPath)
+    {
+        if (selectedPath != null)
+        {
+            foreach (var item in _minedPath)
+            {
+                selectedPath[item.Item1].AwardCredits(this, item.Item2 * -1);
+            }
+            _minedPath.Clear();
+        }
+    }
+
+    internal void AddMinedPath(List<PathNode> selectedPath)
+    {
+        ClearMinedPath(selectedPath);
+        for (int i = 0; i < selectedPath.Count; i++)
+        {
+            if (selectedPath[i].isAsteroid)
+            {
+                int j = i;
+                var minedAmount = selectedPath[i].MineCredits(this, true);
+                _minedPath.Add(new Tuple<int, int>(i, minedAmount));
+            }
+        }
     }
 }

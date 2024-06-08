@@ -15,8 +15,8 @@ public class Action {
     internal int costOfAction;
     internal int actionOrder;
     internal int playerId;
-    public bool _statonInventory = false;
-    public Guid? _parentGuid = null;
+    internal bool _statonInventory = false;
+    internal Guid? _parentGuid = null;
 
     public Action(ActionType _actionType, Unit _selectedUnit = null, Module? _selectedModule = null, int _cost = 0, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null)
     {

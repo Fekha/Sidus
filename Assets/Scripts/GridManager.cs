@@ -184,7 +184,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit)
     {
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
@@ -206,7 +206,7 @@ public class GridManager : MonoBehaviour
             {
                 return RetracePath(startNode, targetNode);
             }
-            List<PathNode> neighbors = GetNeighbors(currentNode);
+            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals <= unit.miningLeft);
             foreach (PathNode neighbor in neighbors)
             {
                 if (!openSet.Contains(neighbor) && !closedSet.Contains(neighbor))
