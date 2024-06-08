@@ -1686,6 +1686,7 @@ public class GameManager : MonoBehaviour
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         currentStation.credits -= action.costOfAction;
+                        StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", currentUnit.transform)); //floater7
                         yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
                     }
                     else
@@ -1707,6 +1708,7 @@ public class GameManager : MonoBehaviour
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                     }
                     currentUnit.selectIcon.SetActive(true);
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Upgraded", currentUnit.transform)); //floater6
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1756,6 +1758,7 @@ public class GameManager : MonoBehaviour
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
                     }
                     currentUnit.selectIcon.SetActive(true);
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Module Installed", currentUnit.transform)); //floater5
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1783,6 +1786,7 @@ public class GameManager : MonoBehaviour
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                         }
                         currentUnit.selectIcon.SetActive(true);
+                        StartCoroutine(GameManager.i.FloatingTextAnimation($"Module Swap", currentUnit.transform)); //floater4
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
@@ -1796,6 +1800,7 @@ public class GameManager : MonoBehaviour
                     turnValue.text += $"{GetDescription(action.actionType)}";
                     PerformUpdates(action, Constants.Create);
                     currentUnit.selectIcon.SetActive(true);
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Credits +1", currentUnit.transform)); //floater1
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1805,6 +1810,7 @@ public class GameManager : MonoBehaviour
                     PerformUpdates(action, Constants.Create);
                     turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
                     currentUnit.selectIcon.SetActive(true);
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Repair +3 HP", currentUnit.transform)); //floater2
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1814,6 +1820,7 @@ public class GameManager : MonoBehaviour
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount + 1}/{tech.neededAmount})";
                     PerformUpdates(action, Constants.Create);
                     currentUnit.selectIcon.SetActive(true);
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"+Tech", currentUnit.transform)); //floater3
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }

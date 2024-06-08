@@ -61,7 +61,7 @@ public class PathNode : MonoBehaviour
     {
         var startingCredits = currentCredits;
         int amountMined = (currentCredits - mineValue) >= 0 ? mineValue : startingCredits;
-        StartCoroutine(GameManager.i.FloatingTextAnimation($"Mined {amountMined}", transform));
+        StartCoroutine(GameManager.i.FloatingTextAnimation($"Mining {amountMined}", transform));
         currentCredits -= amountMined;
         mineralText.text = $"{currentCredits}";
         hasBeenMinedThisTurn = true;
