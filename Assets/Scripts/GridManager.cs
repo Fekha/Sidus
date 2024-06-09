@@ -69,7 +69,7 @@ public class GridManager : MonoBehaviour
         {
             playerColor = "Red";
             spawnX = 6;
-            spawnY = 1;
+            spawnY = 2;
             facing = Direction.TopRight;
         }
         else if (stationId == 2)
@@ -82,8 +82,8 @@ public class GridManager : MonoBehaviour
         else if (stationId == 3)
         {
             playerColor = "Orange";
-            spawnX = 5;
-            spawnY = 6;
+            spawnX = 6;
+            spawnY = 7;
             facing = Direction.Left;
         }
         var station = Instantiate(stationPrefab);
@@ -155,8 +155,8 @@ public class GridManager : MonoBehaviour
         var nodeParent = GameObject.Find("Nodes").transform;
         grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
-        List<Coords> asteroids = new List<Coords>() { new Coords(1,4),new Coords(2,5),new Coords(3,6),new Coords(1,1),new Coords(2,2),new Coords(3,3),new Coords(4,4),new Coords(5,5),new Coords(6,6),new Coords(4,1),new Coords(5,2),new Coords(6,3), };
-        List<Coords> rifts = new List<Coords>() { new Coords(7,0),new Coords(0,7),new Coords(3,4),new Coords(4,3),new Coords(0,3),new Coords(7,4), };
+        List<Coords> asteroids = new List<Coords>() { new Coords(2,5),new Coords(3,6),new Coords(4,7),new Coords(2,2),new Coords(3,3),new Coords(4,4),new Coords(5,5),new Coords(6,6),new Coords(7,7),new Coords(5,2),new Coords(6,3),new Coords(7,4), };
+        List<Coords> rifts = new List<Coords>() { new Coords(8,0),new Coords(0,8),new Coords(4,5),new Coords(5,4),new Coords(0,4),new Coords(8,5), };
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
