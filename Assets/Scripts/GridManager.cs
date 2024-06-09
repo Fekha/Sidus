@@ -220,7 +220,7 @@ public class GridManager : MonoBehaviour
             {
                 return RetracePath(startNode, targetNode);
             }
-            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals <= unit.miningLeft);
+            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals > unit.miningLeft);
             foreach (PathNode neighbor in neighbors)
             {
                 if (!openSet.Contains(neighbor) && !closedSet.Contains(neighbor))
@@ -253,7 +253,7 @@ public class GridManager : MonoBehaviour
             PathNode currentNode = queue.Dequeue();
             if (currentNode != clickedNode)
                 nodesWithinRange.Add(currentNode);
-            List<PathNode> neighbors = GetNeighbors(currentNode);
+            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals > unit.miningLeft);
             foreach (PathNode neighbor in neighbors)
             {
                 // Check if enemy owned tile and adjust cost

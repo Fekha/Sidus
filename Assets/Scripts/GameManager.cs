@@ -929,7 +929,7 @@ public class GameManager : MonoBehaviour
             i++;
             didFightLastMove = false;
             unitMoving.subtractMovement(GridManager.i.GetGCost(nextNode));
-            if (GridManager.i.GetNeighbors(currentNode, currentNode.minerals <= unitMoving.miningLeft).Contains(nextNode) && unitMoving.movementLeft >= 0)
+            if (GridManager.i.GetNeighbors(currentNode, currentNode.minerals > unitMoving.miningLeft).Contains(nextNode) && unitMoving.movementLeft >= 0)
             {
                 turnValue.text = beforeText;
                 unitMoving.hasMoved = true; 
