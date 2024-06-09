@@ -15011,7 +15011,18 @@ MonoBehaviour:
   fleetlvl2: {fileID: 21300000, guid: 34921cacec31dad4da0906f0b1a7936b, type: 3}
   fleetlvl3: {fileID: 21300000, guid: 7f788ad0d73df3649a43baa0c40e5c80, type: 3}
   fleetlvl4: {fileID: 21300000, guid: 497f51c7c64fc8145b711b9469d6ae67, type: 3}
-  nebulaSprite: {fileID: 5643095999323206722, guid: 8582a886c571474439e9e9144487bc93, type: 3}
+  nebulaSprite:
+  - {fileID: 21300000, guid: 6c1c8333621ea7f4ab2d5ad4c83d651a, type: 3}
+  - {fileID: 21300000, guid: 24e95c6093841e947b1aae8d866c8cf9, type: 3}
+  - {fileID: 21300000, guid: c87e3ffa0ce49ab49af1ab19f041c9b7, type: 3}
+  - {fileID: 21300000, guid: bfe6c5a7195eab946b3e7abfc40fd5f6, type: 3}
+  - {fileID: 21300000, guid: 33ea4aef62ac96e4eb775f30d0bd1400, type: 3}
+  - {fileID: 21300000, guid: 3dc1b600ba2181349801da03ee282320, type: 3}
+  - {fileID: 21300000, guid: 4421540276897a542ae331f224e3073e, type: 3}
+  - {fileID: 21300000, guid: c5fc2a0611f5d3b4fa60da9b41082cb8, type: 3}
+  - {fileID: 21300000, guid: 2d3508bc5a3948b42808430e2a6bc14c, type: 3}
+  nodeController: {fileID: 9100000, guid: 08ff2c8e98985a841a1abdbc80831c50, type: 2}
+  nebulaRotationClip: {fileID: 7400000, guid: 30695f588c0dfb6438ee70681cfcf60d, type: 2}
 --- !u!1 &1743288665
 GameObject:
   m_ObjectHideFlags: 0

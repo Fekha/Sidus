@@ -26,7 +26,12 @@ public class GridManager : MonoBehaviour
     public Sprite fleetlvl2;
     public Sprite fleetlvl3;
     public Sprite fleetlvl4;
-    public Sprite nebulaSprite;
+    public List<Sprite> nebulaSprite;
+    public RuntimeAnimatorController nodeController;
+    public AnimationClip nebulaRotationClip;
+
+
+
     private void Awake()
     {
         i = this;
@@ -170,14 +175,22 @@ public class GridManager : MonoBehaviour
                 int startCredits = 0;
                 int creditRegin = 0;
                 bool isRift = false;
+                var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
                 if (asteroids.Any(x=>x.CoordsEquals(coords)))
                 {
                     startCredits = 6;
                     maxCredits = 12;
                     creditRegin = 1;
-                } else if (rifts.Any(x => x.CoordsEquals(coords))) {
+                } else if (rift != null) {
                     isRift = true;
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite;
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift)%nebulaSprite.Count];
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
+                    cell.transform.Find("Node/Background").gameObject.SetActive(false);
+                    Animator animator = cell.AddComponent<Animator>();
+                    animator.runtimeAnimatorController = nodeController;
+                    AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
+                    overrideController["DefaultAnimation"] = nebulaRotationClip; // Replace "DefaultAnimation" with the actual animation state name if needed
+                    animator.runtimeAnimatorController = overrideController;
                 }
                 grid[x, y] = cell.AddComponent<PathNode>();
                 grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);

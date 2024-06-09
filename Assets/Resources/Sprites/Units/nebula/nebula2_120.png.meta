@@ -1,13 +1,19 @@
 fileFormatVersion: 2
-guid: 24e95c6093841e947b1aae8d866c8cf9
+guid: 1254b64d760f7394197ba2e52c1ee9e2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9210949802374397989
-    second: nebula1_0
+      213: -3952275830825632308
+    second: nebula2_120_0
   - first:
-      213: 2875400051076555774
-    second: nebula1_1
+      213: 3592120945692723981
+    second: nebula2_120_1
+  - first:
+      213: 5976608794940679128
+    second: nebula2_120_2
+  - first:
+      213: -2870882784103892313
+    second: nebula2_120_3
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -54,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 450
+  spritePixelsToUnits: 350
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -137,13 +143,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: nebula1_0
+      name: nebula2_120_0
       rect:
         serializedVersion: 2
-        x: 15
-        y: 27
-        width: 439
-        height: 450
+        x: 268
+        y: 445
+        width: 28
+        height: 13
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -151,20 +157,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5200b762b0ed3df70800000000000000
-      internalID: 9210949802374397989
+      spriteID: ccdb6496212b629c0800000000000000
+      internalID: -3952275830825632308
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: nebula1_1
+      name: nebula2_120_1
       rect:
         serializedVersion: 2
-        x: 126
-        y: 453
-        width: 21
-        height: 28
+        x: 9
+        y: 145
+        width: 479
+        height: 294
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -172,8 +178,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ef3ee87ac1977e720800000000000000
-      internalID: 2875400051076555774
+      spriteID: d0b414ed7f6c9d130800000000000000
+      internalID: 3592120945692723981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nebula2_120_2
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 125
+        width: 58
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d32ae7980e21f250800000000000000
+      internalID: 5976608794940679128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nebula2_120_3
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 109
+        width: 106
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aaf3b581539828d0800000000000000
+      internalID: -2870882784103892313
       vertices: []
       indices: 
       edges: []
@@ -189,8 +237,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      nebula1_0: 9210949802374397989
-      nebula1_1: 2875400051076555774
+      nebula2_120_0: -3952275830825632308
+      nebula2_120_1: 3592120945692723981
+      nebula2_120_2: 5976608794940679128
+      nebula2_120_3: -2870882784103892313
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
