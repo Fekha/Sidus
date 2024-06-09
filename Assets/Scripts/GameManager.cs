@@ -1768,7 +1768,7 @@ public class GameManager : MonoBehaviour
                             {
                                 turnValue.text += $"{selectedModule.effectText}";
                             }
-                            StartCoroutine(FloatingTextAnimation($"Module Installed", currentUnit.transform, currentUnit)); //floater5
+                            StartCoroutine(FloatingTextAnimation($"+Module", currentUnit.transform, currentUnit)); //floater5
                             PerformUpdates(action, Constants.Create);
                         }
                         else
