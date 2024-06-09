@@ -493,7 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnArchivePrefab: {fileID: 6979547818320996721, guid: df61d562ff727f6418ac7208d87f7f65, type: 3}
-  floatingTextPrefab: {fileID: 6487576039336411521, guid: c2af6f32e2fbb694988b0ee5cc5e2a41, type: 3}
+  floatingTextPrefab: {fileID: 3012913576608231180, guid: 37afb242c64ae9e4294f584e11c345ce, type: 3}
   selectPrefab: {fileID: 2892300046146373026, guid: 60e19938acfbede4584c9c54342348ea, type: 3}
   pathPrefab: {fileID: 2892300046146373026, guid: e66b32493abf0f94082d2090a7712982, type: 3}
   movementRangePrefab: {fileID: 5456294327097982956, guid: c54ccc24843cb744ba04b55618d0a13b, type: 3}
@@ -2939,7 +2939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.4341278, y: -147.99998}
+  m_AnchoredPosition: {x: 0, y: -149}
   m_SizeDelta: {x: -24.7953, y: -318.17}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &379360909
@@ -6266,7 +6266,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.48350525, y: 0.013129}
+  m_AnchoredPosition: {x: -0.48350525, y: 1}
   m_SizeDelta: {x: 422.2598, y: 363.86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &696530456
@@ -9896,7 +9896,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.4552002, y: -9}
+  m_AnchoredPosition: {x: 0.4552002, y: -9.000015}
   m_SizeDelta: {x: -58.0794, y: -263.7057}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1122413270

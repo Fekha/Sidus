@@ -121,6 +121,7 @@ public class GridManager : MonoBehaviour
                 fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
                     fleetNode.selectIcon.SetActive(true);
                     yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
                     fleetNode.selectIcon.SetActive(false);

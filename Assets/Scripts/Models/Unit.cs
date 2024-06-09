@@ -71,7 +71,7 @@ public class Unit : Node
         if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
             regen *= 2;
         if (HP < maxHP)
-            StartCoroutine(GameManager.i.FloatingTextAnimation($"Repair {Math.Min(regen,maxHP-HP)}",transform));
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this));
         HP += regen;
     }
     public void TakeDamage(int damage,bool maxHpDamage = false)

@@ -69,7 +69,8 @@ public class PathNode : MonoBehaviour
         int minedAmount = (minerals - unit.miningLeft) >= 0 ? unit.miningLeft : startingCredits;
         if (!isQueuing && minedAmount > 0)
         {
-            StartCoroutine(GameManager.i.FloatingTextAnimation($"Mined {minedAmount}", transform));
+            var plural = minedAmount == 1 ? "" : "s";
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{minedAmount} Credit{plural}", transform, unit));
             StartCoroutine(MineAnimation());
             hasBeenMinedThisTurn = true;
         }
