@@ -749,7 +749,7 @@ public class GameManager : MonoBehaviour
             if (action.actionType == ActionType.MoveAndMine) {
                 var currentNode = action.selectedUnit.currentPathNode;
                 foreach (var nextNode in action.selectedPath) {
-                    if (!GridManager.i.GetNeighbors(currentNode, nextNode.minerals <= action.selectedUnit.miningLeft).Contains(nextNode))
+                    if (!GridManager.i.GetNeighbors(currentNode, currentNode.minerals > action.selectedUnit.miningLeft).Contains(nextNode))
                     {
                         Debug.Log("Movement no longer valid");
                         return;
