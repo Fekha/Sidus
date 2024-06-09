@@ -121,6 +121,7 @@ public class GridManager : MonoBehaviour
                 fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
+                    StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
                     fleetNode.selectIcon.SetActive(true);
                     yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
                     fleetNode.selectIcon.SetActive(false);
@@ -184,7 +185,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit)
     {
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
@@ -206,7 +207,7 @@ public class GridManager : MonoBehaviour
             {
                 return RetracePath(startNode, targetNode);
             }
-            List<PathNode> neighbors = GetNeighbors(currentNode);
+            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals <= unit.miningLeft);
             foreach (PathNode neighbor in neighbors)
             {
                 if (!openSet.Contains(neighbor) && !closedSet.Contains(neighbor))

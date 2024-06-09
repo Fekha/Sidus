@@ -314,7 +314,7 @@ public class GameManager : MonoBehaviour
                     //Double click confirm to movement early
                     else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && !HasQueuedMovement(SelectedUnit))
                     {
-                        QueueAction(new Action(SelectedPath.Any(x => x.isAsteroid) ? ActionType.MoveAndMine : ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     }
                     //Create Movement
                     else if (SelectedUnit != null && targetNode != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
@@ -322,14 +322,15 @@ public class GameManager : MonoBehaviour
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)
                         {
-                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode);
+                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit);
                             Debug.Log($"Path created for {SelectedUnit.unitName}");
                         }
                         else
                         {
-                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode));
+                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit));
                             Debug.Log($"Path edited for {SelectedUnit.unitName}");
                         }
+                        SelectedUnit.AddMinedPath(SelectedPath);
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                         DrawPath(SelectedPath);
                         HighlightRangeOfMovement(targetNode, SelectedUnit);
@@ -375,7 +376,7 @@ public class GameManager : MonoBehaviour
 
     private void SetAsteroidTextValues(PathNode targetNode)
     {
-        asteroidPanel.transform.Find("CurrentValue").GetComponent<TextMeshProUGUI>().text = $"Current Value: {targetNode.currentCredits}";
+        asteroidPanel.transform.Find("CurrentValue").GetComponent<TextMeshProUGUI>().text = $"Current Value: {targetNode.minerals}";
         asteroidPanel.transform.Find("MaxValue").GetComponent<TextMeshProUGUI>().text = $"Max Value: {targetNode.maxCredits}";
         asteroidPanel.transform.Find("RegenValue").GetComponent<TextMeshProUGUI>().text = $"Regen Per Turn: {targetNode.creditsRegin}";
     }
@@ -438,6 +439,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log($"Invalid tile selected, reseting path and selection.");
             SelectedUnit.resetMovementRange();
+            SelectedUnit.ClearMinedPath(SelectedPath);
             SelectedUnit.selectIcon.SetActive(false);
         }
         ResetAfterSelection();
@@ -740,6 +742,21 @@ public class GameManager : MonoBehaviour
         {
             action.selectedUnit = action.selectedUnit ?? SelectedUnit ?? MyStation;
             action.selectedPath = SelectedPath ?? action.selectedPath;
+            if (action.actionType == ActionType.MoveUnit && (action.selectedPath.Any(x => x.isAsteroid) || action.selectedUnit._minedPath.Count > 0))
+            {
+                action.actionType = ActionType.MoveAndMine;
+            }
+            if (action.actionType == ActionType.MoveAndMine) {
+                var currentNode = action.selectedUnit.currentPathNode;
+                foreach (var nextNode in action.selectedPath) {
+                    if (!GridManager.i.GetNeighbors(currentNode, nextNode.minerals <= action.selectedUnit.miningLeft).Contains(nextNode))
+                    {
+                        Debug.Log("Movement no longer valid");
+                        return;
+                    }
+                    currentNode = nextNode;
+                }
+            }
             var costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.selectedModule);
             if (costOfAction > MyStation.credits)
             {
@@ -912,7 +929,7 @@ public class GameManager : MonoBehaviour
             i++;
             didFightLastMove = false;
             unitMoving.subtractMovement(GridManager.i.GetGCost(nextNode));
-            if (GridManager.i.GetNeighbors(currentNode,false).Contains(nextNode) && unitMoving.movementLeft >= 0)
+            if (GridManager.i.GetNeighbors(currentNode, currentNode.minerals <= unitMoving.miningLeft).Contains(nextNode) && unitMoving.movementLeft >= 0)
             {
                 turnValue.text = beforeText;
                 unitMoving.hasMoved = true; 
@@ -925,11 +942,8 @@ public class GameManager : MonoBehaviour
                 {
                     if (AllUnits.Contains(unitMoving))
                     {
-                        var minedAmount = nextNode.MineCredits(unitMoving.miningLeft);
-                        unitMoving.miningLeft -= minedAmount;
-                        Stations[unitMoving.stationId].credits += minedAmount;
+                        var minedAmount = nextNode.MineCredits(unitMoving, false);
                     }
-                    StartCoroutine(MineAnimation(nextNode));
                     if (!nextNode.isAsteroid)
                     {
                         CheckDestroyAsteroidModules(unitMoving);
@@ -1197,11 +1211,12 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
         }
     }
-    internal IEnumerator FloatingTextAnimation(string text, Transform transform)
+    internal IEnumerator FloatingTextAnimation(string text, Transform spawnTransform, Unit unit)
     {
-        var floatingObj = Instantiate(floatingTextPrefab, transform);
+        var floatingObj = Instantiate(floatingTextPrefab, spawnTransform);
         var floatingTextObj = floatingObj.transform.Find("FloatingText");
         floatingTextObj.GetComponent<TextMeshPro>().text = text;
+        floatingTextObj.GetComponent<TextMeshPro>().color = GridManager.i.playerColors[unit.stationId];
         var animationTime = floatingTextObj.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length;
         yield return new WaitForSeconds(animationTime);
         Destroy(floatingObj);
@@ -1608,9 +1623,14 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
         {
             if (modifier == Constants.Remove)
+            {
+                action.selectedUnit.ClearMinedPath(action.selectedPath);
                 action.selectedUnit.resetMovementRange();
-            if (action.actionType == ActionType.MoveAndMine)
-                station.credits += (Mathf.Min(action.selectedPath.Sum(x => x.currentCredits), action.selectedUnit.maxMining) * modifier);
+            }
+            else
+            {
+                action.selectedUnit.AddMinedPath(action.selectedPath);
+            }
         }
         else if (TechActions.Contains(action.actionType)) //Research Actions
         {
@@ -1625,6 +1645,7 @@ public class GameManager : MonoBehaviour
             action.selectedUnit.RegenHP(3 * modifier);
         }
     }
+
     private void SubmitResponse(bool response)
     {
         SubmittedTurn = response;
@@ -1686,7 +1707,6 @@ public class GameManager : MonoBehaviour
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         currentStation.credits -= action.costOfAction;
-                        StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", currentUnit.transform)); //floater7
                         yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
                     }
                     else
@@ -1701,6 +1721,7 @@ public class GameManager : MonoBehaviour
                     if (CanLevelUp(currentUnit, action.actionType, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
+                        StartCoroutine(FloatingTextAnimation($"Upgraded", currentUnit.transform, currentUnit)); //floater6
                         PerformUpdates(action, Constants.Create);
                     }
                     else
@@ -1708,7 +1729,6 @@ public class GameManager : MonoBehaviour
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                     }
                     currentUnit.selectIcon.SetActive(true);
-                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Upgraded", currentUnit.transform)); //floater6
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1718,11 +1738,13 @@ public class GameManager : MonoBehaviour
                     {
                         var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
                         turnValue.text += $"Won bid\n\nPaid {action.selectedModule.currentBid} credits for:\n{wonModule.effectText}";
+                        StartCoroutine(FloatingTextAnimation($"Won Bid", currentUnit.transform, currentUnit)); //floater5
                         PerformUpdates(action, Constants.Create);
                         currentStation.modules.Add(wonModule);
                     }
                     else
                     {
+                        StartCoroutine(FloatingTextAnimation($"Lost Bid", currentUnit.transform, currentUnit)); //floater5
                         turnValue.text += "Lost bid\nGained 1 credit.";
                         currentStation.credits++;
                     }
@@ -1746,6 +1768,7 @@ public class GameManager : MonoBehaviour
                             {
                                 turnValue.text += $"{selectedModule.effectText}";
                             }
+                            StartCoroutine(FloatingTextAnimation($"Module Installed", currentUnit.transform, currentUnit)); //floater5
                             PerformUpdates(action, Constants.Create);
                         }
                         else
@@ -1758,7 +1781,6 @@ public class GameManager : MonoBehaviour
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
                     }
                     currentUnit.selectIcon.SetActive(true);
-                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Module Installed", currentUnit.transform)); //floater5
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1779,6 +1801,7 @@ public class GameManager : MonoBehaviour
                             {
                                 turnValue.text += $"{selectedModule.effectText}";
                             }
+                            StartCoroutine(FloatingTextAnimation($"Module Swap", currentUnit.transform, currentUnit)); //floater4
                             PerformUpdates(action, Constants.Create);
                         }
                         else
@@ -1786,7 +1809,6 @@ public class GameManager : MonoBehaviour
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                         }
                         currentUnit.selectIcon.SetActive(true);
-                        StartCoroutine(GameManager.i.FloatingTextAnimation($"Module Swap", currentUnit.transform)); //floater4
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                         currentUnit.selectIcon.SetActive(false);
                     }
@@ -1798,19 +1820,19 @@ public class GameManager : MonoBehaviour
                 else if (action.actionType == ActionType.GainCredit)
                 {
                     turnValue.text += $"{GetDescription(action.actionType)}";
+                    StartCoroutine(FloatingTextAnimation($"+1 Credit", currentUnit.transform, currentUnit)); //floater1
                     PerformUpdates(action, Constants.Create);
                     currentUnit.selectIcon.SetActive(true);
-                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Credits +1", currentUnit.transform)); //floater1
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.RepairFleet)
                 {
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n";
+                    StartCoroutine(FloatingTextAnimation($"+3 HP", currentUnit.transform, currentUnit)); //floater2
                     PerformUpdates(action, Constants.Create);
                     turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
                     currentUnit.selectIcon.SetActive(true);
-                    StartCoroutine(GameManager.i.FloatingTextAnimation($"Repair +3 HP", currentUnit.transform)); //floater2
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1818,9 +1840,9 @@ public class GameManager : MonoBehaviour
                 {
                     var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount + 1}/{tech.neededAmount})";
+                    StartCoroutine(FloatingTextAnimation($"+Tech", currentUnit.transform, currentUnit)); //floater3
                     PerformUpdates(action, Constants.Create);
                     currentUnit.selectIcon.SetActive(true);
-                    StartCoroutine(GameManager.i.FloatingTextAnimation($"+Tech", currentUnit.transform)); //floater3
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     currentUnit.selectIcon.SetActive(false);
                 }
@@ -1881,12 +1903,7 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
-    private IEnumerator MineAnimation(PathNode asteroidToMine)
-    {
-        asteroidToMine.ShowMineIcon(true);
-        yield return new WaitForSeconds(1f);
-        asteroidToMine.ShowMineIcon(false);
-    }
+
 
     private void StartTurn()
     {
@@ -1918,7 +1935,7 @@ public class GameManager : MonoBehaviour
                 unit.RegenHP(1);
             }
             unit.hasMoved = false;
-            unit.miningLeft = unit.maxMining;
+            unit.resetMining();
             unit.resetMovementRange();
             unit.HP = Mathf.Min(unit.maxHP, unit.HP);
         }

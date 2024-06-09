@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class PathNode : MonoBehaviour
     public Unit structureOnPath;
     public bool isRift = false;
     public int maxCredits = 0;
-    public int currentCredits = 0;
+    public int minerals = 0;
     public int creditsRegin = 0;
     public Coords coords;
 
@@ -23,7 +24,7 @@ public class PathNode : MonoBehaviour
     public bool isEvenCol { get { return coords.y % 2 == 0; } }
     public Coords[] offSet { get { return isEvenCol ? evenOffsets : oddOffsets; } }
 
-    public bool isAsteroid { get { return currentCredits > 0; } }
+    public bool isAsteroid { get { return minerals > 0; } }
 
 
     public int ownedById;
@@ -31,7 +32,7 @@ public class PathNode : MonoBehaviour
     {
         isRift = _isRift;
         maxCredits = _maxCredits;
-        currentCredits = _startCredits;
+        minerals = _startCredits;
         creditsRegin = _creditRegin;
         asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
         asteriodSprite.gameObject.SetActive(isAsteroid);
@@ -49,24 +50,41 @@ public class PathNode : MonoBehaviour
 
     public void ReginCredits()
     {
-        if (currentCredits < maxCredits && !hasBeenMinedThisTurn && isAsteroid)
+        if (minerals < maxCredits && !hasBeenMinedThisTurn && isAsteroid)
         {
-            currentCredits = Mathf.Min(currentCredits + creditsRegin, maxCredits);
-            mineralText.text = $"{currentCredits}";
+            minerals = Mathf.Min(minerals + creditsRegin, maxCredits);
+            mineralText.text = $"{minerals}";
         }
         hasBeenMinedThisTurn = false;
     }
-
-    public int MineCredits(int mineValue)
+    private IEnumerator MineAnimation()
     {
-        var startingCredits = currentCredits;
-        int amountMined = (currentCredits - mineValue) >= 0 ? mineValue : startingCredits;
-        StartCoroutine(GameManager.i.FloatingTextAnimation($"Mining {amountMined}", transform));
-        currentCredits -= amountMined;
-        mineralText.text = $"{currentCredits}";
-        hasBeenMinedThisTurn = true;
+        ShowMineIcon(true);
+        yield return new WaitForSeconds(1f);
+        ShowMineIcon(false);
+    }
+    public int MineCredits(Unit unit, bool isQueuing)
+    {
+        var startingCredits = minerals;
+        int minedAmount = (minerals - unit.miningLeft) >= 0 ? unit.miningLeft : startingCredits;
+        if (!isQueuing && minedAmount > 0)
+        {
+            var plural = minedAmount == 1 ? "" : "s";
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{minedAmount} Credit{plural}", transform, unit));
+            StartCoroutine(MineAnimation());
+            hasBeenMinedThisTurn = true;
+        }
+        AwardCredits(unit, minedAmount);
+        return minedAmount;
+    }
+
+    internal void AwardCredits(Unit unit, int minedAmount)
+    {
+        minerals -= minedAmount;
+        unit.miningLeft -= minedAmount;
+        GameManager.i.Stations[unit.stationId].credits += minedAmount;
+        mineralText.text = $"{minerals}";
         asteriodSprite.gameObject.SetActive(isAsteroid);
-        return amountMined;
     }
 
     internal void ShowMineIcon(bool active)
@@ -77,7 +95,7 @@ public class PathNode : MonoBehaviour
     {
         if (isAsteroid)
         {
-            mineralText.text = $"{currentCredits}";
+            mineralText.text = $"{minerals}";
             mineralText.gameObject.SetActive(active);
         }
         else
