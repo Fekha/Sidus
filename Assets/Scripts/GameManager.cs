@@ -1307,6 +1307,7 @@ public class GameManager : MonoBehaviour
             var damage = Mathf.Max(s1Dmg - s1Amr, 0);
             s1.TakeDamage(damage, s2.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
             string hpText = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.HP}";
+            StartCoroutine(FloatingTextAnimation($"-{damage} HP", s1.transform, s1));
             returnText += $"<u><b>{s1.color} took {damage} damage</u></b> and has {hpText} HP left.";
             if (s1Amr != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
@@ -1319,6 +1320,7 @@ public class GameManager : MonoBehaviour
             var damage = Mathf.Max(s2Dmg - s2Amr, 0);
             s2.TakeDamage(damage, s1.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
             string hpText = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.HP}";
+            StartCoroutine(FloatingTextAnimation($"-{damage} HP", s2.transform, s2));
             returnText += $"<u><b>{s2.color} took {damage} damage</u></b> and has {hpText} HP left.";
             if (s2Amr != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
