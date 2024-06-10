@@ -5,10 +5,10 @@ public enum ResearchType
     ResearchStationLvl,
     ResearchFleetLvl,
     ResearchMaxFleets,
-    ResearchHP,
+    ResearchMining,
     ResearchKinetic,
     ResearchThermal,
     ResearchExplosive,
-    ResearchMining,
+    ResearchHP,
 }
 

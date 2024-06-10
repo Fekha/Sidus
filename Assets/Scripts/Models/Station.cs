@@ -29,8 +29,7 @@ public class Station : Unit
         stationId = GameManager.i.Stations.Count;
         unitName = $"{_color} Station";
         GameManager.i.Stations.Add(this);
-        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 3, _direction);
-        globalCreditGain = 1;   
+        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 2, _direction);
     }
 
     internal void researchKinetic(int modifier)
@@ -54,14 +53,14 @@ public class Station : Unit
     internal void researchHP(int modifier)
     {
         bonusHP+=(2 * modifier);
-        GainHP(2 * modifier);
-        fleets.ForEach(x => x.GainHP(2* modifier));
+        IncreaseMaxHP(2 * modifier);
+        fleets.ForEach(x => x.IncreaseMaxHP(2* modifier));
     }
     internal void researchMining(int modifier)
     {
         bonusExplosive += modifier;
-        maxMining += modifier;
-        fleets.ForEach(x => x.maxMining += modifier);
+        IncreaseMaxMining(1 * modifier);
+        fleets.ForEach(x => IncreaseMaxMining(1 * modifier));
     }
 
     internal void AOERegen(int amount)
@@ -70,9 +69,9 @@ public class Station : Unit
         var neighbors = GridManager.i.GetNeighbors(currentPathNode, false);
         foreach (var neighbor in neighbors)
         {
-            if (neighbor.structureOnPath != null && neighbor.structureOnPath.stationId == stationId)
+            if (neighbor.unitOnPath != null && neighbor.unitOnPath.stationId == stationId)
             {
-                neighbor.structureOnPath.RegenHP(amount);
+                neighbor.unitOnPath.RegenHP(amount);
             }
         }
     }

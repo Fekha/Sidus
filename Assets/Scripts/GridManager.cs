@@ -143,7 +143,7 @@ public class GridManager : MonoBehaviour
     }
     bool CanSpawnFleet(int x, int y)
     {
-        if (grid[x, y].structureOnPath == null && !grid[x, y].isAsteroid)
+        if (grid[x, y].unitOnPath == null && !grid[x, y].isAsteroid)
         {
             Debug.Log($"Can Spawn at {x},{y}");
             return true;
@@ -178,7 +178,7 @@ public class GridManager : MonoBehaviour
                 var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
                 if (asteroids.Any(x=>x.CoordsEquals(coords)))
                 {
-                    startCredits = 6;
+                    startCredits = 4;
                     maxCredits = 12;
                     creditRegin = 1;
                 } else if (rift != null) {
@@ -198,8 +198,9 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, bool blockedByAsteroid)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit, bool checkAsteroids = true)
     {
+        startNode.parent = null;
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
         startNode.gCost = 0;
@@ -220,14 +221,13 @@ public class GridManager : MonoBehaviour
             {
                 return RetracePath(startNode, targetNode);
             }
-            List<PathNode> neighbors = GetNeighbors(currentNode, blockedByAsteroid);
+            List<PathNode> neighbors = GetNeighbors(currentNode, checkAsteroids ? currentNode.minerals > unit.miningLeft : checkAsteroids);
             foreach (PathNode neighbor in neighbors)
             {
                 if (!openSet.Contains(neighbor) && !closedSet.Contains(neighbor))
                 {
                     neighbor.gCost = currentNode.gCost + GetGCost(neighbor);
                     neighbor.parent = currentNode;
-                    //neighbor.coordsText.text = $"G:{neighbor.gCost} \n H:{neighbor.hCost} \n F:{neighbor.fCost}";
                     openSet.Add(neighbor);
                 }
             }
@@ -238,20 +238,19 @@ public class GridManager : MonoBehaviour
     {
         return 1;
     }
-    internal List<PathNode> GetNodesWithinRange(PathNode clickedNode, Unit unit)
+    internal List<PathNode> GetNodesWithinRange(PathNode startNode, Unit unit)
     {
         var range = unit.getMovementRange();
         List<PathNode> nodesWithinRange = new List<PathNode>();
         Queue<PathNode> queue = new Queue<PathNode>();
         HashSet<PathNode> visited = new HashSet<PathNode>();
-        queue.Enqueue(clickedNode);
-        clickedNode.gCost = 0; // Set initial cost to 0 for clicked node
-        visited.Add(clickedNode);
-
+        queue.Enqueue(startNode);
+        startNode.gCost = 0; // Set initial cost to 0 for clicked node
+        visited.Add(startNode);
         while (queue.Count > 0)
         {
             PathNode currentNode = queue.Dequeue();
-            if (currentNode != clickedNode)
+            if (currentNode != startNode)
                 nodesWithinRange.Add(currentNode);
             List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals > unit.miningLeft);
             foreach (PathNode neighbor in neighbors)
@@ -296,7 +295,7 @@ public class GridManager : MonoBehaviour
             if (!gridNode.isRift)
                 neighbors.Add(gridNode);
         }
-        if (node.isAsteroid && blockedByAsteroid)
+        if (node.isAsteroid && blockedByAsteroid && node.parent != null)
         {
             neighbors = GetNeighbors(node.parent, false).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
             neighbors.Add(node.parent);

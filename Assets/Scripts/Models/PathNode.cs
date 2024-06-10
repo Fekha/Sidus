@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PathNode : MonoBehaviour
 {
-    public Unit structureOnPath;
+    public Unit unitOnPath;
     public bool isRift = false;
     public int maxCredits = 0;
     public int minerals = 0;
@@ -54,6 +54,7 @@ public class PathNode : MonoBehaviour
         {
             minerals = Mathf.Min(minerals + creditsRegin, maxCredits);
             mineralText.text = $"{minerals}";
+            //StartCoroutine(GameManager.i.FloatingTextAnimation($"+{creditsRegin} Credit", transform, null));
         }
         hasBeenMinedThisTurn = false;
     }

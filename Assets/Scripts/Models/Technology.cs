@@ -5,7 +5,7 @@ using UnityEngine.Windows;
 
 public class Technology
 {
-    public int researchId { get; set; }
+    public ResearchType researchId { get; set; }
     public int level { get; set; }
     public int neededAmount { get; set; }
     public int currentAmount { get; set; }
@@ -15,7 +15,7 @@ public class Technology
 
     internal Technology(int _researchId)
     {
-        researchId = _researchId;
+        researchId = (ResearchType)_researchId;
         UpdateValues(1);
     }
     private int GetNeededAmount(int level)
@@ -29,41 +29,41 @@ public class Technology
         neededAmount = GetNeededAmount(modifier + level);
         switch (researchId)
         {
-            case 0:
+            case ResearchType.ResearchStationLvl:
                 effectText = $"Increase max station level to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max level: {modifier + level})";
                 break;
-            case 1:
+            case ResearchType.ResearchFleetLvl:
                 effectText = $"Increase max fleet level to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max level: {modifier + level})";
                 requirementText = "<b>Must increase max <u>station level</u> first</b>\n\n";
                 break;
-            case 2:
+            case ResearchType.ResearchMaxFleets:
                 effectText = $"Increase max number of fleets to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max fleets: {modifier + level})";
                 requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 break;
-            case 3:
+            case ResearchType.ResearchHP:
                 effectText = $"+2 HP for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
                 requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
                 break;
-            case 4:
+            case ResearchType.ResearchKinetic:
                 effectText = $"+1 kinetic power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
                 break;
-            case 5:
+            case ResearchType.ResearchThermal:
                 effectText = $"+1 thermal power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
                 break;
-            case 6:
+            case ResearchType.ResearchExplosive:
                 effectText = $"+1 explosive power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
                 break;
-            case 7:
+            case ResearchType.ResearchMining:
                 effectText = $"+1 mining power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
+                requirementText = "<b>Must increase max <u>number of fleets</u> first</b>\n\n";
                 break;
             default:
                 break;    
@@ -74,7 +74,7 @@ public class Technology
     {
         currentAmount += modifier;
         if (currentAmount >= neededAmount || currentAmount < 0) {
-            switch ((ResearchType)researchId)
+            switch (researchId)
             {
                 case ResearchType.ResearchHP:
                     station.researchHP(modifier);

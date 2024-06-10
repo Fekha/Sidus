@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -224,7 +225,7 @@ public class GameManager : MonoBehaviour
             }
             miningValue.text = unit.maxMining.ToString();
         }
-        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.structureOnPath).Where(x => x != null && x.teamId == unit.teamId);
+        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId);
         var kineticPower = $"{unit.kineticPower}";
         var thermalPower = $"{unit.thermalPower}";
         var explosivePower = $"{unit.explosivePower}";
@@ -234,8 +235,8 @@ public class GameManager : MonoBehaviour
             int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
             int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
             kineticPower += kineticSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
-            thermalPower += thermalSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
-            explosivePower += explosiveSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
+            thermalPower += thermalSupportValue > 0 ? $" (+{thermalSupportValue})" : "";
+            explosivePower += explosiveSupportValue > 0 ? $" (+{explosiveSupportValue})" : "";
         }
         KineticValueText.text = $"{kineticPower}"; 
         ThermalValueText.text = $"{thermalPower}";
@@ -292,9 +293,9 @@ public class GameManager : MonoBehaviour
                     technologyPanel.SetActive(false); 
                     Unit targetUnit = null;
                     //Check if you clicked on unit
-                    if (targetNode.structureOnPath != null)
+                    if (targetNode.unitOnPath != null)
                     {
-                        targetUnit = targetNode.structureOnPath;
+                        targetUnit = targetNode.unitOnPath;
                     }
                     //Original click on unit
                     if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
@@ -322,18 +323,18 @@ public class GameManager : MonoBehaviour
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)
                         {
-                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedNode.minerals > SelectedUnit.miningLeft);
+                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit);
                             Debug.Log($"Path created for {SelectedUnit.unitName}");
                         }
                         else
                         {
-                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedNode.minerals > SelectedUnit.miningLeft));
+                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit));
                             Debug.Log($"Path edited for {SelectedUnit.unitName}");
                         }
                         SelectedUnit.AddMinedPath(SelectedPath);
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                         DrawPath(SelectedPath);
-                        HighlightRangeOfMovement(targetNode, SelectedUnit);
+                        HighlightRangeOfMovement(SelectedNode, SelectedUnit);
                     }
                     //Clicked on invalid tile, clear
                     else
@@ -381,6 +382,7 @@ public class GameManager : MonoBehaviour
         asteroidPanel.transform.Find("RegenValue").GetComponent<TextMeshProUGUI>().text = $"Regen Per Turn: {targetNode.creditsRegin}";
     }
     //ViewQueuedAction
+    //ClickOnAction
     public void ShowQueuedAction(int i)
     {
         DeselectUnitIcons();
@@ -392,8 +394,8 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
-            var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Mining Power" : "+1 Movement";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic Power\n+1 Thermal Power\n+1 Explosive Power\n{extraBonus}";
+            var extraBonus = action.selectedUnit.level % 2 == 0 ? "+2 Mining Power" : "+1 Movement";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
             if (action.actionType == ActionType.UpgradeStation)
             {
                 message += "\n+1 Credit per turn";
@@ -468,7 +470,7 @@ public class GameManager : MonoBehaviour
                         canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
                     case ResearchType.ResearchMining:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchMaxFleets].level;
                         break;
                     //case ResearchType.ResearchKinetic:
                     //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
@@ -749,6 +751,7 @@ public class GameManager : MonoBehaviour
             if (action.actionType == ActionType.MoveAndMine) {
                 var currentNode = action.selectedUnit.currentPathNode;
                 foreach (var nextNode in action.selectedPath) {
+                    nextNode.parent = currentNode;
                     if (!GridManager.i.GetNeighbors(currentNode, currentNode.minerals > action.selectedUnit.miningLeft).Contains(nextNode))
                     {
                         Debug.Log("Movement no longer valid");
@@ -917,7 +920,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
     {
         int i = 0;
-        unitMoving.currentPathNode.structureOnPath = null;
+        unitMoving.currentPathNode.unitOnPath = null;
         ClearMovementRange();
         unitMoving.resetMovementRange();
         var beforeText = turnValue.text;
@@ -953,11 +956,11 @@ public class GameManager : MonoBehaviour
                     isValidHex = !nextNode.isAsteroid;
                 }
                 //Unit on Path
-                if (nextNode.structureOnPath != null)
+                if (nextNode.unitOnPath != null)
                 {
                     isValidHex = false;
                     //if enemy, attack, if you didn't destroy them, stay blocked and move back
-                    if (nextNode.structureOnPath.teamId != unitMoving.teamId)
+                    if (nextNode.unitOnPath.teamId != unitMoving.teamId)
                     {
                         ToggleHPText(true);
                         yield return StartCoroutine(FightEnemyUnit(unitMoving, nextNode));
@@ -965,17 +968,17 @@ public class GameManager : MonoBehaviour
                         didFightLastMove = true;
                         if (unitMoving == null || !AllUnits.Contains(unitMoving))
                             break;
-                        blockedMovement = nextNode.structureOnPath != null && AllUnits.Contains(nextNode.structureOnPath);
-                        isValidHex = nextNode.structureOnPath == null;
+                        blockedMovement = nextNode.unitOnPath != null && AllUnits.Contains(nextNode.unitOnPath);
+                        isValidHex = nextNode.unitOnPath == null;
                         if(!blockedMovement && isValidHex)
                             yield return StartCoroutine(MoveDirectly(unitMoving, nextNode.transform.position, Constants.MovementSpeed / 2));
                         if (i != path.Count() && !blockedMovement)
                             turnValue.text = beforeText;
                     }
                     //if ally reapir, not yourself
-                    else if (nextNode.structureOnPath.teamId == unitMoving.teamId && nextNode.structureOnPath.unitGuid != unitMoving.unitGuid)
+                    else if (nextNode.unitOnPath.teamId == unitMoving.teamId && nextNode.unitOnPath.unitGuid != unitMoving.unitGuid)
                     {
-                        nextNode.structureOnPath.RegenHP(1);
+                        nextNode.unitOnPath.RegenHP(1);
                     } 
                 }
                 if(isValidHex)
@@ -984,7 +987,7 @@ public class GameManager : MonoBehaviour
                     unitMoving.SetNodeColor();
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
-                    var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, false);
+                    var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, null, false);
                     var lastNode = nextNode;
                     foreach (var p in pathBack)
                     {
@@ -1005,7 +1008,7 @@ public class GameManager : MonoBehaviour
         if (unitMoving != null && AllUnits.Contains(unitMoving))
         {
             unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
-            unitMoving.currentPathNode.structureOnPath = unitMoving;
+            unitMoving.currentPathNode.unitOnPath = unitMoving;
             if(GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId))
                 unitMoving.SetNodeColor();
         }
@@ -1025,7 +1028,7 @@ public class GameManager : MonoBehaviour
         Vector3 endPos = nextNode.transform.position;
         float HexSize = .5f;
         var didTeleport = false;
-        bool somethingOnPath = checkPath && (nextNode.isAsteroid || (nextNode.structureOnPath != null && nextNode.structureOnPath.teamId != unitMoving.teamId));
+        bool somethingOnPath = checkPath && (nextNode.isAsteroid || (nextNode.unitOnPath != null && nextNode.unitOnPath.teamId != unitMoving.teamId));
         // Check for wrap-around on the X-axis
         if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1 && currentNode.coords.y == nextNode.coords.y)
         {
@@ -1148,13 +1151,13 @@ public class GameManager : MonoBehaviour
 
     internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
     {
-        var unitOnPath = node.structureOnPath;
+        var unitOnPath = node.unitOnPath;
         Debug.Log($"{unitMoving.unitName} is attacking {unitOnPath.unitName}");
         CheckEnterCombatModules(unitMoving);
         CheckEnterCombatModules(unitOnPath);
         //unitMoving.selectIcon.SetActive(true);
         //unitOnPath.inCombatIcon.SetActive(true);
-        var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
+        var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.unitOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
         int s1sKinetic = 0;
         int s2sKinetic = 0;
         int s1sThermal = 0;
@@ -1203,7 +1206,7 @@ public class GameManager : MonoBehaviour
                 Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
             }
             AllUnits.Remove(unitMoving);
-            unitMoving.currentPathNode.structureOnPath = null;
+            unitMoving.currentPathNode.unitOnPath = null;
             Destroy(unitMoving.gameObject);
         }
         if (unitOnPath.HP <= 0)
@@ -1224,11 +1227,11 @@ public class GameManager : MonoBehaviour
             {
                 Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
                 AllUnits.Remove(unitMoving);
-                unitMoving.currentPathNode.structureOnPath = null;
+                unitMoving.currentPathNode.unitOnPath = null;
                 Destroy(unitMoving.gameObject);
             }
             AllUnits.Remove(unitOnPath);
-            node.structureOnPath = null;
+            node.unitOnPath = null;
             Destroy(unitOnPath.gameObject); //they are dead
         }
         else
@@ -1241,7 +1244,7 @@ public class GameManager : MonoBehaviour
         var floatingObj = Instantiate(floatingTextPrefab, spawnTransform);
         var floatingTextObj = floatingObj.transform.Find("FloatingText");
         floatingTextObj.GetComponent<TextMeshPro>().text = text;
-        floatingTextObj.GetComponent<TextMeshPro>().color = GridManager.i.playerColors[unit.stationId];
+        floatingTextObj.GetComponent<TextMeshPro>().color = unit != null ? GridManager.i.playerColors[unit.stationId] : Color.white;
         var animationTime = floatingTextObj.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length;
         yield return new WaitForSeconds(animationTime);
         Destroy(floatingObj);
@@ -1269,11 +1272,11 @@ public class GameManager : MonoBehaviour
     {
         if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP3))
         {
-            unit.GainHP(3);
+            unit.IncreaseMaxHP(3);
         }
         if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining2))
         {
-            unit.maxMining += 2;
+            unit.IncreaseMaxMining(2);
         }
     }
 
@@ -1942,7 +1945,6 @@ public class GameManager : MonoBehaviour
         foreach (var station in Stations)
         {
             station.AOERegen(1);
-            station.credits += station.globalCreditGain + station.fleets.Sum(x => x.globalCreditGain);
             station.actions.Clear();
             if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.75))))
             {
@@ -1962,6 +1964,12 @@ public class GameManager : MonoBehaviour
             if (!unit.hasMoved)
             {
                 unit.RegenHP(1);
+            }
+            Stations[unit.stationId].credits += unit.globalCreditGain;
+            if (unit.globalCreditGain > 0)
+            {
+                string plural = unit.globalCreditGain == 1 ? "" : "s";
+                StartCoroutine(FloatingTextAnimation($"+{unit.globalCreditGain} Credit{plural}", unit.transform, unit));
             }
             unit.hasMoved = false;
             unit.resetMining();
@@ -2003,16 +2011,14 @@ public class GameManager : MonoBehaviour
             }
             if (unit.level % 2 != 0)
             {
-                unit.maxMining += modifier;
-                unit.miningLeft += modifier;
+                unit.IncreaseMaxMining(2 * modifier);
             }
         }
         else
         {
             if (unit.level % 2 == 0)
             {
-                unit.maxMining += modifier;
-                unit.miningLeft += modifier;
+                unit.IncreaseMaxMining(2 * modifier);
             }
             if (unit.level % 2 != 0)
             {
@@ -2020,14 +2026,14 @@ public class GameManager : MonoBehaviour
                 unit.movementLeft += modifier;
             }
         }
-        unit.GainHP(3 * modifier);
+        unit.IncreaseMaxHP(3 * modifier);
         unit.kineticPower += modifier;
         unit.explosivePower += modifier;
         unit.thermalPower += modifier;
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
         if (unit is Station)
         {
-            unit.globalCreditGain += modifier;
+            //unit.globalCreditGain += modifier;
             if (unit.level == 1)
             {
                 spriteRenderer.sprite = GridManager.i.stationlvl1;

@@ -53,7 +53,7 @@ public class Unit : Node
         thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
         maxMining = _mining;
-        currentPathNode.structureOnPath = this;
+        currentPathNode.unitOnPath = this;
         transform.position = currentPathNode.transform.position;
         resetMining();
         resetMovementRange();
@@ -84,9 +84,14 @@ public class Unit : Node
         }
         ShowHPText(true);
     }
-    internal void GainHP(int hp)
+    internal void IncreaseMaxHP(int hp)
     {
         maxHP += hp;
+    }
+    internal void IncreaseMaxMining(int mining)
+    {
+        maxMining += mining;
+        miningLeft += mining;
     }
     public void SetNodeColor()
     {
@@ -140,75 +145,78 @@ public class Unit : Node
         switch (id)
         {
             case 0:
-                kineticPower += (3 * modifer);
+                kineticPower += (5 * modifer);
                 thermalDamageModifier += (-1 * modifer);
                 break;
             case 1:
-                thermalPower += (3 * modifer);
-                GainHP(1 * modifer);
+                thermalPower += (5 * modifer);
+                IncreaseMaxHP(1 * modifer);
                 break;
             case 2:
-                explosivePower += (3 * modifer);
+                explosivePower += (5 * modifer);
                 kineticDamageModifier += (1 * modifer);
                 break;
             case 3:
                 maxMovement += (1 * modifer);
                 movementLeft += (1 * modifer);
-                kineticPower += (-1 * modifer);
+                kineticPower += (1 * modifer);
                 break;
             case 4:
                 maxMovement += (1 * modifer);
                 movementLeft += (1 * modifer);
-                thermalPower += (-1 * modifer);
+                thermalPower += (1 * modifer);
                 break;
             case 5:
                 maxMovement += (1 * modifer);
                 movementLeft += (1 * modifer);
-                explosivePower += (-1 * modifer);
+                explosivePower += (1 * modifer);
                 break;
             case 6:
                 kineticPower += (2 * modifer);
-                explosivePower += (1 * modifer);
+                explosivePower += (3 * modifer);
                 break;
             case 7:
-                kineticPower += (1 * modifer);
-                thermalPower += (2 * modifer);
+                kineticPower += (2 * modifer);
+                thermalPower += (3 * modifer);
                 break;
             case 8:
-                kineticPower += (-1 * modifer);
-                explosivePower += (4 * modifer);
+                kineticPower += (6 * modifer);
+                explosivePower += (-1 * modifer);
+                thermalDamageModifier += (-3 * modifer);
                 break;
             case 9:
-                kineticPower += (3 * modifer);
-                explosiveDamageModifier += (-1 * modifer);
+                thermalPower += (6 * modifer);
+                kineticPower += (-1 * modifer);
+                explosiveDamageModifier += (-2 * modifer);
                 break;
             case 10:
-                explosivePower += (3 * modifer);
-                kineticDamageModifier += (1 * modifer);
+                explosivePower += (6 * modifer);
+                thermalPower += (-1 * modifer);
+                kineticDamageModifier += (-1 * modifer);
                 break;
             case 11:
                 kineticPower += (1 * modifer);
-                thermalPower += (1 * modifer);
-                explosivePower += (1 * modifer);
+                thermalPower += (2 * modifer);
+                explosivePower += (2 * modifer);
                 break;
             case 12:
-                thermalPower += (2 * modifer);
-                explosivePower += (1 * modifer);
+                thermalPower += (3 * modifer);
+                explosivePower += (2 * modifer);
                 break;
             case 13:
                 maxMining += (2 * modifer);
                 miningLeft += (2 * modifer);
-                kineticDamageModifier += (2 * modifer);
+                kineticDamageModifier += (3 * modifer);
                 break;
             case 14:
                 maxMining += (2 * modifer);
                 miningLeft += (2 * modifer);
-                thermalDamageModifier += (2 * modifer);
+                thermalDamageModifier += (3 * modifer);
                 break;
             case 15:
                 maxMining += (2 * modifer);
                 miningLeft += (2 * modifer);
-                explosiveDamageModifier += (2 * modifer);
+                explosiveDamageModifier += (3 * modifer);
                 break;
             case 16:
                 kineticPower += (3 * modifer);
@@ -228,7 +236,7 @@ public class Unit : Node
             case 19:
                 thermalPower += (-2 * modifer);
                 explosivePower += (4 * modifer);
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 break;
             case 20:
                 maxMovement += (1 * modifer);
@@ -261,27 +269,27 @@ public class Unit : Node
                 thermalDamageModifier += (2 * modifer);
                 break;
             case 26:
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 kineticDamageModifier += (-2 * modifer);
                 break;
             case 27:
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 thermalDamageModifier += (-2 * modifer);
                 break;
             case 28:
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 explosiveDamageModifier += (-2 * modifer);
                 break;
             case 29:
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 kineticPower += (1 * modifer);
                 break;
             case 30:
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 thermalPower += (1 * modifer);
                 break;
             case 31:
-                GainHP(3 * modifer);
+                IncreaseMaxHP(3 * modifer);
                 explosivePower += (1 * modifer);
                 break;  
             case 32:

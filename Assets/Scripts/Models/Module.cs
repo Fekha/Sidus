@@ -48,130 +48,130 @@ public class Module
         switch (moduleId)
         {
             case 0:
-                effectText = "+3 Kinetic Power \n +1 Thermal Damage Taken";
+                effectText = "+5 Kinetic Power \n +1 Thermal Damage Taken";
                 break;
             case 1:
-                effectText = "+3 Thermal Power \n +1 Max HP";
+                effectText = "+5 Thermal Power \n +1 Max HP";
                 break;
             case 2:
-                effectText = "+3 Explosive Power \n -1 Thermal Damage Taken";
+                effectText = "+5 Explosive Power \n -1 Thermal Damage Taken";
                 break;
             case 3:
-                effectText = "+1 Movement \n -1 Kinetic Power";
+                effectText = "+1 Movement \n +1 Kinetic Power";
                 break;
             case 4:
-                effectText = "+1 Movement \n -1 Thermal Power";
+                effectText = "+1 Movement \n +1 Thermal Power";
                 break;
             case 5:
-                effectText = "+1 Movement \n -1 Explosive Power";
+                effectText = "+1 Movement \n +1 Explosive Power";
                 break;
             case 6:
-                effectText = "+2 Kinetic Power \n +1 Explosive Power";
+                effectText = "+2 Kinetic Power \n +3 Explosive Power";
                 break;
             case 7:
-                effectText = "+1 Kinetic Power \n +2 Thermal Power";
+                effectText = "+2 Kinetic Power \n +3 Thermal Power";
                 break;
             case 8:
-                effectText = "-1 Kinetic Power \n +4 Explosive Power ";
+                effectText = "+6 Kinetic Power \n -1 Explosive Power \n +3 Thermal Damage Taken";
                 break;
             case 9:
-                effectText = "+3 Kinetic Power \n +1 Explosive Damage Taken";
+                effectText = "+6 Thermal Power \n -1 Kinetic Power \n +2 Explosive Damage Taken";
                 break;
             case 10:
-                effectText = "+3 Explosive Power \n -1 Kinetic Damage Taken";
+                effectText = "+6 Explosive Power \n -1 Thermal Power \n +1 Kinetic Damage Taken";
                 break;
             case 11:
-                effectText = "+1 Kinetic Power \n +1 Thermal Power \n +1 Explosive Power";
+                effectText = "+1 Kinetic Power \n +2 Thermal Power \n +2 Explosive Power";
                 break;
             case 12:
-                effectText = "+2 Thermal Power \n +1 Explosive Power";
+                effectText = "+3 Thermal Power \n +2 Explosive Power";
                 break;
             case 13:
-                effectText = "+2 Mining Power \n -2 Kinetic Damage Taken";
+                effectText = "+2 Mining Power \n +3 Explosive Power \n -1 Kinetic Damage Taken";
                 break;
             case 14:
-                effectText = "+2 Mining Power \n -2 Thermal Damage Taken";
+                effectText = "+2 Mining Power \n +3 Kinetic Power \n -1 Thermal Damage Taken";
                 break;
             case 15:
-                effectText = "+2 Mining Power \n -2 Explosive Damage Taken";
+                effectText = "+2 Mining Power \n +3 Thermal Power";
                 break;
             case 16:
-                effectText = "+3 Kinetic Power \n -2 Thermal Power \n +2 Explosive Power";
+                effectText = "+4 Kinetic Power \n -2 Thermal Power \n +3 Explosive Power";
                 break;
             case 17:
-                effectText = "+2 Kinetic Power \n +3 Thermal Power \n -2 Explosive Power";
+                effectText = "+3 Kinetic Power \n +4 Thermal Power \n -2 Explosive Power";
                 break;
             case 18:
-                effectText = "-2 Kinetic Power \n +4 Thermal Power \n +1 Explosive Power";
+                effectText = "-2 Kinetic Power \n +5 Thermal Power \n +2 Explosive Power";
                 break;
             case 19:
-                effectText = "-2 Kinetic Power \n +4 Explosive Power \n +3 Max HP";
+                effectText = "-2 Kinetic Power \n +5 Explosive Power \n +5 Max HP";
                 break;
             case 20:
-                effectText = "+1 Movement \n +2 Kinetic Damage Taken";
+                effectText = "+1 Movement \n -2 Kinetic Damage Taken";
                 break;
             case 21:
-                effectText = "+1 Movement \n +2 Thermal Damage Taken";
+                effectText = "+1 Movement \n -2 Thermal Damage Taken";
                 break;
             case 22:
-                effectText = "+1 Movement \n +2 Explosive Damage Taken";
+                effectText = "+1 Movement \n -2 Explosive Damage Taken";
                 break;
             case 23:
-                effectText = "+1 Kinetic Power \n -2 Thermal Damage Taken \n -2 Explosive Damage Taken";
+                effectText = "+3 Kinetic Power \n -2 Thermal Damage Taken \n -2 Explosive Damage Taken";
                 break;
             case 24:
-                effectText = "+1 Thermal Power \n -2 Kinetic Damage Taken \n -2 Explosive Damage Taken";
+                effectText = "+3 Thermal Power \n -2 Kinetic Damage Taken \n -2 Explosive Damage Taken";
                 break;
             case 25:
-                effectText = "+1 Explosive Power \n -2 Kinetic Damage Taken \n -2 Thermal Damage Taken";
+                effectText = "+3 Explosive Power \n -2 Kinetic Damage Taken \n -2 Thermal Damage Taken";
                 break; 
             case 26:
-                effectText = "+3 Max HP \n -2 Kinetic Damage Taken";
+                effectText = "+5 Max HP \n -4 Kinetic Damage Taken";
                 break;
             case 27:
-                effectText = "+3 Max HP \n -2 Thermal Damage Taken";
+                effectText = "+5 Max HP \n -4 Thermal Damage Taken";
                 break;
             case 28:
-                effectText = "+3 Max HP \n -2 Explosive Damage Taken";
+                effectText = "+5 Max HP \n -4 Explosive Damage Taken";
                 break;
             case 29:
-                effectText = "+3 Max HP \n +1 Kinetic Power";
+                effectText = "+5 Max HP \n +2 Kinetic Power";
                 break;
             case 30:
-                effectText = "+3 Max HP \n +1 Thermal Power";
+                effectText = "+5 Max HP \n +2 Thermal Power";
                 break;
             case 31:
-                effectText = "+3 Max HP \n +1 Explosive Power";
+                effectText = "+5 Max HP \n +2 Explosive Power";
                 break; 
             case 32:
-                effectText = "+1 credit per turn \n -2 Explosive Power";
+                effectText = "+1 credit per turn";
                 rarity = Rarity.Rare;
                 break; 
             case 33:
-                effectText = "+2 credits per turn \n -2 Mining Power";
+                effectText = "+2 credits per turn \n -1 Mining Power";
                 rarity = Rarity.Rare;
                 break; 
             case 34:
-                effectText = "+3 credits per turn \n -2 Movement";
+                effectText = "+4 credits per turn \n -1 Movement";
                 rarity = Rarity.Rare;
                 break;
             case 35:
-                effectText = "+2 Mining Power \n +1 Kinetic Power";
+                effectText = "+3 Mining Power \n +3 Kinetic Power \n -1 Thermal Power";
                 break;
             case 36:
-                effectText = "+2 Mining Power \n +1 Thermal Power";
+                effectText = "+3 Mining Power \n +2 Thermal Power";
                 break;
             case 37:
-                effectText = "+2 Mining Power \n +1 Explosive Power";
+                effectText = "+3 Mining Power \n +3 Explosive Power \n -1 Kinetic Power";
                 break;
             case 38:
-                effectText = "+5 Kinetic Power \n -2 Thermal Power \n +4 Explosive Damage Taken";
+                effectText = "+7 Kinetic Power \n -2 Thermal Power \n +3 Thermal Damage Taken";
                 break;
             case 39:
-                effectText = "+5 Thermal Power \n -2 Explosive Power \n +3 Kinetic Damage Taken";
+                effectText = "+7 Thermal Power \n -2 Explosive Power \n +2 Explosive Damage Taken";
                 break;
             case 40:
-                effectText = "-2 Kinetic Power \n +5 Explosive Power \n +2 Thermal Damage Taken";
+                effectText = "-2 Thermal Power \n +7 Explosive Power \n +1 Thermal Damage Taken";
                 break;
             case 41:
                 effectText = "Support allies at full Power.";
