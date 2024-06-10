@@ -198,7 +198,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit)
+    internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, bool blockedByAsteroid)
     {
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
@@ -220,7 +220,7 @@ public class GridManager : MonoBehaviour
             {
                 return RetracePath(startNode, targetNode);
             }
-            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals > unit.miningLeft);
+            List<PathNode> neighbors = GetNeighbors(currentNode, blockedByAsteroid);
             foreach (PathNode neighbor in neighbors)
             {
                 if (!openSet.Contains(neighbor) && !closedSet.Contains(neighbor))
@@ -287,7 +287,7 @@ public class GridManager : MonoBehaviour
     {
         return ((coord % Constants.GridSize) + Constants.GridSize) % Constants.GridSize;
     }
-    internal List<PathNode> GetNeighbors(PathNode node, bool first = true)
+    internal List<PathNode> GetNeighbors(PathNode node, bool blockedByAsteroid = true)
     {
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
@@ -296,7 +296,7 @@ public class GridManager : MonoBehaviour
             if (!gridNode.isRift)
                 neighbors.Add(gridNode);
         }
-        if (node.isAsteroid && first)
+        if (node.isAsteroid && blockedByAsteroid)
         {
             neighbors = GetNeighbors(node.parent, false).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
             neighbors.Add(node.parent);

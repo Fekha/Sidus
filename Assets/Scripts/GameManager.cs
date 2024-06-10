@@ -322,12 +322,12 @@ public class GameManager : MonoBehaviour
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)
                         {
-                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit);
+                            SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedNode.minerals > SelectedUnit.miningLeft);
                             Debug.Log($"Path created for {SelectedUnit.unitName}");
                         }
                         else
                         {
-                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedUnit));
+                            SelectedPath.AddRange(GridManager.i.FindPath(SelectedPath.Last(), SelectedNode, SelectedNode.minerals > SelectedUnit.miningLeft));
                             Debug.Log($"Path edited for {SelectedUnit.unitName}");
                         }
                         SelectedUnit.AddMinedPath(SelectedPath);
@@ -929,14 +929,15 @@ public class GameManager : MonoBehaviour
             i++;
             didFightLastMove = false;
             unitMoving.subtractMovement(GridManager.i.GetGCost(nextNode));
-            if (GridManager.i.GetNeighbors(currentNode, currentNode.minerals > unitMoving.miningLeft).Contains(nextNode) && unitMoving.movementLeft >= 0)
-            {
+            //Check that no one hacked their client to send back bad results, currently not full working and stopping real moves, todo come back to later
+            //if (GridManager.i.GetNeighbors(currentNode, currentNode.minerals > unitMoving.miningLeft).Contains(nextNode) && unitMoving.movementLeft >= 0)
+            //{
                 turnValue.text = beforeText;
                 unitMoving.hasMoved = true; 
                 bool blockedMovement = false;
                 bool isValidHex = true;
                 //Move and turn toward node
-                yield return StartCoroutine(MoveUnit(unitMoving, currentNode, nextNode));
+                yield return StartCoroutine(MoveUnit(unitMoving, currentNode, nextNode, true));
                 //Asteroid on Path
                 if (nextNode.isAsteroid)
                 {
@@ -946,6 +947,7 @@ public class GameManager : MonoBehaviour
                     }
                     if (!nextNode.isAsteroid)
                     {
+                        yield return StartCoroutine(MoveDirectly(unitMoving, nextNode.transform.position, Constants.MovementSpeed/2));
                         CheckDestroyAsteroidModules(unitMoving);
                     }
                     isValidHex = !nextNode.isAsteroid;
@@ -965,6 +967,8 @@ public class GameManager : MonoBehaviour
                             break;
                         blockedMovement = nextNode.structureOnPath != null && AllUnits.Contains(nextNode.structureOnPath);
                         isValidHex = nextNode.structureOnPath == null;
+                        if(!blockedMovement && isValidHex)
+                            yield return StartCoroutine(MoveDirectly(unitMoving, nextNode.transform.position, Constants.MovementSpeed / 2));
                         if (i != path.Count() && !blockedMovement)
                             turnValue.text = beforeText;
                     }
@@ -980,23 +984,23 @@ public class GameManager : MonoBehaviour
                     unitMoving.SetNodeColor();
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
-                    var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, unitMoving);
+                    var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, false);
                     var lastNode = nextNode;
                     foreach (var p in pathBack)
                     {
-                        yield return StartCoroutine(MoveUnit(unitMoving, lastNode, p));
+                        yield return StartCoroutine(MoveUnit(unitMoving, lastNode, p, false));
                         lastNode = p;
                     }
                     unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
                     break;
                 }
                 currentNode = nextNode;
-            }
-            else
-            {
-                turnValue.text = "Next hex was not a neighbor or out of range, movement cancelled";
-                Debug.Log($"Current: {currentNode.coordsText}, Next: {nextNode.coordsText}");
-            }
+            //}
+            //else
+            //{
+            //    turnValue.text = "Next hex was not a neighbor or out of range, movement cancelled";
+            //    Debug.Log($"Current: {currentNode.coordsText}, Next: {nextNode.coordsText}");
+            //}
         }
         if (unitMoving != null && AllUnits.Contains(unitMoving))
         {
@@ -1010,7 +1014,7 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
     }
-    IEnumerator MoveUnit(Unit unitMoving, PathNode currentNode, PathNode nextNode)
+    IEnumerator MoveUnit(Unit unitMoving, PathNode currentNode, PathNode nextNode, bool checkPath)
     {
         // Determine the direction and detect if wrap-around is needed
         Direction direction;
@@ -1021,7 +1025,7 @@ public class GameManager : MonoBehaviour
         Vector3 endPos = nextNode.transform.position;
         float HexSize = .5f;
         var didTeleport = false;
-        bool somethingOnPath = nextNode.isAsteroid || (nextNode.structureOnPath != null && nextNode.structureOnPath.teamId != unitMoving.teamId);
+        bool somethingOnPath = checkPath && (nextNode.isAsteroid || (nextNode.structureOnPath != null && nextNode.structureOnPath.teamId != unitMoving.teamId));
         // Check for wrap-around on the X-axis
         if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1 && currentNode.coords.y == nextNode.coords.y)
         {
@@ -1120,20 +1124,28 @@ public class GameManager : MonoBehaviour
         }
         if ((didTeleport && !somethingOnPath) || somethingOnPath || !didTeleport)
         {
-            elapsedTime = 0f;
-            startPos = unitMoving.transform.position;
-            // Move to final position
-            while (elapsedTime <= totalTime && !tapped)
-            {
-                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
-                unitMoving.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            unitMoving.unitImage.rotation = toRot;
-            unitMoving.transform.position = endPos;
+            yield return StartCoroutine(MoveDirectly(unitMoving, endPos, totalTime, toRot));
         }
     }
+
+    private IEnumerator MoveDirectly(Unit unitMoving, Vector3 endPos, float totalTime, Quaternion? toRot = null)
+    {
+        float elapsedTime = 0f;
+        var startPos = unitMoving.transform.position;
+        // Move to final position
+        while (elapsedTime <= totalTime && !tapped)
+        {
+            if(toRot != null)
+                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, (Quaternion)toRot, elapsedTime / totalTime);
+            unitMoving.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / totalTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        if (toRot != null)
+            unitMoving.unitImage.rotation = (Quaternion)toRot;
+        unitMoving.transform.position = endPos;
+    }
+
     internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
     {
         var unitOnPath = node.structureOnPath;
