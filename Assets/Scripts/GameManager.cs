@@ -396,10 +396,6 @@ public class GameManager : MonoBehaviour
         {
             var extraBonus = action.selectedUnit.level % 2 == 0 ? "+2 Mining Power" : "+1 Movement";
             var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
-            if (action.actionType == ActionType.UpgradeStation)
-            {
-                message += "\n+1 Credit per turn";
-            }
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)

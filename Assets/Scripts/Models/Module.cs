@@ -96,13 +96,13 @@ public class Module
                 effectText = "+2 Mining Power \n +3 Thermal Power";
                 break;
             case 16:
-                effectText = "+4 Kinetic Power \n -2 Thermal Power \n +3 Explosive Power";
+                effectText = "+3 Kinetic Power \n -2 Thermal Power \n +4 Explosive Power";
                 break;
             case 17:
                 effectText = "+3 Kinetic Power \n +4 Thermal Power \n -2 Explosive Power";
                 break;
             case 18:
-                effectText = "-2 Kinetic Power \n +5 Thermal Power \n +2 Explosive Power";
+                effectText = "-2 Kinetic Power \n +3 Thermal Power \n +4 Explosive Power";
                 break;
             case 19:
                 effectText = "-2 Kinetic Power \n +5 Explosive Power \n +5 Max HP";

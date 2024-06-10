@@ -221,120 +221,121 @@ public class Unit : Node
             case 16:
                 kineticPower += (3 * modifer);
                 thermalPower += (-2 * modifer);
-                explosivePower += (2 * modifer);
+                explosivePower += (4 * modifer);
                 break;
             case 17:
-                kineticPower += (2 * modifer);
-                thermalPower += (3 * modifer);
+                kineticPower += (3 * modifer);
+                thermalPower += (4 * modifer);
                 explosivePower += (-2 * modifer);
                 break;
             case 18:
                 kineticPower += (-2 * modifer);
-                thermalPower += (4 * modifer);
-                explosivePower += (1 * modifer);
+                thermalPower += (3 * modifer);
+                explosivePower += (4 * modifer);
                 break;
             case 19:
                 thermalPower += (-2 * modifer);
-                explosivePower += (4 * modifer);
-                IncreaseMaxHP(3 * modifer);
+                explosivePower += (5 * modifer);
+                IncreaseMaxHP(5 * modifer);
                 break;
             case 20:
                 maxMovement += (1 * modifer);
                 movementLeft += (1 * modifer);
-                kineticDamageModifier += (-2 * modifer); 
+                kineticDamageModifier += (2 * modifer); 
                 break;
             case 21:
                 maxMovement += (1 * modifer);
                 movementLeft += (1 * modifer);
-                thermalDamageModifier += (-2 * modifer);
+                thermalDamageModifier += (2 * modifer);
                 break;
             case 22:
                 maxMovement += (1 * modifer);
                 movementLeft += (1 * modifer);
-                explosiveDamageModifier += (-2 * modifer);
+                explosiveDamageModifier += (2 * modifer);
                 break;
             case 23:
-                kineticPower += (1 * modifer);
+                kineticPower += (3 * modifer);
                 thermalDamageModifier += (2 * modifer);
                 explosiveDamageModifier += (2 * modifer);
                 break;
             case 24:
-                thermalPower += (1 * modifer);
+                thermalPower += (3 * modifer);
                 explosiveDamageModifier += (2 * modifer);
                 kineticDamageModifier += (2 * modifer);
                 break;
             case 25:
-                explosivePower += (1 * modifer);
+                explosivePower += (3 * modifer);
                 kineticDamageModifier += (2 * modifer);
                 thermalDamageModifier += (2 * modifer);
                 break;
             case 26:
-                IncreaseMaxHP(3 * modifer);
-                kineticDamageModifier += (-2 * modifer);
+                IncreaseMaxHP(5 * modifer);
+                kineticDamageModifier += (-4 * modifer);
                 break;
             case 27:
-                IncreaseMaxHP(3 * modifer);
-                thermalDamageModifier += (-2 * modifer);
+                IncreaseMaxHP(5 * modifer);
+                thermalDamageModifier += (-4 * modifer);
                 break;
             case 28:
-                IncreaseMaxHP(3 * modifer);
-                explosiveDamageModifier += (-2 * modifer);
+                IncreaseMaxHP(5 * modifer);
+                explosiveDamageModifier += (-4 * modifer);
                 break;
             case 29:
-                IncreaseMaxHP(3 * modifer);
-                kineticPower += (1 * modifer);
+                IncreaseMaxHP(5 * modifer);
+                kineticPower += (2 * modifer);
                 break;
             case 30:
-                IncreaseMaxHP(3 * modifer);
-                thermalPower += (1 * modifer);
+                IncreaseMaxHP(5 * modifer);
+                thermalPower += (2 * modifer);
                 break;
             case 31:
-                IncreaseMaxHP(3 * modifer);
-                explosivePower += (1 * modifer);
+                IncreaseMaxHP(5 * modifer);
+                explosivePower += (2 * modifer);
                 break;  
             case 32:
                 globalCreditGain += (1 * modifer);
-                explosivePower += (-2 * modifer);
                 break; 
             case 33:
                 globalCreditGain += (2 * modifer);
-                maxMining += (-2 * modifer);
-                miningLeft += (-2 * modifer);
+                maxMining += (-1 * modifer);
+                miningLeft += (-1 * modifer);
                 break; 
             case 34:
-                globalCreditGain += (3 * modifer);
-                maxMovement += (-2 * modifer);
-                movementLeft += (-2 * modifer);
+                globalCreditGain += (4 * modifer);
+                maxMovement += (-1 * modifer);
+                movementLeft += (-1 * modifer);
                 break;
             case 35:
-                maxMining += (2 * modifer);
-                miningLeft += (2 * modifer);
-                kineticPower += (1 * modifer);
+                maxMining += (3 * modifer);
+                miningLeft += (3 * modifer);
+                kineticPower += (3 * modifer);
+                thermalPower += (-1 * modifer);
                 break; 
             case 36:
-                maxMining += (2 * modifer);
-                miningLeft += (2 * modifer);
-                thermalPower += (1 * modifer);
+                maxMining += (3 * modifer);
+                miningLeft += (3 * modifer);
+                thermalPower += (2 * modifer);
                 break; 
             case 37:
-                maxMining += (2 * modifer);
-                miningLeft += (2 * modifer);
-                explosivePower += (1 * modifer);
+                maxMining += (3 * modifer);
+                miningLeft += (3 * modifer);
+                explosivePower += (3 * modifer);
+                kineticPower += (-1 * modifer);
                 break;
             case 38:
-                kineticPower += (5 * modifer);
+                kineticPower += (7 * modifer);
                 thermalPower += (-2 * modifer);
-                explosiveDamageModifier += (-4 * modifer);
+                explosiveDamageModifier += (-3 * modifer);
                 break;
             case 39:
-                thermalPower += (5 * modifer);
+                thermalPower += (7 * modifer);
                 explosivePower += (-2 * modifer);
-                kineticDamageModifier += (-3 * modifer);
+                kineticDamageModifier += (-2 * modifer);
                 break;
             case 40:
                 kineticPower += (-2 * modifer);
-                explosivePower += (5 * modifer);
-                thermalDamageModifier += (-2 * modifer);
+                explosivePower += (7 * modifer);
+                thermalDamageModifier += (-1 * modifer);
                 break; 
             case 41:
                 supportValue = modifer == 1 ? 1 : .5;
