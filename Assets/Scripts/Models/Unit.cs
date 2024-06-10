@@ -82,6 +82,7 @@ public class Unit : Node
         {
             maxHP -= Mathf.Max(damage, 0);
         }
+        ShowHPText(true);
     }
     internal void GainHP(int hp)
     {
@@ -132,7 +133,6 @@ public class Unit : Node
             HPText.text = $"{Mathf.Min(maxHP, HP)}";
             statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
         }
-        
         HPText.gameObject.SetActive(value);
     }
     internal void EditModule(int id, int modifer = 1)

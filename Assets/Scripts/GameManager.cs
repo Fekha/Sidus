@@ -957,7 +957,9 @@ public class GameManager : MonoBehaviour
                     //if enemy, attack, if you didn't destroy them, stay blocked and move back
                     if (nextNode.structureOnPath.teamId != unitMoving.teamId)
                     {
+                        ToggleHPText(true);
                         yield return StartCoroutine(FightEnemyUnit(unitMoving, nextNode));
+                        ToggleHPText(false);
                         didFightLastMove = true;
                         if (unitMoving == null || !AllUnits.Contains(unitMoving))
                             break;
@@ -978,14 +980,14 @@ public class GameManager : MonoBehaviour
                     unitMoving.SetNodeColor();
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
-                    float elapsedTime = 0f;
-                    float totalTime = .8f;
-                    while (elapsedTime <= totalTime && !tapped)
+                    var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, unitMoving);
+                    var lastNode = nextNode;
+                    foreach (var p in pathBack)
                     {
-                        unitMoving.transform.position = Vector3.Lerp(nextNode.transform.position, unitMoving.currentPathNode.transform.position, elapsedTime / totalTime);
-                        elapsedTime += Time.deltaTime;
-                        yield return null;
+                        yield return StartCoroutine(MoveUnit(unitMoving, lastNode, p));
+                        lastNode = p;
                     }
+                    unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
                     break;
                 }
                 currentNode = nextNode;
@@ -1017,11 +1019,13 @@ public class GameManager : MonoBehaviour
         float totalTime = Constants.MovementSpeed;
         Vector3 startPos = unitMoving.transform.position;
         Vector3 endPos = nextNode.transform.position;
-        // Grid size
         float HexSize = .5f;
+        var didTeleport = false;
+        bool somethingOnPath = nextNode.isAsteroid || (nextNode.structureOnPath != null && nextNode.structureOnPath.teamId != unitMoving.teamId);
         // Check for wrap-around on the X-axis
         if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1 && currentNode.coords.y == nextNode.coords.y)
         {
+            didTeleport = true;
             direction = (startPos.x < endPos.x) ? Direction.Left : Direction.Right;
             toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
             Vector3 intermediatePosX = new Vector3(
@@ -1045,8 +1049,10 @@ public class GameManager : MonoBehaviour
                 endPos.y,
                 endPos.z);
         }
+        // Check for wrap-around on the Y-axis odd
         else if (Mathf.Abs(currentNode.coords.y - nextNode.coords.y) > 1)
         {
+            didTeleport = true;
             if (startPos.x < endPos.x)
             {
                 direction = (startPos.y < endPos.y) ? Direction.BottomRight : Direction.TopRight;
@@ -1075,14 +1081,15 @@ public class GameManager : MonoBehaviour
                 (startPos.y < endPos.y) ? endPos.y + HexSize : endPos.y - HexSize,
                 endPos.z);
         }
-        // Check for wrap-around on the Y-axis
+        // Check for wrap-around on the Y-axis even
         else if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1)
         {
-            if (startPos.x < endPos.x) 
+            didTeleport = true;
+            if (startPos.x < endPos.x)
             {
                 direction = (startPos.y < endPos.y) ? Direction.TopLeft : Direction.BottomLeft;
             }
-            else 
+            else
             {
                 direction = (startPos.y < endPos.y) ? Direction.TopRight : Direction.BottomRight;
             }
@@ -1106,19 +1113,26 @@ public class GameManager : MonoBehaviour
                 (startPos.y < endPos.y) ? endPos.y - HexSize : endPos.y + HexSize,
                 endPos.z);
         }
-        totalTime = Constants.MovementSpeed;
-        elapsedTime = 0f;
-        startPos = unitMoving.transform.position;
-        // Move to final position
-        while (elapsedTime <= totalTime && !tapped)
+        else if (somethingOnPath)
         {
-            unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
-            unitMoving.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / totalTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            totalTime = Constants.MovementSpeed / 2;
+            endPos = (startPos + endPos) / 2;
         }
-        unitMoving.unitImage.rotation = toRot;
-        unitMoving.transform.position = endPos;
+        if ((didTeleport && !somethingOnPath) || somethingOnPath || !didTeleport)
+        {
+            elapsedTime = 0f;
+            startPos = unitMoving.transform.position;
+            // Move to final position
+            while (elapsedTime <= totalTime && !tapped)
+            {
+                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+                unitMoving.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / totalTime);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            unitMoving.unitImage.rotation = toRot;
+            unitMoving.transform.position = endPos;
+        }
     }
     internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
     {
@@ -1126,8 +1140,8 @@ public class GameManager : MonoBehaviour
         Debug.Log($"{unitMoving.unitName} is attacking {unitOnPath.unitName}");
         CheckEnterCombatModules(unitMoving);
         CheckEnterCombatModules(unitOnPath);
-        unitMoving.selectIcon.SetActive(true);
-        unitOnPath.inCombatIcon.SetActive(true);
+        //unitMoving.selectIcon.SetActive(true);
+        //unitOnPath.inCombatIcon.SetActive(true);
         var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.structureOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
         int s1sKinetic = 0;
         int s2sKinetic = 0;
@@ -1150,7 +1164,6 @@ public class GameManager : MonoBehaviour
                 s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * supportFleet.supportValue));
             }
         }
-        
         phaseText.gameObject.SetActive(true);
         for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
         {
@@ -1385,6 +1398,8 @@ public class GameManager : MonoBehaviour
         }
         while (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber));
         customAlertPanel.SetActive(false);
+        infoToggle = true;
+        ToggleAll();
         isEndingTurn = true;
         turnValue.text = $"Turn #{TurnNumber} Complete!";
         turnLabel.SetActive(true);
