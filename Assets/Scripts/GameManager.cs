@@ -700,7 +700,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"{MyStation.unitName} removed action {GetDescription(action.actionType)} from queue");
         if (action != null)
         {
-            PerformUpdates(action, Constants.Remove);           
+            PerformUpdates(action, Constants.Remove, true);           
             ClearActionBar();
             MyStation.actions.RemoveAt(slot);
             for (int i = 0; i < MyStation.actions.Count; i++)
@@ -778,7 +778,7 @@ public class GameManager : MonoBehaviour
                 action.costOfAction = costOfAction;
                 MyStation.actions.Add(action);
                 AddActionBarImage(action.actionType, MyStation.actions.Count()-1);
-                PerformUpdates(action, Constants.Create);
+                PerformUpdates(action, Constants.Create, true);
                 ResetAfterSelection();
             }
         }
@@ -1245,8 +1245,10 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{unitMoving.unitName} movement was blocked by {unitOnPath.unitName}");
         }
     }
-    internal IEnumerator FloatingTextAnimation(string text, Transform spawnTransform, Unit unit)
+    internal IEnumerator FloatingTextAnimation(string text, Transform spawnTransform, Unit unit, bool stagger = false)
     {
+        if(stagger)
+            yield return new WaitForSeconds(.4f);
         var floatingObj = Instantiate(floatingTextPrefab, spawnTransform);
         var floatingTextObj = floatingObj.transform.Find("FloatingText");
         floatingTextObj.GetComponent<TextMeshPro>().text = text;
@@ -1261,28 +1263,28 @@ public class GameManager : MonoBehaviour
         {
             unit.RegenHP(3);
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic1))
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic2))
         {
-            unit.kineticPower++;
+            unit.kineticPower += 2;
         }  
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal1))
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal2))
         {
-            unit.thermalPower++;
+            unit.thermalPower += 2;
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive1))
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive2))
         {
-            unit.explosivePower++;
+            unit.explosivePower += 2;
         }
     }
     private void CheckDestroyAsteroidModules(Unit unit)
     {
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP3))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP5))
         {
-            unit.IncreaseMaxHP(3);
+            unit.IncreaseMaxHP(5);
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining2))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits3))
         {
-            unit.IncreaseMaxMining(2);
+            Stations[unit.stationId].GainCredits(3, unit,false,false);
         }
     }
 
@@ -1527,7 +1529,7 @@ public class GameManager : MonoBehaviour
                 {
                     for(int i = lastSubmittedTurn.Count()-1; i >= 0; i--)
                     {
-                        PerformUpdates(lastSubmittedTurn[i], Constants.Remove);
+                        PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);
                     }
                     ClearModules();
                     ToggleMineralText(true);
@@ -1567,10 +1569,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void PerformUpdates(Action action, int modifier)
+    private void PerformUpdates(Action action, int modifier, bool queued = false)
     {
         var station = Stations[action.selectedUnit.stationId];
-        station.credits -= (action.costOfAction * modifier);
+        station.GainCredits(-1 * action.costOfAction * modifier, station, queued);
         if (action.actionType == ActionType.AttachModule)
         {
             Unit UnitToRemoveFrom;
@@ -1680,7 +1682,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.RepairFleet)
         {
-            action.selectedUnit.RegenHP(3 * modifier, true);
+            action.selectedUnit.RegenHP(3 * modifier, queued);
         }
     }
 
@@ -1744,7 +1746,7 @@ public class GameManager : MonoBehaviour
                     if (IsUnderMaxFleets(currentStation, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
-                        currentStation.credits -= action.costOfAction;
+                        currentStation.GainCredits(-1 * action.costOfAction, currentStation);
                         yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
                     }
                     else
@@ -1784,7 +1786,7 @@ public class GameManager : MonoBehaviour
                     {
                         StartCoroutine(FloatingTextAnimation($"Lost Bid", currentUnit.transform, currentUnit)); //floater5
                         turnValue.text += "Lost bid\nGained 1 credit.";
-                        currentStation.credits++;
+                        currentStation.GainCredits(1, currentStation);
                     }
                     currentUnit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
@@ -1971,12 +1973,7 @@ public class GameManager : MonoBehaviour
             {
                 unit.RegenHP(1);
             }
-            Stations[unit.stationId].credits += unit.globalCreditGain;
-            if (unit.globalCreditGain > 0 && TurnNumber != 1)
-            {
-                string plural = unit.globalCreditGain == 1 ? "" : "s";
-                StartCoroutine(FloatingTextAnimation($"+{unit.globalCreditGain} Credit{plural}", unit.transform, unit));
-            }
+            Stations[unit.stationId].GainCredits(unit.globalCreditGain,unit,TurnNumber == 1);
             unit.hasMoved = false;
             unit.resetMining();
             unit.resetMovementRange();

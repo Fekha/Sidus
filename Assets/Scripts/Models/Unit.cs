@@ -93,6 +93,11 @@ public class Unit : Node
         maxMining += mining;
         miningLeft += mining;
     }
+    internal void IncreaseMaxMovement(int movement)
+    {
+        maxMovement += movement;
+        movementLeft += movement;
+    }
     public void SetNodeColor()
     {
         currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[stationId];
@@ -157,18 +162,15 @@ public class Unit : Node
                 kineticDamageModifier += (1 * modifer);
                 break;
             case 3:
-                maxMovement += (1 * modifer);
-                movementLeft += (1 * modifer);
+                IncreaseMaxMovement(1 * modifer);
                 kineticPower += (1 * modifer);
                 break;
             case 4:
-                maxMovement += (1 * modifer);
-                movementLeft += (1 * modifer);
+                IncreaseMaxMovement(1 * modifer);
                 thermalPower += (1 * modifer);
                 break;
             case 5:
-                maxMovement += (1 * modifer);
-                movementLeft += (1 * modifer);
+                IncreaseMaxMovement(1 * modifer);
                 explosivePower += (1 * modifer);
                 break;
             case 6:
@@ -204,18 +206,15 @@ public class Unit : Node
                 explosivePower += (2 * modifer);
                 break;
             case 13:
-                maxMining += (2 * modifer);
-                miningLeft += (2 * modifer);
+                IncreaseMaxMining(2 * modifer);
                 kineticDamageModifier += (3 * modifer);
                 break;
             case 14:
-                maxMining += (2 * modifer);
-                miningLeft += (2 * modifer);
+                IncreaseMaxMining(2 * modifer);
                 thermalDamageModifier += (3 * modifer);
                 break;
             case 15:
-                maxMining += (2 * modifer);
-                miningLeft += (2 * modifer);
+                IncreaseMaxMining(2 * modifer);
                 explosiveDamageModifier += (3 * modifer);
                 break;
             case 16:
@@ -239,18 +238,15 @@ public class Unit : Node
                 IncreaseMaxHP(5 * modifer);
                 break;
             case 20:
-                maxMovement += (1 * modifer);
-                movementLeft += (1 * modifer);
+                IncreaseMaxMovement(1 * modifer);
                 kineticDamageModifier += (2 * modifer); 
                 break;
             case 21:
-                maxMovement += (1 * modifer);
-                movementLeft += (1 * modifer);
+                IncreaseMaxMovement(1 * modifer);
                 thermalDamageModifier += (2 * modifer);
                 break;
             case 22:
-                maxMovement += (1 * modifer);
-                movementLeft += (1 * modifer);
+                IncreaseMaxMovement(1 * modifer);
                 explosiveDamageModifier += (2 * modifer);
                 break;
             case 23:
@@ -297,28 +293,23 @@ public class Unit : Node
                 break; 
             case 33:
                 globalCreditGain += (2 * modifer);
-                maxMining += (-1 * modifer);
-                miningLeft += (-1 * modifer);
+                IncreaseMaxMining(-1 * modifer);
                 break; 
             case 34:
                 globalCreditGain += (4 * modifer);
-                maxMovement += (-1 * modifer);
-                movementLeft += (-1 * modifer);
+                IncreaseMaxMovement(-1 * modifer);
                 break;
             case 35:
-                maxMining += (3 * modifer);
-                miningLeft += (3 * modifer);
+                IncreaseMaxMining(3 * modifer);
                 kineticPower += (3 * modifer);
                 thermalPower += (-1 * modifer);
                 break; 
             case 36:
-                maxMining += (3 * modifer);
-                miningLeft += (3 * modifer);
+                IncreaseMaxMining(3 * modifer);
                 thermalPower += (2 * modifer);
                 break; 
             case 37:
-                maxMining += (3 * modifer);
-                miningLeft += (3 * modifer);
+                IncreaseMaxMining(3 * modifer);
                 explosivePower += (3 * modifer);
                 kineticPower += (-1 * modifer);
                 break;
@@ -338,35 +329,40 @@ public class Unit : Node
                 thermalDamageModifier += (-1 * modifer);
                 break; 
             case 41:
+                kineticPower += (2 * modifer);
                 supportValue = modifer == 1 ? 1 : .5;
                 break;
             case 42:
+                thermalPower += (3 * modifer);
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.ReduceMaxHp); }
                 else { moduleEffects.Remove(ModuleEffect.ReduceMaxHp); }
                 break;
             case 43:
+                explosivePower += (4 * modifer);
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.DoubleHeal); }
                 else { moduleEffects.Remove(ModuleEffect.DoubleHeal); }
                 break;
             case 44:
+                explosivePower += (2 * modifer);
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatHeal3); }
                 else { moduleEffects.Remove(ModuleEffect.CombatHeal3); }
                 break;
             case 45:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatKinetic1); }
-                else { moduleEffects.Remove(ModuleEffect.CombatKinetic1); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatKinetic2); }
+                else { moduleEffects.Remove(ModuleEffect.CombatKinetic2); }
                 break;
             case 46:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatThermal1); }
-                else { moduleEffects.Remove(ModuleEffect.CombatThermal1); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatThermal2); }
+                else { moduleEffects.Remove(ModuleEffect.CombatThermal2); }
                 break;
             case 47:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatExplosive1); }
-                else { moduleEffects.Remove(ModuleEffect.CombatExplosive1); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatExplosive2); }
+                else { moduleEffects.Remove(ModuleEffect.CombatExplosive2); }
                 break;
             case 48:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidMining2); }
-                else { moduleEffects.Remove(ModuleEffect.AsteroidMining2); }
+                IncreaseMaxMining(1 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidCredits3); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidCredits3); }
                 break;
             case 49:
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.HiddenStats); }
@@ -377,8 +373,9 @@ public class Unit : Node
                 else { moduleEffects.Remove(ModuleEffect.SelfDestruct); }
                 break; 
             case 51:
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidHP3); }
-                else { moduleEffects.Remove(ModuleEffect.AsteroidHP3); }
+                IncreaseMaxMining(1 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidHP5); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidHP5); }
                 break;
             default:
                 break;
@@ -401,7 +398,7 @@ public class Unit : Node
         {
             foreach (var item in _minedPath)
             {
-                selectedPath[item.Item1].AwardCredits(this, item.Item2 * -1);
+                selectedPath[item.Item1].AwardCredits(this, item.Item2 * -1,true);
             }
             _minedPath.Clear();
         }

@@ -76,4 +76,15 @@ public class Station : Unit
             }
         }
     }
+
+    internal void GainCredits(int creditsGained, Unit unit, bool queued = false, bool stagger = true)
+    {
+        credits += creditsGained;
+        if (creditsGained != 0 && !queued)
+        {
+            string plural = Math.Abs(creditsGained) == 1 ? "" : "s";
+            string positive = creditsGained > 0 ? "+" : "";
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"{positive}{creditsGained} Credit{plural}", unit.transform, unit, stagger));
+        }
+    }
 }

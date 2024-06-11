@@ -70,20 +70,18 @@ public class PathNode : MonoBehaviour
         int minedAmount = (minerals - unit.miningLeft) >= 0 ? unit.miningLeft : startingCredits;
         if (!isQueuing && minedAmount > 0)
         {
-            var plural = minedAmount == 1 ? "" : "s";
-            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{minedAmount} Credit{plural}", transform, unit));
             StartCoroutine(MineAnimation());
             hasBeenMinedThisTurn = true;
         }
-        AwardCredits(unit, minedAmount);
+        AwardCredits(unit, minedAmount, isQueuing);
         return minedAmount;
     }
 
-    internal void AwardCredits(Unit unit, int minedAmount)
+    internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)
     {
         minerals -= minedAmount;
         unit.miningLeft -= minedAmount;
-        GameManager.i.Stations[unit.stationId].credits += minedAmount;
+        GameManager.i.Stations[unit.stationId].GainCredits(minedAmount, unit, isQueuing, false);
         mineralText.text = $"{minerals}";
         asteriodSprite.gameObject.SetActive(isAsteroid);
     }

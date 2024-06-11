@@ -174,35 +174,35 @@ public class Module
                 effectText = "-2 Thermal Power \n +7 Explosive Power \n +1 Thermal Damage Taken";
                 break;
             case 41:
-                effectText = "Support allies at full Power.";
+                effectText = "Support allies at full Power. \n +2 Kinetic Power";
                 rarity = Rarity.Rare;
                 break;
             case 42:
-                effectText = "Damage dealt reduces Max HP.";
+                effectText = "Damage dealt reduces Max HP. \n +3 Thermal Power";
                 rarity = Rarity.Rare;
                 break;
             case 43:
-                effectText = "Double all repairing.";
+                effectText = "Double all repairing. \n +4 Explosive Power";
                 rarity = Rarity.Rare;
                 break;
             case 44:
-                effectText = "Repair 3 HP when entering combat.";
+                effectText = "Repair 3 HP when entering combat. \n +2 Explosive Power";
                 rarity = Rarity.Rare;
                 break;
             case 45:
-                effectText = "Gain 1 Kinetic Power when entering combat.";
+                effectText = "Gain 2 Kinetic Power when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 46:
-                effectText = "Gain 1 Thermal Power when entering combat.";
+                effectText = "Gain 2 Thermal Power when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 47:
-                effectText = "Gain 1 Explosive Power when entering combat.";
+                effectText = "Gain 2 Explosive Power when entering combat.";
                 rarity = Rarity.Rare;
                 break;
             case 48:
-                effectText = "Gain 2 Mining Power after destroying an asteroid.";
+                effectText = "Gain 3 Credits after destroying an asteroid. \n +1 Mining Power";
                 rarity = Rarity.Rare;
                 break;
             case 49:
@@ -214,7 +214,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 51:
-                effectText = "Gain 3 Max HP after destroying an asteroid.";
+                effectText = "Gain 5 Max HP after destroying an asteroid. \n +1 Mining Power";
                 rarity = Rarity.Rare;
                 break;
             default:
