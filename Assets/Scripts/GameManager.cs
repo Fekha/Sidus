@@ -1860,7 +1860,6 @@ public class GameManager : MonoBehaviour
                 else if (action.actionType == ActionType.GainCredit)
                 {
                     turnValue.text += $"{GetDescription(action.actionType)}";
-                    StartCoroutine(FloatingTextAnimation($"+1 Credit", currentUnit.transform, currentUnit)); //floater1
                     PerformUpdates(action, Constants.Create);
                     currentUnit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
@@ -1869,7 +1868,6 @@ public class GameManager : MonoBehaviour
                 else if (action.actionType == ActionType.RepairFleet)
                 {
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n";
-                    StartCoroutine(FloatingTextAnimation($"+3 HP", currentUnit.transform, currentUnit)); //floater2
                     PerformUpdates(action, Constants.Create);
                     turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
                     currentUnit.selectIcon.SetActive(true);

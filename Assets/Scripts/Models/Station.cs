@@ -61,7 +61,7 @@ public class Station : Unit
     {
         bonusExplosive += modifier;
         IncreaseMaxMining(1 * modifier);
-        fleets.ForEach(x => IncreaseMaxMining(1 * modifier));
+        fleets.ForEach(x => x.IncreaseMaxMining(1 * modifier));
     }
 
     internal void AOERegen(int amount)
