@@ -30,6 +30,7 @@ public class Station : Unit
         unitName = $"{_color} Station";
         GameManager.i.Stations.Add(this);
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 2, _direction);
+        globalCreditGain = 1;   
     }
 
     internal void researchKinetic(int modifier)

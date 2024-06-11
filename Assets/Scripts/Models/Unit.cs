@@ -66,11 +66,11 @@ public class Unit : Node
         unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }
-    public void RegenHP(int regen)
+    public void RegenHP(int regen, bool queuing = false)
     {
         if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
             regen *= 2;
-        if (HP < maxHP)
+        if (HP < maxHP && !queuing)
             StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this));
         HP += regen;
     }

@@ -1670,7 +1670,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.RepairFleet)
         {
-            action.selectedUnit.RegenHP(3 * modifier);
+            action.selectedUnit.RegenHP(3 * modifier, true);
         }
     }
 
@@ -1962,7 +1962,7 @@ public class GameManager : MonoBehaviour
                 unit.RegenHP(1);
             }
             Stations[unit.stationId].credits += unit.globalCreditGain;
-            if (unit.globalCreditGain > 0)
+            if (unit.globalCreditGain > 0 && TurnNumber != 1)
             {
                 string plural = unit.globalCreditGain == 1 ? "" : "s";
                 StartCoroutine(FloatingTextAnimation($"+{unit.globalCreditGain} Credit{plural}", unit.transform, unit));
