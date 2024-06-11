@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -242,7 +243,7 @@ public class GameManager : MonoBehaviour
         ThermalValueText.text = $"{thermalPower}";
         ExplosiveValueText.text = $"{explosivePower}";
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
-        upgradeButton.interactable = false;
+        upgradeButton.interactable = true;
         upgradeButton.gameObject.SetActive(false);
         createFleetButton.gameObject.SetActive(false);
         repairFleetButton.gameObject.SetActive(false);
@@ -323,6 +324,7 @@ public class GameManager : MonoBehaviour
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)
                         {
+                            SelectedUnit.currentPathNode.parent = null;
                             SelectedPath = GridManager.i.FindPath(SelectedUnit.currentPathNode, SelectedNode, SelectedUnit);
                             Debug.Log($"Path created for {SelectedUnit.unitName}");
                         }
@@ -394,7 +396,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
-            var extraBonus = action.selectedUnit.level % 2 == 0 ? "+2 Mining Power" : "+1 Movement";
+            var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Movement" : "+2 Mining Power";
             var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
             ShowCustomAlertPanel(message);
         }
@@ -672,12 +674,20 @@ public class GameManager : MonoBehaviour
     }
     public void CreateFleet()
     {
-        QueueAction(new Action(ActionType.CreateFleet,null,null,0,null,Guid.NewGuid()));
+        if (IsUnderMaxFleets(MyStation, true))
+            QueueAction(new Action(ActionType.CreateFleet, null, null, 0, null, Guid.NewGuid()));
+        else
+            ViewTechnology(true);
     }
 
     public void UpgradeStructure()
     {
-        QueueAction(new Action(SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet, SelectedUnit));
+        var actionType = SelectedUnit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
+        if (CanLevelUp(SelectedUnit, actionType, true)){
+            QueueAction(new Action(actionType, SelectedUnit));
+        } else {
+            ViewTechnology(true);
+        }
     }
 
     public void CancelAction(int slot)
@@ -811,6 +821,7 @@ public class GameManager : MonoBehaviour
   
     private void UpdateCreateFleetCostText()
     {
+        createFleetButton.interactable = true;
         if (IsUnderMaxFleets(MyStation, true))
         {
             var cost = GetCostOfAction(ActionType.CreateFleet, MyStation, true);
@@ -820,7 +831,6 @@ public class GameManager : MonoBehaviour
         else
         {
             createFleetCost.text = "(Technology Required)";
-            createFleetButton.interactable = false;
         }
     }
 

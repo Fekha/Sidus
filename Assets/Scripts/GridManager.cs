@@ -200,7 +200,6 @@ public class GridManager : MonoBehaviour
 
     internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit, bool checkAsteroids = true)
     {
-        startNode.parent = null;
         List<PathNode> openSet = new List<PathNode>();
         HashSet<PathNode> closedSet = new HashSet<PathNode>();
         startNode.gCost = 0;
