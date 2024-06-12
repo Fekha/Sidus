@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
     private SqlManager sql;
-    private int TurnNumber = 0;
+    internal int TurnNumber = 0;
     private bool infoToggle = false;
     private int helpPageNumber = 0;
     private bool isWaitingForTurns = false;
@@ -142,8 +142,12 @@ public class GameManager : MonoBehaviour
         {
             TechActions.Add((ActionType)i);
         }
-        StartTurn();
-        StartCoroutine(GetTurnReadiness());
+        if (Globals.GameMatch.GameTurns.Count() > 1) {
+            StartCoroutine(DoEndTurn());
+        } else {
+            StartTurn();
+            StartCoroutine(GetTurnReadiness());
+        }
     }
 
     private IEnumerator GetTurnReadiness()
@@ -396,6 +400,8 @@ public class GameManager : MonoBehaviour
         {
             var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Movement" : "+2 Mining Power";
             var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
+            if (action.actionType == ActionType.UpgradeStation)
+                message += "\n+1 Credit per turn.";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
@@ -1201,8 +1207,7 @@ public class GameManager : MonoBehaviour
             if (unitMoving is Station)
             {
                 var station = (unitMoving as Station);
-                station.defeated = true;
-                while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]);  Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
+                while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
                 winner = unitOnPath.stationId;
             }
             else if (unitMoving is Fleet)
@@ -1219,7 +1224,6 @@ public class GameManager : MonoBehaviour
             if (unitOnPath is Station)
             {
                 var station = (unitOnPath as Station);
-                station.defeated = true;
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
                 winner = unitMoving.stationId;
             }
@@ -1418,14 +1422,6 @@ public class GameManager : MonoBehaviour
             i++;
         }
         while (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber));
-        customAlertPanel.SetActive(false);
-        infoToggle = true;
-        ToggleAll();
-        isEndingTurn = true;
-        turnValue.text = $"Turn #{TurnNumber} Complete!";
-        turnLabel.SetActive(true);
-        yield return StartCoroutine(WaitforSecondsOrTap(1));
-        isWaitingForTurns = false;
     }
 
     private void CheckForTurns(GameTurn turns)
@@ -1470,7 +1466,7 @@ public class GameManager : MonoBehaviour
                     {
                         int k = (TurnNumber-1 + j) % Stations.Count;
                         if (k == Globals.localStationIndex)
-                            actionOrders.Add(i + j+1);
+                            actionOrders.Add(i+j+1);
                     }
                 }
                 GameTurn gameTurn = new GameTurn()
@@ -1494,12 +1490,20 @@ public class GameManager : MonoBehaviour
                             SelectedModule = x.selectedModule?.ToServerModule(),
                             SelectedUnitGuid = x.selectedUnit?.unitGuid,
                         }).ToList(),
-                    Credits = MyStation.credits,
+                    Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
                     Station = MyStation.ToServerUnit(),
                     Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
                     ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
+                    Credits = MyStation.credits,
+                    BonusKinetic = MyStation.bonusKinetic,
+                    BonusThermal = MyStation.bonusThermal,
+                    BonusExplosive = MyStation.bonusExplosive,
+                    BonusMining = MyStation.bonusMining,
+                    Score = MyStation.score,
+                    FleetCount = MyStation.fleetCount,
+                    MaxActions = MyStation.maxActions
                 };
-                StartCoroutine(DoEndTurn(gameTurn));
+                StartCoroutine(CheckEndTurn(gameTurn));
             }
             else
             {
@@ -1508,7 +1512,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator DoEndTurn(GameTurn gameTurn)
+    private IEnumerator CheckEndTurn(GameTurn gameTurn)
     {
         customAlertText.text = "Submitting Turn.";
         customAlertPanel.SetActive(true);
@@ -1522,36 +1526,7 @@ public class GameManager : MonoBehaviour
             if (!isWaitingForTurns)
             {
                 yield return StartCoroutine(GetTurnsFromServer());
-                var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
-                if (turnFromServer != null)
-                {
-                    for(int i = lastSubmittedTurn.Count()-1; i >= 0; i--)
-                    {
-                        PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);
-                    }
-                    ClearModules();
-                    ToggleMineralText(true);
-                    ClearTurnArchiveObjects();
-                    var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
-                    foreach (var serverAction in serverActions)
-                    {
-                        yield return StartCoroutine(PerformAction(new Action(serverAction)));
-                        yield return new WaitForSeconds(.1f);
-                    }
-                    foreach (var archive in turnArchive)
-                    {
-                        var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
-                        turnArchiveObject.GetComponentInChildren<TextMeshProUGUI>().text = archive.Item1;
-                        var archivePopUpText = archive.Item2;
-                        turnArchiveObject.GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(archivePopUpText));
-                        TurnArchiveObjects.Add(turnArchiveObject);
-                    }
-                    foreach (var asteroid in GridManager.i.AllNodes)
-                    {
-                        asteroid.ReginCredits();
-                    }
-                    FinishTurns();
-                }
+                yield return StartCoroutine(DoEndTurn());
             }
             else
             {
@@ -1564,6 +1539,48 @@ public class GameManager : MonoBehaviour
         {
             customAlertText.text = $"Your turn was NOT submitted successfully. \n\n Please try again.";
             customAlertPanel.SetActive(true);
+        }
+    }
+
+    private IEnumerator DoEndTurn()
+    {
+        customAlertPanel.SetActive(false);
+        infoToggle = true;
+        ToggleAll();
+        isEndingTurn = true;
+        turnValue.text = $"Turn #{TurnNumber} Complete!";
+        turnLabel.SetActive(true);
+        yield return StartCoroutine(WaitforSecondsOrTap(1));
+        isWaitingForTurns = false;
+        var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
+        if (turnFromServer != null)
+        {
+            for (int i = lastSubmittedTurn.Count() - 1; i >= 0; i--)
+            {
+                PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);
+            }
+            ClearModules();
+            ToggleMineralText(true);
+            ClearTurnArchiveObjects();
+            var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
+            foreach (var serverAction in serverActions)
+            {
+                yield return StartCoroutine(PerformAction(new Action(serverAction)));
+                yield return new WaitForSeconds(.1f);
+            }
+            foreach (var archive in turnArchive)
+            {
+                var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
+                turnArchiveObject.GetComponentInChildren<TextMeshProUGUI>().text = archive.Item1;
+                var archivePopUpText = archive.Item2;
+                turnArchiveObject.GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(archivePopUpText));
+                TurnArchiveObjects.Add(turnArchiveObject);
+            }
+            foreach (var asteroid in GridManager.i.AllNodes)
+            {
+                asteroid.ReginCredits();
+            }
+            FinishTurns();
         }
     }
 
@@ -2032,7 +2049,7 @@ public class GameManager : MonoBehaviour
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
         if (unit is Station)
         {
-            //unit.globalCreditGain += modifier;
+            unit.globalCreditGain += modifier;
             if (unit.level == 1)
             {
                 spriteRenderer.sprite = GridManager.i.stationlvl1;

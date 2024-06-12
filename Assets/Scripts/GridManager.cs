@@ -1,3 +1,4 @@
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ public class GridManager : MonoBehaviour
     public GameObject nodePrefab;
     public GameObject unitPrefab;
     private Vector3 cellPrefabSize;
-    private Transform characterParent;
+    internal Transform characterParent;
     internal PathNode[,] grid;
     private Vector2 gridSize = new Vector2(Constants.GridSize, Constants.GridSize);
     internal int scoreToWin = 99;
@@ -29,9 +30,6 @@ public class GridManager : MonoBehaviour
     public List<Sprite> nebulaSprite;
     public RuntimeAnimatorController nodeController;
     public AnimationClip nebulaRotationClip;
-
-
-
     private void Awake()
     {
         i = this;
@@ -55,55 +53,60 @@ public class GridManager : MonoBehaviour
     }
     private void CreateStation(int stationId)
     {
-        string playerColor = "Blue";
+        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = stationlvl1;
         unitSprite.color = playerColors[stationId];
+        Player serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
         if (!Globals.IsCPUGame || stationId == 0)
         {
-            stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Station.UnitGuid;
-            fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Fleets[0].UnitGuid;
-        }
-        int spawnX = 1;
-        int spawnY = 6;
-        Direction facing = Direction.BottomLeft;
-        if (stationId == 1)
-        {
-            playerColor = "Red";
-            spawnX = 6;
-            spawnY = 1;
-            facing = Direction.TopRight;
-        }
-        else if (stationId == 2)
-        {
-            playerColor = "Purple";
-            spawnX = 2;
-            spawnY = 1;
-            facing = Direction.Right;
-        }
-        else if (stationId == 3)
-        {
-            playerColor = "Orange";
-            spawnX = 5;
-            spawnY = 6;
-            facing = Direction.Left;
+            serverPlayer = currentGameTurn.Players[stationId];
+            stationGuid = (Guid)serverPlayer.Station.UnitGuid;
+            fleetGuid = (Guid)serverPlayer.Fleets[0].UnitGuid;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, playerColor, 12, 1, 5, 6, 7, stationGuid, facing);
-        StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
+        GameManager.i.Stations.Add(stationNode);
+        if (Globals.GameMatch.GameTurns.Count() > 1)
+        {
+            GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
+            stationNode.InitializeStation(serverPlayer);
+        } else {
+            string color = "Blue";
+            int spawnX = 1;
+            int spawnY = 6;
+            Direction facing = Direction.BottomLeft;
+            if (stationId == 1)
+            {
+                color = "Red";
+                spawnX = 6;
+                spawnY = 1;
+                facing = Direction.TopRight;
+            }
+            else if (stationId == 2)
+            {
+                color = "Purple";
+                spawnX = 2;
+                spawnY = 1;
+                facing = Direction.Right;
+            }
+            else if (stationId == 3)
+            {
+                color = "Orange";
+                spawnX = 5;
+                spawnY = 6;
+                facing = Direction.Left;
+            }
+            stationNode.InitializeStation(spawnX, spawnY, color, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
+        }
     }
 
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
     {
-        GameObject fleetPrefab = unitPrefab;
-        SpriteRenderer unitSprite = fleetPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
-        unitSprite.sprite = fleetlvl1;
-        unitSprite.color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
         if(!originalSpawn)
             hexesNearby = hexesNearby.Where(x => x.ownedById == stationNode.stationId).ToList();
@@ -120,7 +123,7 @@ public class GridManager : MonoBehaviour
             int j = (i + startIndex)%hexesNearby.Count;
             if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
             {
-                var fleet = Instantiate(fleetPrefab);
+                var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
                 fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
@@ -303,7 +306,7 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Where(x=>!x.defeated).Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
+        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
     }
     internal int CheckForWin()
     {
@@ -315,10 +318,6 @@ public class GridManager : MonoBehaviour
             {
                 return i;
             }
-        }
-        if (GameManager.i.Stations.Where(x => !x.defeated).Select(x => x.teamId).Distinct().Count() == 1)
-        {
-            return GameManager.i.Stations.FirstOrDefault(x => !x.defeated).stationId;
         }
         return -1;
     }

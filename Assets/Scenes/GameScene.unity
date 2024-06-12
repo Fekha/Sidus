@@ -17006,7 +17006,7 @@ MonoBehaviour:
 
     Each level up provides
     +3 Max HP and +1 of each combat stat. Every ''even'' level gives +1 movement,
-    every ''odd'' level gives +2 mining.'
+    every ''odd'' level gives +2 mining. Stations gain +1 credit per turn.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

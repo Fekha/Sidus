@@ -1,7 +1,7 @@
 using StartaneousAPI.ServerModels;
 using System;
 using System.Collections.Generic;
-using static System.Collections.Specialized.BitVector32;
+using System.Linq;
 
 public class Station : Unit
 {
@@ -9,18 +9,17 @@ public class Station : Unit
     internal List<Fleet> fleets = new List<Fleet>();
     internal List<Module> modules = new List<Module>();
     internal List<Technology> technology = new List<Technology>();
-    internal int maxActions = 2;
-    internal int credits = 6;
-    internal bool defeated = false;
-    internal int fleetCount = 0;
-    internal int bonusKinetic = 0;
-    internal int bonusThermal = 0;
-    internal int bonusExplosive = 0;
-    internal int bonusHP = 0;
-    internal int bonusMining = 0;
-    internal int score = 0;
+    internal int maxActions;
+    internal int credits;
+    internal int fleetCount;
+    internal int bonusKinetic;
+    internal int bonusThermal;
+    internal int bonusExplosive;
+    internal int bonusHP;
+    internal int bonusMining;
+    internal int score;
 
-    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _structureId, Direction _direction)
+    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid)
     {
         for (int i = 0; i <= Constants.TechAmount; i++)
         {
@@ -28,11 +27,36 @@ public class Station : Unit
         }
         stationId = GameManager.i.Stations.Count;
         unitName = $"{_color} Station";
-        GameManager.i.Stations.Add(this);
-        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, 2, _direction);
-        globalCreditGain = 1;   
+        credits = 6;
+        maxActions = 2;
+        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
+        globalCreditGain = 1;
+        StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
     }
-
+    public void InitializeStation(Player player)
+    {
+        actions = player.Actions.Select(x=>new Action(x)).ToList();
+        technology = player.Technology.Select(x => new Technology(x)).ToList();
+        modules = GameManager.i.AllModules.Where(x => player.ModulesGuids.Contains(x.moduleGuid)).ToList();
+        maxActions = player.MaxActions;
+        credits = player.Credits;
+        fleetCount = player.FleetCount;
+        bonusKinetic = player.BonusKinetic;
+        bonusThermal = player.BonusThermal;
+        bonusExplosive = player.BonusExplosive;
+        bonusHP = player.BonusHP;
+        bonusMining = player.BonusMining;
+        score = player.Score;
+        InitializeUnit(player.Station);
+        foreach (var fleet in player.Fleets)
+        {
+            var fleetObj = Instantiate(GridManager.i.unitPrefab);
+            fleetObj.transform.SetParent(GridManager.i.characterParent);
+            var fleetNode = fleetObj.AddComponent<Fleet>();
+            fleetNode.InitializeUnit(fleet);
+            fleets.Add(fleetNode);
+        }
+    }
     internal void researchKinetic(int modifier)
     {
         bonusKinetic += modifier;
