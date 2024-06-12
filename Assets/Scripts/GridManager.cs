@@ -70,8 +70,7 @@ public class GridManager : MonoBehaviour
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        GameManager.i.Stations.Add(stationNode);
-        if (Globals.GameMatch.GameTurns.Count() > 1)
+        if (currentGameTurn.TurnNumber > 0)
         {
             GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
             stationNode.InitializeStation(serverPlayer);
@@ -103,6 +102,7 @@ public class GridManager : MonoBehaviour
             }
             stationNode.InitializeStation(spawnX, spawnY, color, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
         }
+        GameManager.i.Stations.Add(stationNode);
     }
 
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)

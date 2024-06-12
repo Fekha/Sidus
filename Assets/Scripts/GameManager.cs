@@ -143,7 +143,14 @@ public class GameManager : MonoBehaviour
             TechActions.Add((ActionType)i);
         }
         if (Globals.GameMatch.GameTurns.Count() > 1) {
-            StartCoroutine(DoEndTurn());
+            yield return StartCoroutine(DoEndTurn());
+            if (Globals.GameMatch.GameTurns.Count() > TurnNumber)
+            {
+                foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions) {
+                    QueueAction(new Action(serverAction), true);
+                }
+                StartCoroutine(CheckEndTurn());
+            }
         } else {
             StartTurn();
             StartCoroutine(GetTurnReadiness());
@@ -1421,14 +1428,21 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
             i++;
         }
-        while (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber));
+        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns[TurnNumber].Players.Any(x=>x == null));
     }
 
     private void CheckForTurns(GameTurn turns)
     {
-        if (turns != null && !Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber))
+        if (turns != null)
         {
-            Globals.GameMatch.GameTurns.Add(turns);
+            if (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber))
+            {
+                Globals.GameMatch.GameTurns.Add(turns);
+            }
+            else
+            {
+                Globals.GameMatch.GameTurns[TurnNumber] = turns;
+            }
         }
     }
     public void ShowTurnArchive(bool active)
@@ -1458,6 +1472,12 @@ public class GameManager : MonoBehaviour
                 while (MyStation.actions.Count < MyStation.maxActions)
                 {
                     QueueAction(new Action(ActionType.GainCredit));
+                }
+                //Remove effects for game save
+                lastSubmittedTurn = MyStation.actions;
+                for (int i = lastSubmittedTurn.Count() - 1; i >= 0; i--)
+                {
+                    PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);
                 }
                 List<int> actionOrders = new List<int>();
                 for (int i = 0; i <= Stations.Count * 5; i += Stations.Count)
@@ -1503,7 +1523,12 @@ public class GameManager : MonoBehaviour
                     FleetCount = MyStation.fleetCount,
                     MaxActions = MyStation.maxActions
                 };
-                StartCoroutine(CheckEndTurn(gameTurn));
+                //add effects back in case player wants to resubmit their turn
+                for (int i = 0; i < lastSubmittedTurn.Count(); i++)
+                {
+                    PerformUpdates(lastSubmittedTurn[i], Constants.Create, true);
+                }
+                StartCoroutine(SubmitEndTurn(gameTurn));
             }
             else
             {
@@ -1512,7 +1537,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator CheckEndTurn(GameTurn gameTurn)
+    private IEnumerator SubmitEndTurn(GameTurn gameTurn)
     {
         customAlertText.text = "Submitting Turn.";
         customAlertPanel.SetActive(true);
@@ -1520,24 +1545,28 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost, SubmitResponse));
         if (SubmittedTurn)
         {
-            SubmittedTurn = false;
-            lastSubmittedTurn = MyStation.actions;
-            endTurnButton.sprite = endTurnButtonPressed;
-            if (!isWaitingForTurns)
-            {
-                yield return StartCoroutine(GetTurnsFromServer());
-                yield return StartCoroutine(DoEndTurn());
-            }
-            else
-            {
-                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your new turn was submitted, overriding your previous one.";
-                customAlertPanel.SetActive(true);
-            }
+            yield return StartCoroutine(CheckEndTurn());
         }
         else
         {
             customAlertText.text = $"Your turn was NOT submitted successfully. \n\n Please try again.";
+            customAlertPanel.SetActive(true);
+        }
+    }
+
+    private IEnumerator CheckEndTurn()
+    {
+        SubmittedTurn = false;
+        endTurnButton.sprite = endTurnButtonPressed;
+        if (!isWaitingForTurns)
+        {
+            yield return StartCoroutine(GetTurnsFromServer());
+            yield return StartCoroutine(DoEndTurn());
+        }
+        else
+        {
+            var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
+            customAlertText.text = $"Your new turn was submitted, overriding your previous one.";
             customAlertPanel.SetActive(true);
         }
     }
@@ -1555,6 +1584,7 @@ public class GameManager : MonoBehaviour
         var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
         if (turnFromServer != null)
         {
+            //Remove effects from queued actions so we can reapply them with visuals
             for (int i = lastSubmittedTurn.Count() - 1; i >= 0; i--)
             {
                 PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);

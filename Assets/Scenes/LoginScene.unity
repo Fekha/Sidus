@@ -1978,7 +1978,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1345632150}
         m_TargetAssemblyTypeName: LoginManager, Assembly-CSharp
-        m_MethodName: ViewOpenGames
+        m_MethodName: ViewActiveGames
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
