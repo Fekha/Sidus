@@ -390,7 +390,7 @@ public class GameManager : MonoBehaviour
     {
         asteroidPanel.transform.Find("CurrentValue").GetComponent<TextMeshProUGUI>().text = $"Current Value: {targetNode.minerals}";
         asteroidPanel.transform.Find("MaxValue").GetComponent<TextMeshProUGUI>().text = $"Max Value: {targetNode.maxCredits}";
-        asteroidPanel.transform.Find("RegenValue").GetComponent<TextMeshProUGUI>().text = $"Regen Per Turn: {targetNode.creditsRegin}";
+        asteroidPanel.transform.Find("RegenValue").GetComponent<TextMeshProUGUI>().text = $"Regen Per Turn: {targetNode.creditRegin}";
     }
     //ViewQueuedAction
     //ClickOnAction
@@ -1001,7 +1001,7 @@ public class GameManager : MonoBehaviour
                 if(isValidHex)
                     unitMoving.currentPathNode = nextNode;
                 if (!nextNode.isAsteroid && nextNode.ownedById == -1)
-                    unitMoving.SetNodeColor();
+                    unitMoving.currentPathNode.SetNodeColor(unitMoving.stationId);
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
                     var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, null, false);
@@ -1027,7 +1027,7 @@ public class GameManager : MonoBehaviour
             unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
             unitMoving.currentPathNode.unitOnPath = unitMoving;
             if(GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId))
-                unitMoving.SetNodeColor();
+                unitMoving.currentPathNode.SetNodeColor(unitMoving.stationId);
         }
         if (!didFightLastMove)
         {
@@ -1495,6 +1495,8 @@ public class GameManager : MonoBehaviour
                     TurnNumber = TurnNumber,
                     ModulesForMarket = Globals.GameMatch.GameTurns.LastOrDefault().ModulesForMarket,
                     MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
+                    AllModules = AllModules.Select(x => x.ToServerModule()).ToList(),
+                    AllNodes = GridManager.i.AllNodes.Select(x => x.ToServerNode()).ToList(),
                     Players = new Player[Globals.GameMatch.MaxPlayers]
                 };
                 gameTurn.Players[Globals.localStationIndex] = new Player()

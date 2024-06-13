@@ -61,7 +61,6 @@ public class Unit : Node
         supportValue = .5;
         globalCreditGain = 0;
         maxAttachedModules = 1;
-        SetNodeColor();
         GetUIComponents();
     }
     internal void InitializeUnit(ServerUnit unit)
@@ -148,11 +147,7 @@ public class Unit : Node
         maxMovement += movement;
         movementLeft += movement;
     }
-    public void SetNodeColor()
-    {
-        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[stationId];
-        currentPathNode.ownedById = stationId;
-    }
+    
     internal void resetMovementRange()
     {
         movementLeft = maxMovement;

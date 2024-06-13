@@ -41,19 +41,19 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
-        CreateGrid();
+        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
+        CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;
         var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.GameTurns[0].Players.Length;
         for (int i = 0; i < stationsCount; i++)
         {
-            CreateStation(i);
+            CreateStation(i, currentGameTurn);
         }
         scoreToWin = GetScoreToWin();
         DoneLoading = true;
     }
-    private void CreateStation(int stationId)
+    private void CreateStation(int stationId, GameTurn currentGameTurn)
     {
-        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = stationlvl1;
@@ -73,6 +73,7 @@ public class GridManager : MonoBehaviour
         if (currentGameTurn.TurnNumber > 0)
         {
             GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
+            GameManager.i.AllModules = currentGameTurn.AllModules.Select(x => new Module(x)).ToList();
             stationNode.InitializeStation(serverPlayer);
         } else {
             string color = "Blue";
@@ -134,6 +135,10 @@ public class GridManager : MonoBehaviour
                     yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
                     fleetNode.selectIcon.SetActive(false);
                 }
+                else
+                {
+                    fleetNode.currentPathNode.SetNodeColor(fleetNode.stationId);
+                }
                 didSpawn = true;
                 break;
             }
@@ -158,7 +163,7 @@ public class GridManager : MonoBehaviour
         }   
     }
 
-    void CreateGrid()
+    void CreateGrid(GameTurn currentGameTurn)
     {
         var nodeParent = GameObject.Find("Nodes").transform;
         grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
@@ -169,24 +174,37 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                var coords = new Coords(x, y);
-                // Calculate the world position based on the size of the cellPrefab
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
-                int maxCredits = 0;
-                int startCredits = 0;
-                int creditRegin = 0;
-                bool isRift = false;
+                grid[x, y] = cell.AddComponent<PathNode>();
+                var coords = new Coords(x, y); 
                 var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
-                if (asteroids.Any(x=>x.CoordsEquals(coords)))
+                if (currentGameTurn.TurnNumber > 0)
                 {
-                    startCredits = 4;
-                    maxCredits = 12;
-                    creditRegin = 1;
-                } else if (rift != null) {
-                    isRift = true;
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift)%nebulaSprite.Count];
+                    grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x=>new Coords(x.Coords).CoordsEquals(coords)));
+                }
+                else
+                {
+                    int maxCredits = 0;
+                    int startCredits = 0;
+                    int creditRegin = 0;
+                    bool isRift = false;
+                    if (asteroids.Any(x => x.CoordsEquals(coords)))
+                    {
+                        startCredits = 4;
+                        maxCredits = 12;
+                        creditRegin = 1;
+                    }
+                    else if (rift != null)
+                    {
+                        isRift = true;
+                    }
+                    grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
+                }
+                if (grid[x, y].isRift)
+                {
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift) % nebulaSprite.Count];
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
                     cell.transform.Find("Node/Background").gameObject.SetActive(false);
                     Animator animator = cell.AddComponent<Animator>();
@@ -195,8 +213,6 @@ public class GridManager : MonoBehaviour
                     overrideController["DefaultAnimation"] = nebulaRotationClip; // Replace "DefaultAnimation" with the actual animation state name if needed
                     animator.runtimeAnimatorController = overrideController;
                 }
-                grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
             }
         }
     }
