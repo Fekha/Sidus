@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(.25f);
         loadingPanel.SetActive(false);
-        if (Globals.GameMatch.GameTurns.Count() > 1) {
+        if (Globals.GameMatch.GameTurns.Count() > 1 && TurnNumber > 0) {
             previousTurnButton.interactable = true;
             yield return StartCoroutine(DoEndTurn());
             if (Globals.GameMatch.GameTurns.Count() > TurnNumber)
