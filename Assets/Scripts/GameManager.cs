@@ -143,6 +143,7 @@ public class GameManager : MonoBehaviour
         }
         ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
+        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
@@ -154,22 +155,31 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(DoEndTurn());
             if (Globals.GameMatch.GameTurns.Count() > TurnNumber)
             {
-                foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions) {
-                    QueueAction(new Action(serverAction), true);
+                if (Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions != null)
+                {
+                    foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions)
+                    {
+                        QueueAction(new Action(serverAction), true);
+                    }
+                    yield return StartCoroutine(CheckEndTurn());
                 }
-                yield return StartCoroutine(CheckEndTurn());
             }
         } else {
             StartTurn();
         }
-        //This is for the turn circle highlighting at the top left
+        StartCoroutine(GetIsTurnReady());
+    }
+
+    private IEnumerator GetIsTurnReady()
+    {
         while (!Globals.IsCPUGame)
         {
             while (!isEndingTurn)
             {
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", UpdateGameTurnStatus));
-                yield return new WaitForSeconds(.1f);
+                yield return new WaitForSeconds(.5f);
             }
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -1615,7 +1625,7 @@ public class GameManager : MonoBehaviour
             {
                 asteroid.ReginCredits();
             }
-            StartCoroutine(FinishTurns());
+            yield return StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}", GetWinner));
         }
     }
 
@@ -1745,7 +1755,10 @@ public class GameManager : MonoBehaviour
     {
         if (exitOption == 0)
         {
-            exitPanel.SetActive(true);
+            if(Winner == -1)
+                exitPanel.SetActive(true);
+            else
+                SceneManager.LoadScene((int)Scene.Lobby);
         }
         else if (exitOption == 1)
         {
@@ -1757,7 +1770,7 @@ public class GameManager : MonoBehaviour
         }
         else if (exitOption == 3)
         {
-            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).stationId}"));
+            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).stationId}"));
             EndTurn(true);
             SceneManager.LoadScene((int)Scene.Lobby);
         }
@@ -1767,9 +1780,10 @@ public class GameManager : MonoBehaviour
             forfietPanel.SetActive(false);
         }
     }
-    private IEnumerator FinishTurns()
+
+    private void GetWinner(int _winner)
     {
-        yield return StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}winner={Winner}",GetWinner));
+        Winner = _winner;
         if (Winner == -1)
         {
             Winner = GridManager.i.CheckForWin();
@@ -1787,11 +1801,6 @@ public class GameManager : MonoBehaviour
             previousTurnButton.interactable = true;
             StartTurn();
         }
-    }
-
-    private void GetWinner(int _winner)
-    {
-        Winner = _winner;
     }
 
     private IEnumerator PerformAction(Action action)
@@ -2000,7 +2009,7 @@ public class GameManager : MonoBehaviour
         while (!tapped)
         {
             elapsedTime += Time.deltaTime;
-            yield return null;
+            yield return new WaitForSeconds(.1f);
         }
     }
 

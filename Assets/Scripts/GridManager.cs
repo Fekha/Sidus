@@ -42,6 +42,11 @@ public class GridManager : MonoBehaviour
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
+        if (currentGameTurn.TurnNumber > 0)
+        {
+            GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
+            currentGameTurn.AllModules.Select(x => new Module(x)).ToList(); //this sets GameManager.i.AllModules
+        }
         CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;
         var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.GameTurns[0].Players.Length;
@@ -72,10 +77,10 @@ public class GridManager : MonoBehaviour
         var stationNode = station.AddComponent<Station>();
         if (currentGameTurn.TurnNumber > 0)
         {
-            GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
-            GameManager.i.AllModules = currentGameTurn.AllModules.Select(x => new Module(x)).ToList();
             stationNode.InitializeStation(serverPlayer);
-        } else {
+        } 
+        else 
+        {
             string color = "Blue";
             int spawnX = 1;
             int spawnY = 6;
