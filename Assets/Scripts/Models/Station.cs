@@ -30,7 +30,8 @@ public class Station : Unit
         credits = 6;
         maxActions = 2;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
-        globalCreditGain = 1;
+        //globalCreditGain = 1;
+        currentPathNode.SetNodeColor(stationId);
         StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
     }
     public void InitializeStation(Player player)

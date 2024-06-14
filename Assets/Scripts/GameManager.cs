@@ -37,6 +37,9 @@ public class GameManager : MonoBehaviour
     public GameObject technologyPanel;
     public GameObject asteroidPanel;
     public GameObject turnArchivePanel;
+    public GameObject loadingPanel;
+    public GameObject exitPanel;
+    public GameObject forfietPanel;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
     private List<PathNode> SelectedPath;
@@ -69,6 +72,7 @@ public class GameManager : MonoBehaviour
     public Button createFleetButton;
     public Button repairFleetButton;
     public Button generateModuleButton;
+    public Button previousTurnButton;
     public Image endTurnButton;
     public Sprite endTurnButtonNotPressed;
     public Sprite endTurnButtonPressed;
@@ -103,7 +107,7 @@ public class GameManager : MonoBehaviour
     internal List<GameObject> AuctionObjects = new List<GameObject>();
     internal List<GameObject> TechnologyObjects = new List<GameObject>();
     internal List<GameObject> TurnArchiveObjects = new List<GameObject>();
-    internal int winner = -1;
+    internal int Winner = -1;
     internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
     public GameObject turnLabel;
     private SqlManager sql;
@@ -123,6 +127,7 @@ public class GameManager : MonoBehaviour
         if(!Globals.HasBeenToLobby)
             SceneManager.LoadScene((int)Scene.Lobby);
 #endif
+        loadingPanel.SetActive(true);
     }
     void Start()
     { 
@@ -142,23 +147,22 @@ public class GameManager : MonoBehaviour
         {
             TechActions.Add((ActionType)i);
         }
+        yield return new WaitForSeconds(.25f);
+        loadingPanel.SetActive(false);
         if (Globals.GameMatch.GameTurns.Count() > 1) {
+            previousTurnButton.interactable = true;
             yield return StartCoroutine(DoEndTurn());
             if (Globals.GameMatch.GameTurns.Count() > TurnNumber)
             {
                 foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions) {
                     QueueAction(new Action(serverAction), true);
                 }
-                StartCoroutine(CheckEndTurn());
+                yield return StartCoroutine(CheckEndTurn());
             }
         } else {
             StartTurn();
-            StartCoroutine(GetTurnReadiness());
         }
-    }
-
-    private IEnumerator GetTurnReadiness()
-    {
+        //This is for the turn circle highlighting at the top left
         while (!Globals.IsCPUGame)
         {
             while (!isEndingTurn)
@@ -166,7 +170,6 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", UpdateGameTurnStatus));
                 yield return new WaitForSeconds(.1f);
             }
-            yield return new WaitForSeconds(1);
         }
     }
 
@@ -407,8 +410,8 @@ public class GameManager : MonoBehaviour
         {
             var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Movement" : "+2 Mining Power";
             var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
-            if (action.actionType == ActionType.UpgradeStation)
-                message += "\n+1 Credit per turn.";
+            //if (action.actionType == ActionType.UpgradeStation)
+            //    message += "\n+1 Credit per turn.";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
@@ -1215,7 +1218,7 @@ public class GameManager : MonoBehaviour
             {
                 var station = (unitMoving as Station);
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
-                winner = unitOnPath.stationId;
+                Winner = unitOnPath.stationId;
             }
             else if (unitMoving is Fleet)
             {
@@ -1232,7 +1235,7 @@ public class GameManager : MonoBehaviour
             {
                 var station = (unitOnPath as Station);
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
-                winner = unitMoving.stationId;
+                Winner = unitMoving.stationId;
             }
             else if (unitOnPath is Fleet)
             {
@@ -1612,7 +1615,7 @@ public class GameManager : MonoBehaviour
             {
                 asteroid.ReginCredits();
             }
-            FinishTurns();
+            StartCoroutine(FinishTurns());
         }
     }
 
@@ -1738,24 +1741,57 @@ public class GameManager : MonoBehaviour
         SubmittedTurn = response;
     }
 
-    private void FinishTurns()
+    public void ExitGame(int exitOption)
     {
-        if (winner == -1)
+        if (exitOption == 0)
         {
-            winner = GridManager.i.CheckForWin();
+            exitPanel.SetActive(true);
         }
-        if (winner != -1)
+        else if (exitOption == 1)
+        {
+            SceneManager.LoadScene((int)Scene.Lobby);
+        }
+        else if (exitOption == 2)
+        {
+            forfietPanel.SetActive(true);
+        }
+        else if (exitOption == 3)
+        {
+            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).stationId}"));
+            EndTurn(true);
+            SceneManager.LoadScene((int)Scene.Lobby);
+        }
+        else if (exitOption == 4)
+        {
+            exitPanel.SetActive(false);
+            forfietPanel.SetActive(false);
+        }
+    }
+    private IEnumerator FinishTurns()
+    {
+        yield return StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}winner={Winner}",GetWinner));
+        if (Winner == -1)
+        {
+            Winner = GridManager.i.CheckForWin();
+        }
+        if (Winner != -1)
         {
             turnTapText.SetActive(false);
             ToggleHPText(true);
-            turnValue.text = $"{Stations[winner].color} player won after {TurnNumber} turns";
-            Debug.Log($"{Stations[winner].color} player won after {TurnNumber} turns");
+            turnValue.text = $"{Stations[Winner].color} player won after {TurnNumber} turns";
+            Debug.Log($"{Stations[Winner].color} player won after {TurnNumber} turns");
             //Add EOG Stats
         }
         else
         {
+            previousTurnButton.interactable = true;
             StartTurn();
         }
+    }
+
+    private void GetWinner(int _winner)
+    {
+        Winner = _winner;
     }
 
     private IEnumerator PerformAction(Action action)
@@ -2081,7 +2117,7 @@ public class GameManager : MonoBehaviour
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
         if (unit is Station)
         {
-            unit.globalCreditGain += modifier;
+            //unit.globalCreditGain += modifier;
             if (unit.level == 1)
             {
                 spriteRenderer.sprite = GridManager.i.stationlvl1;

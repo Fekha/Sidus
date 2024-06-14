@@ -104,8 +104,9 @@ public class PathNode : MonoBehaviour
     }
     public void SetNodeColor(int _ownedById)
     {
-        transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[_ownedById];
         ownedById = _ownedById;
+        if(ownedById != -1)
+            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[_ownedById];
     }
     internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)
     {
