@@ -1,3 +1,4 @@
+using StartaneousAPI.ServerModels;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -7,8 +8,8 @@ public class Technology
 {
     public ResearchType researchId { get; set; }
     public int level { get; set; }
-    public int neededAmount { get; set; }
     public int currentAmount { get; set; }
+    public int neededAmount { get; set; }
     public string effectText { get; set; }
     public string currentEffectText { get; set; }
     public string requirementText { get; set; }
@@ -17,6 +18,30 @@ public class Technology
     {
         researchId = (ResearchType)_researchId;
         UpdateValues(1);
+    }
+    internal Technology(ServerTechnology tech)
+    {
+        researchId = (ResearchType)tech.ResearchId;
+        level = tech.Level;
+        currentAmount = tech.CurrentAmount;
+        neededAmount = tech.NeededAmount;
+        effectText = tech.EffectText;
+        currentEffectText = tech.CurrentEffectText;
+        requirementText = tech.RequirementText;
+    }
+
+    public ServerTechnology ToServerTechnology()
+    {
+        return new ServerTechnology()
+        {
+            ResearchId = (int)researchId,
+            Level = level,
+            CurrentAmount = currentAmount,
+            NeededAmount = neededAmount,
+            EffectText = effectText,
+            CurrentEffectText = currentEffectText,
+            RequirementText = requirementText,
+        };
     }
     private int GetNeededAmount(int level)
     {

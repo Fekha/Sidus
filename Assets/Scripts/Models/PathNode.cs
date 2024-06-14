@@ -1,3 +1,4 @@
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
 using TMPro;
@@ -9,8 +10,9 @@ public class PathNode : MonoBehaviour
     public bool isRift = false;
     public int maxCredits = 0;
     public int minerals = 0;
-    public int creditsRegin = 0;
+    public int creditRegin = 0;
     public Coords coords;
+    public int ownedById = -1;
 
     internal int gCost;
     internal PathNode parent;
@@ -26,33 +28,57 @@ public class PathNode : MonoBehaviour
 
     public bool isAsteroid { get { return minerals > 0; } }
 
-
-    public int ownedById;
-    public void InitializeNode(int _x, int _y, int _startCredits, int _maxCredits, int _creditRegin, bool _isRift)
+    public void InitializeNode(int _x, int _y, int _minerals, int _maxCredits, int _creditRegin, bool _isRift)
     {
         isRift = _isRift;
         maxCredits = _maxCredits;
-        minerals = _startCredits;
-        creditsRegin = _creditRegin;
+        minerals = _minerals;
+        creditRegin = _creditRegin;
+        coords = new Coords(_x, _y);
+        GetUIComponents();
+    }
+
+    public void InitializeNode(ServerNode node)
+    {
+        isRift = node.IsRift;
+        maxCredits = node.MaxCredits;
+        minerals = node.Minerals;
+        creditRegin = node.CreditRegin;
+        coords = new Coords(node.Coords);
+        ownedById = node.OwnedById;
+        GetUIComponents();
+    }
+
+    private void GetUIComponents()
+    {
         asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
         asteriodSprite.gameObject.SetActive(isAsteroid);
         mineIcon = transform.Find("Asteroid/Mine").gameObject;
         mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
-        ownedById = -1;
-        coords = new Coords(_x, _y);
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
         coordsText.text = $"{coords.x},{coords.y}";
-//#if UNITY_EDITOR
-//        coordsText.gameObject.SetActive(true);
-//#endif
+        SetNodeColor(ownedById);
+        //coordsText.gameObject.SetActive(true); //Helpful for debugging
         GridManager.i.AllNodes.Add(this);
     }
 
+    public ServerNode ToServerNode()
+    {
+        return new ServerNode()
+        {
+            IsRift = isRift,
+            MaxCredits = maxCredits,
+            Minerals = minerals,
+            CreditRegin = creditRegin,
+            Coords = coords.ToServerCoords(),
+            OwnedById = ownedById,
+        };
+    }
     public void ReginCredits()
     {
         if (minerals < maxCredits && !hasBeenMinedThisTurn && isAsteroid)
         {
-            minerals = Mathf.Min(minerals + creditsRegin, maxCredits);
+            minerals = Mathf.Min(minerals + creditRegin, maxCredits);
             mineralText.text = $"{minerals}";
             //StartCoroutine(GameManager.i.FloatingTextAnimation($"+{creditsRegin} Credit", transform, null));
         }
@@ -76,7 +102,12 @@ public class PathNode : MonoBehaviour
         AwardCredits(unit, minedAmount, isQueuing);
         return minedAmount;
     }
-
+    public void SetNodeColor(int _ownedById)
+    {
+        ownedById = _ownedById;
+        if(ownedById != -1)
+            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[_ownedById];
+    }
     internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)
     {
         minerals -= minedAmount;

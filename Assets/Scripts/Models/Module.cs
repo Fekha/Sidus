@@ -1,5 +1,6 @@
 using StartaneousAPI.ServerModels;
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Module
@@ -44,7 +45,8 @@ public class Module
         moduleGuid = _moduleGuid;
         moduleId = _moduleId;
         icon = Resources.Load<Sprite>($"Sprites/Modules/{moduleId}");
-        GameManager.i.AllModules.Add(this);
+        if(!GameManager.i.AllModules.Any(x=>x.moduleGuid == _moduleGuid))
+            GameManager.i.AllModules.Add(this);
         switch (moduleId)
         {
             case 0:

@@ -1,7 +1,9 @@
 using StartaneousAPI.ServerModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Unit : Node
@@ -23,20 +25,21 @@ public class Unit : Node
     internal int explosiveDamageModifier;
     internal int maxMining;
     internal int miningLeft;
-    internal double supportValue = .5;
-    internal int level = 1;
-    internal int globalCreditGain = 0;
-    internal bool hasMoved = false;
+    internal double supportValue;
+    internal int level;
+    internal int globalCreditGain;
+    internal int maxAttachedModules; // 1+ station.level
+    internal Direction facing;
     internal List<Module> attachedModules = new List<Module>();
     internal List<ModuleEffect> moduleEffects = new List<ModuleEffect>();
+
     internal TextMeshPro HPText;
     internal TextMeshPro statText;
     internal GameObject selectIcon;
     internal GameObject inCombatIcon;
-    internal Direction facing;
     internal Transform unitImage;
-    internal int maxAttachedModules = 1; // 1+ station.level
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
+    internal bool hasMoved = false;
 
     public void InitializeUnit(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
     {
@@ -53,19 +56,65 @@ public class Unit : Node
         thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
         maxMining = _mining;
+        miningLeft = _mining;
+        level = 1;
+        supportValue = .5;
+        globalCreditGain = 0;
+        maxAttachedModules = 1;
+        GetUIComponents();
+    }
+    internal void InitializeUnit(ServerUnit unit)
+    {
+        unitGuid = unit.UnitGuid;
+        facing = unit.Facing;
+        color = unit.Color;
+        location = new Coords(unit.Location);
+        unitName = unit.UnitName;
+        stationId = unit.StationId;
+        teamId = unit.TeamId;
+        maxHP = unit.MaxHP;
+        HP = unit.HP;
+        maxMovement = unit.MaxMovement;
+        movementLeft = unit.MovementLeft;
+        kineticPower = unit.KineticPower;
+        thermalPower = unit.ThermalPower;
+        explosivePower = unit.ExplosivePower;
+        kineticDamageModifier = unit.KineticDamageModifier;
+        thermalDamageModifier = unit.ThermalDamageModifier;
+        explosiveDamageModifier = unit.ExplosiveDamageModifier;
+        maxMining = unit.MaxMining;
+        miningLeft = unit.MiningLeft;
+        supportValue = unit.SupportValue;
+        level = unit.Level;
+        globalCreditGain = unit.GlobalCreditGain;
+        maxAttachedModules = unit.MaxAttachedModules;
+        attachedModules = GameManager.i.AllModules.Where(x => unit.AttachedModules.Contains(x.moduleGuid)).ToList();
+        moduleEffects = unit.ModuleEffects.Select(x => (ModuleEffect)x).ToList();
+        GetUIComponents();
+    }
+    private void GetUIComponents()
+    {
         currentPathNode.unitOnPath = this;
         transform.position = currentPathNode.transform.position;
-        resetMining();
-        resetMovementRange();
-        SetNodeColor();
         HPText = transform.Find("HP").GetComponent<TextMeshPro>();
         statText = transform.Find("HP/Stats").GetComponent<TextMeshPro>();
         selectIcon = transform.Find("Select").gameObject;
         inCombatIcon = transform.Find("InCombat").gameObject;
         unitImage = transform.Find("Unit");
+        SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
+        unitSprite.color = GridManager.i.playerColors[stationId];
+        if (this is Station)
+        {
+            unitSprite.sprite = level == 1 ? GridManager.i.stationlvl1 : level == 2 ? GridManager.i.stationlvl2 : level == 3 ? GridManager.i.stationlvl3 : GridManager.i.stationlvl4;
+        }
+        else
+        {
+            unitSprite.sprite = level == 1 ? GridManager.i.fleetlvl1 : level == 2 ? GridManager.i.fleetlvl2 : level == 3 ? GridManager.i.fleetlvl3 : GridManager.i.fleetlvl4;
+        }
         unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }
+
     public void RegenHP(int regen, bool queuing = false)
     {
         if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
@@ -98,11 +147,7 @@ public class Unit : Node
         maxMovement += movement;
         movementLeft += movement;
     }
-    public void SetNodeColor()
-    {
-        currentPathNode.transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[stationId];
-        currentPathNode.ownedById = stationId;
-    }
+    
     internal void resetMovementRange()
     {
         movementLeft = maxMovement;
@@ -388,9 +433,32 @@ public class Unit : Node
         {
             UnitGuid = unitGuid,
             Facing = facing,
-            Location = location.ToServerCoords()
+            Color = color,
+            Location = location.ToServerCoords(),
+            UnitName = unitName,
+            StationId = stationId,
+            TeamId = teamId,
+            MaxHP = maxHP,
+            HP = HP,
+            MaxMovement = maxMovement,
+            MovementLeft = movementLeft,
+            KineticPower = kineticPower,
+            ThermalPower = thermalPower,
+            ExplosivePower = explosivePower,
+            KineticDamageModifier = kineticDamageModifier,
+            ThermalDamageModifier = thermalDamageModifier,
+            ExplosiveDamageModifier = explosiveDamageModifier,
+            MaxMining = maxMining,
+            MiningLeft = miningLeft,
+            SupportValue = supportValue,
+            Level = level,
+            GlobalCreditGain = globalCreditGain,
+            MaxAttachedModules = maxAttachedModules,
+            AttachedModules = attachedModules.Select(x=>x.moduleGuid).ToList(),
+            ModuleEffects = moduleEffects.Select(x=>(int)x).ToList(),
         };
     }
+
 
     internal void ClearMinedPath(List<PathNode> selectedPath)
     {

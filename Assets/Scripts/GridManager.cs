@@ -1,3 +1,4 @@
+using StartaneousAPI.ServerModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ public class GridManager : MonoBehaviour
     public GameObject nodePrefab;
     public GameObject unitPrefab;
     private Vector3 cellPrefabSize;
-    private Transform characterParent;
+    internal Transform characterParent;
     internal PathNode[,] grid;
     private Vector2 gridSize = new Vector2(Constants.GridSize, Constants.GridSize);
     internal int scoreToWin = 99;
@@ -29,9 +30,6 @@ public class GridManager : MonoBehaviour
     public List<Sprite> nebulaSprite;
     public RuntimeAnimatorController nodeController;
     public AnimationClip nebulaRotationClip;
-
-
-
     private void Awake()
     {
         i = this;
@@ -43,67 +41,78 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
-        CreateGrid();
+        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
+        if (currentGameTurn.TurnNumber > 0)
+        {
+            GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
+            currentGameTurn.AllModules.Select(x => new Module(x)).ToList(); //this sets GameManager.i.AllModules
+        }
+        CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;
         var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.GameTurns[0].Players.Length;
         for (int i = 0; i < stationsCount; i++)
         {
-            CreateStation(i);
+            CreateStation(i, currentGameTurn);
         }
         scoreToWin = GetScoreToWin();
         DoneLoading = true;
     }
-    private void CreateStation(int stationId)
+    private void CreateStation(int stationId, GameTurn currentGameTurn)
     {
-        string playerColor = "Blue";
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = stationlvl1;
         unitSprite.color = playerColors[stationId];
+        Player serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
         if (!Globals.IsCPUGame || stationId == 0)
         {
-            stationGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Station.UnitGuid;
-            fleetGuid = (Guid)Globals.GameMatch.GameTurns[0].Players[stationId].Fleets[0].UnitGuid;
-        }
-        int spawnX = 1;
-        int spawnY = 6;
-        Direction facing = Direction.BottomLeft;
-        if (stationId == 1)
-        {
-            playerColor = "Red";
-            spawnX = 6;
-            spawnY = 1;
-            facing = Direction.TopRight;
-        }
-        else if (stationId == 2)
-        {
-            playerColor = "Purple";
-            spawnX = 2;
-            spawnY = 1;
-            facing = Direction.Right;
-        }
-        else if (stationId == 3)
-        {
-            playerColor = "Orange";
-            spawnX = 5;
-            spawnY = 6;
-            facing = Direction.Left;
+            serverPlayer = currentGameTurn.Players[stationId];
+            stationGuid = (Guid)serverPlayer.Station.UnitGuid;
+            fleetGuid = (Guid)serverPlayer.Fleets[0].UnitGuid;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
-        stationNode.InitializeStation(spawnX, spawnY, playerColor, 12, 1, 5, 6, 7, stationGuid, facing);
-        StartCoroutine(CreateFleet(stationNode, fleetGuid, true));
+        if (currentGameTurn.TurnNumber > 0)
+        {
+            stationNode.InitializeStation(serverPlayer);
+        } 
+        else 
+        {
+            string color = "Blue";
+            int spawnX = 1;
+            int spawnY = 6;
+            Direction facing = Direction.BottomLeft;
+            if (stationId == 1)
+            {
+                color = "Red";
+                spawnX = 6;
+                spawnY = 1;
+                facing = Direction.TopRight;
+            }
+            else if (stationId == 2)
+            {
+                color = "Purple";
+                spawnX = 2;
+                spawnY = 1;
+                facing = Direction.Right;
+            }
+            else if (stationId == 3)
+            {
+                color = "Orange";
+                spawnX = 5;
+                spawnY = 6;
+                facing = Direction.Left;
+            }
+            stationNode.InitializeStation(spawnX, spawnY, color, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
+        }
+        GameManager.i.Stations.Add(stationNode);
     }
 
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
     {
-        GameObject fleetPrefab = unitPrefab;
-        SpriteRenderer unitSprite = fleetPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
-        unitSprite.sprite = fleetlvl1;
-        unitSprite.color = playerColors[stationNode.stationId];
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
         if(!originalSpawn)
             hexesNearby = hexesNearby.Where(x => x.ownedById == stationNode.stationId).ToList();
@@ -120,7 +129,7 @@ public class GridManager : MonoBehaviour
             int j = (i + startIndex)%hexesNearby.Count;
             if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
             {
-                var fleet = Instantiate(fleetPrefab);
+                var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
                 fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
@@ -130,6 +139,10 @@ public class GridManager : MonoBehaviour
                     fleetNode.selectIcon.SetActive(true);
                     yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
                     fleetNode.selectIcon.SetActive(false);
+                }
+                else
+                {
+                    fleetNode.currentPathNode.SetNodeColor(fleetNode.stationId);
                 }
                 didSpawn = true;
                 break;
@@ -155,7 +168,7 @@ public class GridManager : MonoBehaviour
         }   
     }
 
-    void CreateGrid()
+    void CreateGrid(GameTurn currentGameTurn)
     {
         var nodeParent = GameObject.Find("Nodes").transform;
         grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
@@ -166,24 +179,37 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                var coords = new Coords(x, y);
-                // Calculate the world position based on the size of the cellPrefab
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
                 var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
                 cell.transform.SetParent(nodeParent);
-                int maxCredits = 0;
-                int startCredits = 0;
-                int creditRegin = 0;
-                bool isRift = false;
+                grid[x, y] = cell.AddComponent<PathNode>();
+                var coords = new Coords(x, y); 
                 var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
-                if (asteroids.Any(x=>x.CoordsEquals(coords)))
+                if (currentGameTurn.TurnNumber > 0)
                 {
-                    startCredits = 4;
-                    maxCredits = 12;
-                    creditRegin = 1;
-                } else if (rift != null) {
-                    isRift = true;
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift)%nebulaSprite.Count];
+                    grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x=>new Coords(x.Coords).CoordsEquals(coords)));
+                }
+                else
+                {
+                    int maxCredits = 0;
+                    int startCredits = 0;
+                    int creditRegin = 0;
+                    bool isRift = false;
+                    if (asteroids.Any(x => x.CoordsEquals(coords)))
+                    {
+                        startCredits = 4;
+                        maxCredits = 12;
+                        creditRegin = 1;
+                    }
+                    else if (rift != null)
+                    {
+                        isRift = true;
+                    }
+                    grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
+                }
+                if (grid[x, y].isRift)
+                {
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift) % nebulaSprite.Count];
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
                     cell.transform.Find("Node/Background").gameObject.SetActive(false);
                     Animator animator = cell.AddComponent<Animator>();
@@ -192,8 +218,6 @@ public class GridManager : MonoBehaviour
                     overrideController["DefaultAnimation"] = nebulaRotationClip; // Replace "DefaultAnimation" with the actual animation state name if needed
                     animator.runtimeAnimatorController = overrideController;
                 }
-                grid[x, y] = cell.AddComponent<PathNode>();
-                grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
             }
         }
     }
@@ -303,7 +327,7 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Where(x=>!x.defeated).Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
+        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
     }
     internal int CheckForWin()
     {
@@ -315,10 +339,6 @@ public class GridManager : MonoBehaviour
             {
                 return i;
             }
-        }
-        if (GameManager.i.Stations.Where(x => !x.defeated).Select(x => x.teamId).Distinct().Count() == 1)
-        {
-            return GameManager.i.Stations.FirstOrDefault(x => !x.defeated).stationId;
         }
         return -1;
     }

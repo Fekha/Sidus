@@ -14,8 +14,10 @@ public class LoginManager : MonoBehaviour
     private SqlManager sql;
     public GameObject waitingPanel;
     public GameObject joinGamePanel;
+    public GameObject activeGamePanel;
     public GameObject createGamePanel;
     public Transform findContent;
+    public Transform activeContent;
     public GameObject openGamePrefab;
     public Toggle toggle1;
     public Toggle teamToggle;
@@ -92,6 +94,14 @@ public class LoginManager : MonoBehaviour
         }
         joinGamePanel.SetActive(active);
     }
+    public void ViewActiveGames(bool active)
+    {
+        if (active)
+        {
+            FindActiveGames();
+        }
+        activeGamePanel.SetActive(active);
+    }
     public void ViewGameCreation(bool active)
     {
         createGamePanel.SetActive(active);
@@ -123,6 +133,15 @@ public class LoginManager : MonoBehaviour
     {
         StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames", GetAllMatches));
     }
+    public void FindActiveGames()
+    {
+        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames?playerGuid={Globals.clientGuid}", GetActiveMatches));
+    }
+    public void JoinActiveGame(GameMatch gameMatch)
+    {
+        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
+        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
+    } 
     public void JoinGame(GameMatch gameMatch)
     {
         gameMatch.GameTurns[0].Players[1] = GetNewPlayer();
@@ -149,15 +168,30 @@ public class LoginManager : MonoBehaviour
         };
     }
 
-    private void GetAllMatches(List<GameMatch> newGames)
+    private void GetAllMatches(List<GameMatch> _newGames)
     {
         ClearOpenGames();
+        var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y?.Station?.UnitGuid == Globals.clientGuid));
         foreach (var game in newGames)
         {
             var prefab = Instantiate(openGamePrefab, findContent);
             prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
             prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns[0].Players.Count(x=>x!=null)}/{game.MaxPlayers}";
+            openGamesObjects.Add(prefab);
+        }
+    }
+    private void GetActiveMatches(List<GameMatch> newGames)
+    {
+        ClearOpenGames();
+        foreach (var game in newGames)
+        {
+            var prefab = Instantiate(openGamePrefab, activeContent);
+            prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
+            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
+            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{game.GameTurns.Count-1}";
+            var players = game.GameTurns.Last().Players;
+            prefab.transform.Find("Ready").gameObject.SetActive(players.All(x => x != null) || !players.Any(x => x?.Station?.UnitGuid == Globals.clientGuid));
             openGamesObjects.Add(prefab);
         }
     }
