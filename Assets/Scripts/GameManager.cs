@@ -150,21 +150,29 @@ public class GameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(.25f);
         loadingPanel.SetActive(false);
-        if (Globals.GameMatch.GameTurns.Count() > 1 && TurnNumber > 0) {
-            previousTurnButton.interactable = true;
-            yield return StartCoroutine(DoEndTurn());
-            if (Globals.GameMatch.GameTurns.Count() > TurnNumber)
+        if (Globals.GameMatch.GameTurns.Count() > 1)
+        {
+            if (TurnNumber > 0)
             {
-                if (Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions != null)
-                {
-                    foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions)
-                    {
-                        QueueAction(new Action(serverAction), true);
-                    }
-                    yield return StartCoroutine(CheckEndTurn());
-                }
+                previousTurnButton.interactable = true;
+                yield return StartCoroutine(DoEndTurn());
             }
-        } else {
+            else
+            {
+                StartTurn();
+            }
+            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions != null)
+            {
+                foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions)
+                {
+                    QueueAction(new Action(serverAction), true);
+                }
+                lastSubmittedTurn = MyStation.actions;
+                yield return StartCoroutine(CheckEndTurn());
+            }
+        }
+        else
+        {
             StartTurn();
         }
         StartCoroutine(GetIsTurnReady());
@@ -1771,6 +1779,7 @@ public class GameManager : MonoBehaviour
         else if (exitOption == 3)
         {
             StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).stationId}"));
+            loadingPanel.SetActive(true);
             EndTurn(true);
             SceneManager.LoadScene((int)Scene.Lobby);
         }
