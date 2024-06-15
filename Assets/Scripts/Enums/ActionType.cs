@@ -30,7 +30,7 @@ public enum ActionType
     ResearchFleetLvl,
     [Description("Research Max Fleets")]
     ResearchMaxFleets,
-    [Description("Research HP")]
+    [Description("Research Mining Power")]
     ResearchHP,
     [Description("Research Kinetic Power")]
     ResearchKinetic,
@@ -38,7 +38,7 @@ public enum ActionType
     ResearchThermal,
     [Description("Research Explosive Power")]
     ResearchExplosive,
-    [Description("Research Mining Power")]
+    [Description("Research HP")]
     ResearchMining,
 }
 

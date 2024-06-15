@@ -209,6 +209,7 @@ public class LoginManager : MonoBehaviour
             waitingPanel.SetActive(true);
             createGamePanel.SetActive(false);
             joinGamePanel.SetActive(false);
+            activeGamePanel.SetActive(false);
             UpdateGameStatus(game.GameTurns[0]);
             StartCoroutine(CheckIfGameHasStarted());
         }
