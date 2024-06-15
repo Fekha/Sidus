@@ -916,10 +916,6 @@ public class GameManager : MonoBehaviour
         {
             return auctionModule?.currentBid ?? 0;
         }
-        else if (actionType == ActionType.GainCredit)
-        {
-            return -1;
-        }
         else
         {
             return 0;
@@ -1490,10 +1486,6 @@ public class GameManager : MonoBehaviour
             if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
             {
                 ShowAreYouSurePanel(false);
-                while (MyStation.actions.Count < MyStation.maxActions)
-                {
-                    QueueAction(new Action(ActionType.GainCredit));
-                }
                 //Remove effects for game save
                 lastSubmittedTurn = MyStation.actions;
                 for (int i = lastSubmittedTurn.Count() - 1; i >= 0; i--)
@@ -1604,8 +1596,8 @@ public class GameManager : MonoBehaviour
         turnLabel.SetActive(true);
         yield return StartCoroutine(WaitforSecondsOrTap(1));
         isWaitingForTurns = false;
-        var turnFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
-        if (turnFromServer != null)
+        var turnsFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
+        if (turnsFromServer != null)
         {
             //Remove effects from queued actions so we can reapply them with visuals
             for (int i = lastSubmittedTurn.Count() - 1; i >= 0; i--)
@@ -1615,11 +1607,15 @@ public class GameManager : MonoBehaviour
             ClearModules();
             ToggleMineralText(true);
             ClearTurnArchiveObjects();
-            var serverActions = turnFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
+            var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
             {
                 yield return StartCoroutine(PerformAction(new Action(serverAction)));
                 yield return new WaitForSeconds(.1f);
+            }
+            for(int i = 0; i<turnsFromServer.Count();i++)
+            {
+                Stations[i].GainCredits(Constants.MaxActions - turnsFromServer[i].Actions.Count(), Stations[i], false, false);
             }
             foreach (var archive in turnArchive)
             {
@@ -1957,14 +1953,6 @@ public class GameManager : MonoBehaviour
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not attached";
                     }
-                }
-                else if (action.actionType == ActionType.GainCredit)
-                {
-                    turnValue.text += $"{GetDescription(action.actionType)}";
-                    PerformUpdates(action, Constants.Create);
-                    currentUnit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    currentUnit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.RepairFleet)
                 {

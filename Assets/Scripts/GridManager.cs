@@ -196,7 +196,7 @@ public class GridManager : MonoBehaviour
                 var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 6, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 9, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
                     StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
