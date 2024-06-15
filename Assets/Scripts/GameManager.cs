@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
         {
             TechActions.Add((ActionType)i);
         }
-        yield return new WaitForSeconds(.25f);
+        yield return new WaitForSeconds(.5f);
         loadingPanel.SetActive(false);
         if (Globals.GameMatch.GameTurns.Count() > 1)
         {

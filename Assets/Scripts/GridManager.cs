@@ -57,6 +57,70 @@ public class GridManager : MonoBehaviour
         scoreToWin = GetScoreToWin();
         DoneLoading = true;
     }
+
+    void CreateGrid(GameTurn currentGameTurn)
+    {
+        var nodeParent = GameObject.Find("Nodes").transform;
+        grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
+        Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
+        List<Coords> asteroids = new List<Coords>()
+        {
+            new Coords(1, 0), new Coords(1, 1), new Coords(0, 4), new Coords(1, 7),
+            new Coords(2, 7), new Coords(3, 5), new Coords(3, 4), new Coords(3, 3),
+            new Coords(6, 8), new Coords(7, 7), new Coords(6, 5), new Coords(5, 4),
+            new Coords(6, 3), new Coords(6, 1), new Coords(7, 1), new Coords(8, 4)
+        };
+        List<Coords> rifts = new List<Coords>()
+        {
+            new Coords(0, 8), new Coords(1, 6), new Coords(1, 5), new Coords(4, 4),
+            new Coords(8, 3), new Coords(7, 2), new Coords(8, 0)
+        }; 
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
+                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
+                cell.transform.SetParent(nodeParent);
+                grid[x, y] = cell.AddComponent<PathNode>();
+                var coords = new Coords(x, y);
+                var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
+                if (currentGameTurn.TurnNumber > 0)
+                {
+                    grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x => new Coords(x.Coords).CoordsEquals(coords)));
+                }
+                else
+                {
+                    int maxCredits = 0;
+                    int startCredits = 0;
+                    int creditRegin = 0;
+                    bool isRift = false;
+                    if (asteroids.Any(x => x.CoordsEquals(coords)))
+                    {
+                        startCredits = 4;
+                        maxCredits = 12;
+                        creditRegin = 1;
+                    }
+                    else if (rift != null)
+                    {
+                        isRift = true;
+                    }
+                    grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
+                }
+                if (grid[x, y].isRift)
+                {
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift) % nebulaSprite.Count];
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
+                    cell.transform.Find("Node/Background").gameObject.SetActive(false);
+                    Animator animator = cell.AddComponent<Animator>();
+                    animator.runtimeAnimatorController = nodeController;
+                    AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
+                    overrideController["DefaultAnimation"] = nebulaRotationClip; // Replace "DefaultAnimation" with the actual animation state name if needed
+                    animator.runtimeAnimatorController = overrideController;
+                }
+            }
+        }
+    }
     private void CreateStation(int stationId, GameTurn currentGameTurn)
     {
         GameObject stationPrefab = unitPrefab;
@@ -83,27 +147,27 @@ public class GridManager : MonoBehaviour
         {
             string color = "Blue";
             int spawnX = 1;
-            int spawnY = 6;
-            Direction facing = Direction.BottomLeft;
+            int spawnY = 4;
+            Direction facing = Direction.Right;
             if (stationId == 1)
             {
                 color = "Red";
-                spawnX = 6;
-                spawnY = 1;
-                facing = Direction.TopRight;
+                spawnX = 7;
+                spawnY = 4;
+                facing = Direction.Left;
             }
             else if (stationId == 2)
             {
                 color = "Purple";
-                spawnX = 2;
-                spawnY = 1;
+                spawnX = 3;
+                spawnY = 7;
                 facing = Direction.Right;
             }
             else if (stationId == 3)
             {
                 color = "Orange";
                 spawnX = 5;
-                spawnY = 6;
+                spawnY = 1;
                 facing = Direction.Left;
             }
             stationNode.InitializeStation(spawnX, spawnY, color, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
@@ -166,60 +230,6 @@ public class GridManager : MonoBehaviour
             Debug.Log($"{x},{y} is blocked");
             return false;
         }   
-    }
-
-    void CreateGrid(GameTurn currentGameTurn)
-    {
-        var nodeParent = GameObject.Find("Nodes").transform;
-        grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
-        Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
-        List<Coords> asteroids = new List<Coords>() { new Coords(1,4),new Coords(2,5),new Coords(3,6),new Coords(1,1),new Coords(2,2),new Coords(3,3),new Coords(4,4),new Coords(5,5),new Coords(6,6),new Coords(4,1),new Coords(5,2),new Coords(6,3), };
-        List<Coords> rifts = new List<Coords>() { new Coords(7,0),new Coords(0,7),new Coords(3,4),new Coords(4,3),new Coords(0,3),new Coords(7,4), };
-        for (int x = 0; x < gridSize.x; x++)
-        {
-            for (int y = 0; y < gridSize.y; y++)
-            {
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * .955f * cellPrefabSize.x) + Vector3.up * (y * .75f * cellPrefabSize.y) + Vector3.right * (y % 2) * (-0.475f * cellPrefabSize.x);
-                var cell = Instantiate(nodePrefab, worldPoint, Quaternion.identity);
-                cell.transform.SetParent(nodeParent);
-                grid[x, y] = cell.AddComponent<PathNode>();
-                var coords = new Coords(x, y); 
-                var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
-                if (currentGameTurn.TurnNumber > 0)
-                {
-                    grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x=>new Coords(x.Coords).CoordsEquals(coords)));
-                }
-                else
-                {
-                    int maxCredits = 0;
-                    int startCredits = 0;
-                    int creditRegin = 0;
-                    bool isRift = false;
-                    if (asteroids.Any(x => x.CoordsEquals(coords)))
-                    {
-                        startCredits = 4;
-                        maxCredits = 12;
-                        creditRegin = 1;
-                    }
-                    else if (rift != null)
-                    {
-                        isRift = true;
-                    }
-                    grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
-                }
-                if (grid[x, y].isRift)
-                {
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift) % nebulaSprite.Count];
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
-                    cell.transform.Find("Node/Background").gameObject.SetActive(false);
-                    Animator animator = cell.AddComponent<Animator>();
-                    animator.runtimeAnimatorController = nodeController;
-                    AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
-                    overrideController["DefaultAnimation"] = nebulaRotationClip; // Replace "DefaultAnimation" with the actual animation state name if needed
-                    animator.runtimeAnimatorController = overrideController;
-                }
-            }
-        }
     }
 
     internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit, bool checkAsteroids = true)
