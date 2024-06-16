@@ -1610,24 +1610,31 @@ public class GameManager : MonoBehaviour
             var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
             {
+                if (Winner != -1)
+                {
+                    break;
+                }
                 yield return StartCoroutine(PerformAction(new Action(serverAction)));
                 yield return new WaitForSeconds(.1f);
             }
-            for(int i = 0; i<turnsFromServer.Count();i++)
+            if (Winner == -1)
             {
-                Stations[i].GainCredits(Constants.MaxActions - turnsFromServer[i].Actions.Count(), Stations[i], false, false);
-            }
-            foreach (var archive in turnArchive)
-            {
-                var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
-                turnArchiveObject.GetComponentInChildren<TextMeshProUGUI>().text = archive.Item1;
-                var archivePopUpText = archive.Item2;
-                turnArchiveObject.GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(archivePopUpText));
-                TurnArchiveObjects.Add(turnArchiveObject);
-            }
-            foreach (var asteroid in GridManager.i.AllNodes)
-            {
-                asteroid.ReginCredits();
+                for (int i = 0; i < turnsFromServer.Count(); i++)
+                {
+                    Stations[i].GainCredits(Constants.MaxActions - turnsFromServer[i].Actions.Count(), Stations[i], false, false);
+                }
+                foreach (var archive in turnArchive)
+                {
+                    var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
+                    turnArchiveObject.GetComponentInChildren<TextMeshProUGUI>().text = archive.Item1;
+                    var archivePopUpText = archive.Item2;
+                    turnArchiveObject.GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(archivePopUpText));
+                    TurnArchiveObjects.Add(turnArchiveObject);
+                }
+                foreach (var asteroid in GridManager.i.AllNodes)
+                {
+                    asteroid.ReginCredits();
+                }
             }
             yield return StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}", GetWinner));
         }
