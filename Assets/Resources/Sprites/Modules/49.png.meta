@@ -3,8 +3,8 @@ guid: 444b4696d2df80748824feb0d9758f4a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5866527960475976465
-    second: spy_0
+      213: -8586417740124189794
+    second: 49_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -106,41 +106,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: spy_0
+      name: 49_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 511
-        height: 511
+        x: 46
+        y: 95
+        width: 384
+        height: 213
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 113411d09181a6150800000000000000
-      internalID: 5866527960475976465
+      spriteID: e9b09c2ee8ae6d880800000000000000
+      internalID: -8586417740124189794
       vertices: []
       indices: 
       edges: []
@@ -165,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      spy_0: 5866527960475976465
+      49_0: -8586417740124189794
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

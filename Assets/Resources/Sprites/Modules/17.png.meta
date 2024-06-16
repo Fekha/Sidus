@@ -3,8 +3,8 @@ guid: f4baa6317a43cd5439aea8e888d439c2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3878934256555427670
-    second: star-gate_0
+      213: 6660783624410144326
+    second: 17_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -106,41 +106,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: star-gate_0
+      name: 17_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 511
-        height: 511
+        width: 486
+        height: 495
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aa87bea58d14b2ac0800000000000000
-      internalID: -3878934256555427670
+      spriteID: 64e94b28a6bdf6c50800000000000000
+      internalID: 6660783624410144326
       vertices: []
       indices: 
       edges: []
@@ -165,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      star-gate_0: -3878934256555427670
+      17_0: 6660783624410144326
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
