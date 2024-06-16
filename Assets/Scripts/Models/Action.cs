@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,12 +29,17 @@ public class Action {
     }
     public Action(ServerAction _action)
     {
-        if (_action is object)
+        if (_action != null)
         {
             actionType = (ActionType)_action.ActionTypeId;
             selectedUnit = GameManager.i.AllUnits.FirstOrDefault(x => x.unitGuid == _action.SelectedUnitGuid);
             selectedModule = _action.SelectedModule != null ? new Module(_action.SelectedModule) : null;
-            selectedPath = _action.SelectedCoords.Select(x=> GridManager.i.grid[x.X,x.Y]).ToList();
+            if (!String.IsNullOrEmpty(_action.XList) && !String.IsNullOrEmpty(_action.YList))
+            {
+                var intXs = _action.XList.Split(",").Select(x => int.Parse(x.ToString())).ToList();
+                var intYs = _action.YList.Split(",").Select(x => int.Parse(x.ToString())).ToList();
+                selectedPath = intXs.Select((x, i) => GridManager.i.grid[x, intYs[i]]).ToList();
+            }
             generatedGuid = _action.GeneratedGuid;
             actionOrder = _action.ActionOrder;
             playerId = _action.PlayerId;

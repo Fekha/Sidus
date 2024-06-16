@@ -1,5 +1,4 @@
-using Newtonsoft.Json.Linq;
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -143,7 +142,7 @@ public class GameManager : MonoBehaviour
         }
         ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
-        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
+        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.Count() == Globals.GameMatch.MaxPlayers).Last();
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
@@ -193,12 +192,12 @@ public class GameManager : MonoBehaviour
 
     private void UpdateGameTurnStatus(GameTurn turn)
     {
-        if (turn != null) {
-            for(int i = 0; i < turn.Players.Length; i++)
-            {
-                turnOrder.Find($"TurnOrder{i}").GetComponent<Image>().sprite = turn.Players[(TurnNumber - 1 + i) % turn.Players.Length] == null ? unReadyCircle : readyCircle;
-            }
-        }
+        //if (turn != null) {
+        //    for(int i = 0; i < turn.Players.Count; i++)
+        //    {
+        //        turnOrder.Find($"TurnOrder{i}").GetComponent<Image>().sprite = turn.Players.FirstOrDefault(x=>x.PlayerId==)[(TurnNumber - 1 + turn.Players[i].PlayerId) % turn.Players.Length] == null ? unReadyCircle : readyCircle;
+        //    }
+        //}
     }
 
     private void FindUI()
@@ -1439,13 +1438,13 @@ public class GameManager : MonoBehaviour
             if (i == 1)
             {
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your turn was submitted! \n\n If you change your mind, your last submitted turn will be used.";
+                customAlertText.text = $"Your turn was submitted!\n\nIf you change your mind, your last submitted turn will be used.";
                 customAlertPanel.SetActive(true);
             }
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
             i++;
         }
-        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns[TurnNumber].Players.Any(x=>x == null));
+        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns[TurnNumber].Players.Count() < Globals.GameMatch.MaxPlayers);
     }
 
     private void CheckForTurns(GameTurn turns)
@@ -1508,35 +1507,43 @@ public class GameManager : MonoBehaviour
                     TurnNumber = TurnNumber,
                     ModulesForMarket = Globals.GameMatch.GameTurns.LastOrDefault().ModulesForMarket,
                     MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
-                    AllModules = AllModules.Select(x => x.ToServerModule()).ToList(),
+                    AllModules = String.Join(",", AllModules.Select(x => x.moduleGuid)),
                     AllNodes = GridManager.i.AllNodes.Select(x => x.ToServerNode()).ToList(),
-                    Players = new Player[Globals.GameMatch.MaxPlayers]
-                };
-                gameTurn.Players[Globals.localStationIndex] = new Player()
-                {
-                    Actions = MyStation.actions.Select((x, i) =>
-                        new ServerAction()
+                    Players = new List<GamePlayer>()
+                    {
+                        new GamePlayer()
                         {
+                            GameGuid = Globals.GameMatch.GameGuid,
+                            TurnNumber = TurnNumber,
                             PlayerId = Globals.localStationIndex,
-                            ActionOrder = actionOrders[i],
-                            ActionTypeId = (int)x.actionType,
-                            GeneratedGuid = x.generatedGuid,
-                            SelectedCoords = x.selectedPath?.Select(y => y.coords?.ToServerCoords()).ToList(),
-                            SelectedModule = x.selectedModule?.ToServerModule(),
-                            SelectedUnitGuid = x.selectedUnit?.unitGuid,
-                        }).ToList(),
-                    Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
-                    Station = MyStation.ToServerUnit(),
-                    Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
-                    ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
-                    Credits = MyStation.credits,
-                    BonusKinetic = MyStation.bonusKinetic,
-                    BonusThermal = MyStation.bonusThermal,
-                    BonusExplosive = MyStation.bonusExplosive,
-                    BonusMining = MyStation.bonusMining,
-                    Score = MyStation.score,
-                    FleetCount = MyStation.fleetCount,
-                    MaxActions = MyStation.maxActions
+                            PlayerGuid = Globals.clientGuid,
+                            Actions = MyStation.actions.Select((x, i) =>
+                                new ServerAction()
+                                {
+                                    GameGuid = Globals.GameMatch.GameGuid,
+                                    TurnNumber = TurnNumber,
+                                    PlayerId = Globals.localStationIndex,
+                                    ActionOrder = actionOrders[i],
+                                    ActionTypeId = (int)x.actionType,
+                                    GeneratedGuid = x.generatedGuid,
+                                    XList = String.Join(",", x.selectedPath?.Select(x => x.coords.x)),
+                                    YList = String.Join(",", x.selectedPath?.Select(x => x.coords.y)),
+                                    SelectedModule = x.selectedModule?.ToServerModule(),
+                                    SelectedUnitGuid = x.selectedUnit?.unitGuid,
+                                }).ToList(),
+                            Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
+                            Units = MyStation.GetServerUnits(),
+                            ModulesGuids = String.Join(",", MyStation.modules.Select(x => x.moduleGuid)),
+                            Credits = MyStation.credits,
+                            BonusKinetic = MyStation.bonusKinetic,
+                            BonusThermal = MyStation.bonusThermal,
+                            BonusExplosive = MyStation.bonusExplosive,
+                            BonusMining = MyStation.bonusMining,
+                            Score = MyStation.score,
+                            FleetCount = MyStation.fleetCount,
+                            MaxActions = MyStation.maxActions
+                        }
+                    }
                 };
                 //add effects back in case player wants to resubmit their turn
                 for (int i = 0; i < lastSubmittedTurn.Count(); i++)

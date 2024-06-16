@@ -1,4 +1,5 @@
-using StartaneousAPI.ServerModels;
+using Models;
+using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,15 +42,14 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
-        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
+        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.Count() == Globals.GameMatch.MaxPlayers).Last();
         if (currentGameTurn.TurnNumber > 0)
         {
             GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
-            currentGameTurn.AllModules.Select(x => new Module(x)).ToList(); //this sets GameManager.i.AllModules
         }
         CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;
-        var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.GameTurns[0].Players.Length;
+        var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.MaxPlayers;
         for (int i = 0; i < stationsCount; i++)
         {
             CreateStation(i, currentGameTurn);
@@ -87,7 +87,7 @@ public class GridManager : MonoBehaviour
                 var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
                 if (currentGameTurn.TurnNumber > 0)
                 {
-                    grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x => new Coords(x.Coords).CoordsEquals(coords)));
+                    grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x => new Coords(x.X,x.Y).CoordsEquals(coords)));
                 }
                 else
                 {
@@ -127,14 +127,14 @@ public class GridManager : MonoBehaviour
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = stationlvl1;
         unitSprite.color = playerColors[stationId];
-        Player serverPlayer = null;
+        GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
         if (!Globals.IsCPUGame || stationId == 0)
         {
             serverPlayer = currentGameTurn.Players[stationId];
-            stationGuid = (Guid)serverPlayer.Station.UnitGuid;
-            fleetGuid = (Guid)serverPlayer.Fleets[0].UnitGuid;
+            stationGuid = (Guid)serverPlayer.PlayerGuid;
+            fleetGuid = (Guid)serverPlayer.Units[1].UnitGuid;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);

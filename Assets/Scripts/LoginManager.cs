@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,10 +38,14 @@ public class LoginManager : MonoBehaviour
 
     private void GetPlayerGuid()
     {
+        bool isUnityEditor = false;
+#if UNITY_EDITOR
+        isUnityEditor = true;
+#endif
         try
         {
             Guid.TryParse(PlayerPrefs.GetString("ClientGuid"), out Globals.clientGuid);
-            if (Globals.clientGuid == Guid.Empty)
+            if (Globals.clientGuid == Guid.Empty || isUnityEditor)
             {
                 Globals.clientGuid = Guid.NewGuid();
                 PlayerPrefs.SetString("ClientGuid", Globals.clientGuid.ToString());
@@ -64,24 +68,25 @@ public class LoginManager : MonoBehaviour
         if (Globals.IsCPUGame)
             MaxPlayers = 1;
         var gameGuid = Guid.NewGuid();
-        var players = new Player[MaxPlayers];
-        players[0] = GetNewPlayer();
+        var players = new List<GamePlayer>();
+        players.Add(GetNewPlayer(gameGuid,0));
         var gameMatch = new GameMatch()
         {
             GameGuid = gameGuid,
             MaxPlayers = MaxPlayers,
             NumberOfModules = 51,
-            GameSettings = GameSettings,
+            GameSettings = String.Join(",", GameSettings),
             GameTurns = new List<GameTurn>()
             {
                 new GameTurn() {
                     GameGuid = gameGuid,
-                    ModulesForMarket = new List<int>(),
+                    ModulesForMarket = "",
                     MarketModules = new List<ServerModule>(),
                     TurnNumber = 0,
                     Players = players
                 }
-            }
+            },
+            HealthCheck = DateTime.Now 
         };
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/CreateGame", stringToPost, SetMatchGuid));
@@ -144,34 +149,46 @@ public class LoginManager : MonoBehaviour
     } 
     public void JoinGame(GameMatch gameMatch)
     {
-        gameMatch.GameTurns[0].Players[1] = GetNewPlayer();
+        gameMatch.GameTurns[0].Players.Add(GetNewPlayer(gameMatch.GameGuid,1));
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
     }
 
-    private Player GetNewPlayer()
+    private GamePlayer GetNewPlayer(Guid gameGuid, int playerId)
     {
-        return new Player()
+        return new GamePlayer()
         {
-            Station = new ServerUnit()
-            {
-                UnitGuid = Globals.clientGuid,
-            },
-            Fleets = new List<ServerUnit>()
+            GameGuid = gameGuid,
+            TurnNumber = 0,
+            PlayerId = playerId,
+            PlayerGuid = Globals.clientGuid,
+            Units = new List<ServerUnit>()
             {
                 new ServerUnit()
                 {
+                    UnitGuid = Globals.clientGuid,
+                    GameGuid = gameGuid,
+                    TurnNumber = 0,
+                    PlayerId = playerId,
+                    IsStation = true,
+                },
+                new ServerUnit()
+                {
                     UnitGuid = Guid.NewGuid(),
+                    GameGuid = gameGuid,
+                    TurnNumber = 0,
+                    PlayerId = playerId,
+                    IsStation = false,
                 },
             },
-            Credits = 5,
+            Credits = 3,
         };
     }
 
     private void GetAllMatches(List<GameMatch> _newGames)
     {
         ClearOpenGames();
-        var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y?.Station?.UnitGuid == Globals.clientGuid));
+        var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y.PlayerGuid == Globals.clientGuid));
         foreach (var game in newGames)
         {
             var prefab = Instantiate(openGamePrefab, findContent);
@@ -191,7 +208,7 @@ public class LoginManager : MonoBehaviour
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
             prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{game.GameTurns.Count-1}";
             var players = game.GameTurns.Last().Players;
-            prefab.transform.Find("Ready").gameObject.SetActive(players.All(x => x != null) || !players.Any(x => x?.Station?.UnitGuid == Globals.clientGuid));
+            prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.clientGuid));
             openGamesObjects.Add(prefab);
         }
     }
@@ -230,20 +247,14 @@ public class LoginManager : MonoBehaviour
 
     private int PlayersNeeded()
     {
-        return Globals.GameMatch.MaxPlayers - (Globals.GameMatch?.GameTurns?[0]?.Players?.Count(x => x != null) ?? 0);
+        return Globals.GameMatch.MaxPlayers - Globals.GameMatch.GameTurns[0].Players.Count();
     }
 
     private void UpdateGameStatus(GameTurn gameTurn)
     {
         Globals.GameMatch.GameTurns[0] = gameTurn;
         if (PlayersNeeded() == 0) {
-            for (int i = 0; i < Globals.GameMatch.GameTurns[0].Players.Length; i++)
-            {
-                if (Globals.GameMatch.GameTurns[0].Players[i].Station.UnitGuid == Globals.clientGuid)
-                {
-                    Globals.localStationIndex = i;
-                }
-            }
+            Globals.localStationIndex = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.clientGuid).PlayerId;
             Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.IsCPUGame ? 4 : Globals.GameMatch.MaxPlayers;
             SceneManager.LoadScene((int)Scene.Game);
         } else {

@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections;
 using TMPro;
@@ -44,7 +44,7 @@ public class PathNode : MonoBehaviour
         maxCredits = node.MaxCredits;
         minerals = node.Minerals;
         creditRegin = node.CreditRegin;
-        coords = new Coords(node.Coords);
+        coords = new Coords(node.X,node.Y);
         ownedById = node.OwnedById;
         GetUIComponents();
     }
@@ -66,11 +66,14 @@ public class PathNode : MonoBehaviour
     {
         return new ServerNode()
         {
+            GameGuid = Globals.GameMatch.GameGuid,
+            TurnNumber = GameManager.i.TurnNumber,
             IsRift = isRift,
             MaxCredits = maxCredits,
             Minerals = minerals,
             CreditRegin = creditRegin,
-            Coords = coords.ToServerCoords(),
+            X = coords.x,
+            Y = coords.y,
             OwnedById = ownedById,
         };
     }
