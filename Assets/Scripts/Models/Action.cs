@@ -33,7 +33,7 @@ public class Action {
         {
             actionType = (ActionType)_action.ActionTypeId;
             selectedUnit = GameManager.i.AllUnits.FirstOrDefault(x => x.unitGuid == _action.SelectedUnitGuid);
-            selectedModule = _action.SelectedModule != null ? new Module(_action.SelectedModule) : null;
+            selectedModule = GameManager.i.AllModules.FirstOrDefault(x => x.moduleGuid == _action.SelectedModuleGuid);
             if (!String.IsNullOrEmpty(_action.XList) && !String.IsNullOrEmpty(_action.YList))
             {
                 var intXs = _action.XList.Split(",").Select(x => int.Parse(x.ToString())).ToList();

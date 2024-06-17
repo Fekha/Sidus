@@ -643,7 +643,8 @@ public class GameManager : MonoBehaviour
     {
         ClearAuctionObjects();
         AuctionModules.Clear();
-        AuctionModules.AddRange(Globals.GameMatch.GameTurns[i].MarketModules.Select(x => new Module(x)));
+        var moduleGuids = Globals.GameMatch.GameTurns[i].MarketModuleGuids.Split(",").Select(x=>new Guid(x));
+        AuctionModules.AddRange(moduleGuids.Select(x => AllModules.FirstOrDefault(y=>y.moduleGuid == x)));
     }
     #region Queue Actions
     public void ModifyModule(ActionType actionType, Guid? dettachGuid = null)
@@ -1506,8 +1507,8 @@ public class GameManager : MonoBehaviour
                     GameGuid = Globals.GameMatch.GameGuid,
                     TurnNumber = TurnNumber,
                     ModulesForMarket = Globals.GameMatch.GameTurns.LastOrDefault().ModulesForMarket,
-                    MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
-                    AllModules = String.Join(",", AllModules.Select(x => x.moduleGuid)),
+                    MarketModuleGuids = Globals.GameMatch.GameTurns.LastOrDefault().MarketModuleGuids,
+                    AllModules = AllModules.Select(x => x.ToServerModule()).ToList(),
                     AllNodes = GridManager.i.AllNodes.Select(x => x.ToServerNode()).ToList(),
                     Players = new List<GamePlayer>()
                     {
@@ -1528,7 +1529,7 @@ public class GameManager : MonoBehaviour
                                     GeneratedGuid = x.generatedGuid,
                                     XList = String.Join(",", x.selectedPath?.Select(x => x.coords.x)),
                                     YList = String.Join(",", x.selectedPath?.Select(x => x.coords.y)),
-                                    SelectedModule = x.selectedModule?.ToServerModule(),
+                                    SelectedModuleGuid = x.selectedModule.moduleGuid,
                                     SelectedUnitGuid = x.selectedUnit?.unitGuid,
                                 }).ToList(),
                             Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),

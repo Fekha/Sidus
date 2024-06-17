@@ -81,7 +81,7 @@ public class LoginManager : MonoBehaviour
                 new GameTurn() {
                     GameGuid = gameGuid,
                     ModulesForMarket = "",
-                    MarketModules = new List<ServerModule>(),
+                    MarketModuleGuids = "",
                     TurnNumber = 0,
                     Players = players
                 }
