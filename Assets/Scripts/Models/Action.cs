@@ -8,9 +8,10 @@ using static GameManager;
 public class Action {
     public ActionType actionType;
     public Unit selectedUnit;
-    public Module selectedModule;
+    public Guid? selectedModuleGuid;
     public List<PathNode> selectedPath;
     public int generatedModuleId;
+    public int? playerBid;
     public Guid? generatedGuid;
     internal int costOfAction;
     internal int actionOrder;
@@ -18,14 +19,15 @@ public class Action {
     internal bool _statonInventory = false;
     internal Guid? _parentGuid = null;
 
-    public Action(ActionType _actionType, Unit _selectedUnit = null, Module? _selectedModule = null, int _cost = 0, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null)
+    public Action(ActionType _actionType, Unit _selectedUnit = null, Guid? _selectedModule = null, int _cost = 0, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null, int? _playerBid = null)
     {
         actionType = _actionType;
         selectedUnit = _selectedUnit;
         costOfAction = _cost;
-        selectedModule = _selectedModule;
+        selectedModuleGuid = _selectedModule;
         selectedPath = _selectedPath ?? new List<PathNode>();
         generatedGuid = _generatedGuid;
+        playerBid = _playerBid;
     }
     public Action(ServerAction _action)
     {
@@ -33,7 +35,6 @@ public class Action {
         {
             actionType = (ActionType)_action.ActionTypeId;
             selectedUnit = GameManager.i.AllUnits.FirstOrDefault(x => x.unitGuid == _action.SelectedUnitGuid);
-            selectedModule = GameManager.i.AllModules.FirstOrDefault(x => x.moduleGuid == _action.SelectedModuleGuid);
             if (!String.IsNullOrEmpty(_action.XList) && !String.IsNullOrEmpty(_action.YList))
             {
                 var intXs = _action.XList.Split(",").Select(x => int.Parse(x.ToString())).ToList();
@@ -43,6 +44,8 @@ public class Action {
             generatedGuid = _action.GeneratedGuid;
             actionOrder = _action.ActionOrder;
             playerId = _action.PlayerId;
+            selectedModuleGuid = _action.SelectedModuleGuid;
+            playerBid = _action.PlayerBid;
         }
     }
 }

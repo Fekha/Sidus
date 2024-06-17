@@ -93,6 +93,8 @@ namespace Models
         public string? YList { get; set; }
         public Guid? SelectedModuleGuid { get; set; }
         public Guid? GeneratedGuid { get; set; }
+        public int? PlayerBid { get; set; }
+
     }
 
     [Serializable]
@@ -137,7 +139,6 @@ namespace Models
         public Guid ModuleGuid { get; set; }
         public int ModuleId { get; set; }
         public int MidBid { get; set; }
-        public int PlayerBid { get; set; }
         public int TurnsLeft { get; set; }
     }
 }

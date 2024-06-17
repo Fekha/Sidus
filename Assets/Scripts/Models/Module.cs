@@ -23,7 +23,6 @@ public class Module
         {
             SetModule(x.ModuleId, (Guid)x.ModuleGuid);
             minBid = x.MidBid;
-            currentBid = x.PlayerBid;
             turnsLeftOnMarket = x.TurnsLeft;
         }
     }
@@ -37,7 +36,6 @@ public class Module
             MidBid = minBid,
             ModuleGuid = moduleGuid,
             ModuleId = moduleId,
-            PlayerBid = currentBid,
             TurnsLeft = turnsLeftOnMarket,
         };
     }
