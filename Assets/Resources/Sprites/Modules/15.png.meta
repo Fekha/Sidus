@@ -3,8 +3,8 @@ guid: 415f5c343f774734a8b9aeb77e1d4698
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5833737085837587961
-    second: summits_0
+      213: 4349915267927364619
+    second: 15_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 512
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -106,50 +106,26 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: summits_0
+      name: 15_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 511
-        height: 511
+        width: 513
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 70ac0a567076a0fa0800000000000000
-      internalID: -5833737085837587961
+      spriteID: b04dbdba3e00e5c30800000000000000
+      internalID: 4349915267927364619
       vertices: []
       indices: 
       edges: []
@@ -157,7 +133,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -165,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      summits_0: -5833737085837587961
+      15_0: 4349915267927364619
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
