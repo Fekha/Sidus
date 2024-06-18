@@ -16,6 +16,7 @@ public class LoginManager : MonoBehaviour
     public GameObject joinGamePanel;
     public GameObject activeGamePanel;
     public GameObject createGamePanel;
+    public GameObject loadingPanel;
     public Transform findContent;
     public Transform activeContent;
     public GameObject openGamePrefab;
@@ -45,7 +46,7 @@ public class LoginManager : MonoBehaviour
         try
         {
             Guid.TryParse(PlayerPrefs.GetString("ClientGuid"), out Globals.clientGuid);
-            if (Globals.clientGuid == Guid.Empty || isUnityEditor)
+            if (Globals.clientGuid == Guid.Empty)
             {
                 Globals.clientGuid = Guid.NewGuid();
                 PlayerPrefs.SetString("ClientGuid", Globals.clientGuid.ToString());
@@ -60,6 +61,7 @@ public class LoginManager : MonoBehaviour
 
     public void CreateGame(bool cpuGame)
     {
+        loadingPanel.SetActive(true);
         Globals.IsCPUGame = cpuGame;
         if (teamToggle.isOn && MaxPlayers == 4 && !Globals.IsCPUGame)
             GameSettings.Add(GameSettingType.Teams.ToString());
@@ -83,7 +85,9 @@ public class LoginManager : MonoBehaviour
                     ModulesForMarket = "",
                     MarketModuleGuids = "",
                     TurnNumber = 0,
-                    Players = players
+                    AllModules = new List<ServerModule>(),
+                    Players = players,
+                    TurnIsOver = true
                 }
             },
             HealthCheck = DateTime.Now 
@@ -153,7 +157,6 @@ public class LoginManager : MonoBehaviour
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
     }
-
     private GamePlayer GetNewPlayer(Guid gameGuid, int playerId)
     {
         return new GamePlayer()
@@ -189,8 +192,9 @@ public class LoginManager : MonoBehaviour
     {
         ClearOpenGames();
         var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y.PlayerGuid == Globals.clientGuid));
-        foreach (var game in newGames)
+        foreach (var newGame in newGames)
         {
+            var game = newGame;
             var prefab = Instantiate(openGamePrefab, findContent);
             prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
@@ -224,6 +228,7 @@ public class LoginManager : MonoBehaviour
             Globals.GameMatch = game;
             MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
+            loadingPanel.SetActive(false);
             createGamePanel.SetActive(false);
             joinGamePanel.SetActive(false);
             activeGamePanel.SetActive(false);

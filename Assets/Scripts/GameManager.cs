@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GameObject infoPanel;
     public GameObject alertPanel;
     public GameObject customAlertPanel;
+    public GameObject submitTurnPanel;
     public GameObject areYouSurePanel;
     public GameObject selectModulePanel;
     public GameObject helpPanel;
@@ -147,7 +148,7 @@ public class GameManager : MonoBehaviour
         {
             TechActions.Add((ActionType)i);
         }
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.25f);
         loadingPanel.SetActive(false);
         if (Globals.GameMatch.GameTurns.Count() > 1)
         {
@@ -556,7 +557,7 @@ public class GameManager : MonoBehaviour
                 subtractButton.onClick.AddListener(() => ModifyBid(false,i));
                 var bidButton = moduleObject.transform.Find("Bid").GetComponent<Button>();
                 bidButton.interactable = !hasQueued && MyStation.credits >= module.currentBid;
-                bidButton.onClick.AddListener(() => BidOn(i));
+                bidButton.onClick.AddListener(() => BidOn(i, module.currentBid));
                 moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
                 moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
                 moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"{module.turnsLeftOnMarket} Turns Left" : "Last Turn!!!";
@@ -582,10 +583,10 @@ public class GameManager : MonoBehaviour
         moduleObj.transform.Find("Bid").GetComponent<Button>().interactable = MyStation.credits >= module.currentBid;
     }
 
-    private void BidOn(int index)
+    private void BidOn(int index, int currentBid)
     {
         ViewModuleMarket(false);
-        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid));
+        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,0,null,null,currentBid));
     }
 
     public void ViewHelpPanel(bool active)
@@ -639,10 +640,11 @@ public class GameManager : MonoBehaviour
         ToggleMineralText(active);
         asteroidPanel.SetActive(active);
     }
-    private void UpdateAuctionModules(int i)
+    private void UpdateModulesFromServer(int i)
     {
         ClearAuctionObjects();
         AuctionModules.Clear();
+        AllModules = Globals.GameMatch.GameTurns[i].AllModules.Select(x => new Module(x)).ToList();
         var moduleGuids = Globals.GameMatch.GameTurns[i].MarketModuleGuids.Split(",").Select(x=>new Guid(x));
         AuctionModules.AddRange(moduleGuids.Select(x => AllModules.FirstOrDefault(y=>y.moduleGuid == x)));
     }
@@ -1441,6 +1443,7 @@ public class GameManager : MonoBehaviour
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
                 customAlertText.text = $"Your turn was submitted!\n\nIf you change your mind, your last submitted turn will be used.";
                 customAlertPanel.SetActive(true);
+                submitTurnPanel.SetActive(false);
             }
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
             i++;
@@ -1562,8 +1565,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator SubmitEndTurn(GameTurn gameTurn)
     {
-        customAlertText.text = "Submitting Turn.";
-        customAlertPanel.SetActive(true);
+        submitTurnPanel.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
         yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost, SubmitResponse));
         if (SubmittedTurn)
@@ -1574,6 +1576,7 @@ public class GameManager : MonoBehaviour
         {
             customAlertText.text = $"Your turn was NOT submitted successfully. \n\n Please try again.";
             customAlertPanel.SetActive(true);
+            submitTurnPanel.SetActive(false);
         }
     }
 
@@ -1591,12 +1594,14 @@ public class GameManager : MonoBehaviour
             var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
             customAlertText.text = $"Your new turn was submitted, overriding your previous one.";
             customAlertPanel.SetActive(true);
+            submitTurnPanel.SetActive(false);
         }
     }
 
     private IEnumerator DoEndTurn()
     {
-        customAlertPanel.SetActive(false);
+        customAlertPanel.SetActive(false); 
+        submitTurnPanel.SetActive(false);
         infoToggle = true;
         ToggleAll();
         isEndingTurn = true;
@@ -2052,7 +2057,7 @@ public class GameManager : MonoBehaviour
 
     private void StartTurn()
     {
-        UpdateAuctionModules(TurnNumber);
+        UpdateModulesFromServer(TurnNumber);
         TurnNumber++;
         endTurnButton.sprite = endTurnButtonNotPressed;
         foreach (var station in Stations)
