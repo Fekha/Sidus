@@ -161,9 +161,9 @@ public class GameManager : MonoBehaviour
             {
                 StartTurn();
             }
-            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions != null)
+            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.clientGuid)?.Actions != null)
             {
-                foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions)
+                foreach (var serverAction in Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x => x.PlayerGuid == Globals.clientGuid)?.Actions)
                 {
                     QueueAction(new Action(serverAction), true);
                 }
@@ -1534,6 +1534,7 @@ public class GameManager : MonoBehaviour
                                     YList = String.Join(",", x.selectedPath?.Select(x => x.coords.y)),
                                     SelectedModuleGuid = x.selectedModuleGuid,
                                     SelectedUnitGuid = x.selectedUnit?.unitGuid,
+                                    PlayerBid = x.playerBid,
                                 }).ToList(),
                             Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
                             Units = MyStation.GetServerUnits(),

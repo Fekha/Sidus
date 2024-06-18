@@ -134,7 +134,7 @@ public class GridManager : MonoBehaviour
         {
             serverPlayer = currentGameTurn.Players[stationId];
             stationGuid = (Guid)serverPlayer.PlayerGuid;
-            fleetGuid = (Guid)serverPlayer.Units[1].UnitGuid;
+            fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => !x.IsStation).UnitGuid;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);

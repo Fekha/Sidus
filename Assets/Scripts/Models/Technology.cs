@@ -36,6 +36,7 @@ public class Technology
         {
             GameGuid = Globals.GameMatch.GameGuid,
             TurnNumber = GameManager.i.TurnNumber,
+            PlayerId = Globals.localStationIndex,
             TechnologyId = (int)researchId,
             Level = level,
             CurrentAmount = currentAmount,

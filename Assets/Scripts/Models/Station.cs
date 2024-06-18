@@ -48,7 +48,7 @@ public class Station : Unit
         bonusMining = player.BonusMining;
         score = player.Score;
         InitializeUnit(player.Units.FirstOrDefault(x=>x.IsStation));
-        foreach (var fleet in player.Units)
+        foreach (var fleet in player.Units.Where(x=>!x.IsStation))
         {
             var fleetObj = Instantiate(GridManager.i.unitPrefab);
             fleetObj.transform.SetParent(GridManager.i.characterParent);

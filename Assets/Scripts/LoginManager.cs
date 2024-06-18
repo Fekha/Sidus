@@ -100,6 +100,7 @@ public class LoginManager : MonoBehaviour
         if (active)
         {
             FindGames();
+            loadingPanel.SetActive(true);
         }
         joinGamePanel.SetActive(active);
     }
@@ -108,6 +109,7 @@ public class LoginManager : MonoBehaviour
         if (active)
         {
             FindActiveGames();
+            loadingPanel.SetActive(true);
         }
         activeGamePanel.SetActive(active);
     }
@@ -201,12 +203,14 @@ public class LoginManager : MonoBehaviour
             prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns[0].Players.Count(x=>x!=null)}/{game.MaxPlayers}";
             openGamesObjects.Add(prefab);
         }
+        loadingPanel.SetActive(false);
     }
     private void GetActiveMatches(List<GameMatch> newGames)
     {
         ClearOpenGames();
-        foreach (var game in newGames)
+        foreach (var newGame in newGames)
         {
+            var game = newGame;
             var prefab = Instantiate(openGamePrefab, activeContent);
             prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
@@ -215,6 +219,7 @@ public class LoginManager : MonoBehaviour
             prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.clientGuid));
             openGamesObjects.Add(prefab);
         }
+        loadingPanel.SetActive(false);
     }
     private void ClearOpenGames()
     {
