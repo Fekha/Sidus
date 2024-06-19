@@ -46,6 +46,7 @@ public class GridManager : MonoBehaviour
         if (currentGameTurn.TurnNumber > 0)
         {
             GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
+            GameManager.i.AllModules = currentGameTurn.AllModules.Select(x => new Module(x)).ToList();
         }
         CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;

@@ -143,14 +143,12 @@ public class GameManager : MonoBehaviour
         }
         ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
-        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.Count() == Globals.GameMatch.MaxPlayers).Last();
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
         }
-        yield return new WaitForSeconds(.25f);
         loadingPanel.SetActive(false);
-        if (Globals.GameMatch.GameTurns.Count() > 1)
+        if (Globals.GameMatch.GameTurns.Count() > 0)
         {
             if (TurnNumber > 0)
             {
@@ -161,9 +159,9 @@ public class GameManager : MonoBehaviour
             {
                 StartTurn();
             }
-            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.clientGuid)?.Actions != null)
+            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions != null)
             {
-                foreach (var serverAction in Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x => x.PlayerGuid == Globals.clientGuid)?.Actions)
+                foreach (var serverAction in Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions)
                 {
                     QueueAction(new Action(serverAction), true);
                 }
@@ -1520,7 +1518,7 @@ public class GameManager : MonoBehaviour
                             GameGuid = Globals.GameMatch.GameGuid,
                             TurnNumber = TurnNumber,
                             PlayerId = Globals.localStationIndex,
-                            PlayerGuid = Globals.clientGuid,
+                            PlayerGuid = Globals.Account.PlayerGuid,
                             Actions = MyStation.actions.Select((x, i) =>
                                 new ServerAction()
                                 {

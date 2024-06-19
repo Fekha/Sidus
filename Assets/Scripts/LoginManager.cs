@@ -34,29 +34,6 @@ public class LoginManager : MonoBehaviour
         Globals.HasBeenToLobby = true;
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
-        GetPlayerGuid();
-    }
-
-    private void GetPlayerGuid()
-    {
-        bool isUnityEditor = false;
-#if UNITY_EDITOR
-        isUnityEditor = true;
-#endif
-        try
-        {
-            Guid.TryParse(PlayerPrefs.GetString("ClientGuid"), out Globals.clientGuid);
-            if (Globals.clientGuid == Guid.Empty)
-            {
-                Globals.clientGuid = Guid.NewGuid();
-                PlayerPrefs.SetString("ClientGuid", Globals.clientGuid.ToString());
-                PlayerPrefs.Save();
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.Log("Unable to connect to cache");
-        }
     }
 
     public void CreateGame(bool cpuGame)
@@ -146,7 +123,7 @@ public class LoginManager : MonoBehaviour
     }
     public void FindActiveGames()
     {
-        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames?playerGuid={Globals.clientGuid}", GetActiveMatches));
+        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames?playerGuid={Globals.Account.PlayerGuid}", GetActiveMatches));
     }
     public void JoinActiveGame(GameMatch gameMatch)
     {
@@ -166,12 +143,12 @@ public class LoginManager : MonoBehaviour
             GameGuid = gameGuid,
             TurnNumber = 0,
             PlayerId = playerId,
-            PlayerGuid = Globals.clientGuid,
+            PlayerGuid = Globals.Account.PlayerGuid,
             Units = new List<ServerUnit>()
             {
                 new ServerUnit()
                 {
-                    UnitGuid = Globals.clientGuid,
+                    UnitGuid = Globals.Account.PlayerGuid,
                     GameGuid = gameGuid,
                     TurnNumber = 0,
                     PlayerId = playerId,
@@ -193,7 +170,7 @@ public class LoginManager : MonoBehaviour
     private void GetAllMatches(List<GameMatch> _newGames)
     {
         ClearOpenGames();
-        var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y.PlayerGuid == Globals.clientGuid));
+        var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y.PlayerGuid == Globals.Account.PlayerGuid));
         foreach (var newGame in newGames)
         {
             var game = newGame;
@@ -216,7 +193,7 @@ public class LoginManager : MonoBehaviour
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
             prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{game.GameTurns.Count-1}";
             var players = game.GameTurns.Last().Players;
-            prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.clientGuid));
+            prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));
             openGamesObjects.Add(prefab);
         }
         loadingPanel.SetActive(false);
@@ -264,7 +241,7 @@ public class LoginManager : MonoBehaviour
     {
         Globals.GameMatch.GameTurns[0] = gameTurn;
         if (PlayersNeeded() == 0) {
-            Globals.localStationIndex = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.clientGuid).PlayerId;
+            Globals.localStationIndex = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerId;
             Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.IsCPUGame ? 4 : Globals.GameMatch.MaxPlayers;
             SceneManager.LoadScene((int)Scene.Game);
         } else {

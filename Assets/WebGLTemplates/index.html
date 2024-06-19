@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Sydus</title>
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Cross-Origin Embedder Policy -->
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <!-- Cross-Origin Opener Policy -->
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  </head>
+  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
+    <canvas id="unity-canvas" width=540 height=960 tabindex="-1" style="width: 540px; height: 960px; background: #231F20"></canvas>
+    <script src="Build/Sydus.loader.js"></script>
+    <script>
+		var canvas = document.querySelector("#unity-canvas");
+		var potW = window.innerHeight/16*9;
+		var potH = window.innerWidth/9*16;
+		if (potH < window.innerHeight) {
+			canvas.style.width = window.innerWidth + 'px';
+			canvas.style.height = potH + 'px';
+		} else if (potW < window.innerWidth){
+			canvas.style.width = potW + 'px';
+			canvas.style.height = window.innerHeight + 'px';
+		} else {
+			canvas.style.width = window.innerWidth + 'px';
+			canvas.style.height = window.innerHeight + 'px';
+		}
+		var unityInstance = null;
+
+		function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: '495727889951-stm773taac4b5mhp3u8j6uk12uahgg1q.apps.googleusercontent.com',
+                callback: handleCredentialResponse
+            });
+        }
+        // Function to start the Google Sign-In popup flow
+        function startGoogleSignIn() {
+            google.accounts.id.prompt();
+        }
+
+        // Callback function to handle the response after Google Sign-In
+        function handleCredentialResponse(response) {
+            console.log('Google Sign-In response:', response);
+            var idToken = response.credential;
+            // Send the ID token to Unity
+            unityInstance.SendMessage('Canvas', 'OnGoogleSignIn', idToken);
+        }
+
+        // Function to be called from Unity to initiate Google Sign-In
+        function initiateGoogleSignIn() {
+            startGoogleSignIn();
+        }
+		createUnityInstance(document.querySelector("#unity-canvas"), {
+			dataUrl: "Build/Sydus.data",
+			frameworkUrl: "Build/Sydus.framework.js",
+			codeUrl: "Build/Sydus.wasm",
+			streamingAssetsUrl: "StreamingAssets",
+			companyName: "GravitasGames",
+			productName: "Sydus",
+			productVersion: "1.0",
+			// matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+			// devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+		}).then((instance) => {
+            unityInstance = instance;
+			initializeGoogleSignIn();
+		});
+    </script>
+  </body>
+</html>

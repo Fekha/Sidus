@@ -4,6 +4,15 @@ using System;
 namespace Models
 {
     [Serializable]
+    public class Account
+    {
+        public string AccountId { get; set; }
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public Guid PlayerGuid { get; set; }
+    }
+
+    [Serializable]
     public class GameMatch
     {
         public int MaxPlayers { get; set; }
