@@ -28,6 +28,8 @@ public class GridManager : MonoBehaviour
     public Sprite fleetlvl2;
     public Sprite fleetlvl3;
     public Sprite fleetlvl4;
+
+    public GameObject fx_Explosion;
     public List<Sprite> nebulaSprite;
     public RuntimeAnimatorController nodeController;
     public AnimationClip nebulaRotationClip;
