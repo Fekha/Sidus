@@ -1227,7 +1227,9 @@ public class GameManager : MonoBehaviour
         unitMoving.selectIcon.SetActive(false);
         if (unitMoving.HP <= 0)
         {
+            
             Debug.Log($"{unitOnPath.unitName} destroyed {unitMoving.unitName}");
+            
             if (unitMoving is Station)
             {
                 var station = (unitMoving as Station);
