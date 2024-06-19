@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -21,7 +21,7 @@ public class Technology
     }
     internal Technology(ServerTechnology tech)
     {
-        researchId = (ResearchType)tech.ResearchId;
+        researchId = (ResearchType)tech.TechnologyId;
         level = tech.Level;
         currentAmount = tech.CurrentAmount;
         neededAmount = tech.NeededAmount;
@@ -34,7 +34,10 @@ public class Technology
     {
         return new ServerTechnology()
         {
-            ResearchId = (int)researchId,
+            GameGuid = Globals.GameMatch.GameGuid,
+            TurnNumber = GameManager.i.TurnNumber,
+            PlayerId = Globals.localStationIndex,
+            TechnologyId = (int)researchId,
             Level = level,
             CurrentAmount = currentAmount,
             NeededAmount = neededAmount,

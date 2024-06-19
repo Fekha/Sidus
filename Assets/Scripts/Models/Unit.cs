@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,11 +66,11 @@ public class Unit : Node
     internal void InitializeUnit(ServerUnit unit)
     {
         unitGuid = unit.UnitGuid;
-        facing = unit.Facing;
+        facing = (Direction)unit.Facing;
         color = unit.Color;
-        location = new Coords(unit.Location);
+        location = new Coords(unit.X,unit.Y);
         unitName = unit.UnitName;
-        stationId = unit.StationId;
+        stationId = unit.PlayerId;
         teamId = unit.TeamId;
         maxHP = unit.MaxHP;
         HP = unit.HP;
@@ -88,7 +88,7 @@ public class Unit : Node
         level = unit.Level;
         globalCreditGain = unit.GlobalCreditGain;
         maxAttachedModules = unit.MaxAttachedModules;
-        attachedModules = GameManager.i.AllModules.Where(x => unit.AttachedModules.Contains(x.moduleGuid)).ToList();
+        attachedModules = GameManager.i.AllModules.Where(x => unit.AttachedModules.Contains(x.moduleGuid.ToString())).ToList();
         moduleEffects = unit.ModuleEffects.Select(x => (ModuleEffect)x).ToList();
         GetUIComponents();
     }
@@ -431,12 +431,16 @@ public class Unit : Node
     {
         return new ServerUnit()
         {
+            IsStation = this is Station,
+            GameGuid = Globals.GameMatch.GameGuid,
+            TurnNumber = GameManager.i.TurnNumber,
             UnitGuid = unitGuid,
-            Facing = facing,
+            Facing = (int)facing,
             Color = color,
-            Location = location.ToServerCoords(),
+            X = location.x,
+            Y = location.y,
             UnitName = unitName,
-            StationId = stationId,
+            PlayerId = stationId,
             TeamId = teamId,
             MaxHP = maxHP,
             HP = HP,
@@ -454,8 +458,8 @@ public class Unit : Node
             Level = level,
             GlobalCreditGain = globalCreditGain,
             MaxAttachedModules = maxAttachedModules,
-            AttachedModules = attachedModules.Select(x=>x.moduleGuid).ToList(),
-            ModuleEffects = moduleEffects.Select(x=>(int)x).ToList(),
+            AttachedModules = String.Join(",",attachedModules.Select(x=>x.moduleGuid)),
+            ModuleEffects = String.Join(",", moduleEffects.Select(x=>(int)x).ToList()),
         };
     }
 

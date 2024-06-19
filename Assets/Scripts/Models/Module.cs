@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -23,7 +23,6 @@ public class Module
         {
             SetModule(x.ModuleId, (Guid)x.ModuleGuid);
             minBid = x.MidBid;
-            currentBid = x.PlayerBid;
             turnsLeftOnMarket = x.TurnsLeft;
         }
     }
@@ -32,14 +31,14 @@ public class Module
     {
         return new ServerModule()
         {
+            GameGuid = Globals.GameMatch.GameGuid,
+            TurnNumber = GameManager.i.TurnNumber,
             MidBid = minBid,
             ModuleGuid = moduleGuid,
             ModuleId = moduleId,
-            PlayerBid = currentBid,
             TurnsLeft = turnsLeftOnMarket,
         };
     }
-
     private void SetModule(int _moduleId, Guid _moduleGuid)
     {
         moduleGuid = _moduleGuid;

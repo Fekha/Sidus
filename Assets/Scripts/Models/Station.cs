@@ -1,4 +1,4 @@
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,11 +33,11 @@ public class Station : Unit
         currentPathNode.SetNodeColor(stationId);
         StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
     }
-    public void InitializeStation(Player player)
+    public void InitializeStation(GamePlayer player)
     {
         actions = player.Actions.Select(x=>new Action(x)).ToList();
         technology = player.Technology.Select(x => new Technology(x)).ToList();
-        modules = GameManager.i.AllModules.Where(x => player.ModulesGuids.Contains(x.moduleGuid)).ToList();
+        modules = GameManager.i.AllModules.Where(x => player.ModulesGuids.Contains(x.moduleGuid.ToString())).ToList();
         maxActions = player.MaxActions;
         credits = player.Credits;
         fleetCount = player.FleetCount;
@@ -47,8 +47,8 @@ public class Station : Unit
         bonusHP = player.BonusHP;
         bonusMining = player.BonusMining;
         score = player.Score;
-        InitializeUnit(player.Station);
-        foreach (var fleet in player.Fleets)
+        InitializeUnit(player.Units.FirstOrDefault(x=>x.IsStation));
+        foreach (var fleet in player.Units.Where(x=>!x.IsStation))
         {
             var fleetObj = Instantiate(GridManager.i.unitPrefab);
             fleetObj.transform.SetParent(GridManager.i.characterParent);
@@ -110,5 +110,13 @@ public class Station : Unit
             string positive = creditsGained > 0 ? "+" : "";
             StartCoroutine(GameManager.i.FloatingTextAnimation($"{positive}{creditsGained} Credit{plural}", unit.transform, unit, stagger));
         }
+    }
+
+    internal List<ServerUnit> GetServerUnits()
+    {
+        var serverUnits = new List<ServerUnit>();
+        serverUnits.Add(this.ToServerUnit());
+        serverUnits.AddRange(fleets.Select(x => x.ToServerUnit()));
+        return serverUnits;
     }
 }

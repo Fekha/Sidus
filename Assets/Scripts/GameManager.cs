@@ -1,5 +1,4 @@
-using Newtonsoft.Json.Linq;
-using StartaneousAPI.ServerModels;
+using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GameObject infoPanel;
     public GameObject alertPanel;
     public GameObject customAlertPanel;
+    public GameObject submitTurnPanel;
     public GameObject areYouSurePanel;
     public GameObject selectModulePanel;
     public GameObject helpPanel;
@@ -143,14 +143,12 @@ public class GameManager : MonoBehaviour
         }
         ColorText.text = $"You're {MyStation.color}";
         ColorText.color = GridManager.i.playerColors[MyStation.stationId];
-        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.All(y => y != null)).Last();
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
         }
-        yield return new WaitForSeconds(.5f);
         loadingPanel.SetActive(false);
-        if (Globals.GameMatch.GameTurns.Count() > 1)
+        if (Globals.GameMatch.GameTurns.Count() > 0)
         {
             if (TurnNumber > 0)
             {
@@ -161,9 +159,9 @@ public class GameManager : MonoBehaviour
             {
                 StartTurn();
             }
-            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions != null)
+            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions != null)
             {
-                foreach (var serverAction in Globals.GameMatch.GameTurns[TurnNumber]?.Players[Globals.localStationIndex]?.Actions)
+                foreach (var serverAction in Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions)
                 {
                     QueueAction(new Action(serverAction), true);
                 }
@@ -193,12 +191,12 @@ public class GameManager : MonoBehaviour
 
     private void UpdateGameTurnStatus(GameTurn turn)
     {
-        if (turn != null) {
-            for(int i = 0; i < turn.Players.Length; i++)
-            {
-                turnOrder.Find($"TurnOrder{i}").GetComponent<Image>().sprite = turn.Players[(TurnNumber - 1 + i) % turn.Players.Length] == null ? unReadyCircle : readyCircle;
-            }
-        }
+        //if (turn != null) {
+        //    for(int i = 0; i < turn.Players.Count; i++)
+        //    {
+        //        turnOrder.Find($"TurnOrder{i}").GetComponent<Image>().sprite = turn.Players.FirstOrDefault(x=>x.PlayerId==)[(TurnNumber - 1 + turn.Players[i].PlayerId) % turn.Players.Length] == null ? unReadyCircle : readyCircle;
+        //    }
+        //}
     }
 
     private void FindUI()
@@ -434,7 +432,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
         {
-            SetModuleInfo(action.selectedModule);
+            SetModuleInfo(AllModules.FirstOrDefault(x=>x.moduleGuid == action.selectedModuleGuid));
         }
         else
         {
@@ -544,7 +542,7 @@ public class GameManager : MonoBehaviour
             {
                 int i = j;
                 var module = AuctionModules[i];
-                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModule?.moduleGuid == module.moduleGuid);
+                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModuleGuid == module.moduleGuid);
                 if (!hasQueued) { module.currentBid = module.minBid; }
                 var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
                 AuctionObjects.Add(moduleObject);
@@ -557,7 +555,7 @@ public class GameManager : MonoBehaviour
                 subtractButton.onClick.AddListener(() => ModifyBid(false,i));
                 var bidButton = moduleObject.transform.Find("Bid").GetComponent<Button>();
                 bidButton.interactable = !hasQueued && MyStation.credits >= module.currentBid;
-                bidButton.onClick.AddListener(() => BidOn(i));
+                bidButton.onClick.AddListener(() => BidOn(i, module.currentBid));
                 moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
                 moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
                 moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"{module.turnsLeftOnMarket} Turns Left" : "Last Turn!!!";
@@ -583,10 +581,10 @@ public class GameManager : MonoBehaviour
         moduleObj.transform.Find("Bid").GetComponent<Button>().interactable = MyStation.credits >= module.currentBid;
     }
 
-    private void BidOn(int index)
+    private void BidOn(int index, int currentBid)
     {
         ViewModuleMarket(false);
-        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index]));
+        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,0,null,null,currentBid));
     }
 
     public void ViewHelpPanel(bool active)
@@ -640,11 +638,13 @@ public class GameManager : MonoBehaviour
         ToggleMineralText(active);
         asteroidPanel.SetActive(active);
     }
-    private void UpdateAuctionModules(int i)
+    private void UpdateModulesFromServer(int i)
     {
         ClearAuctionObjects();
         AuctionModules.Clear();
-        AuctionModules.AddRange(Globals.GameMatch.GameTurns[i].MarketModules.Select(x => new Module(x)));
+        AllModules = Globals.GameMatch.GameTurns[i].AllModules.Select(x => new Module(x)).ToList();
+        var moduleGuids = Globals.GameMatch.GameTurns[i].MarketModuleGuids.Split(",").Select(x=>new Guid(x));
+        AuctionModules.AddRange(moduleGuids.Select(x => AllModules.FirstOrDefault(y=>y.moduleGuid == x)));
     }
     #region Queue Actions
     public void ModifyModule(ActionType actionType, Guid? dettachGuid = null)
@@ -670,7 +670,7 @@ public class GameManager : MonoBehaviour
             if(selectedUnit.unitGuid != MyStation.unitGuid)
                 availableModules.AddRange(MyStation.attachedModules);
             availableModules.AddRange(MyStation.fleets.Where(x=>x.unitGuid != selectedUnit.unitGuid).SelectMany(x=>x.attachedModules).ToList());
-            List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModule?.moduleGuid).ToList();
+            List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModuleGuid).ToList();
             availableModules = availableModules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
             if (availableModules.Count > 0)
             {
@@ -693,14 +693,14 @@ public class GameManager : MonoBehaviour
     private void SetSelectedModule(Module module, Unit unit, ActionType action, Guid? dettachGuid)
     {
         //if not already queued up
-        if (MyStation.actions.Any(x => x.selectedModule?.moduleGuid == module.moduleGuid))
+        if (MyStation.actions.Any(x => x.selectedModuleGuid == module.moduleGuid))
         {
             ShowCustomAlertPanel("This action is already queued up.");
         }
         else
         {
             ViewModuleSelection(false);
-            QueueAction(new Action(action, unit, module, 0, null, dettachGuid));
+            QueueAction(new Action(action, unit, module.moduleGuid, 0, null, dettachGuid));
             ClearSelectableModules();
         }
     }
@@ -798,7 +798,7 @@ public class GameManager : MonoBehaviour
                     currentNode = nextNode;
                 }
             }
-            var costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.selectedModule);
+            var costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.playerBid);
             if (costOfAction > MyStation.credits)
             {
                 if(!requeing)
@@ -894,7 +894,7 @@ public class GameManager : MonoBehaviour
         }
         return currentFleets < maxNumFleets;
     }
-    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, Module auctionModule = null)
+    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, int? playerBid = null)
     {
         var station = Stations[structure.stationId];
         var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
@@ -914,7 +914,7 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.BidOnModule)
         {
-            return auctionModule?.currentBid ?? 0;
+            return playerBid ?? 0;
         }
         else
         {
@@ -1439,13 +1439,14 @@ public class GameManager : MonoBehaviour
             if (i == 1)
             {
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your turn was submitted! \n\n If you change your mind, your last submitted turn will be used.";
+                customAlertText.text = $"Your turn was submitted!\n\nIf you change your mind, your last submitted turn will be used.";
                 customAlertPanel.SetActive(true);
+                submitTurnPanel.SetActive(false);
             }
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
             i++;
         }
-        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns[TurnNumber].Players.Any(x=>x == null));
+        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns[TurnNumber].Players.Count() < Globals.GameMatch.MaxPlayers);
     }
 
     private void CheckForTurns(GameTurn turns)
@@ -1507,36 +1508,45 @@ public class GameManager : MonoBehaviour
                     GameGuid = Globals.GameMatch.GameGuid,
                     TurnNumber = TurnNumber,
                     ModulesForMarket = Globals.GameMatch.GameTurns.LastOrDefault().ModulesForMarket,
-                    MarketModules = Globals.GameMatch.GameTurns.LastOrDefault().MarketModules,
+                    MarketModuleGuids = Globals.GameMatch.GameTurns.LastOrDefault().MarketModuleGuids,
                     AllModules = AllModules.Select(x => x.ToServerModule()).ToList(),
                     AllNodes = GridManager.i.AllNodes.Select(x => x.ToServerNode()).ToList(),
-                    Players = new Player[Globals.GameMatch.MaxPlayers]
-                };
-                gameTurn.Players[Globals.localStationIndex] = new Player()
-                {
-                    Actions = MyStation.actions.Select((x, i) =>
-                        new ServerAction()
+                    Players = new List<GamePlayer>()
+                    {
+                        new GamePlayer()
                         {
+                            GameGuid = Globals.GameMatch.GameGuid,
+                            TurnNumber = TurnNumber,
                             PlayerId = Globals.localStationIndex,
-                            ActionOrder = actionOrders[i],
-                            ActionTypeId = (int)x.actionType,
-                            GeneratedGuid = x.generatedGuid,
-                            SelectedCoords = x.selectedPath?.Select(y => y.coords?.ToServerCoords()).ToList(),
-                            SelectedModule = x.selectedModule?.ToServerModule(),
-                            SelectedUnitGuid = x.selectedUnit?.unitGuid,
-                        }).ToList(),
-                    Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
-                    Station = MyStation.ToServerUnit(),
-                    Fleets = MyStation.fleets.Select(x => x.ToServerUnit()).ToList(),
-                    ModulesGuids = MyStation.modules.Select(x => x.moduleGuid).ToList(),
-                    Credits = MyStation.credits,
-                    BonusKinetic = MyStation.bonusKinetic,
-                    BonusThermal = MyStation.bonusThermal,
-                    BonusExplosive = MyStation.bonusExplosive,
-                    BonusMining = MyStation.bonusMining,
-                    Score = MyStation.score,
-                    FleetCount = MyStation.fleetCount,
-                    MaxActions = MyStation.maxActions
+                            PlayerGuid = Globals.Account.PlayerGuid,
+                            Actions = MyStation.actions.Select((x, i) =>
+                                new ServerAction()
+                                {
+                                    GameGuid = Globals.GameMatch.GameGuid,
+                                    TurnNumber = TurnNumber,
+                                    PlayerId = Globals.localStationIndex,
+                                    ActionOrder = actionOrders[i],
+                                    ActionTypeId = (int)x.actionType,
+                                    GeneratedGuid = x.generatedGuid,
+                                    XList = String.Join(",", x.selectedPath?.Select(x => x.coords.x)),
+                                    YList = String.Join(",", x.selectedPath?.Select(x => x.coords.y)),
+                                    SelectedModuleGuid = x.selectedModuleGuid,
+                                    SelectedUnitGuid = x.selectedUnit?.unitGuid,
+                                    PlayerBid = x.playerBid,
+                                }).ToList(),
+                            Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
+                            Units = MyStation.GetServerUnits(),
+                            ModulesGuids = String.Join(",", MyStation.modules.Select(x => x.moduleGuid)),
+                            Credits = MyStation.credits,
+                            BonusKinetic = MyStation.bonusKinetic,
+                            BonusThermal = MyStation.bonusThermal,
+                            BonusExplosive = MyStation.bonusExplosive,
+                            BonusMining = MyStation.bonusMining,
+                            Score = MyStation.score,
+                            FleetCount = MyStation.fleetCount,
+                            MaxActions = MyStation.maxActions
+                        }
+                    }
                 };
                 //add effects back in case player wants to resubmit their turn
                 for (int i = 0; i < lastSubmittedTurn.Count(); i++)
@@ -1554,8 +1564,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator SubmitEndTurn(GameTurn gameTurn)
     {
-        customAlertText.text = "Submitting Turn.";
-        customAlertPanel.SetActive(true);
+        submitTurnPanel.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
         yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost, SubmitResponse));
         if (SubmittedTurn)
@@ -1566,6 +1575,7 @@ public class GameManager : MonoBehaviour
         {
             customAlertText.text = $"Your turn was NOT submitted successfully. \n\n Please try again.";
             customAlertPanel.SetActive(true);
+            submitTurnPanel.SetActive(false);
         }
     }
 
@@ -1583,12 +1593,14 @@ public class GameManager : MonoBehaviour
             var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
             customAlertText.text = $"Your new turn was submitted, overriding your previous one.";
             customAlertPanel.SetActive(true);
+            submitTurnPanel.SetActive(false);
         }
     }
 
     private IEnumerator DoEndTurn()
     {
-        customAlertPanel.SetActive(false);
+        customAlertPanel.SetActive(false); 
+        submitTurnPanel.SetActive(false);
         infoToggle = true;
         ToggleAll();
         isEndingTurn = true;
@@ -1646,11 +1658,12 @@ public class GameManager : MonoBehaviour
         station.GainCredits(-1 * action.costOfAction * modifier, station, queued);
         if (action.actionType == ActionType.AttachModule)
         {
+            var actionModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
             Unit UnitToRemoveFrom;
             List<Module> inventoryRemoveFrom;
             if (action._parentGuid == null)
             {
-                UnitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                UnitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == actionModule.moduleGuid));
                 if (UnitToRemoveFrom != null)
                 {
                     inventoryRemoveFrom = UnitToRemoveFrom.attachedModules;
@@ -1675,27 +1688,28 @@ public class GameManager : MonoBehaviour
                 }
 
             }
-            action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+            action.selectedUnit.EditModule(actionModule.moduleId, modifier);
             if (!action._statonInventory)
-                UnitToRemoveFrom.EditModule(action.selectedModule.moduleId, modifier * -1);
+                UnitToRemoveFrom.EditModule(actionModule.moduleId, modifier * -1);
             if (modifier == Constants.Create)
             {
                 action._parentGuid = UnitToRemoveFrom.unitGuid;
-                action.selectedUnit.attachedModules.Add(action.selectedModule);
-                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                action.selectedUnit.attachedModules.Add(actionModule);
+                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == actionModule.moduleGuid));
             }
             else
             {
-                inventoryRemoveFrom.Add(action.selectedModule);
-                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                inventoryRemoveFrom.Add(actionModule);
+                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == actionModule.moduleGuid));
                 action._statonInventory = false;
                 action._parentGuid = null;
             }
         }
         else if (action.actionType == ActionType.SwapModule)
         {
+            var actionModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
             Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
-            Unit unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == (modifier == Constants.Create ? action.selectedModule.moduleGuid : action.generatedGuid)));
+            Unit unitToRemoveFrom = AllUnits.FirstOrDefault(x => x.attachedModules.Any(x => x.moduleGuid == (modifier == Constants.Create ? actionModule.moduleGuid : action.generatedGuid)));
             List<Module> inventoryRemoveFrom;
             if (unitToRemoveFrom == null)
             {
@@ -1705,18 +1719,18 @@ public class GameManager : MonoBehaviour
             {
                 inventoryRemoveFrom = unitToRemoveFrom?.attachedModules;
             }
-            action.selectedUnit.EditModule(action.selectedModule.moduleId, modifier);
+            action.selectedUnit.EditModule(actionModule.moduleId, modifier);
             action.selectedUnit.EditModule(dettachedModule.moduleId, modifier * -1);
             if (unitToRemoveFrom != null)
             {
-                unitToRemoveFrom.EditModule(action.selectedModule.moduleId, modifier * -1);
+                unitToRemoveFrom.EditModule(actionModule.moduleId, modifier * -1);
                 unitToRemoveFrom.EditModule(dettachedModule.moduleId, modifier);
             }
             if (modifier == Constants.Create)
             {              
                 //attach new
-                action.selectedUnit.attachedModules.Add(action.selectedModule);
-                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                action.selectedUnit.attachedModules.Add(actionModule);
+                inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == actionModule.moduleGuid));
                 //dettach old
                 inventoryRemoveFrom.Add(dettachedModule);
                 action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
@@ -1727,8 +1741,8 @@ public class GameManager : MonoBehaviour
                 action.selectedUnit.attachedModules.Add(dettachedModule);
                 inventoryRemoveFrom.Remove(inventoryRemoveFrom.FirstOrDefault(x => x.moduleGuid == dettachedModule.moduleGuid));
                 //deattach new
-                inventoryRemoveFrom.Add(action.selectedModule);
-                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule.moduleGuid));
+                inventoryRemoveFrom.Add(actionModule);
+                action.selectedUnit.attachedModules.Remove(action.selectedUnit.attachedModules.FirstOrDefault(x => x.moduleGuid == actionModule.moduleGuid));
             }
         }
         else if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
@@ -1823,7 +1837,7 @@ public class GameManager : MonoBehaviour
         if (currentUnit != null && AllUnits.Contains(currentUnit))
         {
             var currentStation = Stations[currentUnit.stationId];
-            action.costOfAction = GetCostOfAction(action.actionType, currentUnit, false, action.selectedModule);
+            action.costOfAction = GetCostOfAction(action.actionType, currentUnit, false, action.playerBid);
             if (currentStation.credits >= action.costOfAction)
             {
                 if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid)
@@ -1878,10 +1892,11 @@ public class GameManager : MonoBehaviour
                 }
                 else if (action.actionType == ActionType.BidOnModule)
                 {
-                    if (action.selectedModule != null)
+                    if (action.selectedModuleGuid != null)
                     {
-                        var wonModule = new Module(action.selectedModule.moduleId, action.selectedModule.moduleGuid);
-                        turnValue.text += $"Won bid\n\nPaid {action.selectedModule.currentBid} credits for:\n{wonModule.effectText}";
+                        var actionModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
+                        var wonModule = new Module(actionModule.moduleId, actionModule.moduleGuid);
+                        turnValue.text += $"Won bid\n\nPaid {action.playerBid} credits for:\n{wonModule.effectText}";
                         StartCoroutine(FloatingTextAnimation($"Won Bid", currentUnit.transform, currentUnit)); //floater5
                         PerformUpdates(action, Constants.Create);
                         currentStation.modules.Add(wonModule);
@@ -1900,7 +1915,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
                     {
-                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
                         if (selectedModule != null)
                         {
                             turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n";
@@ -1932,7 +1947,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (currentUnit.attachedModules.Count > 0)
                     {
-                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModule?.moduleGuid);
+                        Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
                         Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
                         if (selectedModule != null && dettachedModule != null)
                         {
@@ -2041,7 +2056,7 @@ public class GameManager : MonoBehaviour
 
     private void StartTurn()
     {
-        UpdateAuctionModules(TurnNumber);
+        UpdateModulesFromServer(TurnNumber);
         TurnNumber++;
         endTurnButton.sprite = endTurnButtonNotPressed;
         foreach (var station in Stations)
@@ -2260,7 +2275,7 @@ public class GameManager : MonoBehaviour
                 if (i < unit.attachedModules.Count)
                 {
                    
-                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId && !MyStation.actions.Any(x=>x.selectedModule?.moduleGuid == unit.attachedModules[i]?.moduleGuid || x.generatedGuid == unit.attachedModules[i]?.moduleGuid));
+                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId && !MyStation.actions.Any(x=>x.selectedModuleGuid == unit.attachedModules[i]?.moduleGuid || x.generatedGuid == unit.attachedModules[i]?.moduleGuid));
                     if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != Constants.SpyModule)
                     {
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
