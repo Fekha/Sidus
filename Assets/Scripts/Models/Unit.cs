@@ -119,7 +119,7 @@ public class Unit : Node
     {
         if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
             regen *= 2;
-        if (HP < maxHP && !queuing)
+        if (regen != 0 && HP < maxHP && !queuing)
             StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this));
         HP += regen;
     }

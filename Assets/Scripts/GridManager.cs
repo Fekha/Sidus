@@ -156,15 +156,15 @@ public class GridManager : MonoBehaviour
         else 
         {
             string color = "Blue";
-            int spawnX = 1;
+            int spawnX = 2;
             int spawnY = 4;
-            Direction facing = Direction.Right;
+            Direction facing = Direction.Left;
             if (stationId == 1)
             {
                 color = "Red";
-                spawnX = 7;
+                spawnX = 6;
                 spawnY = 4;
-                facing = Direction.Left;
+                facing = Direction.Right;
             }
             else if (stationId == 2)
             {
@@ -206,7 +206,7 @@ public class GridManager : MonoBehaviour
                 var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 9, 2, stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
                     StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7

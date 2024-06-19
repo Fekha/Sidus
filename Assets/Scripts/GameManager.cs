@@ -494,11 +494,11 @@ public class GameManager : MonoBehaviour
                     case ResearchType.ResearchMaxFleets:
                         canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
                         break;
-                    case ResearchType.ResearchHP:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                        break;
+                    //case ResearchType.ResearchHP:
+                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+                    //    break;
                     case ResearchType.ResearchMining:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchMaxFleets].level;
+                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchHP].level;
                         break;
                     //case ResearchType.ResearchKinetic:
                     //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
@@ -1238,6 +1238,7 @@ public class GameManager : MonoBehaviour
             {
                 Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
             }
+            Stations[unitMoving.stationId].modules.AddRange(unitMoving.attachedModules);
             AllUnits.Remove(unitMoving);
             unitMoving.currentPathNode.unitOnPath = null;
             Destroy(unitMoving.gameObject);
@@ -1262,6 +1263,7 @@ public class GameManager : MonoBehaviour
                 unitMoving.currentPathNode.unitOnPath = null;
                 Destroy(unitMoving.gameObject);
             }
+            Stations[unitOnPath.stationId].modules.AddRange(unitOnPath.attachedModules);
             AllUnits.Remove(unitOnPath);
             node.unitOnPath = null;
             Destroy(unitOnPath.gameObject); //they are dead
@@ -2078,10 +2080,7 @@ public class GameManager : MonoBehaviour
         }
         foreach (var unit in AllUnits)
         {
-            if (!unit.hasMoved)
-            {
-                unit.RegenHP(1);
-            }
+            unit.RegenHP(unit.movementLeft);
             Stations[unit.stationId].GainCredits(unit.globalCreditGain,unit,TurnNumber == 1);
             unit.hasMoved = false;
             unit.resetMining();

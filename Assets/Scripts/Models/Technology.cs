@@ -64,17 +64,17 @@ public class Technology
             case ResearchType.ResearchFleetLvl:
                 effectText = $"Increase max fleet level to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max level: {modifier + level})";
-                requirementText = "<b>Must increase max <u>station level</u> first</b>\n\n";
+                requirementText = "<b>Must research <u>max station level</u> first</b>\n\n";
                 break;
             case ResearchType.ResearchMaxFleets:
                 effectText = $"Increase max number of fleets to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max fleets: {modifier + level})";
-                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
+                requirementText = "<b>Must research <u>max fleet level</u> first</b>\n\n";
                 break;
             case ResearchType.ResearchHP:
-                effectText = $"+2 HP for all units";
+                effectText = $"+2 max HP for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>fleet level</u> first</b>\n\n";
+                requirementText = "<b>Must research <u>max fleet level</u> first</b>\n\n";
                 break;
             case ResearchType.ResearchKinetic:
                 effectText = $"+1 kinetic power for all units";
@@ -91,7 +91,7 @@ public class Technology
             case ResearchType.ResearchMining:
                 effectText = $"+1 mining power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must increase max <u>number of fleets</u> first</b>\n\n";
+                requirementText = "<b>Must research <u>+2 max HP for all units</u> first</b>\n\n";
                 break;
             default:
                 break;    

@@ -185,7 +185,7 @@ public class LoginManager : MonoBehaviour
     private void GetActiveMatches(List<GameMatch> newGames)
     {
         ClearOpenGames();
-        foreach (var newGame in newGames)
+        foreach (var newGame in newGames.Where(x=>x.MaxPlayers > 1))
         {
             var game = newGame;
             var prefab = Instantiate(openGamePrefab, activeContent);

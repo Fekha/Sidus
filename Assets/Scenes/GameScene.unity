@@ -7259,8 +7259,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00024414062, y: 12.613}
-  m_SizeDelta: {x: -24.01, y: -133.49}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -25.999998, y: -140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &696530456
 MonoBehaviour:
@@ -7317,7 +7317,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.15
+  m_fontSize: 28.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -14622,7 +14622,7 @@ MonoBehaviour:
   m_text: "Movement:\nYou may move each unit once per turn.\nMoving into an asteroid
     will mine it. \nEnding your turn on an invalid hex will return you to the last
     valid hex.\n\nRepairing:\nMoving over allied units repairs 1 of their HP.\nUnits
-    that don't move on a turn self repair 1 HP.\nStations Repair 1 HP to each neighboring
+    self repair 1 HP per unused movement.\nStations Repair 1 HP to each neighboring
     allied unit and themsleives each turn.\n\nClaiming:\nYou immediatly claim any
     nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
     its movement on the hex, and you must already own a neighboring hex to claim
