@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      syduslogo120x120_0: -2239616205231360371
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

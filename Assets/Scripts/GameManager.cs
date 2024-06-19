@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
     internal List<GameObject> TechnologyObjects = new List<GameObject>();
     internal List<GameObject> TurnArchiveObjects = new List<GameObject>();
     internal int Winner = -1;
-    internal Station MyStation {get {return Stations[Globals.localStationIndex];}}
+    internal Station MyStation {get {return Stations.FirstOrDefault(x=>x.stationId == Globals.localStationIndex);}}
     public GameObject turnLabel;
     private SqlManager sql;
     internal int TurnNumber = 0;
@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
         sql = new SqlManager();
 #if UNITY_EDITOR
         if(!Globals.HasBeenToLobby)
-            SceneManager.LoadScene((int)Scene.Lobby);
+            SceneManager.LoadScene((int)Scene.Login);
 #endif
         loadingPanel.SetActive(true);
     }

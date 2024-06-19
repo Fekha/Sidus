@@ -50,10 +50,19 @@ public class GridManager : MonoBehaviour
         }
         CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;
-        var stationsCount = Globals.IsCPUGame ? Constants.MaxPlayers : Globals.GameMatch.MaxPlayers;
-        for (int i = 0; i < stationsCount; i++)
+        if (Globals.IsCPUGame)
         {
-            CreateStation(i, currentGameTurn);
+            for (int i = 0; i < Constants.MaxPlayers; i++)
+            {
+                CreateStation(i, currentGameTurn);
+            }
+        }
+        else
+        {
+            foreach(var station in currentGameTurn.Players.OrderBy(x=>x.PlayerId))
+            {
+                CreateStation(station.PlayerId, currentGameTurn);
+            }
         }
         scoreToWin = GetScoreToWin();
         DoneLoading = true;
