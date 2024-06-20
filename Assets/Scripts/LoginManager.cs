@@ -39,12 +39,11 @@ public class LoginManager : MonoBehaviour
     public void CreateGame(bool cpuGame)
     {
         loadingPanel.SetActive(true);
-        Globals.IsCPUGame = cpuGame;
-        if (teamToggle.isOn && MaxPlayers == 4 && !Globals.IsCPUGame)
+        if (teamToggle.isOn && MaxPlayers == 4 && !cpuGame)
             GameSettings.Add(GameSettingType.Teams.ToString());
         if (toggle1.isOn)
             GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
-        if (Globals.IsCPUGame)
+        if (cpuGame)
             MaxPlayers = 1;
         var gameGuid = Guid.NewGuid();
         var players = new List<GamePlayer>();
@@ -242,7 +241,7 @@ public class LoginManager : MonoBehaviour
         Globals.GameMatch.GameTurns[0] = gameTurn;
         if (PlayersNeeded() == 0) {
             Globals.localStationIndex = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerId;
-            Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.IsCPUGame ? 4 : Globals.GameMatch.MaxPlayers;
+            Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.GameMatch.MaxPlayers == 1 ? 4 : Globals.GameMatch.MaxPlayers;
             SceneManager.LoadScene((int)Scene.Game);
         } else {
             UpdateWaitingText();

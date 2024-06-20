@@ -52,7 +52,7 @@ public class GridManager : MonoBehaviour
         }
         CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Characters").transform;
-        if (Globals.IsCPUGame)
+        if (Globals.GameMatch.MaxPlayers == 1)
         {
             for (int i = 0; i < Constants.MaxPlayers; i++)
             {
@@ -142,7 +142,7 @@ public class GridManager : MonoBehaviour
         GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
-        if (!Globals.IsCPUGame || stationId == 0)
+        if (Globals.GameMatch.MaxPlayers != 1 || stationId == 0)
         {
             serverPlayer = currentGameTurn.Players[stationId];
             stationGuid = (Guid)serverPlayer.PlayerGuid;

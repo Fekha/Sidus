@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GetIsTurnReady()
     {
-        while (!Globals.IsCPUGame)
+        while (Globals.GameMatch.MaxPlayers != 1)
         {
             while (!isEndingTurn)
             {
