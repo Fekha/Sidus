@@ -1,6 +1,7 @@
 using Models;
 using System;
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -110,7 +111,12 @@ public class PathNode : MonoBehaviour
         ownedByGuid = _ownedByGuid;
         if (ownedByGuid != Guid.Empty)
         {
-            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[(int)GameManager.i.GetStationByGuid(ownedByGuid).playerColor];
+            int? playerColor = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == ownedByGuid)?.PlayerColor;
+            //For Practice Games
+            if (playerColor == null) {
+                playerColor = (int)GameManager.i.GetStationByGuid(ownedByGuid).playerColor;
+            }
+            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[(int)playerColor];
         }
     }
     internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)
