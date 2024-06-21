@@ -20,7 +20,7 @@ public class SqlManager
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(request.error);
+                Debug.Log($"{request.error}\n{apiUrl + url}");
             }
             else
             {
@@ -37,7 +37,7 @@ public class SqlManager
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(request.error);
+                Debug.Log($"{request.error}\n{apiUrl + url}\n{ToPost}");
             }
             else
             {

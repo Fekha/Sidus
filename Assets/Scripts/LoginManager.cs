@@ -141,24 +141,26 @@ public class LoginManager : MonoBehaviour
         {
             GameGuid = gameGuid,
             TurnNumber = 0,
-            PlayerId = playerId,
+            PlayerColor = playerId,
             PlayerGuid = Globals.Account.PlayerGuid,
             Units = new List<ServerUnit>()
             {
                 new ServerUnit()
                 {
+                    PlayerGuid = Globals.Account.PlayerGuid,
                     UnitGuid = Globals.Account.PlayerGuid,
                     GameGuid = gameGuid,
                     TurnNumber = 0,
-                    PlayerId = playerId,
+                    PlayerColor = playerId,
                     IsStation = true,
                 },
                 new ServerUnit()
                 {
+                    PlayerGuid = Globals.Account.PlayerGuid,
                     UnitGuid = Guid.NewGuid(),
                     GameGuid = gameGuid,
                     TurnNumber = 0,
-                    PlayerId = playerId,
+                    PlayerColor = playerId,
                     IsStation = false,
                 },
             },
@@ -240,7 +242,7 @@ public class LoginManager : MonoBehaviour
     {
         Globals.GameMatch.GameTurns[0] = gameTurn;
         if (PlayersNeeded() == 0) {
-            Globals.localStationIndex = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerId;
+            Globals.localStationColor = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerColor;
             Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.GameMatch.MaxPlayers == 1 ? 4 : Globals.GameMatch.MaxPlayers;
             SceneManager.LoadScene((int)Scene.Game);
         } else {

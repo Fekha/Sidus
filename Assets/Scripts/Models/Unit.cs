@@ -9,9 +9,9 @@ using UnityEngine;
 public class Unit : Node
 {
     internal string unitName;
-    internal string color;
     internal Guid unitGuid;
-    internal int stationId;
+    internal Guid playerGuid;
+    internal PlayerColor playerColor;
     internal int teamId;
     internal int maxHP;
     internal int HP;
@@ -32,7 +32,6 @@ public class Unit : Node
     internal Direction facing;
     internal List<Module> attachedModules = new List<Module>();
     internal List<ModuleEffect> moduleEffects = new List<ModuleEffect>();
-
     internal TextMeshPro HPText;
     internal TextMeshPro statText;
     internal GameObject selectIcon;
@@ -41,15 +40,15 @@ public class Unit : Node
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
     internal bool hasMoved = false;
 
-    public void InitializeUnit(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
+    public void InitializeUnit(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
     {
-        teamId = stationId % Globals.Teams;
+        teamId = _color % Globals.Teams;
         facing = _direction;
         unitGuid = _unitGuid;
         location = new Coords(_x, _y);
-        color = _color;
         maxHP = _hp;
         HP = _hp;
+        playerColor = (PlayerColor)_color;
         maxMovement = _range;
         movementLeft = _range;
         kineticPower = _electricAttack;
@@ -67,10 +66,10 @@ public class Unit : Node
     {
         unitGuid = unit.UnitGuid;
         facing = (Direction)unit.Facing;
-        color = unit.Color;
         location = new Coords(unit.X,unit.Y);
         unitName = unit.UnitName;
-        stationId = unit.PlayerId;
+        playerColor = (PlayerColor)unit.PlayerColor;
+        playerGuid = unit.PlayerGuid;
         teamId = unit.TeamId;
         maxHP = unit.MaxHP;
         HP = unit.HP;
@@ -102,7 +101,7 @@ public class Unit : Node
         inCombatIcon = transform.Find("InCombat").gameObject;
         unitImage = transform.Find("Unit");
         SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
-        unitSprite.color = GridManager.i.playerColors[stationId];
+        unitSprite.color = GridManager.i.playerColors[(int)playerColor];
         if (this is Station)
         {
             unitSprite.sprite = level == 1 ? GridManager.i.stationlvl1 : level == 2 ? GridManager.i.stationlvl2 : level == 3 ? GridManager.i.stationlvl3 : GridManager.i.stationlvl4;
@@ -434,13 +433,13 @@ public class Unit : Node
             IsStation = this is Station,
             GameGuid = Globals.GameMatch.GameGuid,
             TurnNumber = GameManager.i.TurnNumber,
+            PlayerGuid = playerGuid,
             UnitGuid = unitGuid,
             Facing = (int)facing,
-            Color = color,
             X = location.x,
             Y = location.y,
             UnitName = unitName,
-            PlayerId = stationId,
+            PlayerColor = (int)playerColor,
             TeamId = teamId,
             MaxHP = maxHP,
             HP = HP,

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static System.Collections.Specialized.BitVector32;
 
 public class GridManager : MonoBehaviour
 {
@@ -61,9 +62,9 @@ public class GridManager : MonoBehaviour
         }
         else
         {
-            foreach(var station in currentGameTurn.Players.OrderBy(x=>x.PlayerId))
+            foreach(var station in currentGameTurn.Players)
             {
-                CreateStation(station.PlayerId, currentGameTurn);
+                CreateStation(station.PlayerColor, currentGameTurn);
             }
         }
         scoreToWin = GetScoreToWin();
@@ -133,18 +134,18 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-    private void CreateStation(int stationId, GameTurn currentGameTurn)
+    private void CreateStation(int stationColor, GameTurn currentGameTurn)
     {
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
         unitSprite.sprite = stationlvl1;
-        unitSprite.color = playerColors[stationId];
+        unitSprite.color = playerColors[stationColor];
         GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
-        if (Globals.GameMatch.MaxPlayers != 1 || stationId == 0)
+        if (Globals.GameMatch.MaxPlayers != 1 || stationColor == 0)
         {
-            serverPlayer = currentGameTurn.Players[stationId];
+            serverPlayer = currentGameTurn.Players[stationColor];
             stationGuid = (Guid)serverPlayer.PlayerGuid;
             fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => !x.IsStation).UnitGuid;
         }
@@ -157,41 +158,36 @@ public class GridManager : MonoBehaviour
         } 
         else 
         {
-            string color = "Blue";
             int spawnX = 2;
             int spawnY = 4;
             Direction facing = Direction.Left;
-            if (stationId == 1)
+            if (stationColor == 1)
             {
-                color = "Red";
                 spawnX = 6;
                 spawnY = 4;
                 facing = Direction.Right;
             }
-            else if (stationId == 2)
+            else if (stationColor == 2)
             {
-                color = "Purple";
                 spawnX = 3;
                 spawnY = 7;
                 facing = Direction.Right;
             }
-            else if (stationId == 3)
+            else if (stationColor == 3)
             {
-                color = "Orange";
                 spawnX = 5;
                 spawnY = 1;
                 facing = Direction.Left;
             }
-            stationNode.InitializeStation(spawnX, spawnY, color, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
+            stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
         }
-        GameManager.i.Stations.Add(stationNode);
     }
 
     public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
     {
         var hexesNearby = GetNeighbors(stationNode.currentPathNode);
         if(!originalSpawn)
-            hexesNearby = hexesNearby.Where(x => x.ownedById == stationNode.stationId).ToList();
+            hexesNearby = hexesNearby.Where(x => x.ownedByGuid == stationNode.playerGuid).ToList();
         var startIndex = -1;
         int k = 0;
         while (startIndex == -1)
@@ -208,7 +204,7 @@ public class GridManager : MonoBehaviour
                 var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, stationNode.color, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, (int)stationNode.playerColor, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
                     StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
@@ -218,7 +214,7 @@ public class GridManager : MonoBehaviour
                 }
                 else
                 {
-                    fleetNode.currentPathNode.SetNodeColor(fleetNode.stationId);
+                    fleetNode.currentPathNode.SetNodeColor(fleetNode.playerGuid);
                 }
                 didSpawn = true;
                 break;
@@ -351,42 +347,39 @@ public class GridManager : MonoBehaviour
     {
         return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
     }
-    internal int CheckForWin()
+    internal Guid CheckForWin()
     {
         GetScores();
         scoreToWin = GetScoreToWin();
         for (int i = 0; i < Globals.Teams; i++)
         {
-            if (GameManager.i.Stations.Where(x=>x.teamId == i).Sum(x=>x.score) >= scoreToWin)
+            var teamStations = GameManager.i.Stations.Where(x => x.teamId == i).ToList();
+            if (teamStations.Sum(x=>x.score) >= scoreToWin)
             {
-                return i;
+                return teamStations.FirstOrDefault().playerGuid;
             }
         }
-        return -1;
+        return Guid.Empty;
     }
 
     internal void GetScores()
     {
-        Dictionary<int, int> scores = new Dictionary<int, int>();
-        //-1 for unowned stations
-        for (int i = -1; i < GameManager.i.Stations.Count; i++)
+        Dictionary<Guid, int> scores = new Dictionary<Guid, int>();
+        scores.Add(new Guid(), 0);
+        foreach (var station in GameManager.i.Stations)
         {
-            scores.Add(i, 0);
+            scores.Add(station.playerGuid, 0);
         }
         for (int i = 0; i < gridSize.x; i++)
         {
             for (int j = 0; j < gridSize.y; j++)
             {
-                scores[grid[i, j].ownedById]++;
+                scores[grid[i, j].ownedByGuid]++;
             }
         }
-        for (int i = 0; i < GameManager.i.Stations.Count; i++)
+        foreach (var station in GameManager.i.Stations)
         {
-            var teamMembers = GameManager.i.Stations.Where(x => x.teamId == GameManager.i.Stations[i].teamId).Select(x => x.stationId);
-            foreach (var team in teamMembers)
-            {
-                GameManager.i.Stations[i].score = scores[team];
-            }
+            station.score = scores[station.playerGuid];
         }
     }
 }

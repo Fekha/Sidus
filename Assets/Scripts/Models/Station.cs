@@ -19,22 +19,25 @@ public class Station : Unit
     internal int bonusMining;
     internal int score;
 
-    public void InitializeStation(int _x, int _y, string _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid)
+    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid)
     {
+        GameManager.i.Stations.Add(this);
         for (int i = 0; i <= Constants.TechAmount; i++)
         {
             technology.Add(new Technology(i));
         }
-        stationId = GameManager.i.Stations.Count;
+        playerColor = (PlayerColor)GameManager.i.Stations.Count;
+        playerGuid = _stationGuid;
         unitName = $"{_color} Station";
         credits = 3;
         maxActions = 2;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
-        currentPathNode.SetNodeColor(stationId);
+        currentPathNode.SetNodeColor(playerGuid);
         StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
     }
     public void InitializeStation(GamePlayer player)
     {
+        GameManager.i.Stations.Add(this);
         actions = player.Actions.Select(x=>new Action(x)).ToList();
         technology = player.Technology.Select(x => new Technology(x)).ToList();
         modules = GameManager.i.AllModules.Where(x => player.ModulesGuids.Contains(x.moduleGuid.ToString())).ToList();
@@ -94,7 +97,7 @@ public class Station : Unit
         var neighbors = GridManager.i.GetNeighbors(currentPathNode, false);
         foreach (var neighbor in neighbors)
         {
-            if (neighbor.unitOnPath != null && neighbor.unitOnPath.stationId == stationId)
+            if (neighbor.unitOnPath != null && neighbor.unitOnPath.playerGuid == playerGuid)
             {
                 neighbor.unitOnPath.RegenHP(amount);
             }

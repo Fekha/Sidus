@@ -12,7 +12,7 @@ public class PathNode : MonoBehaviour
     public int minerals = 0;
     public int creditRegin = 0;
     public Coords coords;
-    public int ownedById = -1;
+    public Guid ownedByGuid;
 
     internal int gCost;
     internal PathNode parent;
@@ -45,7 +45,7 @@ public class PathNode : MonoBehaviour
         minerals = node.Minerals;
         creditRegin = node.CreditRegin;
         coords = new Coords(node.X,node.Y);
-        ownedById = node.OwnedById;
+        ownedByGuid = node.OwnedByGuid;
         GetUIComponents();
     }
 
@@ -57,7 +57,7 @@ public class PathNode : MonoBehaviour
         mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
         coordsText.text = $"{coords.x},{coords.y}";
-        SetNodeColor(ownedById);
+        SetNodeColor(ownedByGuid);
         //coordsText.gameObject.SetActive(true); //Helpful for debugging
         GridManager.i.AllNodes.Add(this);
     }
@@ -74,7 +74,7 @@ public class PathNode : MonoBehaviour
             CreditRegin = creditRegin,
             X = coords.x,
             Y = coords.y,
-            OwnedById = ownedById,
+            OwnedByGuid = ownedByGuid,
         };
     }
     public void ReginCredits()
@@ -105,17 +105,19 @@ public class PathNode : MonoBehaviour
         AwardCredits(unit, minedAmount, isQueuing);
         return minedAmount;
     }
-    public void SetNodeColor(int _ownedById)
+    public void SetNodeColor(Guid _ownedByGuid)
     {
-        ownedById = _ownedById;
-        if(ownedById != -1)
-            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[_ownedById];
+        ownedByGuid = _ownedByGuid;
+        if (ownedByGuid != Guid.Empty)
+        {
+            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[(int)GameManager.i.GetStationByGuid(ownedByGuid).playerColor];
+        }
     }
     internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)
     {
         minerals -= minedAmount;
         unit.miningLeft -= minedAmount;
-        GameManager.i.Stations[unit.stationId].GainCredits(minedAmount, unit, isQueuing, false);
+        GameManager.i.GetStationByGuid(unit.playerGuid).GainCredits(minedAmount, unit, isQueuing, false);
         mineralText.text = $"{minerals}";
         asteriodSprite.gameObject.SetActive(isAsteroid);
     }

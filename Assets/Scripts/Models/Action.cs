@@ -15,7 +15,7 @@ public class Action {
     public Guid? generatedGuid;
     internal int costOfAction;
     internal int actionOrder;
-    internal int playerId;
+    internal Guid playerGuid;
     internal bool _statonInventory = false;
     internal Guid? _parentGuid = null;
 
@@ -43,7 +43,7 @@ public class Action {
             }
             generatedGuid = _action.GeneratedGuid;
             actionOrder = _action.ActionOrder;
-            playerId = _action.PlayerId;
+            playerGuid = _action.PlayerGuid;
             selectedModuleGuid = _action.SelectedModuleGuid;
             playerBid = _action.PlayerBid;
         }

@@ -20,7 +20,7 @@ namespace Models
         public Guid GameGuid { get; set; }
         public List<GameTurn>? GameTurns { get; set; }
         public string? GameSettings { get; set; }
-        public int Winner { get; set; }
+        public Guid Winner { get; set; }
         public DateTime HealthCheck { get; set; }
     }
 
@@ -48,7 +48,7 @@ namespace Models
         public int MaxCredits { get; set; }
         public int Minerals { get; set; }
         public int CreditRegin { get; set; }
-        public int OwnedById { get; set; }
+        public Guid OwnedByGuid { get; set; }
     }
 
 
@@ -57,8 +57,8 @@ namespace Models
     {
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
-        public int PlayerId { get; set; }
         public Guid PlayerGuid { get; set; }
+        public int PlayerColor { get; set; }
         public List<ServerUnit>? Units { get; set; }
         public List<ServerAction>? Actions { get; set; }
         public List<ServerTechnology>? Technology { get; set; }
@@ -79,7 +79,7 @@ namespace Models
     {
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
-        public int PlayerId { get; set; }
+        public Guid PlayerGuid { get; set; }
         public int TechnologyId { get; set; }
         public int Level { get; set; }
         public int CurrentAmount { get; set; }
@@ -94,7 +94,7 @@ namespace Models
     {
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
-        public int PlayerId { get; set; }
+        public Guid PlayerGuid { get; set; }
         public int ActionOrder { get; set; }
         public int? ActionTypeId { get; set; }
         public Guid? SelectedUnitGuid { get; set; }
@@ -111,8 +111,9 @@ namespace Models
     {
         public bool IsStation { get; set; }
         public Guid GameGuid { get; set; }
+        public Guid PlayerGuid { get; set; }
         public int TurnNumber { get; set; }
-        public int PlayerId { get; set; }
+        public int PlayerColor { get; set; }
         public Guid UnitGuid { get; set; }
         public int? X { get; set; }
         public int? Y { get; set; }
@@ -135,7 +136,6 @@ namespace Models
         public int Level { get; set; }
         public int GlobalCreditGain { get; set; }
         public int MaxAttachedModules { get; set; }
-        public string? Color { get; set; }
         public string? AttachedModules { get; set; }
         public string? ModuleEffects { get; set; }
     }

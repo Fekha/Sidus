@@ -107,8 +107,8 @@ public class GameManager : MonoBehaviour
     internal List<GameObject> AuctionObjects = new List<GameObject>();
     internal List<GameObject> TechnologyObjects = new List<GameObject>();
     internal List<GameObject> TurnArchiveObjects = new List<GameObject>();
-    internal int Winner = -1;
-    internal Station MyStation {get {return Stations.FirstOrDefault(x=>x.stationId == Globals.localStationIndex);}}
+    internal Guid Winner;
+    internal Station MyStation {get {return Stations.FirstOrDefault(x=>x.playerGuid == Globals.Account.PlayerGuid);}}
     public GameObject turnLabel;
     private SqlManager sql;
     internal int TurnNumber = 0;
@@ -141,8 +141,8 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
-        ColorText.text = $"You're {MyStation.color}";
-        ColorText.color = GridManager.i.playerColors[MyStation.stationId];
+        ColorText.text = $"You're {MyStation.playerColor.ToString()}";
+        ColorText.color = GridManager.i.playerColors[(int)MyStation.playerColor];
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
@@ -275,8 +275,8 @@ public class GameManager : MonoBehaviour
         upgradeButton.gameObject.SetActive(false);
         createFleetButton.gameObject.SetActive(false);
         repairFleetButton.gameObject.SetActive(false);
-        UpdateCreditsAndHexesText(Stations[unit.stationId]);
-        if (unit.stationId == MyStation.stationId)
+        UpdateCreditsAndHexesText(GetStationByGuid(unit.playerGuid));
+        if (unit.playerGuid == MyStation.playerGuid)
         {
             if (CanLevelUp(unit, actionType, true))
             {
@@ -327,7 +327,7 @@ public class GameManager : MonoBehaviour
                         targetUnit = targetNode.unitOnPath;
                     }
                     //Original click on unit
-                    if (SelectedUnit == null && targetUnit != null && targetUnit.stationId == MyStation.stationId)
+                    if (SelectedUnit == null && targetUnit != null && targetUnit.playerGuid == MyStation.playerGuid)
                     {
                         SelectedUnit = targetUnit;
                         SetUnitTextValues(SelectedUnit);
@@ -657,7 +657,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("No action slots available to queue this action.");
         }
-        else if (MyStation.stationId != SelectedUnit.stationId)
+        else if (MyStation.playerGuid != SelectedUnit.playerGuid)
         {
             ShowCustomAlertPanel("This is not your unit!");
         } 
@@ -866,14 +866,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool CanLevelUp(Unit structure, ActionType actionType, bool countQueue)
+    private bool CanLevelUp(Unit unit, ActionType actionType, bool countQueue)
     {
-        var station = Stations[structure.stationId];
-        var currentLevel = structure.level;
+        var station = GetStationByGuid(unit.playerGuid);
+        var currentLevel = unit.level;
         var maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].level;
         var maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
         if (countQueue) {
-            currentLevel += Stations[structure.stationId].actions.Count(x => x.selectedUnit.unitGuid == structure.unitGuid && x.actionType == actionType);
+            currentLevel += GetStationByGuid(unit.playerGuid).actions.Count(x => x.selectedUnit.unitGuid == unit.unitGuid && x.actionType == actionType);
             maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].level;
             maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
         } 
@@ -894,10 +894,10 @@ public class GameManager : MonoBehaviour
         }
         return currentFleets < maxNumFleets;
     }
-    private int GetCostOfAction(ActionType actionType, Unit structure, bool countQueue, int? playerBid = null)
+    private int GetCostOfAction(ActionType actionType, Unit unit, bool countQueue, int? playerBid = null)
     {
-        var station = Stations[structure.stationId];
-        var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == structure.unitGuid).Count() : 0;
+        var station = GetStationByGuid(unit.playerGuid);
+        var countingQueue = countQueue ? station.actions.Where(x => x.actionType == actionType && x.selectedUnit.unitGuid == unit.unitGuid).Count() : 0;
         if (actionType == ActionType.CreateFleet)
         {
             if (station.fleets.Count + countingQueue <= 0)
@@ -906,11 +906,11 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.UpgradeFleet)
         {
-            return (structure.level + countingQueue) * (9 - (structure.level + countingQueue)); //8,14,18
+            return (unit.level + countingQueue) * (9 - (unit.level + countingQueue)); //8,14,18
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return ((structure.level + 1 + countingQueue) * 5); //10,15,20
+            return ((unit.level + 1 + countingQueue) * 5); //10,15,20
         }
         else if (actionType == ActionType.BidOnModule)
         {
@@ -1017,8 +1017,8 @@ public class GameManager : MonoBehaviour
                 }
                 if(isValidHex)
                     unitMoving.currentPathNode = nextNode;
-                if (!nextNode.isAsteroid && nextNode.ownedById == -1)
-                    unitMoving.currentPathNode.SetNodeColor(unitMoving.stationId);
+                if (!nextNode.isAsteroid && nextNode.ownedByGuid == Guid.Empty)
+                    unitMoving.currentPathNode.SetNodeColor(unitMoving.playerGuid);
                 if (blockedMovement || (!isValidHex && i == path.Count()))
                 {
                     var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, null, false);
@@ -1043,8 +1043,8 @@ public class GameManager : MonoBehaviour
         {
             unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
             unitMoving.currentPathNode.unitOnPath = unitMoving;
-            if(GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedById == unitMoving.stationId))
-                unitMoving.currentPathNode.SetNodeColor(unitMoving.stationId);
+            if(GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedByGuid == unitMoving.playerGuid))
+                unitMoving.currentPathNode.SetNodeColor(unitMoving.playerGuid);
         }
         if (!didFightLastMove)
         {
@@ -1234,13 +1234,13 @@ public class GameManager : MonoBehaviour
             {
                 var station = (unitMoving as Station);
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
-                Winner = unitOnPath.stationId;
+                Winner = unitOnPath.playerGuid;
             }
             else if (unitMoving is Fleet)
             {
-                Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
+                GetStationByGuid(unitMoving.playerGuid).fleets.Remove(unitMoving as Fleet);
             }
-            Stations[unitMoving.stationId].modules.AddRange(unitMoving.attachedModules);
+            GetStationByGuid(unitMoving.playerGuid).modules.AddRange(unitMoving.attachedModules);
             AllUnits.Remove(unitMoving);
             unitMoving.currentPathNode.unitOnPath = null;
             Destroy(unitMoving.gameObject);
@@ -1252,20 +1252,20 @@ public class GameManager : MonoBehaviour
             {
                 var station = (unitOnPath as Station);
                 while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
-                Winner = unitMoving.stationId;
+                Winner = unitMoving.playerGuid;
             }
             else if (unitOnPath is Fleet)
             {
-                Stations[unitOnPath.stationId].fleets.Remove(unitOnPath as Fleet);
+                GetStationByGuid(unitOnPath.playerGuid).fleets.Remove(unitOnPath as Fleet);
             }
             if (unitMoving is Fleet && unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct))
             {
-                Stations[unitMoving.stationId].fleets.Remove(unitMoving as Fleet);
+                GetStationByGuid(unitMoving.playerGuid).fleets.Remove(unitMoving as Fleet);
                 AllUnits.Remove(unitMoving);
                 unitMoving.currentPathNode.unitOnPath = null;
                 Destroy(unitMoving.gameObject);
             }
-            Stations[unitOnPath.stationId].modules.AddRange(unitOnPath.attachedModules);
+            GetStationByGuid(unitOnPath.playerGuid).modules.AddRange(unitOnPath.attachedModules);
             AllUnits.Remove(unitOnPath);
             node.unitOnPath = null;
             Destroy(unitOnPath.gameObject); //they are dead
@@ -1282,7 +1282,7 @@ public class GameManager : MonoBehaviour
         var floatingObj = Instantiate(floatingTextPrefab, spawnTransform);
         var floatingTextObj = floatingObj.transform.Find("FloatingText");
         floatingTextObj.GetComponent<TextMeshPro>().text = text;
-        floatingTextObj.GetComponent<TextMeshPro>().color = unit != null ? GridManager.i.playerColors[unit.stationId] : Color.white;
+        floatingTextObj.GetComponent<TextMeshPro>().color = unit != null ? GridManager.i.playerColors[(int)unit.playerColor] : Color.white;
         var animationTime = floatingTextObj.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length;
         yield return new WaitForSeconds(animationTime);
         Destroy(floatingObj);
@@ -1314,7 +1314,7 @@ public class GameManager : MonoBehaviour
         }
         if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits3))
         {
-            Stations[unit.stationId].GainCredits(3, unit,false,false);
+            GetStationByGuid(unit.playerGuid).GainCredits(3, unit,false,false);
         }
     }
 
@@ -1374,7 +1374,7 @@ public class GameManager : MonoBehaviour
             s1.TakeDamage(damage, s2.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
             string hpText = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.HP}";
             StartCoroutine(FloatingTextAnimation($"-{damage} HP", s1.transform, s1));
-            returnText += $"<u><b>{s1.color} took {damage} damage</u></b> and has {hpText} HP left.";
+            returnText += $"<u><b>{s1.playerColor.ToString()} took {damage} damage</u></b> and has {hpText} HP left.";
             if (s1Amr != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
                 var modifierSymbol = s1Amr > 0 ? "-" : "+";
@@ -1387,7 +1387,7 @@ public class GameManager : MonoBehaviour
             s2.TakeDamage(damage, s1.moduleEffects.Contains(ModuleEffect.ReduceMaxHp));
             string hpText = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.HP}";
             StartCoroutine(FloatingTextAnimation($"-{damage} HP", s2.transform, s2));
-            returnText += $"<u><b>{s2.color} took {damage} damage</u></b> and has {hpText} HP left.";
+            returnText += $"<u><b>{s2.playerColor.ToString()} took {damage} damage</u></b> and has {hpText} HP left.";
             if (s2Amr != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
                 var modifierSymbol = s2Amr > 0 ? "-" : "+";
@@ -1398,7 +1398,7 @@ public class GameManager : MonoBehaviour
         {
             returnText += $"<u><b>Niether unit took damage.</u></b>";
         }
-        returnText += $"\n\n{s1.color} had {power1Text} Power{support1Text}.\n{s2.color} had {power2Text} Power{support2Text}.\n";
+        returnText += $"\n\n{s1.playerColor.ToString()} had {power1Text} Power{support1Text}.\n{s2.playerColor.ToString()} had {power2Text} Power{support2Text}.\n";
         phaseText.text = "Phase:\n";
         if (type is AttackType.Kinetic)
         {
@@ -1503,7 +1503,7 @@ public class GameManager : MonoBehaviour
                     for (int j = 0; j < Stations.Count; j++)
                     {
                         int k = (TurnNumber-1 + j) % Stations.Count;
-                        if (k == Globals.localStationIndex)
+                        if (k == Globals.localStationColor)
                             actionOrders.Add(i+j+1);
                     }
                 }
@@ -1521,14 +1521,14 @@ public class GameManager : MonoBehaviour
                         {
                             GameGuid = Globals.GameMatch.GameGuid,
                             TurnNumber = TurnNumber,
-                            PlayerId = Globals.localStationIndex,
+                            PlayerColor = Globals.localStationColor,
                             PlayerGuid = Globals.Account.PlayerGuid,
                             Actions = MyStation.actions.Select((x, i) =>
                                 new ServerAction()
                                 {
                                     GameGuid = Globals.GameMatch.GameGuid,
                                     TurnNumber = TurnNumber,
-                                    PlayerId = Globals.localStationIndex,
+                                    PlayerGuid = Globals.Account.PlayerGuid,
                                     ActionOrder = actionOrders[i],
                                     ActionTypeId = (int)x.actionType,
                                     GeneratedGuid = x.generatedGuid,
@@ -1626,14 +1626,14 @@ public class GameManager : MonoBehaviour
             var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
             {
-                if (Winner != -1)
+                if (Winner != Guid.Empty)
                 {
                     break;
                 }
                 yield return StartCoroutine(PerformAction(new Action(serverAction)));
                 yield return new WaitForSeconds(.1f);
             }
-            if (Winner == -1)
+            if (Winner == Guid.Empty)
             {
                 for (int i = 0; i < turnsFromServer.Count(); i++)
                 {
@@ -1652,13 +1652,13 @@ public class GameManager : MonoBehaviour
                     asteroid.ReginCredits();
                 }
             }
-            yield return StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}", GetWinner));
+            yield return StartCoroutine(sql.GetRoutine<Guid>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}", GetWinner));
         }
     }
 
     private void PerformUpdates(Action action, int modifier, bool queued = false)
     {
-        var station = Stations[action.selectedUnit.stationId];
+        var station = GetStationByGuid(action.selectedUnit.playerGuid);
         station.GainCredits(-1 * action.costOfAction * modifier, station, queued);
         if (action.actionType == ActionType.AttachModule)
         {
@@ -1674,8 +1674,8 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    UnitToRemoveFrom = Stations[action.selectedUnit.stationId];
-                    inventoryRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+                    UnitToRemoveFrom = GetStationByGuid(action.selectedUnit.playerGuid);
+                    inventoryRemoveFrom = GetStationByGuid(action.selectedUnit.playerGuid).modules;
                     action._statonInventory = true;
                 }
             }
@@ -1717,7 +1717,7 @@ public class GameManager : MonoBehaviour
             List<Module> inventoryRemoveFrom;
             if (unitToRemoveFrom == null)
             {
-                inventoryRemoveFrom = Stations[action.selectedUnit.stationId].modules;
+                inventoryRemoveFrom = GetStationByGuid(action.selectedUnit.playerGuid).modules;
             }
             else
             {
@@ -1784,7 +1784,7 @@ public class GameManager : MonoBehaviour
     {
         if (exitOption == 0)
         {
-            if(Winner == -1)
+            if(Winner == Guid.Empty)
                 exitPanel.SetActive(true);
             else
                 SceneManager.LoadScene((int)Scene.Lobby);
@@ -1799,7 +1799,7 @@ public class GameManager : MonoBehaviour
         }
         else if (exitOption == 3)
         {
-            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).stationId}"));
+            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).playerColor.ToString()}"));
             loadingPanel.SetActive(true);
             EndTurn(true);
             SceneManager.LoadScene((int)Scene.Lobby);
@@ -1811,19 +1811,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GetWinner(int _winner)
+    private void GetWinner(Guid _winner)
     {
         Winner = _winner;
-        if (Winner == -1)
+        if (Winner == Guid.Empty)
         {
             Winner = GridManager.i.CheckForWin();
         }
-        if (Winner != -1)
+        if (Winner != Guid.Empty)
         {
             turnTapText.SetActive(false);
             ToggleHPText(true);
-            turnValue.text = $"{Stations[Winner].color} player won after {TurnNumber} turns";
-            Debug.Log($"{Stations[Winner].color} player won after {TurnNumber} turns");
+            turnValue.text = $"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns";
+            Debug.Log($"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns");
             //Add EOG Stats
         }
         else
@@ -1836,29 +1836,29 @@ public class GameManager : MonoBehaviour
     private IEnumerator PerformAction(Action action)
     {
         tapped = false;
-        var currentUnit = action.selectedUnit;
-        turnValue.text = $"{currentUnit.unitName}:\n";
-        if (currentUnit != null && AllUnits.Contains(currentUnit))
+        var unit = action.selectedUnit;
+        turnValue.text = $"{unit.unitName}:\n";
+        if (unit != null && AllUnits.Contains(unit))
         {
-            var currentStation = Stations[currentUnit.stationId];
-            action.costOfAction = GetCostOfAction(action.actionType, currentUnit, false, action.playerBid);
+            var currentStation = GetStationByGuid(unit.playerGuid);
+            action.costOfAction = GetCostOfAction(action.actionType, unit, false, action.playerBid);
             if (currentStation.credits >= action.costOfAction)
             {
                 if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid)
                 {
                     isMoving = true;
-                    if (currentUnit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= currentUnit.getMaxMovementRange())
+                    if (unit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= unit.getMaxMovementRange())
                     {
                         turnTapText.SetActive(false);
                         turnValue.text += $"{GetDescription(action.actionType)}";
-                        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
-                        Debug.Log("Moving to position: " + currentUnit.currentPathNode.transform.position);
-                        yield return StartCoroutine(MoveOnPath(currentUnit, action.selectedPath));
+                        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
+                        Debug.Log("Moving to position: " + unit.currentPathNode.transform.position);
+                        yield return StartCoroutine(MoveOnPath(unit, action.selectedPath));
                     }
                     else
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
+                        turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                     }
                     isMoving = false;
@@ -1874,25 +1874,25 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
-                        Debug.Log($"{currentUnit.unitName} not eligible for {GetDescription(action.actionType)}");
+                        Debug.Log($"{unit.unitName} not eligible for {GetDescription(action.actionType)}");
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
                     }
                 }
                 else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
                 {
-                    if (CanLevelUp(currentUnit, action.actionType, false))
+                    if (CanLevelUp(unit, action.actionType, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
-                        StartCoroutine(FloatingTextAnimation($"Upgraded", currentUnit.transform, currentUnit)); //floater6
+                        StartCoroutine(FloatingTextAnimation($"Upgraded", unit.transform, unit)); //floater6
                         PerformUpdates(action, Constants.Create);
                     }
                     else
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                     }
-                    currentUnit.selectIcon.SetActive(true);
+                    unit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    currentUnit.selectIcon.SetActive(false);
+                    unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.BidOnModule)
                 {
@@ -1901,29 +1901,29 @@ public class GameManager : MonoBehaviour
                         var actionModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
                         var wonModule = new Module(actionModule.moduleId, actionModule.moduleGuid);
                         turnValue.text += $"Won bid\n\nPaid {action.playerBid} credits for:\n{wonModule.effectText}";
-                        StartCoroutine(FloatingTextAnimation($"Won Bid", currentUnit.transform, currentUnit)); //floater5
+                        StartCoroutine(FloatingTextAnimation($"Won Bid", unit.transform, unit)); //floater5
                         PerformUpdates(action, Constants.Create);
                         currentStation.modules.Add(wonModule);
                     }
                     else
                     {
-                        StartCoroutine(FloatingTextAnimation($"Lost Bid", currentUnit.transform, currentUnit)); //floater5
+                        StartCoroutine(FloatingTextAnimation($"Lost Bid", unit.transform, unit)); //floater5
                         turnValue.text += "Lost bid\nGained 1 credit.";
                         currentStation.GainCredits(1, currentStation);
                     }
-                    currentUnit.selectIcon.SetActive(true);
+                    unit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    currentUnit.selectIcon.SetActive(false);
+                    unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.AttachModule)
                 {
-                    if (currentUnit.attachedModules.Count <= currentUnit.maxAttachedModules)
+                    if (unit.attachedModules.Count <= unit.maxAttachedModules)
                     {
                         Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
                         if (selectedModule != null)
                         {
                             turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n";
-                            if (currentUnit.moduleEffects.Contains(ModuleEffect.HiddenStats))
+                            if (unit.moduleEffects.Contains(ModuleEffect.HiddenStats))
                             {
                                 turnValue.text += $"???";
                             }
@@ -1931,7 +1931,7 @@ public class GameManager : MonoBehaviour
                             {
                                 turnValue.text += $"{selectedModule.effectText}";
                             }
-                            StartCoroutine(FloatingTextAnimation($"+Module", currentUnit.transform, currentUnit)); //floater5
+                            StartCoroutine(FloatingTextAnimation($"+Module", unit.transform, unit)); //floater5
                             PerformUpdates(action, Constants.Create);
                         }
                         else
@@ -1943,20 +1943,20 @@ public class GameManager : MonoBehaviour
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
                     }
-                    currentUnit.selectIcon.SetActive(true);
+                    unit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    currentUnit.selectIcon.SetActive(false);
+                    unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.SwapModule)
                 {
-                    if (currentUnit.attachedModules.Count > 0)
+                    if (unit.attachedModules.Count > 0)
                     {
                         Module selectedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid);
                         Module dettachedModule = AllModules.FirstOrDefault(x => x.moduleGuid == action.generatedGuid);
                         if (selectedModule != null && dettachedModule != null)
                         {
                             turnValue.text += $"{GetDescription(action.actionType)}.\n\nModule effect:\n";
-                            if (currentUnit.moduleEffects.Contains(ModuleEffect.HiddenStats))
+                            if (unit.moduleEffects.Contains(ModuleEffect.HiddenStats))
                             {
                                 turnValue.text += $"???";
                             }
@@ -1964,16 +1964,16 @@ public class GameManager : MonoBehaviour
                             {
                                 turnValue.text += $"{selectedModule.effectText}";
                             }
-                            StartCoroutine(FloatingTextAnimation($"Module Swap", currentUnit.transform, currentUnit)); //floater4
+                            StartCoroutine(FloatingTextAnimation($"Module Swap", unit.transform, unit)); //floater4
                             PerformUpdates(action, Constants.Create);
                         }
                         else
                         {
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                         }
-                        currentUnit.selectIcon.SetActive(true);
+                        unit.selectIcon.SetActive(true);
                         yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        currentUnit.selectIcon.SetActive(false);
+                        unit.selectIcon.SetActive(false);
                     }
                     else
                     {
@@ -1984,20 +1984,20 @@ public class GameManager : MonoBehaviour
                 {
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n";
                     PerformUpdates(action, Constants.Create);
-                    turnValue.text += $"New HP/Max: {Mathf.Min(currentUnit.maxHP, currentUnit.HP)}/{currentUnit.maxHP}";
-                    currentUnit.selectIcon.SetActive(true);
+                    turnValue.text += $"New HP/Max: {Mathf.Min(unit.maxHP, unit.HP)}/{unit.maxHP}";
+                    unit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    currentUnit.selectIcon.SetActive(false);
+                    unit.selectIcon.SetActive(false);
                 }
                 else if (TechActions.Contains(action.actionType))
                 {
                     var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount + 1}/{tech.neededAmount})";
-                    StartCoroutine(FloatingTextAnimation($"+Tech", currentUnit.transform, currentUnit)); //floater3
+                    StartCoroutine(FloatingTextAnimation($"+Tech", unit.transform, unit)); //floater3
                     PerformUpdates(action, Constants.Create);
-                    currentUnit.selectIcon.SetActive(true);
+                    unit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    currentUnit.selectIcon.SetActive(false);
+                    unit.selectIcon.SetActive(false);
                 }
                 else
                 {
@@ -2008,7 +2008,7 @@ public class GameManager : MonoBehaviour
             else
             {
                 turnValue.text += $"Could not perform {GetDescription(action.actionType)}, could not afford";
-                Debug.Log($"Broke ass {currentUnit.color} bitch couldn't afford {GetDescription(action.actionType)}");
+                Debug.Log($"Broke ass {unit.playerColor.ToString()} bitch couldn't afford {GetDescription(action.actionType)}");
                 yield return StartCoroutine(WaitforSecondsOrTap(1));
             }
         }
@@ -2018,7 +2018,7 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
         if (!(action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine || action.actionType == ActionType.MineAsteroid))
-            turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({currentUnit.color}): {GetDescription(action.actionType)}", turnValue.text));
+            turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
 
     }
 
@@ -2083,7 +2083,7 @@ public class GameManager : MonoBehaviour
         foreach (var unit in AllUnits)
         {
             unit.RegenHP(unit.movementLeft);
-            Stations[unit.stationId].GainCredits(unit.globalCreditGain,unit,TurnNumber == 1);
+            GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain,unit,TurnNumber == 1);
             unit.hasMoved = false;
             unit.resetMining();
             unit.resetMovementRange();
@@ -2276,7 +2276,7 @@ public class GameManager : MonoBehaviour
                 if (i < unit.attachedModules.Count)
                 {
                    
-                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.stationId == MyStation.stationId && !MyStation.actions.Any(x=>x.selectedModuleGuid == unit.attachedModules[i]?.moduleGuid || x.generatedGuid == unit.attachedModules[i]?.moduleGuid));
+                    UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.playerGuid == MyStation.playerGuid && !MyStation.actions.Any(x=>x.selectedModuleGuid == unit.attachedModules[i]?.moduleGuid || x.generatedGuid == unit.attachedModules[i]?.moduleGuid));
                     if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != Constants.SpyModule)
                     {
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
@@ -2293,7 +2293,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(false);
-                    if (unit.stationId == MyStation.stationId)
+                    if (unit.playerGuid == MyStation.playerGuid)
                     {
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = attachModuleBar;
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => ModifyModule(ActionType.AttachModule));
@@ -2315,5 +2315,9 @@ public class GameManager : MonoBehaviour
     internal List<PathNode> GetPathFromCoords(List<Coords> selectedCoords)
     {
         return selectedCoords.Select(x => GridManager.i.grid[x.x, x.y]).ToList();
+    }
+    public Station GetStationByGuid(Guid playerGuid)
+    {
+        return Stations.FirstOrDefault(x => x.playerGuid == playerGuid);
     }
 }
