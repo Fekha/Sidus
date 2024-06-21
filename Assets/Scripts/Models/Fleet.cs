@@ -10,7 +10,7 @@ public class Fleet : Unit
         playerGuid = _station.playerGuid;
         _station.fleets.Add(this);
         _station.fleetCount++;
-        unitName = $"{_color} Fleet {_station.fleetCount}";
+        unitName = $"{(PlayerColor)_color} Fleet {_station.fleetCount}";
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _structureId, _mining, _station.facing);
     }
 }

@@ -28,7 +28,7 @@ public class Station : Unit
         }
         playerColor = (PlayerColor)GameManager.i.Stations.Count;
         playerGuid = _stationGuid;
-        unitName = $"{_color} Station";
+        unitName = $"{(PlayerColor)_color} Station";
         credits = 3;
         maxActions = 2;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
