@@ -17,12 +17,12 @@ public class GridManager : MonoBehaviour
     internal PathNode[,] grid;
     private Vector2 gridSize = new Vector2(Constants.GridSize, Constants.GridSize);
     internal int scoreToWin = 99;
-    public List<Color> playerColors;
-    public List<Color> tileColors;
+    internal List<Color> playerColors;
+    internal List<Color> tileColors;
     internal List<PathNode> AllNodes = new List<PathNode>();
     internal bool DoneLoading = false;
-    public Sprite[,] fleetSprites;
-    public Sprite[,] stationSprites;
+    internal Sprite[,] fleetSprites;
+    internal Sprite[,] stationSprites;
 
     public GameObject fx_Explosion;
     public List<Sprite> nebulaSprite;

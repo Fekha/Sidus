@@ -1288,9 +1288,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(animationTime);
         Destroy(floatingObj);
     }
-
-    
-
     private void CheckEnterCombatModules(Unit unit)
     {
         if (unit.moduleEffects.Contains(ModuleEffect.CombatHeal3))
