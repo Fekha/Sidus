@@ -1,11 +1,9 @@
 using Models;
-using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static System.Collections.Specialized.BitVector32;
 
 public class GridManager : MonoBehaviour
 {
@@ -231,7 +229,7 @@ public class GridManager : MonoBehaviour
             startIndex = hexesNearby.FindIndex(x => x.coords.CoordsEquals(coords));
             k++;
         }
-        bool didSpawn = false;
+        stationNode._didSpawn = false;
         for (int i = 0; i < hexesNearby.Count; i++) {
             int j = (i + startIndex)%hexesNearby.Count;
             if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
@@ -251,11 +249,11 @@ public class GridManager : MonoBehaviour
                 {
                     fleetNode.currentPathNode.SetNodeColor(fleetNode.playerGuid);
                 }
-                didSpawn = true;
+                stationNode._didSpawn = true;
                 break;
             }
         }
-        if (!didSpawn)
+        if (!stationNode._didSpawn)
         {
             GameManager.i.turnValue.text += "\nNo valid location to spawn fleet.";
             yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));

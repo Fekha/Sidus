@@ -18,6 +18,7 @@ public class Station : Unit
     internal int bonusHP;
     internal int bonusMining;
     internal int score;
+    internal bool _didSpawn;
 
     public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid)
     {
@@ -86,7 +87,7 @@ public class Station : Unit
     }
     internal void researchMining(int modifier)
     {
-        bonusExplosive += modifier;
+        bonusMining += modifier;
         IncreaseMaxMining(1 * modifier);
         fleets.ForEach(x => x.IncreaseMaxMining(1 * modifier));
     }

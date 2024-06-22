@@ -416,6 +416,7 @@ public class GameManager : MonoBehaviour
     //ClickOnAction
     public void ShowQueuedAction(int i)
     {
+        technologyPanel.SetActive(false);
         DeselectUnitIcons();
         var action = MyStation.actions[i];
         action.selectedUnit.selectIcon.SetActive(true);
@@ -486,32 +487,7 @@ public class GameManager : MonoBehaviour
             {
                 int i = j;
                 var tech = MyStation.technology[i];
-                var canQueue = true;
-                switch ((ResearchType)i)
-                {
-                    case ResearchType.ResearchFleetLvl:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
-                        break;
-                    case ResearchType.ResearchMaxFleets:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                        break;
-                    //case ResearchType.ResearchHP:
-                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                    //    break;
-                    case ResearchType.ResearchMining:
-                        canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchHP].level;
-                        break;
-                    //case ResearchType.ResearchKinetic:
-                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                    //    break;
-                    //case ResearchType.ResearchThermal:
-                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                    //    break;
-                    //case ResearchType.ResearchExplosive:
-                    //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-                    //    break;
-                    default: break;
-                }
+                var canQueue = tech.GetCanQueueTech();
                 var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
                 TechnologyObjects.Add(techObject);
                 var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
@@ -529,7 +505,10 @@ public class GameManager : MonoBehaviour
     private void Research(int i)
     {
         QueueAction(new Action((ActionType)i+Constants.MinTech));
-        technologyPanel.SetActive(false);
+        //if(MyStation.actions.Count == MyStation.maxActions)
+        //{
+            technologyPanel.SetActive(false);
+        //}
     }
 
     public void ViewModuleMarket(bool active)
@@ -729,6 +708,7 @@ public class GameManager : MonoBehaviour
     }
     internal void CancelAction(int slot, bool isRequeuing)
     {
+        technologyPanel.SetActive(false);
         var action = MyStation.actions[slot];
         Debug.Log($"{MyStation.unitName} removed action {GetDescription(action.actionType)} from queue");
         if (action != null)
@@ -777,9 +757,12 @@ public class GameManager : MonoBehaviour
         }
         else if (MyStation.actions.Count >= MyStation.maxActions)
         {
-            if(!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {GetDescription(action.actionType)}.");
-        } 
-        else 
+            if (!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {GetDescription(action.actionType)}.");
+        }
+        else if (TechActions.Contains(action.actionType) && !MyStation.technology[(int)action.actionType - Constants.MinTech].GetCanQueueTech()) {
+            if (!requeing) ShowCustomAlertPanel($"Missing required tech to queue action: {GetDescription(action.actionType)}.");
+        }
+        else
         {
             action.selectedUnit = action.selectedUnit ?? SelectedUnit ?? MyStation;
             action.selectedPath = SelectedPath ?? action.selectedPath;
@@ -802,15 +785,14 @@ public class GameManager : MonoBehaviour
             var costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.playerBid);
             if (costOfAction > MyStation.credits)
             {
-                if(!requeing)
-                    ShowCustomAlertPanel($"Can not afford to queue action: {GetDescription(action.actionType)}.");
+                if (!requeing) ShowCustomAlertPanel($"Can not afford to queue action: {GetDescription(action.actionType)}.");
             }
             else
             {
                 Debug.Log($"{MyStation.unitName} queuing up action {GetDescription(action.actionType)}");
                 action.costOfAction = costOfAction;
                 MyStation.actions.Add(action);
-                AddActionBarImage(action.actionType, MyStation.actions.Count()-1);
+                AddActionBarImage(action.actionType, MyStation.actions.Count() - 1);
                 PerformUpdates(action, Constants.Create, true);
                 ResetAfterSelection();
             }
@@ -1869,8 +1851,11 @@ public class GameManager : MonoBehaviour
                     if (IsUnderMaxFleets(currentStation, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
-                        currentStation.GainCredits(-1 * action.costOfAction, currentStation);
                         yield return StartCoroutine(GridManager.i.CreateFleet(currentStation, (Guid)action.generatedGuid, false));
+                        if (currentStation._didSpawn)
+                        {
+                            currentStation.GainCredits(-1 * action.costOfAction, currentStation);
+                        }
                     }
                     else
                     {

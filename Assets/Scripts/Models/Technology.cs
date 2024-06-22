@@ -48,6 +48,7 @@ public class Technology
     }
     private int GetNeededAmount(int level)
     {
+        return 1;
         //increases whenever the input number is a triangular number, 1,2,2,3,3,3
         return ((int)Math.Floor((-1 + Math.Sqrt(1 + 8 * level-1)) / 2))+1;
     }
@@ -79,10 +80,12 @@ public class Technology
             case ResearchType.ResearchKinetic:
                 effectText = $"+1 kinetic power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
+                requirementText = "<b>Must research <u>+1 thermal power for all units</u> first</b>\n\n";
                 break;
             case ResearchType.ResearchThermal:
                 effectText = $"+1 thermal power for all units";
                 currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
+                requirementText = "<b>Must research <u>+1 explosive power for all units</u> first</b>\n\n";
                 break;
             case ResearchType.ResearchExplosive:
                 effectText = $"+1 explosive power for all units";
@@ -134,6 +137,30 @@ public class Technology
                 currentAmount = neededAmount-1;
                 level += modifier;
             }
+        }
+    }
+
+    internal bool GetCanQueueTech()
+    {
+        switch (researchId)
+        {
+            case ResearchType.ResearchFleetLvl:
+                return level < GameManager.i.MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
+            case ResearchType.ResearchMaxFleets:
+                return level < GameManager.i.MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+            //case ResearchType.ResearchHP:
+            //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
+            //    break;
+            case ResearchType.ResearchMining:
+                return level < GameManager.i.MyStation.technology[(int)ResearchType.ResearchHP].level;
+            case ResearchType.ResearchKinetic:
+                return level <= GameManager.i.MyStation.technology[(int)ResearchType.ResearchThermal].level;
+            case ResearchType.ResearchThermal:
+                return level <= GameManager.i.MyStation.technology[(int)ResearchType.ResearchExplosive].level;
+            //case ResearchType.ResearchExplosive:
+            //    canQueue = tech.level <= MyStation.technology[(int)ResearchType.ResearchThermal].level;
+            //    break;
+            default: return true;
         }
     }
 }
