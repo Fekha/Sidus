@@ -17,18 +17,12 @@ public class GridManager : MonoBehaviour
     internal PathNode[,] grid;
     private Vector2 gridSize = new Vector2(Constants.GridSize, Constants.GridSize);
     internal int scoreToWin = 99;
-    public List<Color> playerColors;
-    public List<Color> tileColors;
+    internal List<Color> playerColors;
+    internal List<Color> tileColors;
     internal List<PathNode> AllNodes = new List<PathNode>();
     internal bool DoneLoading = false;
-    public Sprite stationlvl1;
-    public Sprite stationlvl2;
-    public Sprite stationlvl3;
-    public Sprite stationlvl4;
-    public Sprite fleetlvl1;
-    public Sprite fleetlvl2;
-    public Sprite fleetlvl3;
-    public Sprite fleetlvl4;
+    internal Sprite[,] fleetSprites;
+    internal Sprite[,] stationSprites;
 
     public GameObject fx_Explosion;
     public List<Sprite> nebulaSprite;
@@ -41,6 +35,47 @@ public class GridManager : MonoBehaviour
         //Blue, Red, Orange, Purple,
         playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0, 1), new Color(.776f, 0, 1, 1), new Color(1, 0.5f, 0, 1), };
         tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), };
+        fleetSprites = new Sprite[4, 4];
+        stationSprites = new Sprite[4, 4];
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                string path = $"Sprites/Units/Fleets/fleet_{i}_{j}";
+                fleetSprites[i, j] = Resources.Load<Sprite>(path);
+
+                // Check if the sprite was loaded correctly
+                if (fleetSprites[i, j] != null)
+                {
+                    Debug.Log($"Loaded sprite at [{i},{j}] from {path}");
+                }
+                else
+                {
+                    Debug.LogWarning($"Failed to load sprite at [{i},{j}] from {path}");
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                string path = $"Sprites/Units/Stations/station_{i}_{j}";
+                stationSprites[i, j] = Resources.Load<Sprite>(path);
+
+                // Check if the sprite was loaded correctly
+                if (stationSprites[i, j] != null)
+                {
+                    Debug.Log($"Loaded sprite at [{i},{j}] from {path}");
+                }
+                else
+                {
+                    Debug.LogWarning($"Failed to load sprite at [{i},{j}] from {path}");
+                }
+            }
+        }
+
     }
     void Start()
     {
@@ -138,8 +173,8 @@ public class GridManager : MonoBehaviour
     {
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
-        unitSprite.sprite = stationlvl1;
-        unitSprite.color = playerColors[stationColor];
+        unitSprite.sprite = stationSprites[stationColor,0];
+        //unitSprite.color = playerColors[stationId];
         GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();

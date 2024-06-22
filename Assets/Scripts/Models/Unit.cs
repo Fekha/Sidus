@@ -102,14 +102,7 @@ public class Unit : Node
         unitImage = transform.Find("Unit");
         SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
         unitSprite.color = GridManager.i.playerColors[(int)playerColor];
-        if (this is Station)
-        {
-            unitSprite.sprite = level == 1 ? GridManager.i.stationlvl1 : level == 2 ? GridManager.i.stationlvl2 : level == 3 ? GridManager.i.stationlvl3 : GridManager.i.stationlvl4;
-        }
-        else
-        {
-            unitSprite.sprite = level == 1 ? GridManager.i.fleetlvl1 : level == 2 ? GridManager.i.fleetlvl2 : level == 3 ? GridManager.i.fleetlvl3 : GridManager.i.fleetlvl4;
-        }
+        unitSprite.sprite = this is Station ? GridManager.i.stationSprites[(int)playerColor, level - 1] : GridManager.i.fleetSprites[(int)playerColor, level - 1];
         unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
         GameManager.i.AllUnits.Add(this);
     }

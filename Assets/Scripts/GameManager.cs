@@ -141,6 +141,7 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
+        
         ColorText.text = $"You're {MyStation.playerColor.ToString()}";
         ColorText.color = GridManager.i.playerColors[(int)MyStation.playerColor];
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
@@ -2146,42 +2147,11 @@ public class GameManager : MonoBehaviour
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
         if (unit is Station)
         {
-            //unit.globalCreditGain += modifier;
-            if (unit.level == 1)
-            {
-                spriteRenderer.sprite = GridManager.i.stationlvl1;
-            }
-            else if (unit.level == 2)
-            {
-                spriteRenderer.sprite = GridManager.i.stationlvl2;
-            }
-            else if (unit.level == 3)
-            {
-                spriteRenderer.sprite = GridManager.i.stationlvl3;
-            }
-            else
-            {
-                spriteRenderer.sprite = GridManager.i.stationlvl4;
-            }
+            spriteRenderer.sprite = GridManager.i.stationSprites[(int)unit.playerColor, unit.level-1];
         }
         else
         {
-            if (unit.level == 1)
-            {
-                spriteRenderer.sprite = GridManager.i.fleetlvl1;
-            }
-            else if (unit.level == 2)
-            {
-                spriteRenderer.sprite = GridManager.i.fleetlvl2;
-            }
-            else if (unit.level == 3)
-            {
-                spriteRenderer.sprite = GridManager.i.fleetlvl3;
-            }
-            else
-            {
-                spriteRenderer.sprite = GridManager.i.fleetlvl4;
-            }
+            spriteRenderer.sprite = GridManager.i.fleetSprites[(int)unit.playerColor, unit.level-1];
         }
     }
     public void RepairFleet()

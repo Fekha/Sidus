@@ -5,9 +5,6 @@ TextureImporter:
   - first:
       213: 1446792919685844086
     second: 48_0
-  - first:
-      213: 783648166708620988
-    second: 48_1
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -49,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 512
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -113,22 +110,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 48_1
+      name: 48_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 513
-        height: 512
+        x: 101
+        y: 45
+        width: 307
+        height: 421
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cbead8d0bd310ea00800000000000000
-      internalID: 783648166708620988
+      spriteID: 67ccc69be7a041410800000000000000
+      internalID: 1446792919685844086
       vertices: []
       indices: 
       edges: []
@@ -145,7 +142,6 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       48_0: 1446792919685844086
-      48_1: 783648166708620988
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
