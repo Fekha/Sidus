@@ -254,23 +254,23 @@ public class GameManager : MonoBehaviour
                 }
             }
             miningValue.text = unit.maxMining.ToString();
+            var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId);
+            var kineticPower = $"{unit.kineticPower}";
+            var thermalPower = $"{unit.thermalPower}";
+            var explosivePower = $"{unit.explosivePower}";
+            if (supportingFleets.Any())
+            {
+                int kineticSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * x.supportValue)));
+                int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
+                int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
+                kineticPower += kineticSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
+                thermalPower += thermalSupportValue > 0 ? $" (+{thermalSupportValue})" : "";
+                explosivePower += explosiveSupportValue > 0 ? $" (+{explosiveSupportValue})" : "";
+            }
+            KineticValueText.text = $"{kineticPower}";
+            ThermalValueText.text = $"{thermalPower}";
+            ExplosiveValueText.text = $"{explosivePower}";
         }
-        var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId);
-        var kineticPower = $"{unit.kineticPower}";
-        var thermalPower = $"{unit.thermalPower}";
-        var explosivePower = $"{unit.explosivePower}";
-        if (supportingFleets.Any())
-        {
-            int kineticSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * x.supportValue)));
-            int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
-            int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
-            kineticPower += kineticSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
-            thermalPower += thermalSupportValue > 0 ? $" (+{thermalSupportValue})" : "";
-            explosivePower += explosiveSupportValue > 0 ? $" (+{explosiveSupportValue})" : "";
-        }
-        KineticValueText.text = $"{kineticPower}"; 
-        ThermalValueText.text = $"{thermalPower}";
-        ExplosiveValueText.text = $"{explosivePower}";
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = true;
         upgradeButton.gameObject.SetActive(false);
