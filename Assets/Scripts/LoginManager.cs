@@ -34,8 +34,17 @@ public class LoginManager : MonoBehaviour
         Globals.HasBeenToLobby = true;
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
+        if(Globals.Account == null)
+        {
+            SceneManager.LoadScene((int)Scene.Login);
+        }
     }
-
+    public void Logout()
+    {
+        PlayerPrefs.SetString("AccountId", "");
+        PlayerPrefs.Save();
+        SceneManager.LoadScene((int)Scene.Login);
+    }
     public void CreateGame(bool cpuGame)
     {
         loadingPanel.SetActive(true);

@@ -1782,7 +1782,7 @@ public class GameManager : MonoBehaviour
         }
         else if (exitOption == 3)
         {
-            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).playerColor.ToString()}"));
+            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).playerGuid}"));
             loadingPanel.SetActive(true);
             EndTurn(true);
             SceneManager.LoadScene((int)Scene.Lobby);
