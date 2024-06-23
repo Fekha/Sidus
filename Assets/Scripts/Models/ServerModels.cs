@@ -18,10 +18,11 @@ namespace Models
         public int MaxPlayers { get; set; }
         public int NumberOfModules { get; set; }
         public Guid GameGuid { get; set; }
-        public List<GameTurn>? GameTurns { get; set; }
         public string? GameSettings { get; set; }
         public Guid Winner { get; set; }
+        public bool IsDeleted { get; set; }
         public DateTime HealthCheck { get; set; }
+        public virtual ICollection<GameTurn> GameTurns { get; set; } = new HashSet<GameTurn>();
     }
 
     [Serializable]
@@ -30,11 +31,11 @@ namespace Models
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
         public string? ModulesForMarket { get; set; }
-        public string MarketModuleGuids { get; set; }
-        public List<GamePlayer>? Players { get; set; }
-        public List<ServerModule> AllModules { get; set; }
-        public List<ServerNode>? AllNodes { get; set; }
+        public string? MarketModuleGuids { get; set; }
         public bool TurnIsOver { get; set; }
+        public virtual ICollection<GamePlayer> Players { get; set; } = new HashSet<GamePlayer>();
+        public virtual ICollection<ServerModule> AllModules { get; set; } = new HashSet<ServerModule>();
+        public virtual ICollection<ServerNode> AllNodes { get; set; } = new HashSet<ServerNode>();
     }
 
     [Serializable]
@@ -42,8 +43,8 @@ namespace Models
     {
         public Guid GameGuid { get; set; }
         public int TurnNumber { get; set; }
-        public int? X { get; set; }
-        public int? Y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
         public bool IsRift { get; set; }
         public int MaxCredits { get; set; }
         public int Minerals { get; set; }
@@ -51,17 +52,13 @@ namespace Models
         public Guid OwnedByGuid { get; set; }
     }
 
-
     [Serializable]
     public class GamePlayer
     {
         public Guid GameGuid { get; set; }
-        public int TurnNumber { get; set; }
         public Guid PlayerGuid { get; set; }
+        public int TurnNumber { get; set; }
         public int PlayerColor { get; set; }
-        public List<ServerUnit>? Units { get; set; }
-        public List<ServerAction>? Actions { get; set; }
-        public List<ServerTechnology>? Technology { get; set; }
         public string? ModulesGuids { get; set; }
         public int Credits { get; set; }
         public int MaxActions { get; set; }
@@ -72,6 +69,9 @@ namespace Models
         public int BonusHP { get; set; }
         public int BonusMining { get; set; }
         public int Score { get; set; }
+        public virtual ICollection<ServerUnit> Units { get; set; } = new HashSet<ServerUnit>();
+        public virtual ICollection<ServerAction> Actions { get; set; } = new HashSet<ServerAction>();
+        public virtual ICollection<ServerTechnology> Technology { get; set; } = new HashSet<ServerTechnology>();
     }
 
     [Serializable]
@@ -101,9 +101,8 @@ namespace Models
         public string? XList { get; set; }
         public string? YList { get; set; }
         public Guid? SelectedModuleGuid { get; set; }
-        public Guid? GeneratedGuid { get; set; }
         public int? PlayerBid { get; set; }
-
+        public Guid? GeneratedGuid { get; set; }
     }
 
     [Serializable]
@@ -111,14 +110,14 @@ namespace Models
     {
         public bool IsStation { get; set; }
         public Guid GameGuid { get; set; }
-        public Guid PlayerGuid { get; set; }
         public int TurnNumber { get; set; }
-        public int PlayerColor { get; set; }
+        public Guid PlayerGuid { get; set; }
         public Guid UnitGuid { get; set; }
         public int? X { get; set; }
         public int? Y { get; set; }
         public int Facing { get; set; }
         public string? UnitName { get; set; }
+        public int PlayerColor { get; set; }
         public int TeamId { get; set; }
         public int MaxHP { get; set; }
         public int HP { get; set; }

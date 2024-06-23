@@ -182,7 +182,7 @@ public class GridManager : MonoBehaviour
         Guid fleetGuid = Guid.NewGuid();
         if (Globals.GameMatch.MaxPlayers != 1 || stationColor == 0)
         {
-            serverPlayer = currentGameTurn.Players[stationColor];
+            serverPlayer = currentGameTurn.Players.FirstOrDefault(x=>x.PlayerColor ==stationColor);
             stationGuid = (Guid)serverPlayer.PlayerGuid;
             fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => !x.IsStation).UnitGuid;
         }

@@ -619,8 +619,8 @@ public class GameManager : MonoBehaviour
     {
         ClearAuctionObjects();
         AuctionModules.Clear();
-        AllModules = Globals.GameMatch.GameTurns[i].AllModules.Select(x => new Module(x)).ToList();
-        var moduleGuids = Globals.GameMatch.GameTurns[i].MarketModuleGuids.Split(",").Select(x=>new Guid(x));
+        AllModules = Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == i).AllModules.Select(x => new Module(x)).ToList();
+        var moduleGuids = Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == i).MarketModuleGuids.Split(",").Select(x=>new Guid(x));
         AuctionModules.AddRange(moduleGuids.Select(x => AllModules.FirstOrDefault(y=>y.moduleGuid == x)));
     }
     #region Queue Actions
@@ -1432,7 +1432,7 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
             i++;
         }
-        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns[TurnNumber].Players.Count() < Globals.GameMatch.MaxPlayers);
+        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber).Players.Count() < Globals.GameMatch.MaxPlayers);
     }
 
     private void CheckForTurns(GameTurn turns)
@@ -1445,7 +1445,8 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Globals.GameMatch.GameTurns[TurnNumber] = turns;
+                var currentTurn = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber);
+                currentTurn = turns;
             }
         }
     }
@@ -1619,7 +1620,7 @@ public class GameManager : MonoBehaviour
             {
                 for (int i = 0; i < turnsFromServer.Count(); i++)
                 {
-                    Stations[i].GainCredits(Constants.MaxActions - turnsFromServer[i].Actions.Count(), Stations[i], false, false);
+                    Stations[i].GainCredits(Constants.MaxActions - turnsFromServer.FirstOrDefault(x=>x.PlayerColor == i).Actions.Count(), Stations[i], false, false);
                 }
                 foreach (var archive in turnArchive)
                 {

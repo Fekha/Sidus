@@ -111,7 +111,7 @@ public class PathNode : MonoBehaviour
         ownedByGuid = _ownedByGuid;
         if (ownedByGuid != Guid.Empty)
         {
-            int? playerColor = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == ownedByGuid)?.PlayerColor;
+            int? playerColor = Globals.GameMatch.GameTurns.FirstOrDefault().Players.FirstOrDefault(x => x.PlayerGuid == ownedByGuid)?.PlayerColor;
             //For Practice Games
             if (playerColor == null) {
                 playerColor = (int)GameManager.i.GetStationByGuid(ownedByGuid).playerColor;

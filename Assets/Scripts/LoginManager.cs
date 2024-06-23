@@ -135,12 +135,14 @@ public class LoginManager : MonoBehaviour
     }
     public void JoinActiveGame(GameMatch gameMatch)
     {
+        loadingPanel.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
-    } 
+    }
     public void JoinGame(GameMatch gameMatch)
     {
-        gameMatch.GameTurns[0].Players.Add(GetNewPlayer(gameMatch.GameGuid,1));
+        loadingPanel.SetActive(true);
+        gameMatch.GameTurns.FirstOrDefault().Players.Add(GetNewPlayer(gameMatch.GameGuid,1));
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
     }
@@ -180,14 +182,14 @@ public class LoginManager : MonoBehaviour
     private void GetAllMatches(List<GameMatch> _newGames)
     {
         ClearOpenGames();
-        var newGames = _newGames.Where(x => !x.GameTurns[0].Players.Any(y => y.PlayerGuid == Globals.Account.PlayerGuid));
+        var newGames = _newGames.Where(x => !x.GameTurns.FirstOrDefault().Players.Any(y => y.PlayerGuid == Globals.Account.PlayerGuid));
         foreach (var newGame in newGames)
         {
             var game = newGame;
             var prefab = Instantiate(openGamePrefab, findContent);
             prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
-            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns[0].Players.Count(x=>x!=null)}/{game.MaxPlayers}";
+            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns.FirstOrDefault().Players.Count(x=>x!=null)}/{game.MaxPlayers}";
             openGamesObjects.Add(prefab);
         }
         loadingPanel.SetActive(false);
@@ -224,7 +226,7 @@ public class LoginManager : MonoBehaviour
             createGamePanel.SetActive(false);
             joinGamePanel.SetActive(false);
             activeGamePanel.SetActive(false);
-            UpdateGameStatus(game.GameTurns[0]);
+            UpdateGameStatus(game.GameTurns.FirstOrDefault());
             StartCoroutine(CheckIfGameHasStarted());
         }
     }
@@ -244,14 +246,15 @@ public class LoginManager : MonoBehaviour
 
     private int PlayersNeeded()
     {
-        return Globals.GameMatch.MaxPlayers - Globals.GameMatch.GameTurns[0].Players.Count();
+        return Globals.GameMatch.MaxPlayers - Globals.GameMatch.GameTurns.FirstOrDefault().Players.Count();
     }
 
-    private void UpdateGameStatus(GameTurn gameTurn)
+    private void UpdateGameStatus(GameTurn newTurn)
     {
-        Globals.GameMatch.GameTurns[0] = gameTurn;
+        var gameTurn = Globals.GameMatch.GameTurns.FirstOrDefault();
+        gameTurn = newTurn;
         if (PlayersNeeded() == 0) {
-            Globals.localStationColor = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerColor;
+            Globals.localStationColor = Globals.GameMatch.GameTurns.FirstOrDefault().Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerColor;
             Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.GameMatch.MaxPlayers == 1 ? 4 : Globals.GameMatch.MaxPlayers;
             PlayerPrefs.SetString("GameGuid", gameTurn.GameGuid.ToString());
             PlayerPrefs.Save();

@@ -14,6 +14,13 @@ public class GoogleSignInManager : MonoBehaviour
     {
 #if UNITY_EDITOR
         Globals.DebugMode = true;
+        //Uncomment to run as exo
+        //PlayerPrefs.SetString("AccountId", "108002382745613062728"); 
+        //PlayerPrefs.Save();
+
+        //Uncomment to run as feca
+        PlayerPrefs.SetString("AccountId", "112550575566380218480");
+        PlayerPrefs.Save();
 #endif
         sql = new SqlManager();
         loadingPanel.SetActive(true);
