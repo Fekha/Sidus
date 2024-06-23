@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class GridManager : MonoBehaviour
     public static GridManager i;
     public GameObject nodePrefab;
     public GameObject unitPrefab;
+    public TextMeshProUGUI amountToWinText;
     private Vector3 cellPrefabSize;
     internal Transform characterParent;
     internal PathNode[,] grid;
@@ -95,12 +97,14 @@ public class GridManager : MonoBehaviour
         }
         else
         {
-            foreach(var station in currentGameTurn.Players)
+            foreach(var station in currentGameTurn.Players.OrderBy(x=>x.PlayerColor))
             {
                 CreateStation(station.PlayerColor, currentGameTurn);
             }
         }
+        GameManager.i.Stations = GameManager.i.Stations.OrderBy(x => x.playerColor).ToList();
         scoreToWin = GetScoreToWin();
+        amountToWinText.text = $"Claim {scoreToWin} Hexes to Win!";
         DoneLoading = true;
     }
 
@@ -369,9 +373,9 @@ public class GridManager : MonoBehaviour
             if (!gridNode.isRift)
                 neighbors.Add(gridNode);
         }
-        if (node.isAsteroid && blockedByAsteroid && node.parent != null)
+        if (node.isAsteroid && blockedByAsteroid && node.parent != null && neighbors.Count > 0)
         {
-            neighbors = GetNeighbors(node.parent, false).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
+            neighbors = GetNeighbors(node.parent, true).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
             neighbors.Add(node.parent);
         }
         return neighbors;

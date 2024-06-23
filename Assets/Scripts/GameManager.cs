@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public GameObject pathPrefab;
     public GameObject movementRangePrefab;
     public GameObject movementMinePrefab;
+    public GameObject turnOrderPrefab;
     public GameObject modulePrefab;
     public GameObject auctionPrefab;
     public GameObject techPrefab;
@@ -93,8 +94,6 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI moduleInfoValue;
     private TextMeshProUGUI alertText;
     private TextMeshProUGUI customAlertText;
-    private TextMeshProUGUI creditsText;
-    private TextMeshProUGUI hexesOwnedText;
     public TextMeshProUGUI ColorText;
 
     public GameObject turnTapText;
@@ -107,6 +106,7 @@ public class GameManager : MonoBehaviour
     internal List<GameObject> AuctionObjects = new List<GameObject>();
     internal List<GameObject> TechnologyObjects = new List<GameObject>();
     internal List<GameObject> TurnArchiveObjects = new List<GameObject>();
+    internal List<GameObject> TurnOrderObjects = new List<GameObject>();
     internal Guid Winner;
     internal Station MyStation {get {return Stations.FirstOrDefault(x=>x.playerGuid == Globals.Account.PlayerGuid);}}
     public GameObject turnLabel;
@@ -212,8 +212,6 @@ public class GameManager : MonoBehaviour
         ThermalValueText = infoPanel.transform.Find("ThermalValue").GetComponent<TextMeshProUGUI>();
         ExplosiveValueText = infoPanel.transform.Find("ExplosiveValue").GetComponent<TextMeshProUGUI>();
         ModuleEffectText = infoPanel.transform.Find("DamageTakenValue").GetComponent<TextMeshProUGUI>();
-        creditsText = actionPanel.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
-        hexesOwnedText = actionPanel.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         phaseText = turnLabel.transform.Find("PhaseText").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
@@ -247,10 +245,10 @@ public class GameManager : MonoBehaviour
             ModuleEffectText.text = "No Modules Installed";
             if (unit.attachedModules.Count > 0)
             {
-                ModuleEffectText.text = unit.attachedModules[0].effectText.Replace(" \n", ",");
+                ModuleEffectText.text = unit.attachedModules[0].effectText.Replace("\n", ", ");
                 for (int i = 1; i < unit.attachedModules.Count; i++)
                 {
-                    ModuleEffectText.text += $"\n {unit.attachedModules[i].effectText.Replace(" \n", ",")}";
+                    ModuleEffectText.text += $"\n {unit.attachedModules[i].effectText.Replace("\n", ", ")}";
                 }
             }
             miningValue.text = unit.maxMining.ToString();
@@ -276,7 +274,6 @@ public class GameManager : MonoBehaviour
         upgradeButton.gameObject.SetActive(false);
         createFleetButton.gameObject.SetActive(false);
         repairFleetButton.gameObject.SetActive(false);
-        UpdateCreditsAndHexesText(GetStationByGuid(unit.playerGuid));
         if (unit.playerGuid == MyStation.playerGuid)
         {
             if (CanLevelUp(unit, actionType, true))
@@ -927,13 +924,15 @@ public class GameManager : MonoBehaviour
         ViewAsteroidInformation(false);
         ViewUnitInformation(false);
     }
-
     private void UpdateCreditsAndHexesText(Station station)
     {
-        creditsText.text = $"Player Credits: {station.credits}";
-        hexesOwnedText.text = $"Hexes Owned: {station.score}/{GridManager.i.scoreToWin}";
+        for (int i = 0; i < Stations.Count; i++)
+        {
+            var orderObj = TurnOrderObjects[i];
+            var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
+            credits.text = Stations[(TurnNumber - 1 + i) % Stations.Count].credits.ToString();
+        }
     }
-
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
     {
         int i = 0;
@@ -1762,19 +1761,24 @@ public class GameManager : MonoBehaviour
     {
         SubmittedTurn = response;
     }
-
+    public void ExitToLobby()
+    {
+        PlayerPrefs.SetString("GameGuid", "");
+        PlayerPrefs.Save();
+        SceneManager.LoadScene((int)Scene.Lobby);
+    }
     public void ExitGame(int exitOption)
     {
         if (exitOption == 0)
         {
-            if(Winner == Guid.Empty)
+            if (Winner == Guid.Empty)
                 exitPanel.SetActive(true);
             else
-                SceneManager.LoadScene((int)Scene.Lobby);
+                ExitToLobby();
         }
         else if (exitOption == 1)
         {
-            SceneManager.LoadScene((int)Scene.Lobby);
+            ExitToLobby();
         }
         else if (exitOption == 2)
         {
@@ -1785,7 +1789,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).playerGuid}"));
             loadingPanel.SetActive(true);
             EndTurn(true);
-            SceneManager.LoadScene((int)Scene.Lobby);
+            ExitToLobby();
         }
         else if (exitOption == 4)
         {
@@ -2078,14 +2082,18 @@ public class GameManager : MonoBehaviour
         turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
-        for (int i = 0; i < Constants.MaxPlayers; i++)
+        ClearTurnOrderObjects();
+        for (int i = 0; i < Stations.Count; i++)
         {
-            var orderObj = turnOrder.Find($"TurnOrder{i}").GetComponent<Image>();
-            orderObj.sprite = unReadyCircle;
-            if (Stations.Count > i)
-                orderObj.transform.Find($"Color").GetComponent<Image>().color = GridManager.i.playerColors[(TurnNumber - 1 + i) % Stations.Count];
-            else
-                orderObj.gameObject.SetActive(false);
+            var station = Stations[(TurnNumber - 1 + i) % Stations.Count];
+            var orderObj = Instantiate(turnOrderPrefab, turnOrder);
+            var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
+            credits.text = station.credits.ToString();
+            credits.color = GridManager.i.playerColors[(int)station.playerColor];
+            var hexes = orderObj.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
+            hexes.text = station.score.ToString();
+            hexes.color = GridManager.i.playerColors[(int)station.playerColor];
+            TurnOrderObjects.Add(orderObj);
         }
         infoToggle = false;
         ViewModuleMarket(false);
@@ -2203,6 +2211,10 @@ public class GameManager : MonoBehaviour
     private void ClearTechnologyObjects()
     {
         while (TechnologyObjects.Count > 0) { Destroy(TechnologyObjects[0].gameObject); TechnologyObjects.RemoveAt(0); }
+    }
+    private void ClearTurnOrderObjects()
+    {
+        while (TurnOrderObjects.Count > 0) { Destroy(TurnOrderObjects[0].gameObject); TurnOrderObjects.RemoveAt(0); }
     }
 
     private void ClearActionBar()

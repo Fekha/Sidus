@@ -253,6 +253,8 @@ public class LoginManager : MonoBehaviour
         if (PlayersNeeded() == 0) {
             Globals.localStationColor = Globals.GameMatch.GameTurns[0].Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerColor;
             Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.GameMatch.MaxPlayers == 1 ? 4 : Globals.GameMatch.MaxPlayers;
+            PlayerPrefs.SetString("GameGuid", gameTurn.GameGuid.ToString());
+            PlayerPrefs.Save();
             SceneManager.LoadScene((int)Scene.Game);
         } else {
             UpdateWaitingText();
