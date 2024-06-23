@@ -16629,7 +16629,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodePrefab: {fileID: 7058775101325988351, guid: 44f977c7fda6b36439c2aa32ad336618, type: 3}
   unitPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
-  amountToWinText: {fileID: 0}
+  amountToWinText: {fileID: 1218915300}
   fx_Explosion: {fileID: 281829147038659408, guid: 4990aeb811e140d40956ac7f1f51d28d, type: 3}
   nebulaSprite:
   - {fileID: 21300000, guid: 8582a886c571474439e9e9144487bc93, type: 3}
