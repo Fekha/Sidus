@@ -366,7 +366,6 @@ public class Unit : Node
                 thermalDamageModifier += (-1 * modifer);
                 break; 
             case 41:
-                kineticPower += (2 * modifer);
                 supportValue = modifer == 1 ? 1 : .5;
                 break;
             case 42:
@@ -402,6 +401,7 @@ public class Unit : Node
                 else { moduleEffects.Remove(ModuleEffect.AsteroidCredits3); }
                 break;
             case 49:
+                kineticPower += (2 * modifer);
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.HiddenStats); }
                 else { moduleEffects.Remove(ModuleEffect.HiddenStats); }
                 break;

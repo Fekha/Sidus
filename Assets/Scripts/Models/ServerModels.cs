@@ -22,7 +22,7 @@ namespace Models
         public Guid Winner { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime HealthCheck { get; set; }
-        public virtual ICollection<GameTurn> GameTurns { get; set; } = new HashSet<GameTurn>();
+        public List<GameTurn> GameTurns { get; set; }
     }
 
     [Serializable]
@@ -33,9 +33,9 @@ namespace Models
         public string? ModulesForMarket { get; set; }
         public string? MarketModuleGuids { get; set; }
         public bool TurnIsOver { get; set; }
-        public virtual ICollection<GamePlayer> Players { get; set; } = new HashSet<GamePlayer>();
-        public virtual ICollection<ServerModule> AllModules { get; set; } = new HashSet<ServerModule>();
-        public virtual ICollection<ServerNode> AllNodes { get; set; } = new HashSet<ServerNode>();
+        public List<GamePlayer> Players { get; set; }
+        public List<ServerModule> AllModules { get; set; }
+        public List<ServerNode> AllNodes { get; set; }
     }
 
     [Serializable]
@@ -69,9 +69,9 @@ namespace Models
         public int BonusHP { get; set; }
         public int BonusMining { get; set; }
         public int Score { get; set; }
-        public virtual ICollection<ServerUnit> Units { get; set; } = new HashSet<ServerUnit>();
-        public virtual ICollection<ServerAction> Actions { get; set; } = new HashSet<ServerAction>();
-        public virtual ICollection<ServerTechnology> Technology { get; set; } = new HashSet<ServerTechnology>();
+        public List<ServerUnit> Units { get; set; }
+        public List<ServerAction> Actions { get; set; }
+        public List<ServerTechnology> Technology { get; set; }
     }
 
     [Serializable]

@@ -175,47 +175,47 @@ public class Module
                 effectText = "-2 Thermal Power\n+7 Explosive Power\n+1 Thermal Damage Taken";
                 break;
             case 41:
-                effectText = "Support allies at full Power.\n+2 Kinetic Power";
+                effectText = "Support allies at full Power.";
                 rarity = Rarity.Rare;
                 break;
             case 42:
-                effectText = "Damage dealt reduces Max HP.\n+3 Thermal Power";
+                effectText = "Damage dealt reduces Max HP\n+3 Thermal Power";
                 rarity = Rarity.Rare;
                 break;
             case 43:
-                effectText = "Double all repairing.\n+4 Explosive Power";
+                effectText = "Double all repairing\n+4 Explosive Power";
                 rarity = Rarity.Rare;
                 break;
             case 44:
-                effectText = "Repair 3 HP when entering combat.\n+2 Explosive Power";
+                effectText = "Repair 3 HP when entering combat\n+2 Explosive Power";
                 rarity = Rarity.Rare;
                 break;
             case 45:
-                effectText = "Gain 2 Kinetic Power when entering combat.";
+                effectText = "Gain 2 Kinetic Power when entering combat";
                 rarity = Rarity.Rare;
                 break;
             case 46:
-                effectText = "Gain 2 Thermal Power when entering combat.";
+                effectText = "Gain 2 Thermal Power when entering combat";
                 rarity = Rarity.Rare;
                 break;
             case 47:
-                effectText = "Gain 2 Explosive Power when entering combat.";
+                effectText = "Gain 2 Explosive Power when entering combat";
                 rarity = Rarity.Rare;
                 break;
             case 48:
-                effectText = "Gain 3 Credits after destroying an asteroid.\n+1 Mining Power";
+                effectText = "Gain 3 Credits after destroying an asteroid\n+1 Mining Power";
                 rarity = Rarity.Rare;
                 break;
             case 49:
-                effectText = "Stats are hidden from enemies.";
+                effectText = "Stats are hidden from enemies\n+2 Kinetic Power";
                 rarity = Rarity.Rare;
                 break;
             case 50:
-                effectText = "If destroyed in combat while defending,\ndestroy the attacking fleet as well.";
+                effectText = "If destroyed in combat while defending\ndestroy the attacking fleet as well.";
                 rarity = Rarity.Rare;
                 break;
             case 51:
-                effectText = "Gain 5 Max HP after destroying an asteroid.\n+1 Mining Power";
+                effectText = "Gain 5 Max HP after destroying an asteroid\n+1 Mining Power";
                 rarity = Rarity.Rare;
                 break;
             default:
