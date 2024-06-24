@@ -1,0 +1,5349 @@
+fileFormatVersion: 2
+guid: 5740feddadc81e949b6d435eb5c8c304
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2889976249081894299
+    second: radial-yellow_0
+  - first:
+      213: -1612516423336154112
+    second: radial-yellow_1
+  - first:
+      213: -4480222897289446746
+    second: radial-yellow_2
+  - first:
+      213: 4208390554147168589
+    second: radial-yellow_3
+  - first:
+      213: -4375951504945903698
+    second: radial-yellow_4
+  - first:
+      213: 5402302667247661239
+    second: radial-yellow_5
+  - first:
+      213: -8249540776834465621
+    second: radial-yellow_6
+  - first:
+      213: 6031802672827236830
+    second: radial-yellow_7
+  - first:
+      213: -1088712250529621364
+    second: radial-yellow_8
+  - first:
+      213: -3003514397935696105
+    second: radial-yellow_9
+  - first:
+      213: 153674952044698442
+    second: radial-yellow_10
+  - first:
+      213: 5854708127570470407
+    second: radial-yellow_11
+  - first:
+      213: 7185758669463576836
+    second: radial-yellow_12
+  - first:
+      213: 8656661852482733803
+    second: radial-yellow_13
+  - first:
+      213: -8916906221470173522
+    second: radial-yellow_14
+  - first:
+      213: -8551587642390644406
+    second: radial-yellow_15
+  - first:
+      213: -6625981520544282919
+    second: radial-yellow_16
+  - first:
+      213: -1672186981943980411
+    second: radial-yellow_17
+  - first:
+      213: -22442766551898798
+    second: radial-yellow_18
+  - first:
+      213: 3966736656719554363
+    second: radial-yellow_19
+  - first:
+      213: 1128155706257286266
+    second: radial-yellow_20
+  - first:
+      213: -2678605182979713092
+    second: radial-yellow_21
+  - first:
+      213: 3349669003662946912
+    second: radial-yellow_22
+  - first:
+      213: -4994663598733148306
+    second: radial-yellow_23
+  - first:
+      213: 3510889196224449850
+    second: radial-yellow_24
+  - first:
+      213: -1626920132936745065
+    second: radial-yellow_25
+  - first:
+      213: -1507123844590653706
+    second: radial-yellow_26
+  - first:
+      213: 8278646610034133512
+    second: radial-yellow_27
+  - first:
+      213: -333326768018719580
+    second: radial-yellow_28
+  - first:
+      213: 140524733884392554
+    second: radial-yellow_29
+  - first:
+      213: 5265182219238882907
+    second: radial-yellow_30
+  - first:
+      213: 606667115433576090
+    second: radial-yellow_31
+  - first:
+      213: -4999199925445828870
+    second: radial-yellow_32
+  - first:
+      213: 4863134229303681465
+    second: radial-yellow_33
+  - first:
+      213: 8783794711152238645
+    second: radial-yellow_34
+  - first:
+      213: 468053750498066895
+    second: radial-yellow_35
+  - first:
+      213: -9100391496451211214
+    second: radial-yellow_36
+  - first:
+      213: -5381121936756404648
+    second: radial-yellow_37
+  - first:
+      213: 2188878657636383584
+    second: radial-yellow_38
+  - first:
+      213: 2238374603034865241
+    second: radial-yellow_39
+  - first:
+      213: 1348064073671078890
+    second: radial-yellow_40
+  - first:
+      213: 3407110938468518441
+    second: radial-yellow_41
+  - first:
+      213: 6703723880868012172
+    second: radial-yellow_42
+  - first:
+      213: 2820051216393212710
+    second: radial-yellow_43
+  - first:
+      213: -2339263443732235299
+    second: radial-yellow_44
+  - first:
+      213: 8524161149654587895
+    second: radial-yellow_45
+  - first:
+      213: -4208696387083781459
+    second: radial-yellow_46
+  - first:
+      213: 2476011196267121365
+    second: radial-yellow_47
+  - first:
+      213: -3759446354473514559
+    second: radial-yellow_48
+  - first:
+      213: 1745114246892877402
+    second: radial-yellow_49
+  - first:
+      213: -3584154073233047745
+    second: radial-yellow_50
+  - first:
+      213: -7047512078237815311
+    second: radial-yellow_51
+  - first:
+      213: -2660996814579225229
+    second: radial-yellow_52
+  - first:
+      213: -5814891298095499316
+    second: radial-yellow_53
+  - first:
+      213: -138901996958015669
+    second: radial-yellow_54
+  - first:
+      213: -5724706533946331617
+    second: radial-yellow_55
+  - first:
+      213: 855491278484453976
+    second: radial-yellow_56
+  - first:
+      213: -747669249779874574
+    second: radial-yellow_57
+  - first:
+      213: 4513811829566656838
+    second: radial-yellow_58
+  - first:
+      213: -9211804372009395335
+    second: radial-yellow_59
+  - first:
+      213: -8911958984223264940
+    second: radial-yellow_60
+  - first:
+      213: 4019270589435388953
+    second: radial-yellow_61
+  - first:
+      213: 5150408219357353374
+    second: radial-yellow_62
+  - first:
+      213: -57092024728783017
+    second: radial-yellow_63
+  - first:
+      213: -4314948053614198426
+    second: radial-yellow_64
+  - first:
+      213: -924882012520019799
+    second: radial-yellow_65
+  - first:
+      213: -2720508490617464741
+    second: radial-yellow_66
+  - first:
+      213: -5021579500367152576
+    second: radial-yellow_67
+  - first:
+      213: 1341242538592147561
+    second: radial-yellow_68
+  - first:
+      213: -1905434294611844055
+    second: radial-yellow_69
+  - first:
+      213: -5304877273120430078
+    second: radial-yellow_70
+  - first:
+      213: 1569657250966372622
+    second: radial-yellow_71
+  - first:
+      213: 7995741852498309274
+    second: radial-yellow_72
+  - first:
+      213: 1884280791611708195
+    second: radial-yellow_73
+  - first:
+      213: 1794524193732139842
+    second: radial-yellow_74
+  - first:
+      213: -204977434866179544
+    second: radial-yellow_75
+  - first:
+      213: 8771973337929269551
+    second: radial-yellow_76
+  - first:
+      213: 9022452687884125112
+    second: radial-yellow_77
+  - first:
+      213: 4269514399036328233
+    second: radial-yellow_78
+  - first:
+      213: 3673037423210608621
+    second: radial-yellow_79
+  - first:
+      213: 8171877826025193154
+    second: radial-yellow_80
+  - first:
+      213: -4146142990635526724
+    second: radial-yellow_81
+  - first:
+      213: -7795752700148718985
+    second: radial-yellow_82
+  - first:
+      213: -2014750920137535214
+    second: radial-yellow_83
+  - first:
+      213: 4852773031934023003
+    second: radial-yellow_84
+  - first:
+      213: -4603384095409162048
+    second: radial-yellow_85
+  - first:
+      213: -6489254121729858064
+    second: radial-yellow_86
+  - first:
+      213: 5685710279110072153
+    second: radial-yellow_87
+  - first:
+      213: -5070761271057012303
+    second: radial-yellow_88
+  - first:
+      213: -781110553182659702
+    second: radial-yellow_89
+  - first:
+      213: -7260705872283652419
+    second: radial-yellow_90
+  - first:
+      213: 3538891458808023395
+    second: radial-yellow_91
+  - first:
+      213: 2916381291816430983
+    second: radial-yellow_92
+  - first:
+      213: 3744597870682099454
+    second: radial-yellow_93
+  - first:
+      213: -8130357962809148914
+    second: radial-yellow_94
+  - first:
+      213: -4824369120797482806
+    second: radial-yellow_95
+  - first:
+      213: 7171170548559092825
+    second: radial-yellow_96
+  - first:
+      213: -750070704398407038
+    second: radial-yellow_97
+  - first:
+      213: -4500325913246029906
+    second: radial-yellow_98
+  - first:
+      213: 1856198766645460538
+    second: radial-yellow_99
+  - first:
+      213: -7233542821164068282
+    second: radial-yellow_100
+  - first:
+      213: 2879020238279688480
+    second: radial-yellow_101
+  - first:
+      213: 4008841155509335747
+    second: radial-yellow_102
+  - first:
+      213: 8076382473068709312
+    second: radial-yellow_103
+  - first:
+      213: -5536285360143022288
+    second: radial-yellow_104
+  - first:
+      213: -3519898967464802496
+    second: radial-yellow_105
+  - first:
+      213: -2522547693446735853
+    second: radial-yellow_106
+  - first:
+      213: 4209361561685921904
+    second: radial-yellow_107
+  - first:
+      213: -2706433868358433981
+    second: radial-yellow_108
+  - first:
+      213: 8271069785798607665
+    second: radial-yellow_109
+  - first:
+      213: 8880599888957965855
+    second: radial-yellow_110
+  - first:
+      213: 7872463272631556629
+    second: radial-yellow_111
+  - first:
+      213: 7602001403236112586
+    second: radial-yellow_112
+  - first:
+      213: -7324359460488863260
+    second: radial-yellow_113
+  - first:
+      213: 3796883612728908245
+    second: radial-yellow_114
+  - first:
+      213: -5355049091324428629
+    second: radial-yellow_115
+  - first:
+      213: 6202479568574485769
+    second: radial-yellow_116
+  - first:
+      213: -1241988841456502829
+    second: radial-yellow_117
+  - first:
+      213: 4190662739488123625
+    second: radial-yellow_118
+  - first:
+      213: 3010026688468148471
+    second: radial-yellow_119
+  - first:
+      213: -1344851772833176008
+    second: radial-yellow_120
+  - first:
+      213: -1480875685995128127
+    second: radial-yellow_121
+  - first:
+      213: 5569302722186396896
+    second: radial-yellow_122
+  - first:
+      213: -4375962323456238872
+    second: radial-yellow_123
+  - first:
+      213: 3367408820317931059
+    second: radial-yellow_124
+  - first:
+      213: -2110486730497595732
+    second: radial-yellow_125
+  - first:
+      213: 8856653922709441302
+    second: radial-yellow_126
+  - first:
+      213: 5953052570503379142
+    second: radial-yellow_127
+  - first:
+      213: 7279761195386600540
+    second: radial-yellow_128
+  - first:
+      213: -6911583917640330511
+    second: radial-yellow_129
+  - first:
+      213: 1528683904308198214
+    second: radial-yellow_130
+  - first:
+      213: -6751106656453294918
+    second: radial-yellow_131
+  - first:
+      213: 2326550307218277720
+    second: radial-yellow_132
+  - first:
+      213: 6884545309519250519
+    second: radial-yellow_133
+  - first:
+      213: -40398327492320084
+    second: radial-yellow_134
+  - first:
+      213: 5662445228769295602
+    second: radial-yellow_135
+  - first:
+      213: -591024224137584211
+    second: radial-yellow_136
+  - first:
+      213: -7752741445788419272
+    second: radial-yellow_137
+  - first:
+      213: 6791331713200972237
+    second: radial-yellow_138
+  - first:
+      213: -5944969219725827431
+    second: radial-yellow_139
+  - first:
+      213: 1463823084014836303
+    second: radial-yellow_140
+  - first:
+      213: -5619677320247077859
+    second: radial-yellow_141
+  - first:
+      213: -3523920206063995812
+    second: radial-yellow_142
+  - first:
+      213: -2563502552068396967
+    second: radial-yellow_143
+  - first:
+      213: 1643026098459230293
+    second: radial-yellow_144
+  - first:
+      213: -3086565054461430910
+    second: radial-yellow_145
+  - first:
+      213: -4309832656771580610
+    second: radial-yellow_146
+  - first:
+      213: -1707535902191098301
+    second: radial-yellow_147
+  - first:
+      213: 568792692698383121
+    second: radial-yellow_148
+  - first:
+      213: -662546375811149743
+    second: radial-yellow_149
+  - first:
+      213: -353153698418878970
+    second: radial-yellow_150
+  - first:
+      213: 1658073266676067005
+    second: radial-yellow_151
+  - first:
+      213: -1866986032301601690
+    second: radial-yellow_152
+  - first:
+      213: -8154044732316702849
+    second: radial-yellow_153
+  - first:
+      213: 8408585172364502985
+    second: radial-yellow_154
+  - first:
+      213: -511084870495125577
+    second: radial-yellow_155
+  - first:
+      213: 889575548871961577
+    second: radial-yellow_156
+  - first:
+      213: 2237962878921760418
+    second: radial-yellow_157
+  - first:
+      213: 770933875660728176
+    second: radial-yellow_158
+  - first:
+      213: 3853203706308278567
+    second: radial-yellow_159
+  - first:
+      213: 1801668229619028218
+    second: radial-yellow_160
+  - first:
+      213: 4147304086887333891
+    second: radial-yellow_161
+  - first:
+      213: 2911491992723829864
+    second: radial-yellow_162
+  - first:
+      213: 5194463494985766303
+    second: radial-yellow_163
+  - first:
+      213: -7412860543471718212
+    second: radial-yellow_164
+  - first:
+      213: -4859713400824853440
+    second: radial-yellow_165
+  - first:
+      213: 2538448661649610344
+    second: radial-yellow_166
+  - first:
+      213: -334345118817553386
+    second: radial-yellow_167
+  - first:
+      213: -5709699124538057320
+    second: radial-yellow_168
+  - first:
+      213: -2193103023962100298
+    second: radial-yellow_169
+  - first:
+      213: 4885406339427634838
+    second: radial-yellow_170
+  - first:
+      213: -1045021863576379038
+    second: radial-yellow_171
+  - first:
+      213: -2934742673773785741
+    second: radial-yellow_172
+  - first:
+      213: 5347428331293294784
+    second: radial-yellow_173
+  - first:
+      213: 4522170273971689430
+    second: radial-yellow_174
+  - first:
+      213: -4150741458400550222
+    second: radial-yellow_175
+  - first:
+      213: -940862903238246050
+    second: radial-yellow_176
+  - first:
+      213: -6647441767093138080
+    second: radial-yellow_177
+  - first:
+      213: -4804169684532573533
+    second: radial-yellow_178
+  - first:
+      213: 4825941078335919167
+    second: radial-yellow_179
+  - first:
+      213: -1818983815858062141
+    second: radial-yellow_180
+  - first:
+      213: 3526054917694737010
+    second: radial-yellow_181
+  - first:
+      213: 8051484568900913215
+    second: radial-yellow_182
+  - first:
+      213: 7018602275677106489
+    second: radial-yellow_183
+  - first:
+      213: 1153709246750005002
+    second: radial-yellow_184
+  - first:
+      213: -4264946140186477499
+    second: radial-yellow_185
+  - first:
+      213: -7915754784261678406
+    second: radial-yellow_186
+  - first:
+      213: -7229924172388755730
+    second: radial-yellow_187
+  - first:
+      213: -6058412597564080793
+    second: radial-yellow_188
+  - first:
+      213: 8589283253177042253
+    second: radial-yellow_189
+  - first:
+      213: -4222833733214260822
+    second: radial-yellow_190
+  - first:
+      213: 3870009917344531381
+    second: radial-yellow_191
+  - first:
+      213: 1764262051465362592
+    second: radial-yellow_192
+  - first:
+      213: 506067968241894757
+    second: radial-yellow_193
+  - first:
+      213: 4763002254003234120
+    second: radial-yellow_194
+  - first:
+      213: -1912085153528073584
+    second: radial-yellow_195
+  - first:
+      213: -6693659840717800649
+    second: radial-yellow_196
+  - first:
+      213: -358014094966035286
+    second: radial-yellow_197
+  - first:
+      213: 3559214288699284046
+    second: radial-yellow_198
+  - first:
+      213: -3343223251710821714
+    second: radial-yellow_199
+  - first:
+      213: 6015399607996462217
+    second: radial-yellow_200
+  - first:
+      213: 4855906200790106362
+    second: radial-yellow_201
+  - first:
+      213: -6000457525093911061
+    second: radial-yellow_202
+  - first:
+      213: 1145482516499208881
+    second: radial-yellow_203
+  - first:
+      213: 1486780289452240569
+    second: radial-yellow_204
+  - first:
+      213: 9064550890715300034
+    second: radial-yellow_205
+  - first:
+      213: 2753884282887557443
+    second: radial-yellow_206
+  - first:
+      213: 8728735747509604779
+    second: radial-yellow_207
+  - first:
+      213: 6989201397965716774
+    second: radial-yellow_208
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: radial-yellow_0
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 49
+        width: 1666
+        height: 1656
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9597d736124b1820800000000000000
+      internalID: 2889976249081894299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_1
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 1698
+        width: 22
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00ca0904bd03f99e0800000000000000
+      internalID: -1612516423336154112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_2
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 1701
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aabd7c130d03d1c0800000000000000
+      internalID: -4480222897289446746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_3
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 1701
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d412d0879e4376a30800000000000000
+      internalID: 4208390554147168589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_4
+      rect:
+        serializedVersion: 2
+        x: 614
+        y: 1705
+        width: 15
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea70d518a4f7543c0800000000000000
+      internalID: -4375951504945903698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_5
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 1702
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b0317a37a5d8fa40800000000000000
+      internalID: 5402302667247661239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_6
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 1700
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba08ea41f5eb38d80800000000000000
+      internalID: -8249540776834465621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_7
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed18e15b29445b350800000000000000
+      internalID: 6031802672827236830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_8
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8ad094f9fd14e0f0800000000000000
+      internalID: -1088712250529621364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_9
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7178541819f5156d0800000000000000
+      internalID: -3003514397935696105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_10
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 1701
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4bdf7ffd86f12200800000000000000
+      internalID: 153674952044698442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_11
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7062e6fb50a104150800000000000000
+      internalID: 5854708127570470407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_12
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 1698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4016f072071f8b360800000000000000
+      internalID: 7185758669463576836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_13
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be688e10714a22870800000000000000
+      internalID: 8656661852482733803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_14
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 1699
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea6bccd0909c04480800000000000000
+      internalID: -8916906221470173522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_15
+      rect:
+        serializedVersion: 2
+        x: 721
+        y: 1701
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a497fa5f858a25980800000000000000
+      internalID: -8551587642390644406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_16
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 1696
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d6c7abb9e8cb04a0800000000000000
+      internalID: -6625981520544282919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_17
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1701
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58e423facc23bc8e0800000000000000
+      internalID: -1672186981943980411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_18
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 1703
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 255a5e73c6440bff0800000000000000
+      internalID: -22442766551898798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_19
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 1697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b372a4df8fdac0730800000000000000
+      internalID: 3966736656719554363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_20
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 1703
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a74abca33a308af00800000000000000
+      internalID: 1128155706257286266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_21
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 1707
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb759f627cea3dad0800000000000000
+      internalID: -2678605182979713092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_22
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 1701
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0627776263a6c7e20800000000000000
+      internalID: 3349669003662946912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_23
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 1706
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6fbfe87be36faab0800000000000000
+      internalID: -4994663598733148306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_24
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 1699
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3d07ba5f1f29b030800000000000000
+      internalID: 3510889196224449850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_25
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 1698
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79fbf5642c40c69e0800000000000000
+      internalID: -1626920132936745065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_26
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 1699
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fe27a239de951be0800000000000000
+      internalID: -1507123844590653706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_27
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 1701
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80a831cca39a3e270800000000000000
+      internalID: 8278646610034133512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_28
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 1698
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ac7d1e0219cf5bf0800000000000000
+      internalID: -333326768018719580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_29
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a64e55d308e33f100800000000000000
+      internalID: 140524733884392554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_30
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 1706
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5ebf6f055fa11940800000000000000
+      internalID: 5265182219238882907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_31
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 1694
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a964458f6805b6800800000000000000
+      internalID: 606667115433576090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_32
+      rect:
+        serializedVersion: 2
+        x: 822
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afe54aa97264f9ab0800000000000000
+      internalID: -4999199925445828870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_33
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 1701
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b160b8c0d25d7340800000000000000
+      internalID: 4863134229303681465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_34
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 1697
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5302f2250ce46e970800000000000000
+      internalID: 8783794711152238645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_35
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 1701
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc10a3ef76cde7600800000000000000
+      internalID: 468053750498066895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_36
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2304a01662ae4b180800000000000000
+      internalID: -9100391496451211214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_37
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85e8292eb1a6255b0800000000000000
+      internalID: -5381121936756404648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_38
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 1700
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06bb9dcba85706e10800000000000000
+      internalID: 2188878657636383584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_39
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95e262097dd401f10800000000000000
+      internalID: 2238374603034865241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_40
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae371a5f12945b210800000000000000
+      internalID: 1348064073671078890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_41
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92a83cdc85d784f20800000000000000
+      internalID: 3407110938468518441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_42
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 1701
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c80e07f0a59680d50800000000000000
+      internalID: 6703723880868012172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_43
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6239689d3a5d22720800000000000000
+      internalID: 2820051216393212710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_44
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddb7848ba44498fd0800000000000000
+      internalID: -2339263443732235299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_45
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f9d8551767eb4670800000000000000
+      internalID: 8524161149654587895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_46
+      rect:
+        serializedVersion: 2
+        x: 972
+        y: 1699
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daab6604fe4b795c0800000000000000
+      internalID: -4208696387083781459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_47
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 1701
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5da4465801f8c5220800000000000000
+      internalID: 2476011196267121365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_48
+      rect:
+        serializedVersion: 2
+        x: 988
+        y: 1696
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c908718573c3dbc0800000000000000
+      internalID: -3759446354473514559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_49
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 1701
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a56f58a5924e73810800000000000000
+      internalID: 1745114246892877402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_50
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 1703
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3fbcac2cd6824ec0800000000000000
+      internalID: -3584154073233047745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_51
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 1697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fd2c5aaa15323e90800000000000000
+      internalID: -7047512078237815311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_52
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 1703
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37d2f86ee7d321bd0800000000000000
+      internalID: -2660996814579225229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_53
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 1707
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc7f1894c2b5d4fa0800000000000000
+      internalID: -5814891298095499316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_54
+      rect:
+        serializedVersion: 2
+        x: 1019
+        y: 1701
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4f99b4ae55821ef0800000000000000
+      internalID: -138901996958015669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_55
+      rect:
+        serializedVersion: 2
+        x: 1020
+        y: 1706
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1e65c8fcb1cd80b0800000000000000
+      internalID: -5724706533946331617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_56
+      rect:
+        serializedVersion: 2
+        x: 1023
+        y: 1699
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85ab28209c05fdb00800000000000000
+      internalID: 855491278484453976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_57
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 1698
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f4436557cebf95f0800000000000000
+      internalID: -747669249779874574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_58
+      rect:
+        serializedVersion: 2
+        x: 1038
+        y: 1699
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 641d64c91f744ae30800000000000000
+      internalID: 4513811829566656838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_59
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 1701
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97b5df9dab8192080800000000000000
+      internalID: -9211804372009395335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_60
+      rect:
+        serializedVersion: 2
+        x: 1057
+        y: 1698
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45f658c758c525480800000000000000
+      internalID: -8911958984223264940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_61
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 914a87b5e4157c730800000000000000
+      internalID: 4019270589435388953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_62
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 1706
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e951c0bccfce97740800000000000000
+      internalID: 5150408219357353374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_63
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 1694
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75778822b1b253ff0800000000000000
+      internalID: -57092024728783017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_64
+      rect:
+        serializedVersion: 2
+        x: 1078
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66100185b993e14c0800000000000000
+      internalID: -4314948053614198426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_65
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 1700
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a88898b5b82a23f0800000000000000
+      internalID: -924882012520019799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_66
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 1697
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b58df4011ffce3ad0800000000000000
+      internalID: -2720508490617464741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_67
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 1700
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04a7b35cc04cf4ab0800000000000000
+      internalID: -5021579500367152576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_68
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 1700
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9689d6e8bfc0d9210800000000000000
+      internalID: 1341242538592147561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_69
+      rect:
+        serializedVersion: 2
+        x: 1134
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92460deba998e85e0800000000000000
+      internalID: -1905434294611844055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_70
+      rect:
+        serializedVersion: 2
+        x: 1137
+        y: 1700
+        width: 23
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2082d9ef93a4166b0800000000000000
+      internalID: -5304877273120430078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_71
+      rect:
+        serializedVersion: 2
+        x: 1153
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0187fe04fa88c510800000000000000
+      internalID: 1569657250966372622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_72
+      rect:
+        serializedVersion: 2
+        x: 1158
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a90b2e10ad496fe60800000000000000
+      internalID: 7995741852498309274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_73
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 1700
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3239b19856f462a10800000000000000
+      internalID: 1884280791611708195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_74
+      rect:
+        serializedVersion: 2
+        x: 1186
+        y: 1700
+        width: 30
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24b9f341f3e67e810800000000000000
+      internalID: 1794524193732139842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_75
+      rect:
+        serializedVersion: 2
+        x: 1193
+        y: 1701
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 822a4d7eb16c72df0800000000000000
+      internalID: -204977434866179544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_76
+      rect:
+        serializedVersion: 2
+        x: 1194
+        y: 1695
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f21c872664f4cb970800000000000000
+      internalID: 8771973337929269551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_77
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1186
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b30a18aae0363d70800000000000000
+      internalID: 9022452687884125112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_78
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 1175
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 929c9fd99bc504b30800000000000000
+      internalID: 4269514399036328233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_79
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 1175
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de73f29631049f230800000000000000
+      internalID: 3673037423210608621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_80
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1162
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ce7f181697586170800000000000000
+      internalID: 8171877826025193154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_81
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 1143
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb5913fcae0f576c0800000000000000
+      internalID: -4146142990635526724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_82
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1149
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 772e7de093cefc390800000000000000
+      internalID: -7795752700148718985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_83
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1111
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2119f4676ba2a04e0800000000000000
+      internalID: -2014750920137535214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_84
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1111
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b55d5088c53885340800000000000000
+      internalID: 4852773031934023003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_85
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1102
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c834741e8e7d10c0800000000000000
+      internalID: -4603384095409162048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_86
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 1073
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f56d0102c981f5a0800000000000000
+      internalID: -6489254121729858064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_87
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 1059
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 957942aef53b7ee40800000000000000
+      internalID: 5685710279110072153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_88
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1048
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b9a6d17d7901a9b0800000000000000
+      internalID: -5070761271057012303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_89
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 1048
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8b1d332710f825f0800000000000000
+      internalID: -781110553182659702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_90
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 1044
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbea0ff5a7acc3b90800000000000000
+      internalID: -7260705872283652419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_91
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1038
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3698aec280bac1130800000000000000
+      internalID: 3538891458808023395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_92
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 1035
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78d20505551197820800000000000000
+      internalID: 2916381291816430983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_93
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 1030
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efec0b47ceb77f330800000000000000
+      internalID: 3744597870682099454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_94
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1009
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0afdf1628a2b2f80800000000000000
+      internalID: -8130357962809148914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_95
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1015
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac0a08168d56c0db0800000000000000
+      internalID: -4824369120797482806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_96
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 1006
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95c9b929e9d158360800000000000000
+      internalID: 7171170548559092825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_97
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 1005
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28ae7eb1ba63795f0800000000000000
+      internalID: -750070704398407038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_98
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 997
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea72c77fc61ab81c0800000000000000
+      internalID: -4500325913246029906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_99
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 997
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3ebb6691fa82c910800000000000000
+      internalID: 1856198766645460538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_100
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 988
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64250fc012b4d9b90800000000000000
+      internalID: -7233542821164068282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_101
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 980
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02142db27a554f720800000000000000
+      internalID: 2879020238279688480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_102
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 987
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c6b91b8ac342a730800000000000000
+      internalID: 4008841155509335747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_103
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 983
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c583799113151070800000000000000
+      internalID: 8076382473068709312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_104
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 969
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 037ca752cc92b23b0800000000000000
+      internalID: -5536285360143022288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_105
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 974
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0470ffec98ec62fc0800000000000000
+      internalID: -3519898967464802496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_106
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 976
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3185023ec3c1efcd0800000000000000
+      internalID: -2522547693446735853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_107
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 956
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0701977c908aa6a30800000000000000
+      internalID: 4209361561685921904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_108
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 963
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 343c86c6cb0d07ad0800000000000000
+      internalID: -2706433868358433981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_109
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 960
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1330efee52eb8c270800000000000000
+      internalID: 8271069785798607665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_110
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 963
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1686bd2c8a3e3b70800000000000000
+      internalID: 8880599888957965855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_111
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 939
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51a5388e2ab904d60800000000000000
+      internalID: 7872463272631556629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_112
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 945
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac8d8e5cffbbf7960800000000000000
+      internalID: 7602001403236112586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_113
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 935
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e12a4670e5aa5a90800000000000000
+      internalID: -7324359460488863260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_114
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 919
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d9553e678d31b430800000000000000
+      internalID: 3796883612728908245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_115
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 925
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bae34d4493b0fa5b0800000000000000
+      internalID: -5355049091324428629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_116
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 921
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90510833e42a31650800000000000000
+      internalID: 6202479568574485769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_117
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 922
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d77cf1aab193cee0800000000000000
+      internalID: -1241988841456502829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_118
+      rect:
+        serializedVersion: 2
+        x: 1720
+        y: 923
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eaa7a8fe89382a30800000000000000
+      internalID: 4190662739488123625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_119
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 913
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f0e69a4353c5c920800000000000000
+      internalID: 3010026688468148471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_120
+      rect:
+        serializedVersion: 2
+        x: 1720
+        y: 911
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83669bc1070265de0800000000000000
+      internalID: -1344851772833176008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_121
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 906
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca5fbbd86fd27be0800000000000000
+      internalID: -1480875685995128127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_122
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 906
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e4498281532a4d40800000000000000
+      internalID: 5569302722186396896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_123
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 899
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ead5ef93757543c0800000000000000
+      internalID: -4375962323456238872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_124
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 887
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33641941b707bbe20800000000000000
+      internalID: 3367408820317931059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_125
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 893
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca6e38d108b06b2e0800000000000000
+      internalID: -2110486730497595732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_126
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 885
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61b8aa171d729ea70800000000000000
+      internalID: 8856653922709441302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_127
+      rect:
+        serializedVersion: 2
+        x: 1717
+        y: 883
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c87412b5cd7d9250800000000000000
+      internalID: 5953052570503379142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_128
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 878
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5cf0b4cc38e60560800000000000000
+      internalID: 7279761195386600540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_129
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 875
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f2deb9cb0f1510a0800000000000000
+      internalID: -6911583917640330511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_130
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 855
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64bb52269e9f63510800000000000000
+      internalID: 1528683904308198214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_131
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 855
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab4835dc3404f42a0800000000000000
+      internalID: -6751106656453294918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_132
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 861
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85542d58d21994020800000000000000
+      internalID: 2326550307218277720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_133
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 846
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7540afdab71da8f50800000000000000
+      internalID: 6884545309519250519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_134
+      rect:
+        serializedVersion: 2
+        x: 1718
+        y: 848
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca4ec486fe9707ff0800000000000000
+      internalID: -40398327492320084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_135
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 844
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fc36e44feb059e40800000000000000
+      internalID: 5662445228769295602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_136
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 841
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da1e0aa79924cc7f0800000000000000
+      internalID: -591024224137584211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_137
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 817
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83b35581bbab86490800000000000000
+      internalID: -7752741445788419272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_138
+      rect:
+        serializedVersion: 2
+        x: 1717
+        y: 815
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc1603d0638af3e50800000000000000
+      internalID: 6791331713200972237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_139
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 803
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9926c911ef93f7da0800000000000000
+      internalID: -5944969219725827431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_140
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 792
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4a98b8d65b805410800000000000000
+      internalID: 1463823084014836303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_141
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 796
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d149a566045e202b0800000000000000
+      internalID: -5619677320247077859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_142
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 782
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c54fbbc3e35881fc0800000000000000
+      internalID: -3523920206063995812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_143
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 779
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 958e72bc20c9c6cd0800000000000000
+      internalID: -2563502552068396967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_144
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 788
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 550cb5b08833dc610800000000000000
+      internalID: 1643026098459230293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_145
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 779
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28331b0bf615a25d0800000000000000
+      internalID: -3086565054461430910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_146
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 774
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d70cb78066034c0800000000000000
+      internalID: -4309832656771580610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_147
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 759
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3466ca4d42d9d48e0800000000000000
+      internalID: -1707535902191098301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_148
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 766
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 113002fb0f1c4e700800000000000000
+      internalID: 568792692698383121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_149
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 753
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 150dd8ed4992ec6f0800000000000000
+      internalID: -662546375811149743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_150
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 749
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60690a61598591bf0800000000000000
+      internalID: -353153698418878970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_151
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 754
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dba6cc7e9d8a20710800000000000000
+      internalID: 1658073266676067005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_152
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 742
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66c0c0868122716e0800000000000000
+      internalID: -1866986032301601690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_153
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 732
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f772e97948307de80800000000000000
+      internalID: -8154044732316702849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_154
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 738
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c72766e9ab41b470800000000000000
+      internalID: 8408585172364502985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_155
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 733
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bfbf04a40348e8f0800000000000000
+      internalID: -511084870495125577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_156
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 724
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ebe26f9f38685c00800000000000000
+      internalID: 889575548871961577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_157
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 731
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ae54a29167de0f10800000000000000
+      internalID: 2237962878921760418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_158
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 727
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 077a21c7648e2ba00800000000000000
+      internalID: 770933875660728176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_159
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 713
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72939b11b54597530800000000000000
+      internalID: 3853203706308278567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_160
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 718
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af09c8d85bfc00910800000000000000
+      internalID: 1801668229619028218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_161
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 700
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 300027af71f2e8930800000000000000
+      internalID: 4147304086887333891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_162
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 707
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 864b2b8aa82b76820800000000000000
+      internalID: 2911491992723829864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_163
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 683
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f955c59f601761840800000000000000
+      internalID: 5194463494985766303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_164
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 663
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb0fbd85c9a302990800000000000000
+      internalID: -7412860543471718212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_165
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 669
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04c01a9e864de8cb0800000000000000
+      internalID: -4859713400824853440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_166
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 650
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 866d036cb916a3320800000000000000
+      internalID: 2538448661649610344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_167
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 631
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6147e78c2ea2c5bf0800000000000000
+      internalID: -334345118817553386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_168
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 637
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89ddc83c5e213c0b0800000000000000
+      internalID: -5709699124538057320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_169
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 599
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bd67e45b688091e0800000000000000
+      internalID: -2193103023962100298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_170
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 599
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69e86058e237cc340800000000000000
+      internalID: 4885406339427634838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_171
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 574
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 261630fd6265f71f0800000000000000
+      internalID: -1045021863576379038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_172
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 585
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37d888e4613b547d0800000000000000
+      internalID: -2934742673773785741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_173
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 61
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c0c8944cb1e53a40800000000000000
+      internalID: 5347428331293294784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_174
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 50
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d7d9e997e9f1ce30800000000000000
+      internalID: 4522170273971689430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_175
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 63
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b26c8992aa9566c0800000000000000
+      internalID: -4150741458400550222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_176
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 63
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e514426ac2261f2f0800000000000000
+      internalID: -940862903238246050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_177
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 51
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06d8157beea8fb3a0800000000000000
+      internalID: -6647441767093138080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_178
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 49
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3aa4cb02029245db0800000000000000
+      internalID: -4804169684532573533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_179
+      rect:
+        serializedVersion: 2
+        x: 761
+        y: 49
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f349d2187df29f240800000000000000
+      internalID: 4825941078335919167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_180
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 58
+        width: 15
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cc789b5bdba1c6e0800000000000000
+      internalID: -1818983815858062141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_181
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 56
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27ac6bb04401fe030800000000000000
+      internalID: 3526054917694737010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_182
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 55
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f38c0eb8e8e9cbf60800000000000000
+      internalID: 8051484568900913215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_183
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 57
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9317b756595176160800000000000000
+      internalID: 7018602275677106489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_184
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 49
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a071e92827cc20010800000000000000
+      internalID: 1153709246750005002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_185
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 49
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54cf208051edfc4c0800000000000000
+      internalID: -4264946140186477499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_186
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 55
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abadbf296f6952290800000000000000
+      internalID: -7915754784261678406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_187
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 49
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee612cf55462aab90800000000000000
+      internalID: -7229924172388755730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_188
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 49
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76df07367d13ceba0800000000000000
+      internalID: -6058412597564080793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_189
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 60
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4544dc5c93433770800000000000000
+      internalID: 8589283253177042253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_190
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 53
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa13a3ad71b7565c0800000000000000
+      internalID: -4222833733214260822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_191
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 59
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b34f80048905b530800000000000000
+      internalID: 3870009917344531381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_192
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 52
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ac7b440dfaeb7810800000000000000
+      internalID: 1764262051465362592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_193
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 57
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5650347c22ae50700800000000000000
+      internalID: 506067968241894757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_194
+      rect:
+        serializedVersion: 2
+        x: 884
+        y: 49
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8456f368055991240800000000000000
+      internalID: 4763002254003234120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_195
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 56
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09239abfea8e675e0800000000000000
+      internalID: -1912085153528073584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_196
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 55
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73bb7b2e6d75b13a0800000000000000
+      internalID: -6693659840717800649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_197
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 55
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aac67f4d314180bf0800000000000000
+      internalID: -358014094966035286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_198
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 51
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4a5a6db98ed46130800000000000000
+      internalID: 3559214288699284046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_199
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 49
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaa33fc6a2c7a91d0800000000000000
+      internalID: -3343223251710821714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_200
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 61
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98437a0921efa7350800000000000000
+      internalID: 6015399607996462217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_201
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 56
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af006b046f4a36340800000000000000
+      internalID: 4855906200790106362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_202
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 49
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be535f63ca71abca0800000000000000
+      internalID: -6000457525093911061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_203
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 59
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ba1b5c974295ef00800000000000000
+      internalID: 1145482516499208881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_204
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9be6ad3cbca12a410800000000000000
+      internalID: 1486780289452240569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_205
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 49
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c049815201cbcd70800000000000000
+      internalID: 9064550890715300034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_206
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 49
+        width: 17
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3415b022a23c73620800000000000000
+      internalID: 2753884282887557443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_207
+      rect:
+        serializedVersion: 2
+        x: 1026
+        y: 60
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba150906ae2b22970800000000000000
+      internalID: 8728735747509604779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-yellow_208
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 53
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62df86d14a1aef060800000000000000
+      internalID: 6989201397965716774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      radial-yellow_0: 2889976249081894299
+      radial-yellow_1: -1612516423336154112
+      radial-yellow_10: 153674952044698442
+      radial-yellow_100: -7233542821164068282
+      radial-yellow_101: 2879020238279688480
+      radial-yellow_102: 4008841155509335747
+      radial-yellow_103: 8076382473068709312
+      radial-yellow_104: -5536285360143022288
+      radial-yellow_105: -3519898967464802496
+      radial-yellow_106: -2522547693446735853
+      radial-yellow_107: 4209361561685921904
+      radial-yellow_108: -2706433868358433981
+      radial-yellow_109: 8271069785798607665
+      radial-yellow_11: 5854708127570470407
+      radial-yellow_110: 8880599888957965855
+      radial-yellow_111: 7872463272631556629
+      radial-yellow_112: 7602001403236112586
+      radial-yellow_113: -7324359460488863260
+      radial-yellow_114: 3796883612728908245
+      radial-yellow_115: -5355049091324428629
+      radial-yellow_116: 6202479568574485769
+      radial-yellow_117: -1241988841456502829
+      radial-yellow_118: 4190662739488123625
+      radial-yellow_119: 3010026688468148471
+      radial-yellow_12: 7185758669463576836
+      radial-yellow_120: -1344851772833176008
+      radial-yellow_121: -1480875685995128127
+      radial-yellow_122: 5569302722186396896
+      radial-yellow_123: -4375962323456238872
+      radial-yellow_124: 3367408820317931059
+      radial-yellow_125: -2110486730497595732
+      radial-yellow_126: 8856653922709441302
+      radial-yellow_127: 5953052570503379142
+      radial-yellow_128: 7279761195386600540
+      radial-yellow_129: -6911583917640330511
+      radial-yellow_13: 8656661852482733803
+      radial-yellow_130: 1528683904308198214
+      radial-yellow_131: -6751106656453294918
+      radial-yellow_132: 2326550307218277720
+      radial-yellow_133: 6884545309519250519
+      radial-yellow_134: -40398327492320084
+      radial-yellow_135: 5662445228769295602
+      radial-yellow_136: -591024224137584211
+      radial-yellow_137: -7752741445788419272
+      radial-yellow_138: 6791331713200972237
+      radial-yellow_139: -5944969219725827431
+      radial-yellow_14: -8916906221470173522
+      radial-yellow_140: 1463823084014836303
+      radial-yellow_141: -5619677320247077859
+      radial-yellow_142: -3523920206063995812
+      radial-yellow_143: -2563502552068396967
+      radial-yellow_144: 1643026098459230293
+      radial-yellow_145: -3086565054461430910
+      radial-yellow_146: -4309832656771580610
+      radial-yellow_147: -1707535902191098301
+      radial-yellow_148: 568792692698383121
+      radial-yellow_149: -662546375811149743
+      radial-yellow_15: -8551587642390644406
+      radial-yellow_150: -353153698418878970
+      radial-yellow_151: 1658073266676067005
+      radial-yellow_152: -1866986032301601690
+      radial-yellow_153: -8154044732316702849
+      radial-yellow_154: 8408585172364502985
+      radial-yellow_155: -511084870495125577
+      radial-yellow_156: 889575548871961577
+      radial-yellow_157: 2237962878921760418
+      radial-yellow_158: 770933875660728176
+      radial-yellow_159: 3853203706308278567
+      radial-yellow_16: -6625981520544282919
+      radial-yellow_160: 1801668229619028218
+      radial-yellow_161: 4147304086887333891
+      radial-yellow_162: 2911491992723829864
+      radial-yellow_163: 5194463494985766303
+      radial-yellow_164: -7412860543471718212
+      radial-yellow_165: -4859713400824853440
+      radial-yellow_166: 2538448661649610344
+      radial-yellow_167: -334345118817553386
+      radial-yellow_168: -5709699124538057320
+      radial-yellow_169: -2193103023962100298
+      radial-yellow_17: -1672186981943980411
+      radial-yellow_170: 4885406339427634838
+      radial-yellow_171: -1045021863576379038
+      radial-yellow_172: -2934742673773785741
+      radial-yellow_173: 5347428331293294784
+      radial-yellow_174: 4522170273971689430
+      radial-yellow_175: -4150741458400550222
+      radial-yellow_176: -940862903238246050
+      radial-yellow_177: -6647441767093138080
+      radial-yellow_178: -4804169684532573533
+      radial-yellow_179: 4825941078335919167
+      radial-yellow_18: -22442766551898798
+      radial-yellow_180: -1818983815858062141
+      radial-yellow_181: 3526054917694737010
+      radial-yellow_182: 8051484568900913215
+      radial-yellow_183: 7018602275677106489
+      radial-yellow_184: 1153709246750005002
+      radial-yellow_185: -4264946140186477499
+      radial-yellow_186: -7915754784261678406
+      radial-yellow_187: -7229924172388755730
+      radial-yellow_188: -6058412597564080793
+      radial-yellow_189: 8589283253177042253
+      radial-yellow_19: 3966736656719554363
+      radial-yellow_190: -4222833733214260822
+      radial-yellow_191: 3870009917344531381
+      radial-yellow_192: 1764262051465362592
+      radial-yellow_193: 506067968241894757
+      radial-yellow_194: 4763002254003234120
+      radial-yellow_195: -1912085153528073584
+      radial-yellow_196: -6693659840717800649
+      radial-yellow_197: -358014094966035286
+      radial-yellow_198: 3559214288699284046
+      radial-yellow_199: -3343223251710821714
+      radial-yellow_2: -4480222897289446746
+      radial-yellow_20: 1128155706257286266
+      radial-yellow_200: 6015399607996462217
+      radial-yellow_201: 4855906200790106362
+      radial-yellow_202: -6000457525093911061
+      radial-yellow_203: 1145482516499208881
+      radial-yellow_204: 1486780289452240569
+      radial-yellow_205: 9064550890715300034
+      radial-yellow_206: 2753884282887557443
+      radial-yellow_207: 8728735747509604779
+      radial-yellow_208: 6989201397965716774
+      radial-yellow_21: -2678605182979713092
+      radial-yellow_22: 3349669003662946912
+      radial-yellow_23: -4994663598733148306
+      radial-yellow_24: 3510889196224449850
+      radial-yellow_25: -1626920132936745065
+      radial-yellow_26: -1507123844590653706
+      radial-yellow_27: 8278646610034133512
+      radial-yellow_28: -333326768018719580
+      radial-yellow_29: 140524733884392554
+      radial-yellow_3: 4208390554147168589
+      radial-yellow_30: 5265182219238882907
+      radial-yellow_31: 606667115433576090
+      radial-yellow_32: -4999199925445828870
+      radial-yellow_33: 4863134229303681465
+      radial-yellow_34: 8783794711152238645
+      radial-yellow_35: 468053750498066895
+      radial-yellow_36: -9100391496451211214
+      radial-yellow_37: -5381121936756404648
+      radial-yellow_38: 2188878657636383584
+      radial-yellow_39: 2238374603034865241
+      radial-yellow_4: -4375951504945903698
+      radial-yellow_40: 1348064073671078890
+      radial-yellow_41: 3407110938468518441
+      radial-yellow_42: 6703723880868012172
+      radial-yellow_43: 2820051216393212710
+      radial-yellow_44: -2339263443732235299
+      radial-yellow_45: 8524161149654587895
+      radial-yellow_46: -4208696387083781459
+      radial-yellow_47: 2476011196267121365
+      radial-yellow_48: -3759446354473514559
+      radial-yellow_49: 1745114246892877402
+      radial-yellow_5: 5402302667247661239
+      radial-yellow_50: -3584154073233047745
+      radial-yellow_51: -7047512078237815311
+      radial-yellow_52: -2660996814579225229
+      radial-yellow_53: -5814891298095499316
+      radial-yellow_54: -138901996958015669
+      radial-yellow_55: -5724706533946331617
+      radial-yellow_56: 855491278484453976
+      radial-yellow_57: -747669249779874574
+      radial-yellow_58: 4513811829566656838
+      radial-yellow_59: -9211804372009395335
+      radial-yellow_6: -8249540776834465621
+      radial-yellow_60: -8911958984223264940
+      radial-yellow_61: 4019270589435388953
+      radial-yellow_62: 5150408219357353374
+      radial-yellow_63: -57092024728783017
+      radial-yellow_64: -4314948053614198426
+      radial-yellow_65: -924882012520019799
+      radial-yellow_66: -2720508490617464741
+      radial-yellow_67: -5021579500367152576
+      radial-yellow_68: 1341242538592147561
+      radial-yellow_69: -1905434294611844055
+      radial-yellow_7: 6031802672827236830
+      radial-yellow_70: -5304877273120430078
+      radial-yellow_71: 1569657250966372622
+      radial-yellow_72: 7995741852498309274
+      radial-yellow_73: 1884280791611708195
+      radial-yellow_74: 1794524193732139842
+      radial-yellow_75: -204977434866179544
+      radial-yellow_76: 8771973337929269551
+      radial-yellow_77: 9022452687884125112
+      radial-yellow_78: 4269514399036328233
+      radial-yellow_79: 3673037423210608621
+      radial-yellow_8: -1088712250529621364
+      radial-yellow_80: 8171877826025193154
+      radial-yellow_81: -4146142990635526724
+      radial-yellow_82: -7795752700148718985
+      radial-yellow_83: -2014750920137535214
+      radial-yellow_84: 4852773031934023003
+      radial-yellow_85: -4603384095409162048
+      radial-yellow_86: -6489254121729858064
+      radial-yellow_87: 5685710279110072153
+      radial-yellow_88: -5070761271057012303
+      radial-yellow_89: -781110553182659702
+      radial-yellow_9: -3003514397935696105
+      radial-yellow_90: -7260705872283652419
+      radial-yellow_91: 3538891458808023395
+      radial-yellow_92: 2916381291816430983
+      radial-yellow_93: 3744597870682099454
+      radial-yellow_94: -8130357962809148914
+      radial-yellow_95: -4824369120797482806
+      radial-yellow_96: 7171170548559092825
+      radial-yellow_97: -750070704398407038
+      radial-yellow_98: -4500325913246029906
+      radial-yellow_99: 1856198766645460538
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

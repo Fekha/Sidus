@@ -10625,6 +10625,7 @@ GameObject:
   - component: {fileID: 961017196}
   - component: {fileID: 961017198}
   - component: {fileID: 961017197}
+  - component: {fileID: 961017199}
   m_Layer: 5
   m_Name: ColorLabel
   m_TagString: Untagged
@@ -10748,6 +10749,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961017195}
   m_CullTransparentMesh: 1
+--- !u!114 &961017199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961017195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c935ed8b8585f4195364b0ee31be81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sequences:
+  - name: New Sequence 0
+    wrap: 3
+    playAutomatically: 1
+    nodes: []
+    events: []
+    passedTime: 0
+    stop: 1
 --- !u!1 &982619060
 GameObject:
   m_ObjectHideFlags: 0
@@ -13635,6 +13656,7 @@ GameObject:
   - component: {fileID: 1219080370}
   - component: {fileID: 1219080372}
   - component: {fileID: 1219080371}
+  - component: {fileID: 1219080373}
   m_Layer: 5
   m_Name: AmountToWinText
   m_TagString: Untagged
@@ -13759,6 +13781,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1219080369}
   m_CullTransparentMesh: 1
+--- !u!114 &1219080373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219080369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1df9242ad0be1341af37a7b85d3a19a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 10
 --- !u!1 &1250495445
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,5524 @@
+fileFormatVersion: 2
+guid: 2ca444b3214ce33478cce3c60e1918a3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4746745475967658621
+    second: radial-purple_0
+  - first:
+      213: 7600162585075343507
+    second: radial-purple_1
+  - first:
+      213: 7791079787945310797
+    second: radial-purple_2
+  - first:
+      213: 992386613931900034
+    second: radial-purple_3
+  - first:
+      213: 4635455723589327995
+    second: radial-purple_4
+  - first:
+      213: -7978437678503718079
+    second: radial-purple_5
+  - first:
+      213: -2515646725926934782
+    second: radial-purple_6
+  - first:
+      213: -4181554622895248962
+    second: radial-purple_7
+  - first:
+      213: -8534011946486670644
+    second: radial-purple_8
+  - first:
+      213: 495202850721778068
+    second: radial-purple_9
+  - first:
+      213: 3430396664729470777
+    second: radial-purple_10
+  - first:
+      213: -6876017078860848257
+    second: radial-purple_11
+  - first:
+      213: -3499569415017427857
+    second: radial-purple_12
+  - first:
+      213: -202364638218089997
+    second: radial-purple_13
+  - first:
+      213: 7547622548991918029
+    second: radial-purple_14
+  - first:
+      213: -7299948354295989624
+    second: radial-purple_15
+  - first:
+      213: 6678174473148985107
+    second: radial-purple_16
+  - first:
+      213: 4427818337335706583
+    second: radial-purple_17
+  - first:
+      213: -8240726408544332190
+    second: radial-purple_18
+  - first:
+      213: 8671787775966205169
+    second: radial-purple_19
+  - first:
+      213: 1097239855617170308
+    second: radial-purple_20
+  - first:
+      213: -8003388554632726805
+    second: radial-purple_21
+  - first:
+      213: 7451516511161395592
+    second: radial-purple_22
+  - first:
+      213: -7135764444542300008
+    second: radial-purple_23
+  - first:
+      213: 8278591996413387752
+    second: radial-purple_24
+  - first:
+      213: -950439656080210145
+    second: radial-purple_25
+  - first:
+      213: 7634610865830855235
+    second: radial-purple_26
+  - first:
+      213: -132613968964567122
+    second: radial-purple_27
+  - first:
+      213: 3427972576470815708
+    second: radial-purple_28
+  - first:
+      213: 4625182171498492146
+    second: radial-purple_29
+  - first:
+      213: -3415294802094163844
+    second: radial-purple_30
+  - first:
+      213: -773698088426950454
+    second: radial-purple_31
+  - first:
+      213: 2533507088744320218
+    second: radial-purple_32
+  - first:
+      213: 2823493108312304028
+    second: radial-purple_33
+  - first:
+      213: 3201082889396972846
+    second: radial-purple_34
+  - first:
+      213: 2369127971918571093
+    second: radial-purple_35
+  - first:
+      213: 5041966372839165286
+    second: radial-purple_36
+  - first:
+      213: 3510946643001519444
+    second: radial-purple_37
+  - first:
+      213: 6629636569133048151
+    second: radial-purple_38
+  - first:
+      213: 4582839997659525242
+    second: radial-purple_39
+  - first:
+      213: 6488643098370619385
+    second: radial-purple_40
+  - first:
+      213: 5343752583209106351
+    second: radial-purple_41
+  - first:
+      213: -8597555989055824920
+    second: radial-purple_42
+  - first:
+      213: -5217954984064917320
+    second: radial-purple_43
+  - first:
+      213: -2708728476549294121
+    second: radial-purple_44
+  - first:
+      213: -6427545495916695760
+    second: radial-purple_45
+  - first:
+      213: 2463394204222206407
+    second: radial-purple_46
+  - first:
+      213: 3056686972536195267
+    second: radial-purple_47
+  - first:
+      213: 878028776556872975
+    second: radial-purple_48
+  - first:
+      213: -8926699647801943976
+    second: radial-purple_49
+  - first:
+      213: 8273888035303222504
+    second: radial-purple_50
+  - first:
+      213: -7456855189269523708
+    second: radial-purple_51
+  - first:
+      213: 8470669469227566208
+    second: radial-purple_52
+  - first:
+      213: 8342197641488498952
+    second: radial-purple_53
+  - first:
+      213: -5385791384914959959
+    second: radial-purple_54
+  - first:
+      213: 7097459914145014478
+    second: radial-purple_55
+  - first:
+      213: -2286027077234948603
+    second: radial-purple_56
+  - first:
+      213: 5067709708674325861
+    second: radial-purple_57
+  - first:
+      213: -265706583091831773
+    second: radial-purple_58
+  - first:
+      213: 1684406400762847553
+    second: radial-purple_59
+  - first:
+      213: 1608115347632503783
+    second: radial-purple_60
+  - first:
+      213: -6514748881831967904
+    second: radial-purple_61
+  - first:
+      213: 6114385490189188133
+    second: radial-purple_62
+  - first:
+      213: -6126802389540614362
+    second: radial-purple_63
+  - first:
+      213: -836934226320069385
+    second: radial-purple_64
+  - first:
+      213: -5886821522841148782
+    second: radial-purple_65
+  - first:
+      213: 9056728197076245656
+    second: radial-purple_66
+  - first:
+      213: 8302209308882797223
+    second: radial-purple_67
+  - first:
+      213: 5218124165693327523
+    second: radial-purple_68
+  - first:
+      213: -9068597505209473299
+    second: radial-purple_69
+  - first:
+      213: 1116339162277784168
+    second: radial-purple_70
+  - first:
+      213: 8825376295483159251
+    second: radial-purple_71
+  - first:
+      213: 6024085404527707409
+    second: radial-purple_72
+  - first:
+      213: -3228280251103351701
+    second: radial-purple_73
+  - first:
+      213: -7838293276807886683
+    second: radial-purple_74
+  - first:
+      213: 2515724831322766423
+    second: radial-purple_75
+  - first:
+      213: 8198097193793251954
+    second: radial-purple_76
+  - first:
+      213: -619112937052940806
+    second: radial-purple_77
+  - first:
+      213: -2588830325600681899
+    second: radial-purple_78
+  - first:
+      213: 8358099502721509206
+    second: radial-purple_79
+  - first:
+      213: 2947878767317917566
+    second: radial-purple_80
+  - first:
+      213: 7421881819593699093
+    second: radial-purple_81
+  - first:
+      213: 697607906093620973
+    second: radial-purple_82
+  - first:
+      213: -3483861006126809077
+    second: radial-purple_83
+  - first:
+      213: -7466479124301541834
+    second: radial-purple_84
+  - first:
+      213: -6094147044114389589
+    second: radial-purple_85
+  - first:
+      213: -831717082267821914
+    second: radial-purple_86
+  - first:
+      213: -4224285918987876868
+    second: radial-purple_87
+  - first:
+      213: -4141413189796261199
+    second: radial-purple_88
+  - first:
+      213: 4721759717208599858
+    second: radial-purple_89
+  - first:
+      213: 302596428918032212
+    second: radial-purple_90
+  - first:
+      213: 2985655961378857032
+    second: radial-purple_91
+  - first:
+      213: 4792703669110518476
+    second: radial-purple_92
+  - first:
+      213: -1976819135666786549
+    second: radial-purple_93
+  - first:
+      213: -4212422763354642245
+    second: radial-purple_94
+  - first:
+      213: 2056357116336212220
+    second: radial-purple_95
+  - first:
+      213: 2699817034035139357
+    second: radial-purple_96
+  - first:
+      213: 7559466475473070883
+    second: radial-purple_97
+  - first:
+      213: -2900131384302570526
+    second: radial-purple_98
+  - first:
+      213: -4284999425180202843
+    second: radial-purple_99
+  - first:
+      213: 2668185500912998970
+    second: radial-purple_100
+  - first:
+      213: 4029676447764292402
+    second: radial-purple_101
+  - first:
+      213: 2647496511807310958
+    second: radial-purple_102
+  - first:
+      213: 523706870497467205
+    second: radial-purple_103
+  - first:
+      213: -8432735553252648248
+    second: radial-purple_104
+  - first:
+      213: 5604854858310242442
+    second: radial-purple_105
+  - first:
+      213: -5673016438816628791
+    second: radial-purple_106
+  - first:
+      213: -709801203140530800
+    second: radial-purple_107
+  - first:
+      213: 2123717485279724764
+    second: radial-purple_108
+  - first:
+      213: -757203395543168820
+    second: radial-purple_109
+  - first:
+      213: -5216826115801532053
+    second: radial-purple_110
+  - first:
+      213: 1869858899385871326
+    second: radial-purple_111
+  - first:
+      213: -5690550135620510484
+    second: radial-purple_112
+  - first:
+      213: 2851491852989040770
+    second: radial-purple_113
+  - first:
+      213: 6862746402577285069
+    second: radial-purple_114
+  - first:
+      213: -8748171786857142652
+    second: radial-purple_115
+  - first:
+      213: 3239635685460851836
+    second: radial-purple_116
+  - first:
+      213: 3780437404049446079
+    second: radial-purple_117
+  - first:
+      213: -7635013413809810529
+    second: radial-purple_118
+  - first:
+      213: -4212889662259098636
+    second: radial-purple_119
+  - first:
+      213: 1330223416609008618
+    second: radial-purple_120
+  - first:
+      213: -783630811945159314
+    second: radial-purple_121
+  - first:
+      213: 3897363063585916792
+    second: radial-purple_122
+  - first:
+      213: 5735396950872986839
+    second: radial-purple_123
+  - first:
+      213: 2364100498215470952
+    second: radial-purple_124
+  - first:
+      213: 7232573886178936287
+    second: radial-purple_125
+  - first:
+      213: -412644023962556308
+    second: radial-purple_126
+  - first:
+      213: -2708236808422013094
+    second: radial-purple_127
+  - first:
+      213: -2401219367501883932
+    second: radial-purple_128
+  - first:
+      213: 3037341691526568918
+    second: radial-purple_129
+  - first:
+      213: -6760799817157752968
+    second: radial-purple_130
+  - first:
+      213: 7420531791213309808
+    second: radial-purple_131
+  - first:
+      213: 8125716328736785797
+    second: radial-purple_132
+  - first:
+      213: 1523595592832418678
+    second: radial-purple_133
+  - first:
+      213: 528573118960965524
+    second: radial-purple_134
+  - first:
+      213: 2801723733061893522
+    second: radial-purple_135
+  - first:
+      213: -1676197489124371913
+    second: radial-purple_136
+  - first:
+      213: -8679247334552589115
+    second: radial-purple_137
+  - first:
+      213: -6664339335680383792
+    second: radial-purple_138
+  - first:
+      213: -288449958621706477
+    second: radial-purple_139
+  - first:
+      213: -7700512884897966035
+    second: radial-purple_140
+  - first:
+      213: 6880696486970736239
+    second: radial-purple_141
+  - first:
+      213: -1367103425926420871
+    second: radial-purple_142
+  - first:
+      213: 4087611306115939039
+    second: radial-purple_143
+  - first:
+      213: 3763942837761349443
+    second: radial-purple_144
+  - first:
+      213: 6083533699691151544
+    second: radial-purple_145
+  - first:
+      213: 3820001475890813836
+    second: radial-purple_146
+  - first:
+      213: -2069222996873370360
+    second: radial-purple_147
+  - first:
+      213: -1658860357707775880
+    second: radial-purple_148
+  - first:
+      213: -630097917701376560
+    second: radial-purple_149
+  - first:
+      213: 6801721712232582582
+    second: radial-purple_150
+  - first:
+      213: 7533646917196320318
+    second: radial-purple_151
+  - first:
+      213: -3178325832619377342
+    second: radial-purple_152
+  - first:
+      213: 6697496770027903289
+    second: radial-purple_153
+  - first:
+      213: 8507058779862281344
+    second: radial-purple_154
+  - first:
+      213: 8485408586905127088
+    second: radial-purple_155
+  - first:
+      213: -3005365099704296128
+    second: radial-purple_156
+  - first:
+      213: -6748862966792372867
+    second: radial-purple_157
+  - first:
+      213: -367589497088123156
+    second: radial-purple_158
+  - first:
+      213: -6375285700301006134
+    second: radial-purple_159
+  - first:
+      213: 2672153677765940687
+    second: radial-purple_160
+  - first:
+      213: -711802921571271568
+    second: radial-purple_161
+  - first:
+      213: 5353094258086048802
+    second: radial-purple_162
+  - first:
+      213: -2243724864720654519
+    second: radial-purple_163
+  - first:
+      213: 6950793641281636926
+    second: radial-purple_164
+  - first:
+      213: -7750841435046963636
+    second: radial-purple_165
+  - first:
+      213: 6854328049116073807
+    second: radial-purple_166
+  - first:
+      213: 4293647993885915083
+    second: radial-purple_167
+  - first:
+      213: 2367768097956410064
+    second: radial-purple_168
+  - first:
+      213: 4438094410771174713
+    second: radial-purple_169
+  - first:
+      213: 6037844326428445
+    second: radial-purple_170
+  - first:
+      213: 8351928971468172934
+    second: radial-purple_171
+  - first:
+      213: 8554956368726729140
+    second: radial-purple_172
+  - first:
+      213: 6057866366580962791
+    second: radial-purple_173
+  - first:
+      213: -3884192846406804142
+    second: radial-purple_174
+  - first:
+      213: 8095889106331503578
+    second: radial-purple_175
+  - first:
+      213: 6443090861332091933
+    second: radial-purple_176
+  - first:
+      213: 4148717033062195274
+    second: radial-purple_177
+  - first:
+      213: -8198426227951771040
+    second: radial-purple_178
+  - first:
+      213: 7844881992474170143
+    second: radial-purple_179
+  - first:
+      213: -101443653409353022
+    second: radial-purple_180
+  - first:
+      213: -5493842889585003795
+    second: radial-purple_181
+  - first:
+      213: 1470536764721805920
+    second: radial-purple_182
+  - first:
+      213: 4767299928731842030
+    second: radial-purple_183
+  - first:
+      213: -2923188754156949809
+    second: radial-purple_184
+  - first:
+      213: 415900911219911316
+    second: radial-purple_185
+  - first:
+      213: -7201974426373037183
+    second: radial-purple_186
+  - first:
+      213: -8679145848360414959
+    second: radial-purple_187
+  - first:
+      213: -6475678858123727617
+    second: radial-purple_188
+  - first:
+      213: 9185375266440775313
+    second: radial-purple_189
+  - first:
+      213: 8655192769809882113
+    second: radial-purple_190
+  - first:
+      213: 8600690378605950472
+    second: radial-purple_191
+  - first:
+      213: -3834502485660927516
+    second: radial-purple_192
+  - first:
+      213: 4489427564443174449
+    second: radial-purple_193
+  - first:
+      213: 3392314189877574738
+    second: radial-purple_194
+  - first:
+      213: 3512950114712322935
+    second: radial-purple_195
+  - first:
+      213: -4360286702505550699
+    second: radial-purple_196
+  - first:
+      213: 1055825932751335720
+    second: radial-purple_197
+  - first:
+      213: -4431627087386926639
+    second: radial-purple_198
+  - first:
+      213: -6950492730995366918
+    second: radial-purple_199
+  - first:
+      213: -1188592631170066110
+    second: radial-purple_200
+  - first:
+      213: 4964197092003276337
+    second: radial-purple_201
+  - first:
+      213: 7540693893462742319
+    second: radial-purple_202
+  - first:
+      213: 8954633135659692637
+    second: radial-purple_203
+  - first:
+      213: -4616645060442016340
+    second: radial-purple_204
+  - first:
+      213: 3541522367789062870
+    second: radial-purple_205
+  - first:
+      213: 4207305345685442097
+    second: radial-purple_206
+  - first:
+      213: -4122462219049677742
+    second: radial-purple_207
+  - first:
+      213: -7078716115744431001
+    second: radial-purple_208
+  - first:
+      213: 6685907552926603813
+    second: radial-purple_209
+  - first:
+      213: 5950436898656857900
+    second: radial-purple_210
+  - first:
+      213: -5729676273155797660
+    second: radial-purple_211
+  - first:
+      213: 1675532390802887388
+    second: radial-purple_212
+  - first:
+      213: 5540332596817727850
+    second: radial-purple_213
+  - first:
+      213: 8503147244935408896
+    second: radial-purple_214
+  - first:
+      213: -8956253155201873816
+    second: radial-purple_215
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: radial-purple_0
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 49
+        width: 1666
+        height: 1656
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38551c1932c202eb0800000000000000
+      internalID: -4746745475967658621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_1
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 1703
+        width: 26
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39061ae8a93397960800000000000000
+      internalID: 7600162585075343507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_2
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 1691
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4ab439c9c97f1c60800000000000000
+      internalID: 7791079787945310797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_3
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 1698
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28c73431e5aa5cd00800000000000000
+      internalID: 992386613931900034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_4
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 1695
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7cd790cb62745040800000000000000
+      internalID: 4635455723589327995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_5
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 1704
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1439136f335e64190800000000000000
+      internalID: -7978437678503718079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_6
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 1700
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20720c891a0a61dd0800000000000000
+      internalID: -2515646725926934782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_7
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb9af6da93228f5c0800000000000000
+      internalID: -4181554622895248962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_8
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 1701
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccad8bc8959119980800000000000000
+      internalID: -8534011946486670644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_9
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 1697
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49948097e505fd600800000000000000
+      internalID: 495202850721778068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_10
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1701
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93782ef67973b9f20800000000000000
+      internalID: 3430396664729470777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_11
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f73eaf0c5ea7390a0800000000000000
+      internalID: -6876017078860848257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_12
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6c801798280f6fc0800000000000000
+      internalID: -3499569415017427857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_13
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 1700
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f909e70f6e013df0800000000000000
+      internalID: -202364638218089997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_14
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcf346328ba8eb860800000000000000
+      internalID: 7547622548991918029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_15
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88a7d7706af51ba90800000000000000
+      internalID: -7299948354295989624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_16
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31f60240d44adac50800000000000000
+      internalID: 6678174473148985107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_17
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 1701
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d30bd67155c27d30800000000000000
+      internalID: 4427818337335706583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_18
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 266d88f1efe03ad80800000000000000
+      internalID: -8240726408544332190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_19
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 1698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f45a028901685870800000000000000
+      internalID: 8671787775966205169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_20
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48b5673d5dd2a3f00800000000000000
+      internalID: 1097239855617170308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_21
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 1699
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be670b963804ee090800000000000000
+      internalID: -8003388554632726805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_22
+      rect:
+        serializedVersion: 2
+        x: 721
+        y: 1701
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 889abbd79ca196760800000000000000
+      internalID: 7451516511161395592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_23
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 1696
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 890913a6b0ca8fc90800000000000000
+      internalID: -7135764444542300008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_24
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1701
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e3ac921f8773e270800000000000000
+      internalID: 8278591996413387752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_25
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 1703
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1705ee1b2c5fc2f0800000000000000
+      internalID: -950439656080210145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_26
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 1697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3428f20f12693f960800000000000000
+      internalID: 7634610865830855235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_27
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 1703
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eafbc9f3c4cd82ef0800000000000000
+      internalID: -132613968964567122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_28
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 1707
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd3d25865ea929f20800000000000000
+      internalID: 3427972576470815708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_29
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 1701
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f033a10ea2ff2040800000000000000
+      internalID: 4625182171498492146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_30
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 1706
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7870f5f87f6a90d0800000000000000
+      internalID: -3415294802094163844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_31
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 1699
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac0b9e310b54345f0800000000000000
+      internalID: -773698088426950454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_32
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 1698
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adc0a8c2643d82320800000000000000
+      internalID: 2533507088744320218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_33
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 1699
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c99e7b2c5001f2720800000000000000
+      internalID: 2823493108312304028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_34
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 1701
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2d66178de78c6c20800000000000000
+      internalID: 3201082889396972846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_35
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 1698
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 556e5a99655d0e020800000000000000
+      internalID: 2369127971918571093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_36
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66d0b8ed3b9a8f540800000000000000
+      internalID: 5041966372839165286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_37
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 1706
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45da479be5369b030800000000000000
+      internalID: 3510946643001519444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_38
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 1694
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7516d159553310c50800000000000000
+      internalID: 6629636569133048151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_39
+      rect:
+        serializedVersion: 2
+        x: 822
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a70b2fa62b4899f30800000000000000
+      internalID: 4582839997659525242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_40
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 1701
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f7bba8058a4c0a50800000000000000
+      internalID: 6488643098370619385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_41
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 1697
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fab31c979a2d82a40800000000000000
+      internalID: 5343752583209106351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_42
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 1701
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8eb9bc731685fa880800000000000000
+      internalID: -8597555989055824920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_43
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b0e4d086991697b0800000000000000
+      internalID: -5217954984064917320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_44
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d75b425dc9a86ad0800000000000000
+      internalID: -2708728476549294121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_45
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 1700
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f29321d65ccc6a0800000000000000
+      internalID: -6427545495916695760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_46
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c1bb642afbbf2220800000000000000
+      internalID: 2463394204222206407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_47
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c885934b988b6a20800000000000000
+      internalID: 3056686972536195267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_48
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f054e3135826f2c00800000000000000
+      internalID: 878028776556872975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_49
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 1701
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 858192c47fdfd1480800000000000000
+      internalID: -8926699647801943976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_50
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec6a97c451c2d270800000000000000
+      internalID: 8273888035303222504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_51
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 403df06a6bde38890800000000000000
+      internalID: -7456855189269523708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_52
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0844e03b00ddd8570800000000000000
+      internalID: 8470669469227566208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_53
+      rect:
+        serializedVersion: 2
+        x: 972
+        y: 1699
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 801060b5e8075c370800000000000000
+      internalID: 8342197641488498952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_54
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 1701
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a1e8c34543d145b0800000000000000
+      internalID: -5385791384914959959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_55
+      rect:
+        serializedVersion: 2
+        x: 988
+        y: 1696
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec2203e103e3f7260800000000000000
+      internalID: 7097459914145014478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_56
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 1701
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5068c723c766640e0800000000000000
+      internalID: -2286027077234948603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_57
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 1703
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56dd452512f145640800000000000000
+      internalID: 5067709708674325861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_58
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 1697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32c145c3545005cf0800000000000000
+      internalID: -265706583091831773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_59
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 1703
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1412dd672b6306710800000000000000
+      internalID: 1684406400762847553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_60
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 1707
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eb3d75736c215610800000000000000
+      internalID: 1608115347632503783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_61
+      rect:
+        serializedVersion: 2
+        x: 1019
+        y: 1701
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06348899866f695a0800000000000000
+      internalID: -6514748881831967904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_62
+      rect:
+        serializedVersion: 2
+        x: 1020
+        y: 1706
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52c778a3539aad450800000000000000
+      internalID: 6114385490189188133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_63
+      rect:
+        serializedVersion: 2
+        x: 1023
+        y: 1699
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62fca6a10b939faa0800000000000000
+      internalID: -6126802389540614362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_64
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 1698
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fc63d361cc9264f0800000000000000
+      internalID: -836934226320069385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_65
+      rect:
+        serializedVersion: 2
+        x: 1038
+        y: 1699
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 292ede2c30fcd4ea0800000000000000
+      internalID: -5886821522841148782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_66
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 1701
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c5ef58f46ffad70800000000000000
+      internalID: 9056728197076245656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_67
+      rect:
+        serializedVersion: 2
+        x: 1057
+        y: 1698
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a286e2216f573370800000000000000
+      internalID: 8302209308882797223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_68
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a8480a28408a6840800000000000000
+      internalID: 5218124165693327523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_69
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 1706
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de6eef2dd9ed52280800000000000000
+      internalID: -9068597505209473299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_70
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 1694
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86aac60bd880e7f00800000000000000
+      internalID: 1116339162277784168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_71
+      rect:
+        serializedVersion: 2
+        x: 1078
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d23d6d5bf80a7a70800000000000000
+      internalID: 8825376295483159251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_72
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 1700
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1154d7922c9d99350800000000000000
+      internalID: 6024085404527707409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_73
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 1697
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6c639d3738d233d0800000000000000
+      internalID: -3228280251103351701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_74
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 1700
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a888863bc9c83390800000000000000
+      internalID: -7838293276807886683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_75
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 1700
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75c7f9bb766a9e220800000000000000
+      internalID: 2515724831322766423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_76
+      rect:
+        serializedVersion: 2
+        x: 1134
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a6c2e56fd75c170800000000000000
+      internalID: 8198097193793251954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_77
+      rect:
+        serializedVersion: 2
+        x: 1137
+        y: 1700
+        width: 23
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af55c1f50187867f0800000000000000
+      internalID: -619112937052940806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_78
+      rect:
+        serializedVersion: 2
+        x: 1153
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55000daf880a21cd0800000000000000
+      internalID: -2588830325600681899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_79
+      rect:
+        serializedVersion: 2
+        x: 1158
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 657a511f63fedf370800000000000000
+      internalID: 8358099502721509206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_80
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 1700
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7f96eece18f8e820800000000000000
+      internalID: 2947878767317917566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_81
+      rect:
+        serializedVersion: 2
+        x: 1186
+        y: 1700
+        width: 30
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51fefcd2132dff660800000000000000
+      internalID: 7421881819593699093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_82
+      rect:
+        serializedVersion: 2
+        x: 1193
+        y: 1701
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deed63bc1b66ea900800000000000000
+      internalID: 697607906093620973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_83
+      rect:
+        serializedVersion: 2
+        x: 1194
+        y: 1695
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b000afa8fd6d6afc0800000000000000
+      internalID: -3483861006126809077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_84
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1186
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63e0329abccb16890800000000000000
+      internalID: -7466479124301541834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_85
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 1175
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba5a0923d8d3d6ba0800000000000000
+      internalID: -6094147044114389589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_86
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 1175
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a85dc568b52574f0800000000000000
+      internalID: -831717082267821914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_87
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1162
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf50b0186525065c0800000000000000
+      internalID: -4224285918987876868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_88
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 1143
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b2931265aeb686c0800000000000000
+      internalID: -4141413189796261199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_89
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1149
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23da7f2227f078140800000000000000
+      internalID: 4721759717208599858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_90
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1111
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45706ff49d9033400800000000000000
+      internalID: 302596428918032212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_91
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1111
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 840a387374e2f6920800000000000000
+      internalID: 2985655961378857032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_92
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1102
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc23b0f189a138240800000000000000
+      internalID: 4792703669110518476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_93
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 1073
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0fe261487de094e0800000000000000
+      internalID: -1976819135666786549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_94
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 1059
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb82a7aa0d77a85c0800000000000000
+      internalID: -4212422763354642245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_95
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1048
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf8019af6e5a98c10800000000000000
+      internalID: 2056357116336212220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_96
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 1048
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d139638c94da77520800000000000000
+      internalID: 2699817034035139357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_97
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 1044
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32beb0a25be98e860800000000000000
+      internalID: 7559466475473070883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_98
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1038
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e3feac1fd9a0c7d0800000000000000
+      internalID: -2900131384302570526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_99
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 1035
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a88167c9bf9884c0800000000000000
+      internalID: -4284999425180202843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_100
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 1030
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3a54c0939c470520800000000000000
+      internalID: 2668185500912998970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_101
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1009
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 233afbc01694ce730800000000000000
+      internalID: 4029676447764292402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_102
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1015
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6c4c5aec0ccdb420800000000000000
+      internalID: 2647496511807310958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_103
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 1006
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54bde6ebf94944700800000000000000
+      internalID: 523706870497467205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_104
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 1005
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ca919f51b7e8fa80800000000000000
+      internalID: -8432735553252648248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_105
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 997
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a80543f3cc178cd40800000000000000
+      internalID: 5604854858310242442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_106
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 997
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cf12671b956541b0800000000000000
+      internalID: -5673016438816628791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_107
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 988
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09de9a101974626f0800000000000000
+      internalID: -709801203140530800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_108
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 980
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd442690dc5f87d10800000000000000
+      internalID: 2123717485279724764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_109
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 987
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc80ee9068fdd75f0800000000000000
+      internalID: -757203395543168820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_110
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 983
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b693ba0a94c1a97b0800000000000000
+      internalID: -5216826115801532053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_111
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 969
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edb6ff513c213f910800000000000000
+      internalID: 1869858899385871326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_112
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 974
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cecd9cd2dca1701b0800000000000000
+      internalID: -5690550135620510484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_113
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 976
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28805518bb8829720800000000000000
+      internalID: 2851491852989040770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_114
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 956
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcf75352e7f5d3f50800000000000000
+      internalID: 6862746402577285069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_115
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 963
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48629421c10489680800000000000000
+      internalID: -8748171786857142652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_116
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 960
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7cb299dd7f75fc20800000000000000
+      internalID: 3239635685460851836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_117
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 963
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb497f31acfc67430800000000000000
+      internalID: 3780437404049446079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_118
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 939
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f93168e80cbfa0690800000000000000
+      internalID: -7635013413809810529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_119
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 945
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb812b4c2fc885c0800000000000000
+      internalID: -4212889662259098636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_120
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 935
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aebe2ea4627e57210800000000000000
+      internalID: 1330223416609008618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_121
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 919
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6535faadebff15f0800000000000000
+      internalID: -783630811945159314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_122
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 925
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87744c5ae07361630800000000000000
+      internalID: 3897363063585916792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_123
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 921
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d494aea329389f40800000000000000
+      internalID: 5735396950872986839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_124
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 922
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8670579a0e8fec020800000000000000
+      internalID: 2364100498215470952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_125
+      rect:
+        serializedVersion: 2
+        x: 1720
+        y: 923
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd5467131a34f5460800000000000000
+      internalID: 7232573886178936287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_126
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 913
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c68260d427ef54af0800000000000000
+      internalID: -412644023962556308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_127
+      rect:
+        serializedVersion: 2
+        x: 1720
+        y: 911
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a574e5ab8f86a6ad0800000000000000
+      internalID: -2708236808422013094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_128
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 906
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e5134c15b72daed0800000000000000
+      internalID: -2401219367501883932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_129
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 906
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dbdce80d2ec62a20800000000000000
+      internalID: 3037341691526568918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_130
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 899
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87749c4f260dc22a0800000000000000
+      internalID: -6760799817157752968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_131
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 887
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07f23c339560bf660800000000000000
+      internalID: 7420531791213309808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_132
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 893
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58582f7f2f754c070800000000000000
+      internalID: 8125716328736785797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_133
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 885
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 673802c8e16e42510800000000000000
+      internalID: 1523595592832418678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_134
+      rect:
+        serializedVersion: 2
+        x: 1717
+        y: 883
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4971d71837ed55700800000000000000
+      internalID: 528573118960965524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_135
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 878
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29d7feb14e8b1e620800000000000000
+      internalID: 2801723733061893522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_136
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 875
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7321757b343fcb8e0800000000000000
+      internalID: -1676197489124371913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_137
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 855
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ccac3aa88e1d8780800000000000000
+      internalID: -8679247334552589115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_138
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 855
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d4ab12fea28383a0800000000000000
+      internalID: -6664339335680383792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_139
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 861
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31780e87a483ffbf0800000000000000
+      internalID: -288449958621706477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_140
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 846
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d28965b8458422590800000000000000
+      internalID: -7700512884897966035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_141
+      rect:
+        serializedVersion: 2
+        x: 1718
+        y: 848
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6e3b29dff42d7f50800000000000000
+      internalID: 6880696486970736239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_142
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 844
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 976af666da2170de0800000000000000
+      internalID: -1367103425926420871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_143
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 841
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fda39e863dc1ab830800000000000000
+      internalID: 4087611306115939039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_144
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 817
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34714a791163c3430800000000000000
+      internalID: 3763942837761349443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_145
+      rect:
+        serializedVersion: 2
+        x: 1717
+        y: 815
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b0853dfaad0d6450800000000000000
+      internalID: 6083533699691151544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_146
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 803
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8b90f36a1f530530800000000000000
+      internalID: 3820001475890813836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_147
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 792
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8052b46c5a4a843e0800000000000000
+      internalID: -2069222996873370360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_148
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 796
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 870c9de2b4b8af8e0800000000000000
+      internalID: -1658860357707775880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_149
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 782
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d532b148417147f0800000000000000
+      internalID: -630097917701376560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_150
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 779
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bd4fa63cd1946e50800000000000000
+      internalID: 6801721712232582582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_151
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 788
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3e04bac4f3ec8860800000000000000
+      internalID: 7533646917196320318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_152
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 779
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24d3646ae7154e3d0800000000000000
+      internalID: -3178325832619377342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_153
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 774
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 939d6d5d3d942fc50800000000000000
+      internalID: 6697496770027903289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_154
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 759
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08c2f0153e42f0670800000000000000
+      internalID: 8507058779862281344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_155
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 766
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b88784f62a32c570800000000000000
+      internalID: 8485408586905127088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_156
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 753
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04dd4cb6d5cca46d0800000000000000
+      internalID: -3005365099704296128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_157
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 749
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7d3d8283e83752a0800000000000000
+      internalID: -6748862966792372867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_158
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 754
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceed5eacc4f06eaf0800000000000000
+      internalID: -367589497088123156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_159
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 742
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aca5eebee6f6687a0800000000000000
+      internalID: -6375285700301006134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_160
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 732
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc51e7cbc95651520800000000000000
+      internalID: 2672153677765940687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_161
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 738
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07cb8ad930b2f16f0800000000000000
+      internalID: -711802921571271568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_162
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 733
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 224f666add20a4a40800000000000000
+      internalID: 5353094258086048802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_163
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 724
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94f2d909f10bcd0e0800000000000000
+      internalID: -2243724864720654519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_164
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 731
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3ac2a76dfd267060800000000000000
+      internalID: 6950793641281636926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_165
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 727
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4695a1d7ca7f6490800000000000000
+      internalID: -7750841435046963636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_166
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 713
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4f4f8d7b077f1f50800000000000000
+      internalID: 6854328049116073807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_167
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 718
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc7732a0a1a169b30800000000000000
+      internalID: 4293647993885915083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_168
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 700
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d2b1354a800cd020800000000000000
+      internalID: 2367768097956410064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_169
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 707
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93599a14a57479d30800000000000000
+      internalID: 4438094410771174713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_170
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 683
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1f294e2363751000800000000000000
+      internalID: 6037844326428445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_171
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 663
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68e67ad262308e370800000000000000
+      internalID: 8351928971468172934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_172
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 669
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b12ce2cd7f49b670800000000000000
+      internalID: 8554956368726729140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_173
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 650
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e538dc4d5dd11450800000000000000
+      internalID: 6057866366580962791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_174
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 631
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25d1fce7f23981ac0800000000000000
+      internalID: -3884192846406804142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_175
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 637
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adb08d39f306a5070800000000000000
+      internalID: 8095889106331503578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_176
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 599
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d14d34d50057a6950800000000000000
+      internalID: 6443090861332091933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_177
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 599
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a40e8452924339930800000000000000
+      internalID: 4148717033062195274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_178
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 574
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06260b568c6593e80800000000000000
+      internalID: -8198426227951771040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_179
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 585
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f131842bb9e9edc60800000000000000
+      internalID: 7844881992474170143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_180
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 61
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c251d1e889979ef0800000000000000
+      internalID: -101443653409353022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_181
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 50
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de2fa72eff2f1c3b0800000000000000
+      internalID: -5493842889585003795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_182
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 63
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06a35627565686410800000000000000
+      internalID: 1470536764721805920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_183
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 63
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee57ec5e60ad82240800000000000000
+      internalID: 4767299928731842030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_184
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 51
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fceee09d05fbe67d0800000000000000
+      internalID: -2923188754156949809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_185
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 49
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49a260bdca395c500800000000000000
+      internalID: 415900911219911316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_186
+      rect:
+        serializedVersion: 2
+        x: 761
+        y: 49
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 183669aba627d0c90800000000000000
+      internalID: -7201974426373037183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_187
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 58
+        width: 15
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 111dba2c5da7d8780800000000000000
+      internalID: -8679145848360414959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_188
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 56
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffc270e5364c126a0800000000000000
+      internalID: -6475678858123727617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_189
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 55
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1968cdc7322097f70800000000000000
+      internalID: 9185375266440775313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_190
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 57
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10c1c0b87fb6d1870800000000000000
+      internalID: 8655192769809882113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_191
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 49
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8067de7b45acb5770800000000000000
+      internalID: 8600690378605950472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_192
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 49
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e9f3db2e4c19cac0800000000000000
+      internalID: -3834502485660927516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_193
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 55
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1368b777596ad4e30800000000000000
+      internalID: 4489427564443174449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_194
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 49
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25c7b2e48cbe31f20800000000000000
+      internalID: 3392314189877574738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_195
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 49
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7738815548180c030800000000000000
+      internalID: 3512950114712322935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_196
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 60
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59c1c4a88562d73c0800000000000000
+      internalID: -4360286702505550699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_197
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 53
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 821f942871c07ae00800000000000000
+      internalID: 1055825932751335720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_198
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 59
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1ad4fc4a2bf72c0800000000000000
+      internalID: -4431627087386926639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_199
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 52
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af3261bbfa3ea8f90800000000000000
+      internalID: -6950492730995366918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_200
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 57
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2491674ac45418fe0800000000000000
+      internalID: -1188592631170066110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_201
+      rect:
+        serializedVersion: 2
+        x: 884
+        y: 49
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 136e1e724fe54e440800000000000000
+      internalID: 4964197092003276337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_202
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 56
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f25ddcfc42de5a860800000000000000
+      internalID: 7540693893462742319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_203
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 55
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5230f8a46f354c70800000000000000
+      internalID: 8954633135659692637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_204
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 55
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca5ba4e07c16eefb0800000000000000
+      internalID: -4616645060442016340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_205
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 51
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dada2864d3062130800000000000000
+      internalID: 3541522367789062870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_206
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 49
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13ece2fabe9536a30800000000000000
+      internalID: 4207305345685442097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_207
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 61
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25c439914721ac6c0800000000000000
+      internalID: -4122462219049677742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_208
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 56
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7646837823953cd90800000000000000
+      internalID: -7078716115744431001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_209
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 49
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52a9a45fe7d19cc50800000000000000
+      internalID: 6685907552926603813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_210
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 59
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2fa1d225d2349250800000000000000
+      internalID: 5950436898656857900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_211
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46d809469c91c70b0800000000000000
+      internalID: -5729676273155797660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_212
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 49
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2977305dfa04710800000000000000
+      internalID: 1675532390802887388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_213
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 49
+        width: 17
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6196d2942733ec40800000000000000
+      internalID: 5540332596817727850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_214
+      rect:
+        serializedVersion: 2
+        x: 1026
+        y: 60
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00d673f1e5f310670800000000000000
+      internalID: 8503147244935408896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-purple_215
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 53
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86888b5253ff4b380800000000000000
+      internalID: -8956253155201873816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      radial-purple_0: -4746745475967658621
+      radial-purple_1: 7600162585075343507
+      radial-purple_10: 3430396664729470777
+      radial-purple_100: 2668185500912998970
+      radial-purple_101: 4029676447764292402
+      radial-purple_102: 2647496511807310958
+      radial-purple_103: 523706870497467205
+      radial-purple_104: -8432735553252648248
+      radial-purple_105: 5604854858310242442
+      radial-purple_106: -5673016438816628791
+      radial-purple_107: -709801203140530800
+      radial-purple_108: 2123717485279724764
+      radial-purple_109: -757203395543168820
+      radial-purple_11: -6876017078860848257
+      radial-purple_110: -5216826115801532053
+      radial-purple_111: 1869858899385871326
+      radial-purple_112: -5690550135620510484
+      radial-purple_113: 2851491852989040770
+      radial-purple_114: 6862746402577285069
+      radial-purple_115: -8748171786857142652
+      radial-purple_116: 3239635685460851836
+      radial-purple_117: 3780437404049446079
+      radial-purple_118: -7635013413809810529
+      radial-purple_119: -4212889662259098636
+      radial-purple_12: -3499569415017427857
+      radial-purple_120: 1330223416609008618
+      radial-purple_121: -783630811945159314
+      radial-purple_122: 3897363063585916792
+      radial-purple_123: 5735396950872986839
+      radial-purple_124: 2364100498215470952
+      radial-purple_125: 7232573886178936287
+      radial-purple_126: -412644023962556308
+      radial-purple_127: -2708236808422013094
+      radial-purple_128: -2401219367501883932
+      radial-purple_129: 3037341691526568918
+      radial-purple_13: -202364638218089997
+      radial-purple_130: -6760799817157752968
+      radial-purple_131: 7420531791213309808
+      radial-purple_132: 8125716328736785797
+      radial-purple_133: 1523595592832418678
+      radial-purple_134: 528573118960965524
+      radial-purple_135: 2801723733061893522
+      radial-purple_136: -1676197489124371913
+      radial-purple_137: -8679247334552589115
+      radial-purple_138: -6664339335680383792
+      radial-purple_139: -288449958621706477
+      radial-purple_14: 7547622548991918029
+      radial-purple_140: -7700512884897966035
+      radial-purple_141: 6880696486970736239
+      radial-purple_142: -1367103425926420871
+      radial-purple_143: 4087611306115939039
+      radial-purple_144: 3763942837761349443
+      radial-purple_145: 6083533699691151544
+      radial-purple_146: 3820001475890813836
+      radial-purple_147: -2069222996873370360
+      radial-purple_148: -1658860357707775880
+      radial-purple_149: -630097917701376560
+      radial-purple_15: -7299948354295989624
+      radial-purple_150: 6801721712232582582
+      radial-purple_151: 7533646917196320318
+      radial-purple_152: -3178325832619377342
+      radial-purple_153: 6697496770027903289
+      radial-purple_154: 8507058779862281344
+      radial-purple_155: 8485408586905127088
+      radial-purple_156: -3005365099704296128
+      radial-purple_157: -6748862966792372867
+      radial-purple_158: -367589497088123156
+      radial-purple_159: -6375285700301006134
+      radial-purple_16: 6678174473148985107
+      radial-purple_160: 2672153677765940687
+      radial-purple_161: -711802921571271568
+      radial-purple_162: 5353094258086048802
+      radial-purple_163: -2243724864720654519
+      radial-purple_164: 6950793641281636926
+      radial-purple_165: -7750841435046963636
+      radial-purple_166: 6854328049116073807
+      radial-purple_167: 4293647993885915083
+      radial-purple_168: 2367768097956410064
+      radial-purple_169: 4438094410771174713
+      radial-purple_17: 4427818337335706583
+      radial-purple_170: 6037844326428445
+      radial-purple_171: 8351928971468172934
+      radial-purple_172: 8554956368726729140
+      radial-purple_173: 6057866366580962791
+      radial-purple_174: -3884192846406804142
+      radial-purple_175: 8095889106331503578
+      radial-purple_176: 6443090861332091933
+      radial-purple_177: 4148717033062195274
+      radial-purple_178: -8198426227951771040
+      radial-purple_179: 7844881992474170143
+      radial-purple_18: -8240726408544332190
+      radial-purple_180: -101443653409353022
+      radial-purple_181: -5493842889585003795
+      radial-purple_182: 1470536764721805920
+      radial-purple_183: 4767299928731842030
+      radial-purple_184: -2923188754156949809
+      radial-purple_185: 415900911219911316
+      radial-purple_186: -7201974426373037183
+      radial-purple_187: -8679145848360414959
+      radial-purple_188: -6475678858123727617
+      radial-purple_189: 9185375266440775313
+      radial-purple_19: 8671787775966205169
+      radial-purple_190: 8655192769809882113
+      radial-purple_191: 8600690378605950472
+      radial-purple_192: -3834502485660927516
+      radial-purple_193: 4489427564443174449
+      radial-purple_194: 3392314189877574738
+      radial-purple_195: 3512950114712322935
+      radial-purple_196: -4360286702505550699
+      radial-purple_197: 1055825932751335720
+      radial-purple_198: -4431627087386926639
+      radial-purple_199: -6950492730995366918
+      radial-purple_2: 7791079787945310797
+      radial-purple_20: 1097239855617170308
+      radial-purple_200: -1188592631170066110
+      radial-purple_201: 4964197092003276337
+      radial-purple_202: 7540693893462742319
+      radial-purple_203: 8954633135659692637
+      radial-purple_204: -4616645060442016340
+      radial-purple_205: 3541522367789062870
+      radial-purple_206: 4207305345685442097
+      radial-purple_207: -4122462219049677742
+      radial-purple_208: -7078716115744431001
+      radial-purple_209: 6685907552926603813
+      radial-purple_21: -8003388554632726805
+      radial-purple_210: 5950436898656857900
+      radial-purple_211: -5729676273155797660
+      radial-purple_212: 1675532390802887388
+      radial-purple_213: 5540332596817727850
+      radial-purple_214: 8503147244935408896
+      radial-purple_215: -8956253155201873816
+      radial-purple_22: 7451516511161395592
+      radial-purple_23: -7135764444542300008
+      radial-purple_24: 8278591996413387752
+      radial-purple_25: -950439656080210145
+      radial-purple_26: 7634610865830855235
+      radial-purple_27: -132613968964567122
+      radial-purple_28: 3427972576470815708
+      radial-purple_29: 4625182171498492146
+      radial-purple_3: 992386613931900034
+      radial-purple_30: -3415294802094163844
+      radial-purple_31: -773698088426950454
+      radial-purple_32: 2533507088744320218
+      radial-purple_33: 2823493108312304028
+      radial-purple_34: 3201082889396972846
+      radial-purple_35: 2369127971918571093
+      radial-purple_36: 5041966372839165286
+      radial-purple_37: 3510946643001519444
+      radial-purple_38: 6629636569133048151
+      radial-purple_39: 4582839997659525242
+      radial-purple_4: 4635455723589327995
+      radial-purple_40: 6488643098370619385
+      radial-purple_41: 5343752583209106351
+      radial-purple_42: -8597555989055824920
+      radial-purple_43: -5217954984064917320
+      radial-purple_44: -2708728476549294121
+      radial-purple_45: -6427545495916695760
+      radial-purple_46: 2463394204222206407
+      radial-purple_47: 3056686972536195267
+      radial-purple_48: 878028776556872975
+      radial-purple_49: -8926699647801943976
+      radial-purple_5: -7978437678503718079
+      radial-purple_50: 8273888035303222504
+      radial-purple_51: -7456855189269523708
+      radial-purple_52: 8470669469227566208
+      radial-purple_53: 8342197641488498952
+      radial-purple_54: -5385791384914959959
+      radial-purple_55: 7097459914145014478
+      radial-purple_56: -2286027077234948603
+      radial-purple_57: 5067709708674325861
+      radial-purple_58: -265706583091831773
+      radial-purple_59: 1684406400762847553
+      radial-purple_6: -2515646725926934782
+      radial-purple_60: 1608115347632503783
+      radial-purple_61: -6514748881831967904
+      radial-purple_62: 6114385490189188133
+      radial-purple_63: -6126802389540614362
+      radial-purple_64: -836934226320069385
+      radial-purple_65: -5886821522841148782
+      radial-purple_66: 9056728197076245656
+      radial-purple_67: 8302209308882797223
+      radial-purple_68: 5218124165693327523
+      radial-purple_69: -9068597505209473299
+      radial-purple_7: -4181554622895248962
+      radial-purple_70: 1116339162277784168
+      radial-purple_71: 8825376295483159251
+      radial-purple_72: 6024085404527707409
+      radial-purple_73: -3228280251103351701
+      radial-purple_74: -7838293276807886683
+      radial-purple_75: 2515724831322766423
+      radial-purple_76: 8198097193793251954
+      radial-purple_77: -619112937052940806
+      radial-purple_78: -2588830325600681899
+      radial-purple_79: 8358099502721509206
+      radial-purple_8: -8534011946486670644
+      radial-purple_80: 2947878767317917566
+      radial-purple_81: 7421881819593699093
+      radial-purple_82: 697607906093620973
+      radial-purple_83: -3483861006126809077
+      radial-purple_84: -7466479124301541834
+      radial-purple_85: -6094147044114389589
+      radial-purple_86: -831717082267821914
+      radial-purple_87: -4224285918987876868
+      radial-purple_88: -4141413189796261199
+      radial-purple_89: 4721759717208599858
+      radial-purple_9: 495202850721778068
+      radial-purple_90: 302596428918032212
+      radial-purple_91: 2985655961378857032
+      radial-purple_92: 4792703669110518476
+      radial-purple_93: -1976819135666786549
+      radial-purple_94: -4212422763354642245
+      radial-purple_95: 2056357116336212220
+      radial-purple_96: 2699817034035139357
+      radial-purple_97: 7559466475473070883
+      radial-purple_98: -2900131384302570526
+      radial-purple_99: -4284999425180202843
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

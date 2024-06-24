@@ -1,0 +1,5524 @@
+fileFormatVersion: 2
+guid: ea85edb285173b84abd128c2c1879fe3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7194286815130122025
+    second: radial-blue_0
+  - first:
+      213: -4555065222766630346
+    second: radial-blue_1
+  - first:
+      213: -8135953452622673094
+    second: radial-blue_2
+  - first:
+      213: 5084010735394656651
+    second: radial-blue_3
+  - first:
+      213: 4919105984599393293
+    second: radial-blue_4
+  - first:
+      213: 2065619595895722608
+    second: radial-blue_5
+  - first:
+      213: -1746234669549676555
+    second: radial-blue_6
+  - first:
+      213: 5688607405700007104
+    second: radial-blue_7
+  - first:
+      213: 2684721455175942225
+    second: radial-blue_8
+  - first:
+      213: 6660617924567461184
+    second: radial-blue_9
+  - first:
+      213: 201527719272358692
+    second: radial-blue_10
+  - first:
+      213: 4979001165519068114
+    second: radial-blue_11
+  - first:
+      213: -3021538464334417408
+    second: radial-blue_12
+  - first:
+      213: 5214240246835684819
+    second: radial-blue_13
+  - first:
+      213: 6239167279132813942
+    second: radial-blue_14
+  - first:
+      213: 5594179525598731677
+    second: radial-blue_15
+  - first:
+      213: -8132364608412219781
+    second: radial-blue_16
+  - first:
+      213: 3407565684942063927
+    second: radial-blue_17
+  - first:
+      213: 1370974377282544749
+    second: radial-blue_18
+  - first:
+      213: -1053834564000943363
+    second: radial-blue_19
+  - first:
+      213: -5761529466670162362
+    second: radial-blue_20
+  - first:
+      213: -5728316258429474935
+    second: radial-blue_21
+  - first:
+      213: 3891356518049591707
+    second: radial-blue_22
+  - first:
+      213: 7899074802817729255
+    second: radial-blue_23
+  - first:
+      213: -1494651775297656913
+    second: radial-blue_24
+  - first:
+      213: -6504026243893254236
+    second: radial-blue_25
+  - first:
+      213: -6524636848566237371
+    second: radial-blue_26
+  - first:
+      213: 2249702688556145319
+    second: radial-blue_27
+  - first:
+      213: -6288784727813678517
+    second: radial-blue_28
+  - first:
+      213: 579764688194815117
+    second: radial-blue_29
+  - first:
+      213: 5222789420195485574
+    second: radial-blue_30
+  - first:
+      213: 3965172620487323988
+    second: radial-blue_31
+  - first:
+      213: 3657518900225251886
+    second: radial-blue_32
+  - first:
+      213: 8913678499627044772
+    second: radial-blue_33
+  - first:
+      213: 5059942784832995813
+    second: radial-blue_34
+  - first:
+      213: -5855997545916360172
+    second: radial-blue_35
+  - first:
+      213: -1153796219216555051
+    second: radial-blue_36
+  - first:
+      213: -9109109160509211375
+    second: radial-blue_37
+  - first:
+      213: -758965912293272500
+    second: radial-blue_38
+  - first:
+      213: -288151393731333063
+    second: radial-blue_39
+  - first:
+      213: 8842461163756797867
+    second: radial-blue_40
+  - first:
+      213: 4855144992608700409
+    second: radial-blue_41
+  - first:
+      213: -2721036948694334933
+    second: radial-blue_42
+  - first:
+      213: -1082573231180319263
+    second: radial-blue_43
+  - first:
+      213: -3854384178985598939
+    second: radial-blue_44
+  - first:
+      213: 8057237779047214403
+    second: radial-blue_45
+  - first:
+      213: 4988038657018094662
+    second: radial-blue_46
+  - first:
+      213: -7602877226670867195
+    second: radial-blue_47
+  - first:
+      213: 3785487637414604921
+    second: radial-blue_48
+  - first:
+      213: -1564570763253848692
+    second: radial-blue_49
+  - first:
+      213: -7290267752224827252
+    second: radial-blue_50
+  - first:
+      213: -9108509971962233543
+    second: radial-blue_51
+  - first:
+      213: -7555455016632113825
+    second: radial-blue_52
+  - first:
+      213: -1632550622777094009
+    second: radial-blue_53
+  - first:
+      213: -4235694658871905528
+    second: radial-blue_54
+  - first:
+      213: 5298156976564246840
+    second: radial-blue_55
+  - first:
+      213: 1614382870796283844
+    second: radial-blue_56
+  - first:
+      213: -4140663061490451013
+    second: radial-blue_57
+  - first:
+      213: 9080518929769403536
+    second: radial-blue_58
+  - first:
+      213: 126535856460214902
+    second: radial-blue_59
+  - first:
+      213: -5436388199589384398
+    second: radial-blue_60
+  - first:
+      213: 735877041967818187
+    second: radial-blue_61
+  - first:
+      213: 4713203171471314701
+    second: radial-blue_62
+  - first:
+      213: -243268059018666077
+    second: radial-blue_63
+  - first:
+      213: 7508178126100701336
+    second: radial-blue_64
+  - first:
+      213: -2262301059330482979
+    second: radial-blue_65
+  - first:
+      213: 3353049309856668668
+    second: radial-blue_66
+  - first:
+      213: 352025033083086981
+    second: radial-blue_67
+  - first:
+      213: -6654091259179313675
+    second: radial-blue_68
+  - first:
+      213: 4670432590962116910
+    second: radial-blue_69
+  - first:
+      213: 4939802313299791766
+    second: radial-blue_70
+  - first:
+      213: 308546452397806745
+    second: radial-blue_71
+  - first:
+      213: -4031659350645625056
+    second: radial-blue_72
+  - first:
+      213: -6981983094268064687
+    second: radial-blue_73
+  - first:
+      213: 5317247489396406770
+    second: radial-blue_74
+  - first:
+      213: 5765566214274034975
+    second: radial-blue_75
+  - first:
+      213: 7613051934908124786
+    second: radial-blue_76
+  - first:
+      213: -3297717667086169860
+    second: radial-blue_77
+  - first:
+      213: -6875835173407012057
+    second: radial-blue_78
+  - first:
+      213: -7518080603102544140
+    second: radial-blue_79
+  - first:
+      213: 7953803627586929497
+    second: radial-blue_80
+  - first:
+      213: -5428661541062164855
+    second: radial-blue_81
+  - first:
+      213: -3769421860513377444
+    second: radial-blue_82
+  - first:
+      213: 3552753431131575740
+    second: radial-blue_83
+  - first:
+      213: -6378012537063174164
+    second: radial-blue_84
+  - first:
+      213: -8340474592492794298
+    second: radial-blue_85
+  - first:
+      213: -9157086064290569166
+    second: radial-blue_86
+  - first:
+      213: 552028284256144154
+    second: radial-blue_87
+  - first:
+      213: -5994664639832814624
+    second: radial-blue_88
+  - first:
+      213: -5382521217880187063
+    second: radial-blue_89
+  - first:
+      213: 2037938763781093346
+    second: radial-blue_90
+  - first:
+      213: -1630248131066946414
+    second: radial-blue_91
+  - first:
+      213: -208265509961382576
+    second: radial-blue_92
+  - first:
+      213: -7824654116381973134
+    second: radial-blue_93
+  - first:
+      213: -4330524043079374246
+    second: radial-blue_94
+  - first:
+      213: -5459084135990558692
+    second: radial-blue_95
+  - first:
+      213: 2719099788701052746
+    second: radial-blue_96
+  - first:
+      213: -2466117247953962112
+    second: radial-blue_97
+  - first:
+      213: -397403366030032619
+    second: radial-blue_98
+  - first:
+      213: -4309422532311528979
+    second: radial-blue_99
+  - first:
+      213: 8363948181085705751
+    second: radial-blue_100
+  - first:
+      213: -5233730413418519889
+    second: radial-blue_101
+  - first:
+      213: -6118033652439604436
+    second: radial-blue_102
+  - first:
+      213: -6532784750022607764
+    second: radial-blue_103
+  - first:
+      213: -5399530608524286940
+    second: radial-blue_104
+  - first:
+      213: 7261198278184191286
+    second: radial-blue_105
+  - first:
+      213: 9118850824539868907
+    second: radial-blue_106
+  - first:
+      213: 6914829121628811989
+    second: radial-blue_107
+  - first:
+      213: 8059841200826603007
+    second: radial-blue_108
+  - first:
+      213: -50115175853061215
+    second: radial-blue_109
+  - first:
+      213: -5865148469896606686
+    second: radial-blue_110
+  - first:
+      213: -7512474343362854370
+    second: radial-blue_111
+  - first:
+      213: 927776715327717838
+    second: radial-blue_112
+  - first:
+      213: -2783854971296761978
+    second: radial-blue_113
+  - first:
+      213: -3031931193526116371
+    second: radial-blue_114
+  - first:
+      213: 5724792909388155211
+    second: radial-blue_115
+  - first:
+      213: -4730547062229788644
+    second: radial-blue_116
+  - first:
+      213: 5989559623918438276
+    second: radial-blue_117
+  - first:
+      213: -5003414374455396132
+    second: radial-blue_118
+  - first:
+      213: 8911105476385792549
+    second: radial-blue_119
+  - first:
+      213: 2375223635103581568
+    second: radial-blue_120
+  - first:
+      213: 1155528849946812200
+    second: radial-blue_121
+  - first:
+      213: 1694516063832882828
+    second: radial-blue_122
+  - first:
+      213: 2170288431286824079
+    second: radial-blue_123
+  - first:
+      213: 258743829948304541
+    second: radial-blue_124
+  - first:
+      213: 6883948029648525489
+    second: radial-blue_125
+  - first:
+      213: 1944737019093325512
+    second: radial-blue_126
+  - first:
+      213: 4342137892760152331
+    second: radial-blue_127
+  - first:
+      213: -6866133836862043368
+    second: radial-blue_128
+  - first:
+      213: 2624046367267476458
+    second: radial-blue_129
+  - first:
+      213: 3192361154609939499
+    second: radial-blue_130
+  - first:
+      213: -1734831826669374745
+    second: radial-blue_131
+  - first:
+      213: 4476967951504647870
+    second: radial-blue_132
+  - first:
+      213: 6566400298997805707
+    second: radial-blue_133
+  - first:
+      213: 3161918900372847579
+    second: radial-blue_134
+  - first:
+      213: -2668615898701641090
+    second: radial-blue_135
+  - first:
+      213: -526749563560991172
+    second: radial-blue_136
+  - first:
+      213: -4265392160494683653
+    second: radial-blue_137
+  - first:
+      213: -8802149416624940271
+    second: radial-blue_138
+  - first:
+      213: 8737608257296623627
+    second: radial-blue_139
+  - first:
+      213: 9164700864490964056
+    second: radial-blue_140
+  - first:
+      213: 7775520563330966827
+    second: radial-blue_141
+  - first:
+      213: -5815153713620724844
+    second: radial-blue_142
+  - first:
+      213: -7548447386609527747
+    second: radial-blue_143
+  - first:
+      213: 5307383072286778195
+    second: radial-blue_144
+  - first:
+      213: -6396949152259773987
+    second: radial-blue_145
+  - first:
+      213: -3320751469261064244
+    second: radial-blue_146
+  - first:
+      213: 268389230809375558
+    second: radial-blue_147
+  - first:
+      213: 5316527828103196724
+    second: radial-blue_148
+  - first:
+      213: 7041424710290483992
+    second: radial-blue_149
+  - first:
+      213: -5966780405428243320
+    second: radial-blue_150
+  - first:
+      213: -6913919000129663909
+    second: radial-blue_151
+  - first:
+      213: -494418230050250778
+    second: radial-blue_152
+  - first:
+      213: -394267421273040830
+    second: radial-blue_153
+  - first:
+      213: -6684618081033362857
+    second: radial-blue_154
+  - first:
+      213: -2250379509877953110
+    second: radial-blue_155
+  - first:
+      213: -7711935929416134243
+    second: radial-blue_156
+  - first:
+      213: 76796391693091166
+    second: radial-blue_157
+  - first:
+      213: 8201496658556677528
+    second: radial-blue_158
+  - first:
+      213: 3774387627978077875
+    second: radial-blue_159
+  - first:
+      213: -362253456200927573
+    second: radial-blue_160
+  - first:
+      213: -5595255810465943205
+    second: radial-blue_161
+  - first:
+      213: -4971991975580781829
+    second: radial-blue_162
+  - first:
+      213: -3674786011995321368
+    second: radial-blue_163
+  - first:
+      213: -5946623572133423331
+    second: radial-blue_164
+  - first:
+      213: -5200374747298472746
+    second: radial-blue_165
+  - first:
+      213: 341908150846638535
+    second: radial-blue_166
+  - first:
+      213: -697934202670815342
+    second: radial-blue_167
+  - first:
+      213: -1422622391932845407
+    second: radial-blue_168
+  - first:
+      213: 489642977575651977
+    second: radial-blue_169
+  - first:
+      213: 7602850076087055335
+    second: radial-blue_170
+  - first:
+      213: -6033436977400679932
+    second: radial-blue_171
+  - first:
+      213: -4285780586036646635
+    second: radial-blue_172
+  - first:
+      213: -2031519108042162178
+    second: radial-blue_173
+  - first:
+      213: -2921575020927505157
+    second: radial-blue_174
+  - first:
+      213: 4389411191540737429
+    second: radial-blue_175
+  - first:
+      213: -8116527253762800851
+    second: radial-blue_176
+  - first:
+      213: 5115143629800982488
+    second: radial-blue_177
+  - first:
+      213: 1266487220369933958
+    second: radial-blue_178
+  - first:
+      213: -2256092178495135697
+    second: radial-blue_179
+  - first:
+      213: -2972800615986989036
+    second: radial-blue_180
+  - first:
+      213: -3442271840859636297
+    second: radial-blue_181
+  - first:
+      213: 8337227117305127536
+    second: radial-blue_182
+  - first:
+      213: -5143484355978747525
+    second: radial-blue_183
+  - first:
+      213: 6264959921174549280
+    second: radial-blue_184
+  - first:
+      213: -3704689095349515376
+    second: radial-blue_185
+  - first:
+      213: -4463603144509901028
+    second: radial-blue_186
+  - first:
+      213: -8051942495737331148
+    second: radial-blue_187
+  - first:
+      213: -14835666538193892
+    second: radial-blue_188
+  - first:
+      213: -7067798849697445206
+    second: radial-blue_189
+  - first:
+      213: 5493072858849933139
+    second: radial-blue_190
+  - first:
+      213: 1211749130311098181
+    second: radial-blue_191
+  - first:
+      213: -1003889753238911387
+    second: radial-blue_192
+  - first:
+      213: -421586508036486448
+    second: radial-blue_193
+  - first:
+      213: 7869309053668952423
+    second: radial-blue_194
+  - first:
+      213: -2986257950955061598
+    second: radial-blue_195
+  - first:
+      213: -3295428169264873603
+    second: radial-blue_196
+  - first:
+      213: 2222778238252380313
+    second: radial-blue_197
+  - first:
+      213: -955085110458509449
+    second: radial-blue_198
+  - first:
+      213: 7892368409203460351
+    second: radial-blue_199
+  - first:
+      213: -5832146256503024838
+    second: radial-blue_200
+  - first:
+      213: -7681205306571490957
+    second: radial-blue_201
+  - first:
+      213: -1705083709535341093
+    second: radial-blue_202
+  - first:
+      213: 4093515512968422229
+    second: radial-blue_203
+  - first:
+      213: 2026404648621888651
+    second: radial-blue_204
+  - first:
+      213: -5529325874959508177
+    second: radial-blue_205
+  - first:
+      213: -5106115854780497374
+    second: radial-blue_206
+  - first:
+      213: 532534611289314867
+    second: radial-blue_207
+  - first:
+      213: -6896814361975864687
+    second: radial-blue_208
+  - first:
+      213: -4307662947444591567
+    second: radial-blue_209
+  - first:
+      213: 1413804860471259998
+    second: radial-blue_210
+  - first:
+      213: -2000343130039077045
+    second: radial-blue_211
+  - first:
+      213: -2582504833082570773
+    second: radial-blue_212
+  - first:
+      213: 3888429604173812461
+    second: radial-blue_213
+  - first:
+      213: -6743671768885683893
+    second: radial-blue_214
+  - first:
+      213: 2804344142272955024
+    second: radial-blue_215
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: radial-blue_0
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 49
+        width: 1666
+        height: 1656
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d884e33242c82c90800000000000000
+      internalID: -7194286815130122025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_1
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 1703
+        width: 26
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63a624c405829c0c0800000000000000
+      internalID: -4555065222766630346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_2
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 1691
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3b0053e079471f80800000000000000
+      internalID: -8135953452622673094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_3
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 1698
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b81987dd3d80e8640800000000000000
+      internalID: 5084010735394656651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_4
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 1695
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d048b8894dc244440800000000000000
+      internalID: 4919105984599393293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_5
+      rect:
+        serializedVersion: 2
+        x: 557
+        y: 1704
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 072537e041e8aac10800000000000000
+      internalID: 2065619595895722608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_6
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 1700
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f7150be1d024c7e0800000000000000
+      internalID: -1746234669549676555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_7
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c4c763cb4ef1fe40800000000000000
+      internalID: 5688607405700007104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_8
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 1701
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 150c1a070fb024520800000000000000
+      internalID: 2684721455175942225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_9
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 1697
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04d617286b44f6c50800000000000000
+      internalID: 6660617924567461184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_10
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 1701
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 423af979468fbc200800000000000000
+      internalID: 201527719272358692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_11
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2db150f1e27f81540800000000000000
+      internalID: 4979001165519068114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_12
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 002fa2686c65116d0800000000000000
+      internalID: -3021538464334417408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_13
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 1700
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d5af26d0e3bc5840800000000000000
+      internalID: 5214240246835684819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_14
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67aa3f67599f59650800000000000000
+      internalID: 6239167279132813942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_15
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9d5319a3a482ad40800000000000000
+      internalID: 5594179525598731677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_16
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7681abc979042f80800000000000000
+      internalID: -8132364608412219781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_17
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 1701
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73948c7bfea1a4f20800000000000000
+      internalID: 3407565684942063927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_18
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d64a612beeda60310800000000000000
+      internalID: 1370974377282544749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_19
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 1698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df2f1b82c070061f0800000000000000
+      internalID: -1053834564000943363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_20
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64edd28d97fea00b0800000000000000
+      internalID: -5761529466670162362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_21
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 1699
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 987673f76bee080b0800000000000000
+      internalID: -5728316258429474935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_22
+      rect:
+        serializedVersion: 2
+        x: 721
+        y: 1701
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b913fb8c220e00630800000000000000
+      internalID: 3891356518049591707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_23
+      rect:
+        serializedVersion: 2
+        x: 732
+        y: 1696
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e2803c9ea62f9d60800000000000000
+      internalID: 7899074802817729255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_24
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 1701
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa7e97e112ee14be0800000000000000
+      internalID: -1494651775297656913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_25
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 1703
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a7acea479e0db5a0800000000000000
+      internalID: -6504026243893254236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_26
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 1697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54709c0fa55d375a0800000000000000
+      internalID: -6524636848566237371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_27
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 1703
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aa51a10dac883f10800000000000000
+      internalID: 2249702688556145319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_28
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 1707
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4a93c50c9fb9b8a0800000000000000
+      internalID: -6288784727813678517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_29
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 1701
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d84ca2589ecbb0800800000000000000
+      internalID: 579764688194815117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_30
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 1706
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6879b6f5e431b7840800000000000000
+      internalID: 5222789420195485574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_31
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 1699
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 451704d6d7f170730800000000000000
+      internalID: 3965172620487323988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_32
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 1698
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2a1437bf0e12c230800000000000000
+      internalID: 3657518900225251886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_33
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 1699
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4af8e446e5fb3bb70800000000000000
+      internalID: 8913678499627044772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_34
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 1701
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e185c17727883640800000000000000
+      internalID: 5059942784832995813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_35
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 1698
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41a981622415bbea0800000000000000
+      internalID: -5855997545916360172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_36
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d39862a374ecffe0800000000000000
+      internalID: -1153796219216555051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_37
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 1706
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11d779b0b71f59180800000000000000
+      internalID: -9109109160509211375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_38
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 1694
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c441121268c9775f0800000000000000
+      internalID: -758965912293272500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_39
+      rect:
+        serializedVersion: 2
+        x: 822
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9343c1785d7400cf0800000000000000
+      internalID: -288151393731333063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_40
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 1701
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baf39ed349bb6ba70800000000000000
+      internalID: 8842461163756797867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_41
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 1697
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f74579a5a0f06340800000000000000
+      internalID: 4855144992608700409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_42
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 1701
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b228c54df4fec3ad0800000000000000
+      internalID: -2721036948694334933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_43
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e57628c16de9f0f0800000000000000
+      internalID: -1082573231180319263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_44
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5208da7b20a728ac0800000000000000
+      internalID: -3854384178985598939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_45
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 1700
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34d67fa221f01df60800000000000000
+      internalID: 8057237779047214403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_46
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 644ea751bb2193540800000000000000
+      internalID: 4988038657018094662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_47
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50d3061b1772d7690800000000000000
+      internalID: -7602877226670867195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_48
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 970fab923f0c88430800000000000000
+      internalID: 3785487637414604921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_49
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 1701
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c85ea462e27894ae0800000000000000
+      internalID: -1564570763253848692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_50
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c885727da14c3da90800000000000000
+      internalID: -7290267752224827252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_51
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 1698
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93d76108072189180800000000000000
+      internalID: -9108509971962233543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_52
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 1701
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f55233161b1a52790800000000000000
+      internalID: -7555455016632113825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_53
+      rect:
+        serializedVersion: 2
+        x: 972
+        y: 1699
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7805783bbd30859e0800000000000000
+      internalID: -1632550622777094009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_54
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 1701
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 803bbe0462ac735c0800000000000000
+      internalID: -4235694658871905528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_55
+      rect:
+        serializedVersion: 2
+        x: 988
+        y: 1696
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8399e5803b5d68940800000000000000
+      internalID: 5298156976564246840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_56
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 1701
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cfa949eaa0776610800000000000000
+      internalID: 1614382870796283844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_57
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 1703
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbdb74d32e86986c0800000000000000
+      internalID: -4140663061490451013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_58
+      rect:
+        serializedVersion: 2
+        x: 1007
+        y: 1697
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0949d112bdb740e70800000000000000
+      internalID: 9080518929769403536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_59
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 1703
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67239a7e0bb81c100800000000000000
+      internalID: 126535856460214902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_60
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 1707
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23f69565cb11e84b0800000000000000
+      internalID: -5436388199589384398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_61
+      rect:
+        serializedVersion: 2
+        x: 1019
+        y: 1701
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc56bd4554c563a00800000000000000
+      internalID: 735877041967818187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_62
+      rect:
+        serializedVersion: 2
+        x: 1020
+        y: 1706
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0fcac51059a86140800000000000000
+      internalID: 4713203171471314701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_63
+      rect:
+        serializedVersion: 2
+        x: 1023
+        y: 1699
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3af5efc3dfcbf9cf0800000000000000
+      internalID: -243268059018666077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_64
+      rect:
+        serializedVersion: 2
+        x: 1031
+        y: 1698
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8902794c938623860800000000000000
+      internalID: 7508178126100701336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_65
+      rect:
+        serializedVersion: 2
+        x: 1038
+        y: 1699
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddcdd973c21ba90e0800000000000000
+      internalID: -2262301059330482979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_66
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 1701
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfb1064059c688e20800000000000000
+      internalID: 3353049309856668668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_67
+      rect:
+        serializedVersion: 2
+        x: 1057
+        y: 1698
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58866f807e4a2e400800000000000000
+      internalID: 352025033083086981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_68
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 1699
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f5d591314be7a3a0800000000000000
+      internalID: -6654091259179313675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_69
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 1706
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2944bb42b5b0d040800000000000000
+      internalID: 4670432590962116910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_70
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 1694
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69f03e02804bd8440800000000000000
+      internalID: 4939802313299791766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_71
+      rect:
+        serializedVersion: 2
+        x: 1078
+        y: 1709
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 994d0eb1d5d284400800000000000000
+      internalID: 308546452397806745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_72
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 1700
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02fa2656e2bac08c0800000000000000
+      internalID: -4031659350645625056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_73
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 1697
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15c8e5e2e530b1f90800000000000000
+      internalID: -6981983094268064687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_74
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 1700
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f97f4c6b68aac940800000000000000
+      internalID: 5317247489396406770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_75
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 1700
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1d2cc2bce7630050800000000000000
+      internalID: 5765566214274034975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_76
+      rect:
+        serializedVersion: 2
+        x: 1134
+        y: 1702
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27e8ccc266ef6a960800000000000000
+      internalID: 7613051934908124786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_77
+      rect:
+        serializedVersion: 2
+        x: 1137
+        y: 1700
+        width: 23
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf88ccbf0472c32d0800000000000000
+      internalID: -3297717667086169860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_78
+      rect:
+        serializedVersion: 2
+        x: 1153
+        y: 1701
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72b40fae6502490a0800000000000000
+      internalID: -6875835173407012057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_79
+      rect:
+        serializedVersion: 2
+        x: 1158
+        y: 1694
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fe715326896aa790800000000000000
+      internalID: -7518080603102544140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_80
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 1700
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 953488b1246916e60800000000000000
+      internalID: 7953803627586929497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_81
+      rect:
+        serializedVersion: 2
+        x: 1186
+        y: 1700
+        width: 30
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98e3a27371589a4b0800000000000000
+      internalID: -5428661541062164855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_82
+      rect:
+        serializedVersion: 2
+        x: 1193
+        y: 1701
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5312830ac250bbc0800000000000000
+      internalID: -3769421860513377444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_83
+      rect:
+        serializedVersion: 2
+        x: 1194
+        y: 1695
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb5d52d1c6aed4130800000000000000
+      internalID: 3552753431131575740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_84
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1186
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cef8c53c36fbc77a0800000000000000
+      internalID: -6378012537063174164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_85
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 1175
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64ecb404c8ea04c80800000000000000
+      internalID: -8340474592492794298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_86
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 1175
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 234e748adbe7be080800000000000000
+      internalID: -9157086064290569166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_87
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1162
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1b4e0dbcc239a700800000000000000
+      internalID: 552028284256144154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_88
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 1143
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eb8b2b654caecca0800000000000000
+      internalID: -5994664639832814624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_89
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1149
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94f9f3c58717d45b0800000000000000
+      internalID: -5382521217880187063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_90
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1111
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e7bb291286384c10800000000000000
+      internalID: 2037938763781093346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_91
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 1111
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29c920456f13069e0800000000000000
+      internalID: -1630248131066946414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_92
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1102
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05549c34f971c1df0800000000000000
+      internalID: -208265509961382576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_93
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 1073
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27521c6b98e396390800000000000000
+      internalID: -7824654116381973134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_94
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 1059
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5a27f0b353e6e3c0800000000000000
+      internalID: -4330524043079374246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_95
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1048
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c10005bd6ef6d34b0800000000000000
+      internalID: -5459084135990558692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_96
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 1048
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4fad56f9de2cb520800000000000000
+      internalID: 2719099788701052746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_97
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 1044
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08b7d35dd6796cdd0800000000000000
+      internalID: -2466117247953962112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_98
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1038
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5114c3f7eb32c7af0800000000000000
+      internalID: -397403366030032619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_99
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 1035
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de9c1860a0bd134c0800000000000000
+      internalID: -4309422532311528979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_100
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 1030
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 716536d7e86b21470800000000000000
+      internalID: 8363948181085705751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_101
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1009
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa2e7022bed0e57b0800000000000000
+      internalID: -5233730413418519889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_102
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1015
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c23a37ecec0681ba0800000000000000
+      internalID: -6118033652439604436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_103
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 1006
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6c30dcc1e2e655a0800000000000000
+      internalID: -6532784750022607764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_104
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 1005
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 424af0df4830115b0800000000000000
+      internalID: -5399530608524286940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_105
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 997
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 635c8decc55f4c460800000000000000
+      internalID: 7261198278184191286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_106
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 997
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bee0a7cd28aac8e70800000000000000
+      internalID: 9118850824539868907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_107
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 988
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d23635237866ff50800000000000000
+      internalID: 6914829121628811989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_108
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 980
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff5d3598ede4adf60800000000000000
+      internalID: 8059841200826603007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_109
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 987
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ab0c695384fd4ff0800000000000000
+      internalID: -50115175853061215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_110
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 983
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22c03e0aa8eca9ea0800000000000000
+      internalID: -5865148469896606686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_111
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 969
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e120f9333645eb790800000000000000
+      internalID: -7512474343362854370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_112
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 974
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec1ccfbc10020ec00800000000000000
+      internalID: 927776715327717838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_113
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 976
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 687b6a137a2cd59d0800000000000000
+      internalID: -2783854971296761978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_114
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 956
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: def1372b4aa6ce5d0800000000000000
+      internalID: -3031931193526116371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_115
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 963
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4981c0e1dc827f40800000000000000
+      internalID: 5724792909388155211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_116
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 960
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c18968aa288b95eb0800000000000000
+      internalID: -4730547062229788644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_117
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 963
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4874ea07eb03f1350800000000000000
+      internalID: 5989559623918438276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_118
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 939
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd8b08ab22d409ab0800000000000000
+      internalID: -5003414374455396132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_119
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 945
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 522630cb73b9aab70800000000000000
+      internalID: 8911105476385792549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_120
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 935
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0850678cf4d76f020800000000000000
+      internalID: 2375223635103581568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_121
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 919
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82f9bc4ed53490010800000000000000
+      internalID: 1155528849946812200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_122
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 925
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8eb3f2d161248710800000000000000
+      internalID: 1694516063832882828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_123
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 921
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8cadfe54d96e1e10800000000000000
+      internalID: 2170288431286824079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_124
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 922
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9c84e7742e379300800000000000000
+      internalID: 258743829948304541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_125
+      rect:
+        serializedVersion: 2
+        x: 1720
+        y: 923
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b8537f9242b88f50800000000000000
+      internalID: 6883948029648525489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_126
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 913
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c61c94e3081dfa10800000000000000
+      internalID: 1944737019093325512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_127
+      rect:
+        serializedVersion: 2
+        x: 1720
+        y: 911
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b096bb7686f524c30800000000000000
+      internalID: 4342137892760152331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_128
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 906
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81b4c8957a796b0a0800000000000000
+      internalID: -6866133836862043368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_129
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 906
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae3d12ba44c7a6420800000000000000
+      internalID: 2624046367267476458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_130
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 899
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2408476e8b8d4c20800000000000000
+      internalID: 3192361154609939499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_131
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 887
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e2745a25a3ace7e0800000000000000
+      internalID: -1734831826669374745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_132
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 893
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb62e34c1a2612e30800000000000000
+      internalID: 4476967951504647870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_133
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 885
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8278ca184a802b50800000000000000
+      internalID: 6566400298997805707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_134
+      rect:
+        serializedVersion: 2
+        x: 1717
+        y: 883
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdb3151cc7461eb20800000000000000
+      internalID: 3161918900372847579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_135
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 878
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7acde3aafb27fad0800000000000000
+      internalID: -2668615898701641090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_136
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 875
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c36ea52101c90b8f0800000000000000
+      internalID: -526749563560991172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_137
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 855
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf97af5dd684ec4c0800000000000000
+      internalID: -4265392160494683653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_138
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 855
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11b982acdbb78d580800000000000000
+      internalID: -8802149416624940271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_139
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 861
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b086faa8a68324970800000000000000
+      internalID: 8737608257296623627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_140
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 846
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85403bc21ee8f2f70800000000000000
+      internalID: 9164700864490964056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_141
+      rect:
+        serializedVersion: 2
+        x: 1718
+        y: 848
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b25661181c238eb60800000000000000
+      internalID: 7775520563330966827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_142
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 844
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 493d759e18c6c4fa0800000000000000
+      internalID: -5815153713620724844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_143
+      rect:
+        serializedVersion: 2
+        x: 1713
+        y: 841
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d34d96368178e3790800000000000000
+      internalID: -7548447386609527747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_144
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 817
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3532396d8cc97a940800000000000000
+      internalID: 5307383072286778195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_145
+      rect:
+        serializedVersion: 2
+        x: 1717
+        y: 815
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9e15573a87937a0800000000000000
+      internalID: -6396949152259773987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_146
+      rect:
+        serializedVersion: 2
+        x: 1706
+        y: 803
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc7765ff1225ae1d0800000000000000
+      internalID: -3320751469261064244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_147
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 792
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 643eeeb559289b300800000000000000
+      internalID: 268389230809375558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_148
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 796
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 430f19834e918c940800000000000000
+      internalID: 5316527828103196724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_149
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 782
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81ba589877a28b160800000000000000
+      internalID: 7041424710290483992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_150
+      rect:
+        serializedVersion: 2
+        x: 1707
+        y: 779
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88430b9a5dcb13da0800000000000000
+      internalID: -5966780405428243320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_151
+      rect:
+        serializedVersion: 2
+        x: 1722
+        y: 788
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5c82770d43dc00a0800000000000000
+      internalID: -6913919000129663909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_152
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 779
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ef90634d397329f0800000000000000
+      internalID: -494418230050250778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_153
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 774
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 248d2888ed7478af0800000000000000
+      internalID: -394267421273040830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_154
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 759
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7526adc95477b33a0800000000000000
+      internalID: -6684618081033362857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_155
+      rect:
+        serializedVersion: 2
+        x: 1711
+        y: 766
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aad28ef32cb05c0e0800000000000000
+      internalID: -2250379509877953110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_156
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 753
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d91549cb123b9f490800000000000000
+      internalID: -7711935929416134243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_157
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 749
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5106ee49e5d01100800000000000000
+      internalID: 76796391693091166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_158
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 754
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89de2dfe1c191d170800000000000000
+      internalID: 8201496658556677528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_159
+      rect:
+        serializedVersion: 2
+        x: 1721
+        y: 742
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b63342dc81516430800000000000000
+      internalID: 3774387627978077875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_160
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 732
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba67c70a66409faf0800000000000000
+      internalID: -362253456200927573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_161
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 738
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b51bcbd3c78a952b0800000000000000
+      internalID: -5595255810465943205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_162
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 733
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf23a6514afeffab0800000000000000
+      internalID: -4971991975580781829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_163
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 724
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ebc1798799800dc0800000000000000
+      internalID: -3674786011995321368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_164
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 731
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d17d5022e59597da0800000000000000
+      internalID: -5946623572133423331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_165
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 727
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dcdc5858be84d7b0800000000000000
+      internalID: -5200374747298472746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_166
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 713
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c94605d6a3beb400800000000000000
+      internalID: 341908150846638535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_167
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 718
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 297e53d5a807056f0800000000000000
+      internalID: -697934202670815342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_168
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 700
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2835fc874d14ce0800000000000000
+      internalID: -1422622391932845407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_169
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 707
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98a4921a1bf8bc600800000000000000
+      internalID: 489642977575651977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_170
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 683
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e378b1dcdfb28960800000000000000
+      internalID: 7602850076087055335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_171
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 663
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 402735b190de44ca0800000000000000
+      internalID: -6033436977400679932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_172
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 669
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51d25089349d584c0800000000000000
+      internalID: -4285780586036646635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_173
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 650
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eff7aba72289ec3e0800000000000000
+      internalID: -2031519108042162178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_174
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 631
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfc26f46ffa7477d0800000000000000
+      internalID: -2921575020927505157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_175
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 637
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 595e8ecf8325aec30800000000000000
+      internalID: 4389411191540737429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_176
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 599
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2301b5477d4c5f80800000000000000
+      internalID: -8116527253762800851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_177
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 599
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d7c365b704acf640800000000000000
+      internalID: 5115143629800982488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_178
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 574
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 686c8b2ba67739110800000000000000
+      internalID: 1266487220369933958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_179
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 585
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f20a240fd10c0b0e0800000000000000
+      internalID: -2256092178495135697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_180
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 61
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4187800279d7eb6d0800000000000000
+      internalID: -2972800615986989036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_181
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 50
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bd3b39aff79a30d0800000000000000
+      internalID: -3442271840859636297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_182
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 63
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 072e9b204e7c3b370800000000000000
+      internalID: 8337227117305127536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_183
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 63
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b71ab16ca3cae98b0800000000000000
+      internalID: -5143484355978747525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_184
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 51
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0231ba9eadb91f650800000000000000
+      internalID: 6264959921174549280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_185
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 49
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09bcd6465ec469cc0800000000000000
+      internalID: -3704689095349515376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_186
+      rect:
+        serializedVersion: 2
+        x: 761
+        y: 49
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c17bb29d6981e02c0800000000000000
+      internalID: -4463603144509901028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_187
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 58
+        width: 15
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43244bd06f0c14090800000000000000
+      internalID: -8051942495737331148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_188
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 56
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1c1cf53a0b4bcff0800000000000000
+      internalID: -14835666538193892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_189
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 55
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa8edb94622aed90800000000000000
+      internalID: -7067798849697445206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_190
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 57
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 357f61d59a05b3c40800000000000000
+      internalID: 5493072858849933139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_191
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 49
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54fd415f96ff0d010800000000000000
+      internalID: 1211749130311098181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_192
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 49
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5664a8896977112f0800000000000000
+      internalID: -1003889753238911387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_193
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 55
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0da436afd49362af0800000000000000
+      internalID: -421586508036486448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_194
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 49
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76904b314e6653d60800000000000000
+      internalID: 7869309053668952423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_195
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 49
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ae33a9273eae86d0800000000000000
+      internalID: -2986257950955061598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_196
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 60
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7fb62c3a894442d0800000000000000
+      internalID: -3295428169264873603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_197
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 53
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9907089e705e8de10800000000000000
+      internalID: 2222778238252380313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_198
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 59
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7771bdcf62bdeb2f0800000000000000
+      internalID: -955085110458509449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_199
+      rect:
+        serializedVersion: 2
+        x: 866
+        y: 52
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff8461ba043578d60800000000000000
+      internalID: 7892368409203460351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_200
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 57
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a33530731ed001fa0800000000000000
+      internalID: -5832146256503024838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_201
+      rect:
+        serializedVersion: 2
+        x: 884
+        y: 49
+        width: 19
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 379f5fe6870e66590800000000000000
+      internalID: -7681205306571490957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_202
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 56
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd537dc66635658e0800000000000000
+      internalID: -1705083709535341093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_203
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 55
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 553a801bba61fc830800000000000000
+      internalID: 4093515512968422229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_204
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 55
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b84de44aa4c3f1c10800000000000000
+      internalID: 2026404648621888651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_205
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 51
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2d99af8963e343b0800000000000000
+      internalID: -5529325874959508177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_206
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 49
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22281d5feae6329b0800000000000000
+      internalID: -5106115854780497374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_207
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 61
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33610805861f36700800000000000000
+      internalID: 532534611289314867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_208
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 56
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 192cd90f0e79940a0800000000000000
+      internalID: -6896814361975864687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_209
+      rect:
+        serializedVersion: 2
+        x: 977
+        y: 49
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 134f37d4f5b1834c0800000000000000
+      internalID: -4307662947444591567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_210
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 59
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e533c1aa708de9310800000000000000
+      internalID: 1413804860471259998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_211
+      rect:
+        serializedVersion: 2
+        x: 992
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b47b021858a5d34e0800000000000000
+      internalID: -2000343130039077045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_212
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 49
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be742697989192cd0800000000000000
+      internalID: -2582504833082570773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_213
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 49
+        width: 17
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de294ea8f1a76f530800000000000000
+      internalID: 3888429604173812461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_214
+      rect:
+        serializedVersion: 2
+        x: 1026
+        y: 60
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b491db5714aa962a0800000000000000
+      internalID: -6743671768885683893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: radial-blue_215
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 53
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 092802ca3280be620800000000000000
+      internalID: 2804344142272955024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      radial-blue_0: -7194286815130122025
+      radial-blue_1: -4555065222766630346
+      radial-blue_10: 201527719272358692
+      radial-blue_100: 8363948181085705751
+      radial-blue_101: -5233730413418519889
+      radial-blue_102: -6118033652439604436
+      radial-blue_103: -6532784750022607764
+      radial-blue_104: -5399530608524286940
+      radial-blue_105: 7261198278184191286
+      radial-blue_106: 9118850824539868907
+      radial-blue_107: 6914829121628811989
+      radial-blue_108: 8059841200826603007
+      radial-blue_109: -50115175853061215
+      radial-blue_11: 4979001165519068114
+      radial-blue_110: -5865148469896606686
+      radial-blue_111: -7512474343362854370
+      radial-blue_112: 927776715327717838
+      radial-blue_113: -2783854971296761978
+      radial-blue_114: -3031931193526116371
+      radial-blue_115: 5724792909388155211
+      radial-blue_116: -4730547062229788644
+      radial-blue_117: 5989559623918438276
+      radial-blue_118: -5003414374455396132
+      radial-blue_119: 8911105476385792549
+      radial-blue_12: -3021538464334417408
+      radial-blue_120: 2375223635103581568
+      radial-blue_121: 1155528849946812200
+      radial-blue_122: 1694516063832882828
+      radial-blue_123: 2170288431286824079
+      radial-blue_124: 258743829948304541
+      radial-blue_125: 6883948029648525489
+      radial-blue_126: 1944737019093325512
+      radial-blue_127: 4342137892760152331
+      radial-blue_128: -6866133836862043368
+      radial-blue_129: 2624046367267476458
+      radial-blue_13: 5214240246835684819
+      radial-blue_130: 3192361154609939499
+      radial-blue_131: -1734831826669374745
+      radial-blue_132: 4476967951504647870
+      radial-blue_133: 6566400298997805707
+      radial-blue_134: 3161918900372847579
+      radial-blue_135: -2668615898701641090
+      radial-blue_136: -526749563560991172
+      radial-blue_137: -4265392160494683653
+      radial-blue_138: -8802149416624940271
+      radial-blue_139: 8737608257296623627
+      radial-blue_14: 6239167279132813942
+      radial-blue_140: 9164700864490964056
+      radial-blue_141: 7775520563330966827
+      radial-blue_142: -5815153713620724844
+      radial-blue_143: -7548447386609527747
+      radial-blue_144: 5307383072286778195
+      radial-blue_145: -6396949152259773987
+      radial-blue_146: -3320751469261064244
+      radial-blue_147: 268389230809375558
+      radial-blue_148: 5316527828103196724
+      radial-blue_149: 7041424710290483992
+      radial-blue_15: 5594179525598731677
+      radial-blue_150: -5966780405428243320
+      radial-blue_151: -6913919000129663909
+      radial-blue_152: -494418230050250778
+      radial-blue_153: -394267421273040830
+      radial-blue_154: -6684618081033362857
+      radial-blue_155: -2250379509877953110
+      radial-blue_156: -7711935929416134243
+      radial-blue_157: 76796391693091166
+      radial-blue_158: 8201496658556677528
+      radial-blue_159: 3774387627978077875
+      radial-blue_16: -8132364608412219781
+      radial-blue_160: -362253456200927573
+      radial-blue_161: -5595255810465943205
+      radial-blue_162: -4971991975580781829
+      radial-blue_163: -3674786011995321368
+      radial-blue_164: -5946623572133423331
+      radial-blue_165: -5200374747298472746
+      radial-blue_166: 341908150846638535
+      radial-blue_167: -697934202670815342
+      radial-blue_168: -1422622391932845407
+      radial-blue_169: 489642977575651977
+      radial-blue_17: 3407565684942063927
+      radial-blue_170: 7602850076087055335
+      radial-blue_171: -6033436977400679932
+      radial-blue_172: -4285780586036646635
+      radial-blue_173: -2031519108042162178
+      radial-blue_174: -2921575020927505157
+      radial-blue_175: 4389411191540737429
+      radial-blue_176: -8116527253762800851
+      radial-blue_177: 5115143629800982488
+      radial-blue_178: 1266487220369933958
+      radial-blue_179: -2256092178495135697
+      radial-blue_18: 1370974377282544749
+      radial-blue_180: -2972800615986989036
+      radial-blue_181: -3442271840859636297
+      radial-blue_182: 8337227117305127536
+      radial-blue_183: -5143484355978747525
+      radial-blue_184: 6264959921174549280
+      radial-blue_185: -3704689095349515376
+      radial-blue_186: -4463603144509901028
+      radial-blue_187: -8051942495737331148
+      radial-blue_188: -14835666538193892
+      radial-blue_189: -7067798849697445206
+      radial-blue_19: -1053834564000943363
+      radial-blue_190: 5493072858849933139
+      radial-blue_191: 1211749130311098181
+      radial-blue_192: -1003889753238911387
+      radial-blue_193: -421586508036486448
+      radial-blue_194: 7869309053668952423
+      radial-blue_195: -2986257950955061598
+      radial-blue_196: -3295428169264873603
+      radial-blue_197: 2222778238252380313
+      radial-blue_198: -955085110458509449
+      radial-blue_199: 7892368409203460351
+      radial-blue_2: -8135953452622673094
+      radial-blue_20: -5761529466670162362
+      radial-blue_200: -5832146256503024838
+      radial-blue_201: -7681205306571490957
+      radial-blue_202: -1705083709535341093
+      radial-blue_203: 4093515512968422229
+      radial-blue_204: 2026404648621888651
+      radial-blue_205: -5529325874959508177
+      radial-blue_206: -5106115854780497374
+      radial-blue_207: 532534611289314867
+      radial-blue_208: -6896814361975864687
+      radial-blue_209: -4307662947444591567
+      radial-blue_21: -5728316258429474935
+      radial-blue_210: 1413804860471259998
+      radial-blue_211: -2000343130039077045
+      radial-blue_212: -2582504833082570773
+      radial-blue_213: 3888429604173812461
+      radial-blue_214: -6743671768885683893
+      radial-blue_215: 2804344142272955024
+      radial-blue_22: 3891356518049591707
+      radial-blue_23: 7899074802817729255
+      radial-blue_24: -1494651775297656913
+      radial-blue_25: -6504026243893254236
+      radial-blue_26: -6524636848566237371
+      radial-blue_27: 2249702688556145319
+      radial-blue_28: -6288784727813678517
+      radial-blue_29: 579764688194815117
+      radial-blue_3: 5084010735394656651
+      radial-blue_30: 5222789420195485574
+      radial-blue_31: 3965172620487323988
+      radial-blue_32: 3657518900225251886
+      radial-blue_33: 8913678499627044772
+      radial-blue_34: 5059942784832995813
+      radial-blue_35: -5855997545916360172
+      radial-blue_36: -1153796219216555051
+      radial-blue_37: -9109109160509211375
+      radial-blue_38: -758965912293272500
+      radial-blue_39: -288151393731333063
+      radial-blue_4: 4919105984599393293
+      radial-blue_40: 8842461163756797867
+      radial-blue_41: 4855144992608700409
+      radial-blue_42: -2721036948694334933
+      radial-blue_43: -1082573231180319263
+      radial-blue_44: -3854384178985598939
+      radial-blue_45: 8057237779047214403
+      radial-blue_46: 4988038657018094662
+      radial-blue_47: -7602877226670867195
+      radial-blue_48: 3785487637414604921
+      radial-blue_49: -1564570763253848692
+      radial-blue_5: 2065619595895722608
+      radial-blue_50: -7290267752224827252
+      radial-blue_51: -9108509971962233543
+      radial-blue_52: -7555455016632113825
+      radial-blue_53: -1632550622777094009
+      radial-blue_54: -4235694658871905528
+      radial-blue_55: 5298156976564246840
+      radial-blue_56: 1614382870796283844
+      radial-blue_57: -4140663061490451013
+      radial-blue_58: 9080518929769403536
+      radial-blue_59: 126535856460214902
+      radial-blue_6: -1746234669549676555
+      radial-blue_60: -5436388199589384398
+      radial-blue_61: 735877041967818187
+      radial-blue_62: 4713203171471314701
+      radial-blue_63: -243268059018666077
+      radial-blue_64: 7508178126100701336
+      radial-blue_65: -2262301059330482979
+      radial-blue_66: 3353049309856668668
+      radial-blue_67: 352025033083086981
+      radial-blue_68: -6654091259179313675
+      radial-blue_69: 4670432590962116910
+      radial-blue_7: 5688607405700007104
+      radial-blue_70: 4939802313299791766
+      radial-blue_71: 308546452397806745
+      radial-blue_72: -4031659350645625056
+      radial-blue_73: -6981983094268064687
+      radial-blue_74: 5317247489396406770
+      radial-blue_75: 5765566214274034975
+      radial-blue_76: 7613051934908124786
+      radial-blue_77: -3297717667086169860
+      radial-blue_78: -6875835173407012057
+      radial-blue_79: -7518080603102544140
+      radial-blue_8: 2684721455175942225
+      radial-blue_80: 7953803627586929497
+      radial-blue_81: -5428661541062164855
+      radial-blue_82: -3769421860513377444
+      radial-blue_83: 3552753431131575740
+      radial-blue_84: -6378012537063174164
+      radial-blue_85: -8340474592492794298
+      radial-blue_86: -9157086064290569166
+      radial-blue_87: 552028284256144154
+      radial-blue_88: -5994664639832814624
+      radial-blue_89: -5382521217880187063
+      radial-blue_9: 6660617924567461184
+      radial-blue_90: 2037938763781093346
+      radial-blue_91: -1630248131066946414
+      radial-blue_92: -208265509961382576
+      radial-blue_93: -7824654116381973134
+      radial-blue_94: -4330524043079374246
+      radial-blue_95: -5459084135990558692
+      radial-blue_96: 2719099788701052746
+      radial-blue_97: -2466117247953962112
+      radial-blue_98: -397403366030032619
+      radial-blue_99: -4309422532311528979
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
