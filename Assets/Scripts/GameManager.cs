@@ -1441,21 +1441,21 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", CheckForTurns));
             i++;
         }
-        while (Globals.GameMatch.GameTurns.Count() <= TurnNumber || Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber).Players.Count() < Globals.GameMatch.MaxPlayers);
+        while (Globals.GameMatch.GameTurns.LastOrDefault().TurnNumber < TurnNumber || Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber).Players.Count() < Globals.GameMatch.MaxPlayers);
     }
 
     private void CheckForTurns(GameTurn turns)
     {
         if (turns != null)
         {
-            if (!Globals.GameMatch.GameTurns.Any(x => x.TurnNumber == TurnNumber))
+            var index = Globals.GameMatch.GameTurns.Select(x => x.TurnNumber).ToList().IndexOf(TurnNumber);
+            if (index == -1)
             {
                 Globals.GameMatch.GameTurns.Add(turns);
             }
             else
             {
-                var currentTurn = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber);
-                currentTurn = turns;
+                Globals.GameMatch.GameTurns[index] = turns;
             }
         }
     }
@@ -1590,7 +1590,6 @@ public class GameManager : MonoBehaviour
     {
         SubmittedTurn = false;
         endTurnButton.sprite = endTurnButtonPressed;
-        //test
         if (!isWaitingForTurns)
         {
             yield return StartCoroutine(GetTurnsFromServer());
