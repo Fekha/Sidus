@@ -104,7 +104,7 @@ public class GridManager : MonoBehaviour
         }
         GameManager.i.Stations = GameManager.i.Stations.OrderBy(x => x.playerColor).ToList();
         scoreToWin = GetScoreToWin();
-        amountToWinText.text = $"Hexes to win: {scoreToWin}";
+        amountToWinText.text = $"{scoreToWin}";
         DoneLoading = true;
     }
 
