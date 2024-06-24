@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 961801081447935047}
   - component: {fileID: 5804428913901410300}
   - component: {fileID: 6053448969343032656}
-  - component: {fileID: 6978812254869419349}
+  - component: {fileID: 8115120131771991439}
   m_Layer: 7
   m_Name: FloatingText
   m_TagString: Untagged
@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.4225989}
   m_SizeDelta: {x: 3.3193, y: 0.6801}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &5804428913901410300
@@ -127,8 +127,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 4
-  m_fontSizeBase: 4
+  m_fontSize: 7
+  m_fontSizeBase: 7
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -172,28 +172,54 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 5804428913901410300}
   m_maskType: 0
---- !u!95 &6978812254869419349
-Animator:
-  serializedVersion: 7
+--- !u!114 &8115120131771991439
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2496645469058961796}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6e1840fdb8c06514b88e76cb6740dcb8, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c935ed8b8585f4195364b0ee31be81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sequences:
+  - name: FloatAway
+    wrap: 0
+    playAutomatically: 1
+    nodes:
+    - target: {fileID: 6053448969343032656}
+      property: fontSize
+      startTime: 0.15
+      duration: 0.75
+      ease: 21
+      channel: 0
+      fromFloat: 7
+      toFloat: 5
+      fromVector2: {x: 0, y: 0}
+      toVector2: {x: 0, y: 0}
+      fromVector3: {x: 0, y: 0, z: 0}
+      toVector3: {x: 0, y: 0, z: 0}
+      fromColor: {r: 0, g: 0, b: 0, a: 0}
+      toColor: {r: 0, g: 0, b: 0, a: 0}
+    - target: {fileID: 961801081447935047}
+      property: anchoredPosition
+      startTime: 0
+      duration: 1.1
+      ease: 13
+      channel: 1
+      fromFloat: 0
+      toFloat: 0
+      fromVector2: {x: 0, y: 0}
+      toVector2: {x: 0, y: 1.5}
+      fromVector3: {x: 0, y: 0, z: 0}
+      toVector3: {x: 0, y: 0, z: 0}
+      fromColor: {r: 0, g: 0, b: 0, a: 0}
+      toColor: {r: 0, g: 0, b: 0, a: 0}
+    events: []
+    passedTime: 0
+    stop: 1
 --- !u!1 &3012913576608231180
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 84711026ab65cd74d8441a37541e9b61
+guid: cdcfb07299e726448a4ed8a667e3e7c0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2960402581040015946
-    second: 18_0
+      213: 5297435481520915231
+    second: radial-2_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 18_0
+      name: radial-2_0
       rect:
         serializedVersion: 2
-        x: 128
-        y: 78
-        width: 241
-        height: 279
+        x: 0
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a4a2a0b6676751920800000000000000
-      internalID: 2960402581040015946
+      spriteID: f13ca90e085448940800000000000000
+      internalID: 5297435481520915231
       vertices: []
       indices: 
       edges: []
@@ -141,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      18_0: 2960402581040015946
+      radial-2_0: 5297435481520915231
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

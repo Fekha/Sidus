@@ -160,6 +160,8 @@ public class GameManager : MonoBehaviour
         {
             previousTurnButton.interactable = true;
             yield return StartCoroutine(DoEndTurn());
+            ///I couldn't for the life of me find where the End Turn button gets clicked. I suspect it's here somewhere. 
+            /// You just gotta grab the Tweener component on the prefab, and then do Play("ReadyUp") and Play("ReadyDown") or ToggleState(")
         }
         if (Globals.GameMatch.GameTurns.LastOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions != null)
         {
@@ -486,21 +488,28 @@ public class GameManager : MonoBehaviour
                 var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
                 techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
                 techObject.transform.Find("AmountNeeded").GetComponent<TextMeshProUGUI>().text = $"{tech.currentAmount}/{tech.neededAmount}";
+                var t = techObject.transform.Find("RadialProgress").GetComponent<Tweener>();
                 var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
                 researchButton.interactable = canQueue;
-                researchButton.onClick.AddListener(() => Research(i));
+                researchButton.onClick.AddListener(() => Research(i, t));
                 techObject.transform.Find("Queued").gameObject.SetActive(!canQueue);
                 techObject.transform.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{i+Constants.MinTech}");
             }
         }
     }
 
-    private void Research(int i)
+    private void Research(int i, Tweener t)
     {
         QueueAction(new Action((ActionType)i+Constants.MinTech));
         //if(MyStation.actions.Count == MyStation.maxActions)
         //{
-            technologyPanel.SetActive(false);
+        /// @feca: This breaks things in ways I didn't see coming.
+        /// Less menu flicking = better, so I'm in favour of keeping the research menu up once you queue a research. 
+        /// Lets us have more visual feedback on what you just unlocked, etc. 
+        /// <3
+        /// 
+            t.Progress();
+            technologyPanel.SetActive(true);
         //}
     }
 
@@ -1263,8 +1272,10 @@ public class GameManager : MonoBehaviour
         var floatingTextObj = floatingObj.transform.Find("FloatingText");
         floatingTextObj.GetComponent<TextMeshPro>().text = text;
         floatingTextObj.GetComponent<TextMeshPro>().color = unit != null ? GridManager.i.playerColors[(int)unit.playerColor] : Color.white;
-        var animationTime = floatingTextObj.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length;
-        yield return new WaitForSeconds(animationTime);
+        //var animationTime = floatingTextObj.GetComponent<Animator>().runtimeAnimatorController.animationClips[0].length;
+        
+        yield return new WaitForSeconds(0.65f);
+        floatingTextObj.GetComponent<Tweener>().Stop();
         Destroy(floatingObj);
     }
     private void CheckEnterCombatModules(Unit unit)
@@ -1470,11 +1481,11 @@ public class GameManager : MonoBehaviour
     }
 
     public void ToggleBurger(){
-        {
-           Animator test = hamburgerButton.GetComponent<Animator>();
-           test.SetTrigger("Toggle");
-        }
+       
+       hamburgerButton.GetComponent<Tweener>().ToggleState();
+       
     }
+
 #region Complete Turn
     public void EndTurn(bool theyAreSure)
     {

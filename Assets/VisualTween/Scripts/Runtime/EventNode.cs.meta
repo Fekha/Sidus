@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: d2ef68e93fa48364bad4ed9b5ee40d05
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33290
+  packageName: Visual Tween
+  packageVersion: Visual Tween
+  assetPath: Assets/VisualTween/Scripts/Runtime/EventNode.cs
+  uploadId: 56558

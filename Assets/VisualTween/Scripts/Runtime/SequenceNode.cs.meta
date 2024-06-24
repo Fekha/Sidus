@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: b3a44fd96b4690540aa9d7e7473b9bab
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33290
+  packageName: Visual Tween
+  packageVersion: Visual Tween
+  assetPath: Assets/VisualTween/Scripts/Runtime/SequenceNode.cs
+  uploadId: 56558
