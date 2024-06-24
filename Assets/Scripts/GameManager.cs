@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     public Button repairFleetButton;
     public Button generateModuleButton;
     public Button previousTurnButton;
+    public GameObject hamburgerButton;
     public Image endTurnButton;
     public Sprite endTurnButtonNotPressed;
     public Sprite endTurnButtonPressed;
@@ -566,6 +567,7 @@ public class GameManager : MonoBehaviour
 
     public void ViewHelpPanel(bool active)
     {
+        
         helpPageNumber++;
         if (helpPageNumber > 4)
         {
@@ -582,6 +584,7 @@ public class GameManager : MonoBehaviour
         }
         if (active)
         {
+            ToggleBurger();
             helpPanel.SetActive(active);
         }
     }
@@ -1452,9 +1455,13 @@ public class GameManager : MonoBehaviour
     }
     public void ShowTurnArchive(bool active)
     {
+        
         if (!isEndingTurn)
         {
             turnArchivePanel.SetActive(active);
+            if(!active){
+                ToggleBurger();
+            }
         }
     }
     public void ToggleAll()
@@ -1464,6 +1471,13 @@ public class GameManager : MonoBehaviour
             infoToggle = !infoToggle;
             ToggleMineralText(infoToggle);
             ToggleHPText(infoToggle);
+        }
+    }
+
+    public void ToggleBurger(){
+        {
+           Animator test = hamburgerButton.GetComponent<Animator>();
+           test.SetTrigger("Toggle");
         }
     }
 #region Complete Turn
@@ -1570,6 +1584,7 @@ public class GameManager : MonoBehaviour
     {
         SubmittedTurn = false;
         endTurnButton.sprite = endTurnButtonPressed;
+        //test
         if (!isWaitingForTurns)
         {
             yield return StartCoroutine(GetTurnsFromServer());
@@ -1796,6 +1811,7 @@ public class GameManager : MonoBehaviour
         {
             exitPanel.SetActive(false);
             forfietPanel.SetActive(false);
+            ToggleBurger();
         }
     }
 
@@ -2088,6 +2104,8 @@ public class GameManager : MonoBehaviour
         {
             var station = Stations[(TurnNumber - 1 + i) % Stations.Count];
             var orderObj = Instantiate(turnOrderPrefab, turnOrder);
+            var readystate = orderObj.transform.Find("ReadyState").GetComponent<Image>();
+            readystate.color = GridManager.i.playerColors[(int)station.playerColor];
             var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
             credits.text = station.credits.ToString();
             credits.color = GridManager.i.playerColors[(int)station.playerColor];
