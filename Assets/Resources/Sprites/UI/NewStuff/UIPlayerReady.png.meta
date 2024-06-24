@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e735f17dfa40f4745b7822e045b96758
+guid: 9dca8980272ef404f825c284a147dc9a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3654551002717206882
-    second: asteroid-final1_0
+      213: -6409460869786454845
+    second: UITurnReady_00 1_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: asteroid-final1_0
+      name: UITurnReady_00 1_0
       rect:
         serializedVersion: 2
-        x: 101
-        y: 147
-        width: 276
-        height: 218
+        x: 0
+        y: 0
+        width: 86
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e964e75c93d684dc0800000000000000
-      internalID: -3654551002717206882
+      spriteID: 3c4bc963c450d07a0800000000000000
+      internalID: -6409460869786454845
       vertices: []
       indices: 
       edges: []
@@ -141,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      asteroid-final1_0: -3654551002717206882
+      UITurnReady_00 1_0: -6409460869786454845
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
