@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI alertText;
     private TextMeshProUGUI customAlertText;
     public TextMeshProUGUI ColorText;
+    public TextMeshProUGUI MatchName;
 
     public GameObject turnTapText;
     private Image moduleInfoIcon;
@@ -142,7 +143,7 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
-        
+        MatchName.text = Globals.GameMatch.GameGuid.ToString().Substring(0, 6);
         ColorText.text = $"You're {MyStation.playerColor.ToString()}";
         ColorText.color = GridManager.i.playerColors[(int)MyStation.playerColor];
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
