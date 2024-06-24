@@ -150,37 +150,31 @@ public class GameManager : MonoBehaviour
             TechActions.Add((ActionType)i);
         }
         loadingPanel.SetActive(false);
-        if (Globals.GameMatch.GameTurns.Count() > 0)
-        {
-            if (TurnNumber > 0)
-            {
-                previousTurnButton.interactable = true;
-                yield return StartCoroutine(DoEndTurn());
-            }
-            else
-            {
-                StartTurn();
-            }
-            if (Globals.GameMatch.GameTurns.Count() > TurnNumber && Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions != null)
-            {
-                foreach (var serverAction in Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions)
-                {
-                    QueueAction(new Action(serverAction), true);
-                }
-                lastSubmittedTurn = MyStation.actions;
-                yield return StartCoroutine(CheckEndTurn());
-            }
-        }
-        else
+
+        if (TurnNumber == 0)
         {
             StartTurn();
         }
-        StartCoroutine(GetIsTurnReady());
+        else
+        {
+            previousTurnButton.interactable = true;
+            yield return StartCoroutine(DoEndTurn());
+        }
+        if (Globals.GameMatch.GameTurns.LastOrDefault(x=>x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x=>x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions != null)
+        {
+            foreach (var serverAction in Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid)?.Actions)
+            {
+                QueueAction(new Action(serverAction), true);
+            }
+            lastSubmittedTurn = MyStation.actions;
+            yield return StartCoroutine(CheckEndTurn());
+        }
+        //StartCoroutine(GetIsTurnReady());
     }
 
     private IEnumerator GetIsTurnReady()
     {
-        while (Globals.GameMatch.MaxPlayers != 1)
+        while (Globals.GameMatch.MaxPlayers > 1)
         {
             while (!isEndingTurn)
             {
@@ -622,9 +616,9 @@ public class GameManager : MonoBehaviour
     {
         ClearAuctionObjects();
         AuctionModules.Clear();
-        AllModules = Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == i).AllModules.Select(x => new Module(x)).ToList();
+        AllModules = Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == i).AllModules.Select(x => new Module(x)).OrderBy(x=>x.turnsLeftOnMarket).ToList();
         var moduleGuids = Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == i).MarketModuleGuids.Split(",").Select(x=>new Guid(x));
-        AuctionModules.AddRange(moduleGuids.Select(x => AllModules.FirstOrDefault(y=>y.moduleGuid == x)));
+        AuctionModules.AddRange(moduleGuids.Select(x => AllModules.FirstOrDefault(y=>y.moduleGuid == x)).OrderBy(x=>x.turnsLeftOnMarket));
     }
     #region Queue Actions
     public void ModifyModule(ActionType actionType, Guid? dettachGuid = null)
