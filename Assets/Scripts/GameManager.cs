@@ -209,21 +209,24 @@ public class GameManager : MonoBehaviour
 
     private void UpdateGameTurnStatus(GameTurn? turn)
     {
-        UpdateCurrentTurn(turn);
-        if (TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
+        if (!isEndingTurn)
         {
-            for (int i = 0; i < Stations.Count; i++)
+            UpdateCurrentTurn(turn);
+            if (TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
             {
-                var readyState = TurnOrderObjects[i]?.transform?.Find("ReadyState")?.gameObject;
-                if (readyState != null)
+                for (int i = 0; i < Stations.Count; i++)
                 {
-                    if (Globals.GameMatch.MaxPlayers > 1 && turn != null)
+                    var readyState = TurnOrderObjects[i]?.transform?.Find("ReadyState")?.gameObject;
+                    if (readyState != null)
                     {
-                        readyState.SetActive(turn.Players.FirstOrDefault(x => x.PlayerGuid == Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid) != null);
-                    }
-                    else if(Globals.GameMatch.MaxPlayers == 1)
-                    {
-                        readyState.SetActive(Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid != Globals.Account.PlayerGuid);
+                        if (Globals.GameMatch.MaxPlayers > 1 && turn != null)
+                        {
+                            readyState.SetActive(turn.Players.FirstOrDefault(x => x.PlayerGuid == Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid) != null);
+                        }
+                        else if (Globals.GameMatch.MaxPlayers == 1)
+                        {
+                            readyState.SetActive(Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid != Globals.Account.PlayerGuid);
+                        }
                     }
                 }
             }
@@ -2150,7 +2153,7 @@ public class GameManager : MonoBehaviour
             var orderObj = Instantiate(turnOrderPrefab, turnOrder);
             var readystate = orderObj.transform.Find("ReadyState").GetComponent<Image>();
             readystate.color = playerColor;
-            readystate.gameObject.SetActive(false);
+            readystate.gameObject.SetActive(Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players?.FirstOrDefault(x => x.PlayerGuid == station.playerGuid) != null);
             var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
             credits.text = station.credits.ToString();
             credits.color = playerColor;

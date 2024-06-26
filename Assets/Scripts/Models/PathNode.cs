@@ -21,6 +21,7 @@ public class PathNode : MonoBehaviour
     private TextMeshPro mineralText;
     public TextMeshPro coordsText;
     private SpriteRenderer asteriodSprite;
+    private SpriteRenderer minedAsteriodSprite;
     private GameObject mineIcon;
     private Coords[] evenOffsets = { new Coords(1, 0), new Coords(1, -1), new Coords(0, -1), new Coords(-1, 0), new Coords(0, 1), new Coords(1, 1) }; // Clockwise from right
     private Coords[] oddOffsets = { new Coords(1, 0), new Coords(0, -1), new Coords(-1, -1), new Coords(-1, 0), new Coords(-1, 1), new Coords(0, 1) }; // Clockwise from right
@@ -52,6 +53,8 @@ public class PathNode : MonoBehaviour
 
     private void GetUIComponents()
     {
+        minedAsteriodSprite = transform.Find("MinedAsteroid").GetComponent<SpriteRenderer>();
+        minedAsteriodSprite.gameObject.SetActive(false);
         asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
         asteriodSprite.gameObject.SetActive(isAsteroid);
         mineIcon = transform.Find("Asteroid/Mine").gameObject;
@@ -126,6 +129,7 @@ public class PathNode : MonoBehaviour
         GameManager.i.GetStationByGuid(unit.playerGuid).GainCredits(minedAmount, unit, isQueuing, false);
         mineralText.text = $"{minerals}";
         asteriodSprite.gameObject.SetActive(isAsteroid);
+        minedAsteriodSprite.gameObject.SetActive(!isAsteroid && isQueuing);
     }
 
     internal void ShowMineIcon(bool active)
