@@ -466,7 +466,12 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
         {
-            SetModuleInfo(AllModules.FirstOrDefault(x=>x.moduleGuid == action.selectedModuleGuid));
+            SetModuleInfo(AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid));
+        }
+        else if (TechActions.Contains(action.actionType))
+        {
+            var tech = MyStation.technology[(int)action.actionType - Constants.MinTech];
+            ShowCustomAlertPanel(tech.effectText + "." + tech.currentEffectText);
         }
         else
         {
@@ -1810,7 +1815,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.RepairFleet)
         {
-            action.selectedUnit.RegenHP(3 * modifier, queued);
+            action.selectedUnit.RegenHP(5 * modifier, queued);
         }
         UpdateCreditsAndHexesText();
     }
