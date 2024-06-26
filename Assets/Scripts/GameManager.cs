@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
     public Sprite lockActionBar;
     public Sprite lockModuleBar;
     public Sprite attachModuleBar;
-    public Sprite emptyModuleBar;
+    public Sprite[] emptyModuleBar;
     public Sprite unReadyCircle;
     public Sprite readyCircle;
 
@@ -98,6 +98,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI customAlertText;
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI MatchName;
+    public TextMeshProUGUI TurnNumberText;
 
     public GameObject turnTapText;
     private Image moduleInfoIcon;
@@ -144,7 +145,8 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
-        MatchName.text = Globals.GameMatch.GameGuid.ToString().Substring(0, 6);
+        MatchName.text = $"{Globals.GameMatch.GameGuid.ToString().Substring(0, 6)}";
+        TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
         ColorText.text = $"{Globals.Account.Username}";
         UpdateColors(GridManager.i.playerColors[(int)MyStation.playerColor]); 
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
@@ -152,13 +154,13 @@ public class GameManager : MonoBehaviour
             TechActions.Add((ActionType)i);
         }
         loadingPanel.SetActive(false);
-        var currentTurnNumber = TurnNumber;
         if (TurnNumber == 0)
         {
             StartTurn();
         }
         else
         {
+            BuildTurnObjects();
             previousTurnButton.interactable = true;
             yield return StartCoroutine(DoEndTurn());
         }
@@ -196,7 +198,7 @@ public class GameManager : MonoBehaviour
         //while not Practice game
         while (Globals.GameMatch.MaxPlayers > 1)
         {
-            while (!isEndingTurn && TurnOrderObjects.Count == Globals.GameMatch.MaxPlayers)
+            while (!isEndingTurn && TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
             {
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", UpdateGameTurnStatus));
                 yield return new WaitForSeconds(.5f);
@@ -442,6 +444,7 @@ public class GameManager : MonoBehaviour
     //ClickOnAction
     public void ShowQueuedAction(int i)
     {
+        moduleMarket.SetActive(false);
         technologyPanel.SetActive(false);
         DeselectUnitIcons();
         var action = MyStation.actions[i];
@@ -737,6 +740,7 @@ public class GameManager : MonoBehaviour
     internal void CancelAction(int slot, bool isRequeuing)
     {
         technologyPanel.SetActive(false);
+        moduleMarket.SetActive(false);
         var action = MyStation.actions[slot];
         Debug.Log($"{MyStation.unitName} removed action {GetDescription(action.actionType)} from queue");
         if (action != null)
@@ -946,7 +950,6 @@ public class GameManager : MonoBehaviour
         ToggleHPText(false);
         DeselectUnitIcons();
         UpdateCreateFleetCostText();
-        UpdateCreditsAndHexesText(MyStation);
         SetModuleGrid();
         ClearMovementPath();
         ClearMovementRange();
@@ -956,13 +959,16 @@ public class GameManager : MonoBehaviour
         ViewAsteroidInformation(false);
         ViewUnitInformation(false);
     }
-    private void UpdateCreditsAndHexesText(Station station)
+    private void UpdateCreditsAndHexesText()
     {
+        GridManager.i.GetScores();
         for (int i = 0; i < Stations.Count; i++)
         {
             var orderObj = TurnOrderObjects[i];
             var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
             credits.text = Stations[(TurnNumber - 1 + i) % Stations.Count].credits.ToString();
+            var hexes = orderObj.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
+            hexes.text = Stations[(TurnNumber - 1 + i) % Stations.Count].score.ToString();
         }
     }
     private IEnumerator MoveOnPath(Unit unitMoving, List<PathNode> path)
@@ -1046,6 +1052,7 @@ public class GameManager : MonoBehaviour
                     break;
                 }
                 currentNode = nextNode;
+                UpdateCreditsAndHexesText();
             //}
             //else
             //{
@@ -1636,6 +1643,10 @@ public class GameManager : MonoBehaviour
         ToggleAll();
         isEndingTurn = true;
         turnValue.text = $"Turn #{TurnNumber} Complete!";
+        for(int i=0;i<Stations.Count;i++)
+        {
+            TurnOrderObjects[i].transform.Find("ReadyState").gameObject.SetActive(false);
+        }
         turnLabel.SetActive(true);
         yield return StartCoroutine(WaitforSecondsOrTap(1));
         isWaitingForTurns = false;
@@ -1801,6 +1812,7 @@ public class GameManager : MonoBehaviour
         {
             action.selectedUnit.RegenHP(3 * modifier, queued);
         }
+        UpdateCreditsAndHexesText();
     }
 
     private void SubmitResponse(bool response)
@@ -2054,8 +2066,6 @@ public class GameManager : MonoBehaviour
             turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
 
     }
-
-
     internal IEnumerator WaitforSecondsOrTap(float time)
     {
         float elapsedTime = 0f;
@@ -2068,7 +2078,6 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(.1f);
         }
     }
-
     public string GetDescription(ActionType value)
     {
         Type type = value.GetType();
@@ -2089,12 +2098,11 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
-
-
     private void StartTurn()
     {
         UpdateModulesFromServer(TurnNumber);
         TurnNumber++;
+        TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
         endTurnButton.sprite = endTurnButtonNotPressed;
         foreach (var station in Stations)
         {
@@ -2125,23 +2133,7 @@ public class GameManager : MonoBehaviour
         turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
-        ClearTurnOrderObjects();
-        for (int i = 0; i < Stations.Count; i++)
-        {
-            var station = Stations[(TurnNumber - 1 + i) % Stations.Count];
-            var orderObj = Instantiate(turnOrderPrefab, turnOrder);
-            var readystate = orderObj.transform.Find("ReadyState").GetComponent<Image>();
-            readystate.color = GridManager.i.playerColors[(int)station.playerColor];
-            readystate.gameObject.SetActive(false);
-            var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
-            credits.text = station.credits.ToString();
-            credits.color = GridManager.i.playerColors[(int)station.playerColor];
-            var hexes = orderObj.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
-            hexes.text = station.score.ToString();
-            hexes.color = GridManager.i.playerColors[(int)station.playerColor];
-            TurnOrderObjects.Add(orderObj);
-        }
-        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null); }
+        BuildTurnObjects();
         infoToggle = false;
         ViewModuleMarket(false);
         ViewTechnology(false);
@@ -2149,7 +2141,31 @@ public class GameManager : MonoBehaviour
         isEndingTurn = false;
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
-#endregion
+
+    private void BuildTurnObjects()
+    {
+        ClearTurnOrderObjects();
+        for (int i = 0; i < Stations.Count; i++)
+        {
+            var station = Stations[(TurnNumber - 1 + i) % Stations.Count];
+            var playerColor = GridManager.i.playerColors[(int)station.playerColor];
+            var orderObj = Instantiate(turnOrderPrefab, turnOrder);
+            var readystate = orderObj.transform.Find("ReadyState").GetComponent<Image>();
+            readystate.color = playerColor;
+            readystate.gameObject.SetActive(false);
+            var credits = orderObj.transform.Find("Credits").GetComponent<TextMeshProUGUI>();
+            credits.text = station.credits.ToString();
+            credits.color = playerColor;
+            var hexes = orderObj.transform.Find("HexesOwned").GetComponent<TextMeshProUGUI>();
+            hexes.text = station.score.ToString();
+            hexes.color = playerColor;
+            //orderObj.transform.Find("HexText").GetComponent<TextMeshProUGUI>().color = playerColor;
+            //orderObj.transform.Find("CreditText").GetComponent<TextMeshProUGUI>().color = playerColor;
+            TurnOrderObjects.Add(orderObj);
+        }
+        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null); }
+    }
+    #endregion
     private void LevelUpUnit(Unit unit, int modifier)
     {
         unit.level += modifier;
@@ -2270,7 +2286,7 @@ public class GameManager : MonoBehaviour
         {
             ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
             if (i < MyStation.maxActions) {
-                ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar;
+                ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];   
             } else {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
                 int k = i-1;
@@ -2314,7 +2330,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = emptyModuleBar;
+                        UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];
                     }
                 }
             }

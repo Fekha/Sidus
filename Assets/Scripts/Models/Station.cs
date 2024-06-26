@@ -39,7 +39,6 @@ public class Station : Unit
     public void InitializeStation(GamePlayer player)
     {
         GameManager.i.Stations.Add(this);
-        actions = player.Actions.Select(x=>new Action(x)).ToList();
         technology = player.Technology.Select(x => new Technology(x)).ToList();
         modules = GameManager.i.AllModules.Where(x => player.ModulesGuids.Contains(x.moduleGuid.ToString())).ToList();
         maxActions = player.MaxActions;
@@ -60,6 +59,8 @@ public class Station : Unit
             fleetNode.InitializeUnit(fleet);
             fleets.Add(fleetNode);
         }
+        actions = player.Actions.Select(x => new Action(x)).ToList();
+
     }
     internal void researchKinetic(int modifier)
     {
