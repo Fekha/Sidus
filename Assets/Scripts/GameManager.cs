@@ -219,7 +219,7 @@ public class GameManager : MonoBehaviour
                     {
                         readyState.SetActive(turn.Players.FirstOrDefault(x => x.PlayerGuid == Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid) != null);
                     }
-                    else
+                    else if(Globals.GameMatch.MaxPlayers == 1)
                     {
                         readyState.SetActive(Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid != Globals.Account.PlayerGuid);
                     }
