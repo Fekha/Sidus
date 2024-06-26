@@ -566,7 +566,7 @@ public class GameManager : MonoBehaviour
                 bidButton.interactable = !hasQueued && MyStation.credits >= module.currentBid;
                 bidButton.onClick.AddListener(() => BidOn(i, module.currentBid));
                 moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
-                moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued);
+                moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued || MyStation.credits < module.currentBid);
                 moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"{module.turnsLeftOnMarket} Turns Left" : "Last Turn!!!";
                 moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
             }
@@ -1026,7 +1026,7 @@ public class GameManager : MonoBehaviour
                         isValidHex = nextNode.unitOnPath == null;
                         if(!blockedMovement && isValidHex)
                             yield return StartCoroutine(MoveDirectly(unitMoving, nextNode.transform.position, Constants.MovementSpeed / 2));
-                        if (i != path.Count() && !blockedMovement)
+                        if (i != path.Count() && !blockedMovement && Winner == Guid.Empty)
                             turnValue.text = beforeText;
                     }
                     //if ally reapir, not yourself
@@ -1509,12 +1509,9 @@ public class GameManager : MonoBehaviour
             ToggleHPText(infoToggle);
         }
     }
-
-    public void ToggleBurger(){
-        {
-           Animator test = hamburgerButton.GetComponent<Animator>();
-           test.SetTrigger("Toggle");
-        }
+    public void ToggleBurger()
+    {
+       hamburgerButton.GetComponent<Animator>().SetTrigger("Toggle");
     }
 #region Complete Turn
     public void EndTurn(bool theyAreSure)
@@ -1689,8 +1686,8 @@ public class GameManager : MonoBehaviour
                 {
                     asteroid.ReginCredits();
                 }
+                Winner = GridManager.i.CheckForWin();
             }
-            Winner = GridManager.i.CheckForWin();
             yield return StartCoroutine(sql.GetRoutine<Guid>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}", GetWinner));
         }
     }
@@ -1833,6 +1830,7 @@ public class GameManager : MonoBehaviour
                 exitPanel.SetActive(true);
             else
                 ExitToLobby();
+            ToggleBurger();
         }
         else if (exitOption == 1)
         {

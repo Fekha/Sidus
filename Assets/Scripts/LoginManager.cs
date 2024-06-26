@@ -48,6 +48,7 @@ public class LoginManager : MonoBehaviour
     public void CreateGame(bool cpuGame)
     {
         loadingPanel.SetActive(true);
+        GameSettings.Clear();
         if (teamToggle.isOn && MaxPlayers == 4 && !cpuGame)
             GameSettings.Add(GameSettingType.Teams.ToString());
         if (toggle1.isOn)
