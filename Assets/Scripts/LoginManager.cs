@@ -222,7 +222,6 @@ public class LoginManager : MonoBehaviour
             Globals.GameMatch = game;
             MaxPlayers = game.MaxPlayers;
             waitingPanel.SetActive(true);
-            loadingPanel.SetActive(false);
             createGamePanel.SetActive(false);
             joinGamePanel.SetActive(false);
             activeGamePanel.SetActive(false);
@@ -259,6 +258,7 @@ public class LoginManager : MonoBehaviour
             PlayerPrefs.Save();
             SceneManager.LoadScene((int)Scene.Game);
         } else {
+            loadingPanel.SetActive(false);
             UpdateWaitingText();
         }
     }
