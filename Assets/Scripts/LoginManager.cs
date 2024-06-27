@@ -47,7 +47,6 @@ public class LoginManager : MonoBehaviour
     }
     public void CreateGame(bool cpuGame)
     {
-        loadingPanel.SetActive(true);
         GameSettings.Clear();
         if (teamToggle.isOn && MaxPlayers == 4 && !cpuGame)
             GameSettings.Add(GameSettingType.Teams.ToString());
@@ -86,7 +85,6 @@ public class LoginManager : MonoBehaviour
         if (active)
         {
             FindGames();
-            loadingPanel.SetActive(true);
         }
         joinGamePanel.SetActive(active);
     }
@@ -95,7 +93,6 @@ public class LoginManager : MonoBehaviour
         if (active)
         {
             FindActiveGames();
-            loadingPanel.SetActive(true);
         }
         activeGamePanel.SetActive(active);
     }
@@ -193,7 +190,6 @@ public class LoginManager : MonoBehaviour
             prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns.FirstOrDefault().Players.Count(x=>x!=null)}/{game.MaxPlayers}";
             openGamesObjects.Add(prefab);
         }
-        loadingPanel.SetActive(false);
     }
     private void GetActiveMatches(List<GameMatch> newGames)
     {
@@ -209,7 +205,6 @@ public class LoginManager : MonoBehaviour
             prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));
             openGamesObjects.Add(prefab);
         }
-        loadingPanel.SetActive(false);
     }
     private void ClearOpenGames()
     {
@@ -259,7 +254,6 @@ public class LoginManager : MonoBehaviour
             PlayerPrefs.Save();
             SceneManager.LoadScene((int)Scene.Game);
         } else {
-            loadingPanel.SetActive(false);
             UpdateWaitingText();
         }
     }

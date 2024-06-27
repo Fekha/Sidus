@@ -41,6 +41,10 @@ public class Action {
                 var intYs = _action.YList.Split(",").Select(x => int.Parse(x.ToString())).ToList();
                 selectedPath = intXs.Select((x, i) => GridManager.i.grid[x, intYs[i]]).ToList();
             }
+            else
+            {
+                selectedPath = new List<PathNode>();
+            }
             generatedGuid = _action.GeneratedGuid;
             actionOrder = _action.ActionOrder;
             playerGuid = _action.PlayerGuid;

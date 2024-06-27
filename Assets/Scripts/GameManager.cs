@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
     internal List<Station> Stations = new List<Station>();
 
     private bool tapped = false;
+    private bool skipTurn = false;
     private bool isMoving = false;
     private bool isEndingTurn = false;
     private Button upgradeButton;
@@ -100,7 +101,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI MatchName;
     public TextMeshProUGUI TurnNumberText;
 
-    public GameObject turnTapText;
+    public GameObject nextActionButton;
+    public GameObject skipActionsButton;
     private Image moduleInfoIcon;
 
     internal List<ActionType> TechActions = new List<ActionType>();
@@ -201,7 +203,8 @@ public class GameManager : MonoBehaviour
             while (!isEndingTurn && TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
             {
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", UpdateGameTurnStatus));
-                yield return new WaitForSeconds(.5f);
+                if(!skipTurn)
+                    yield return new WaitForSeconds(.5f);
             }
             yield return new WaitForSeconds(1f);
         }
@@ -630,7 +633,7 @@ public class GameManager : MonoBehaviour
 
     public void ShowUnlockPanel(int unlock)
     {
-        alertText.text = $"This action slot will unlock once you own {Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.25 * unlock)))} hexes.";
+        alertText.text = $"This action slot will unlock once you own {unlock} hexes.";
         alertPanel.SetActive(true);
     }
     public void ShowCustomAlertPanel(string message)
@@ -1105,7 +1108,7 @@ public class GameManager : MonoBehaviour
 
             // Move to intermediate position
             totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped)
+            while (elapsedTime <= totalTime && !tapped && !skipTurn)
             {
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
                 unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosX, elapsedTime / totalTime);
@@ -1138,7 +1141,7 @@ public class GameManager : MonoBehaviour
                 startPos.z);
             // Move to intermediate position
             totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped)
+            while (elapsedTime <= totalTime && !tapped && !skipTurn)
             {
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
                 unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
@@ -1170,7 +1173,7 @@ public class GameManager : MonoBehaviour
                 startPos.z);
             // Move to intermediate position
             totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped)
+            while (elapsedTime <= totalTime && !tapped && !skipTurn)
             {
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
                 unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
@@ -1199,7 +1202,7 @@ public class GameManager : MonoBehaviour
         float elapsedTime = 0f;
         var startPos = unitMoving.transform.position;
         // Move to final position
-        while (elapsedTime <= totalTime && !tapped)
+        while (elapsedTime <= totalTime && !tapped && !skipTurn)
         {
             if(toRot != null)
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, (Quaternion)toRot, elapsedTime / totalTime);
@@ -1472,7 +1475,7 @@ public class GameManager : MonoBehaviour
             if (i == 1)
             {
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your turn was submitted!\n\nIf you change your mind, your last submitted turn will be used.";
+                customAlertText.text = $"Your orders were transmitted to your units!";
                 customAlertPanel.SetActive(true);
                 submitTurnPanel.SetActive(false);
             }
@@ -1561,13 +1564,13 @@ public class GameManager : MonoBehaviour
                             TurnNumber = TurnNumber,
                             PlayerColor = Globals.localStationColor,
                             PlayerGuid = Globals.Account.PlayerGuid,
-                            Actions = MyStation.actions.Select((x, i) =>
+                            Actions = MyStation.actions.Select((x, j) =>
                                 new ServerAction()
                                 {
                                     GameGuid = Globals.GameMatch.GameGuid,
                                     TurnNumber = TurnNumber,
                                     PlayerGuid = Globals.Account.PlayerGuid,
-                                    ActionOrder = actionOrders[i],
+                                    ActionOrder = actionOrders[j],
                                     ActionTypeId = (int)x.actionType,
                                     GeneratedGuid = x.generatedGuid,
                                     XList = String.Join(",", x.selectedPath?.Select(x => x.coords.x)),
@@ -1616,7 +1619,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            customAlertText.text = $"Your turn was NOT submitted successfully. \n\n Please try again.";
+            customAlertText.text = $"Your orders were NOT transmitted successfully. \n\n Please try again.";
             customAlertPanel.SetActive(true);
             submitTurnPanel.SetActive(false);
         }
@@ -1634,7 +1637,7 @@ public class GameManager : MonoBehaviour
         else
         {
             var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-            customAlertText.text = $"Your new turn was submitted, overriding your previous one.";
+            customAlertText.text = $"Your new orders were transmitted to your units in time to replace your previous ones.";
             customAlertPanel.SetActive(true);
             submitTurnPanel.SetActive(false);
         }
@@ -1669,12 +1672,8 @@ public class GameManager : MonoBehaviour
             var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
             {
-                if (Winner != Guid.Empty)
-                {
-                    break;
-                }
+                if (Winner != Guid.Empty){ break; }
                 yield return StartCoroutine(PerformAction(new Action(serverAction)));
-                yield return new WaitForSeconds(.1f);
             }
             if (Winner == Guid.Empty)
             {
@@ -1868,7 +1867,8 @@ public class GameManager : MonoBehaviour
         Winner = _winner;
         if (Winner != Guid.Empty)
         {
-            turnTapText.SetActive(false);
+            nextActionButton.SetActive(false);
+            skipActionsButton.SetActive(false);
             ToggleHPText(true);
             turnValue.text = $"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns";
             Debug.Log($"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns");
@@ -1897,7 +1897,8 @@ public class GameManager : MonoBehaviour
                     isMoving = true;
                     if (unit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= unit.getMaxMovementRange())
                     {
-                        turnTapText.SetActive(false);
+                        nextActionButton.SetActive(false);
+                        skipActionsButton.SetActive(false);
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
                         Debug.Log("Moving to position: " + unit.currentPathNode.transform.position);
@@ -2076,9 +2077,10 @@ public class GameManager : MonoBehaviour
     {
         float elapsedTime = 0f;
         float totalTime = time;
-        turnTapText.SetActive(true);
+        nextActionButton.SetActive(true);
+        skipActionsButton.SetActive(true);
         tapped = false;
-        while (!tapped)
+        while (!tapped && !skipTurn)
         {
             elapsedTime += Time.deltaTime;
             yield return new WaitForSeconds(.1f);
@@ -2108,23 +2110,28 @@ public class GameManager : MonoBehaviour
     {
         UpdateModulesFromServer(TurnNumber);
         TurnNumber++;
+        skipTurn = false;
         TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
         endTurnButton.sprite = endTurnButtonNotPressed;
         foreach (var station in Stations)
         {
             station.AOERegen(1);
             station.actions.Clear();
-            if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.75))))
+            if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.66))))
             {
                 station.maxActions = 5;
             }
-            else if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.5))))
+            else if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.33))))
             {
                 station.maxActions = 4;
             }
-            else
+            else if (station.score >= 3)
             {
                 station.maxActions = 3;
+            }
+            else
+            {
+                station.maxActions = 2;
             }
         }
         foreach (var unit in AllUnits)
@@ -2295,7 +2302,7 @@ public class GameManager : MonoBehaviour
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];   
             } else {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
-                int k = i-1;
+                int k = Convert.ToInt32(Math.Floor(i == 2 ? 3.0 : i == 3 ? (GridManager.i.scoreToWin * .33) : (GridManager.i.scoreToWin * .66)));
                 ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(k));
             }
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
@@ -2355,5 +2362,10 @@ public class GameManager : MonoBehaviour
     public Station GetStationByGuid(Guid playerGuid)
     {
         return Stations.FirstOrDefault(x => x.playerGuid == playerGuid);
+    }
+
+    public void SkipTurns()
+    {
+        skipTurn = true;
     }
 }

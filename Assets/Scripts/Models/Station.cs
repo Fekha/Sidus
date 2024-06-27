@@ -31,7 +31,6 @@ public class Station : Unit
         playerGuid = _stationGuid;
         unitName = $"{(PlayerColor)_color} Station";
         credits = 3;
-        maxActions = 2;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
         currentPathNode.SetNodeColor(playerGuid);
         StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
