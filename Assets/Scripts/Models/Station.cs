@@ -20,17 +20,17 @@ public class Station : Unit
     internal int score;
     internal bool _didSpawn;
 
-    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid)
+    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid, int _credits)
     {
         GameManager.i.Stations.Add(this);
-        for (int i = 0; i <= Constants.TechAmount; i++)
+        for (int i = 0; i < Constants.TechAmount; i++)
         {
             technology.Add(new Technology(i));
         }
         playerColor = (PlayerColor)GameManager.i.Stations.Count;
         playerGuid = _stationGuid;
         unitName = $"{(PlayerColor)_color} Station";
-        credits = 3;
+        credits = _credits;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
         currentPathNode.SetNodeColor(playerGuid);
         StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
@@ -59,7 +59,6 @@ public class Station : Unit
             fleets.Add(fleetNode);
         }
         actions = player.Actions.Select(x => new Action(x)).ToList();
-
     }
     internal void researchKinetic(int modifier)
     {
@@ -82,8 +81,8 @@ public class Station : Unit
     internal void researchHP(int modifier)
     {
         bonusHP+=(2 * modifier);
-        IncreaseMaxHP(2 * modifier);
-        fleets.ForEach(x => x.IncreaseMaxHP(2* modifier));
+        IncreaseHP(2 * modifier);
+        fleets.ForEach(x => x.IncreaseHP(2* modifier));
     }
     internal void researchMining(int modifier)
     {

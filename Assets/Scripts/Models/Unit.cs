@@ -129,6 +129,11 @@ public class Unit : Node
     {
         maxHP += hp;
     }
+    internal void IncreaseHP(int hp)
+    {
+        IncreaseMaxHP(hp);
+        HP += hp;
+    }
     internal void IncreaseMaxMining(int mining)
     {
         maxMining += mining;

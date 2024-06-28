@@ -1,14 +1,14 @@
 using System.ComponentModel;
 
-public enum ResearchType
+public enum TechnologyType
 {
     ResearchStationLvl,
     ResearchFleetLvl,
     ResearchMaxFleets,
-    ResearchMining,
     ResearchKinetic,
+    ResearchHP,
+    ResearchMining,
     ResearchThermal,
     ResearchExplosive,
-    ResearchHP,
 }
 

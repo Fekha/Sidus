@@ -6,7 +6,7 @@ using UnityEngine.Windows;
 
 public class Technology
 {
-    public ResearchType researchId { get; set; }
+    public TechnologyType researchId { get; set; }
     public int level { get; set; }
     public int currentAmount { get; set; }
     public int neededAmount { get; set; }
@@ -16,12 +16,12 @@ public class Technology
 
     internal Technology(int _researchId)
     {
-        researchId = (ResearchType)_researchId;
+        researchId = (TechnologyType)_researchId;
         UpdateValues(1);
     }
     internal Technology(ServerTechnology tech)
     {
-        researchId = (ResearchType)tech.TechnologyId;
+        researchId = (TechnologyType)tech.TechnologyId;
         level = tech.Level;
         currentAmount = tech.CurrentAmount;
         neededAmount = tech.NeededAmount;
@@ -58,43 +58,41 @@ public class Technology
         neededAmount = GetNeededAmount(modifier + level);
         switch (researchId)
         {
-            case ResearchType.ResearchStationLvl:
+            case TechnologyType.ResearchStationLvl:
                 effectText = $"Increase max station level to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max level: {modifier + level})";
                 break;
-            case ResearchType.ResearchFleetLvl:
+            case TechnologyType.ResearchFleetLvl:
                 effectText = $"Increase max fleet level to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max level: {modifier + level})";
                 requirementText = "<b>Must research <u>max station level</u> first</b>\n\n";
                 break;
-            case ResearchType.ResearchMaxFleets:
+            case TechnologyType.ResearchMaxFleets:
                 effectText = $"Increase max number of fleets to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max fleets: {modifier + level})";
                 requirementText = "<b>Must research <u>max fleet level</u> first</b>\n\n";
                 break;
-            case ResearchType.ResearchHP:
-                effectText = $"+2 max HP for all units";
-                currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must research <u>max fleet level</u> first</b>\n\n";
+            case TechnologyType.ResearchHP:
+                effectText = $"+2 HP for all units";
+                currentEffectText = $"\n(Current mining bonus: +{level - 1 + modifier})";
+                requirementText = "<b>Must research <u>power for all units</u> first</b>\n\n";
                 break;
-            case ResearchType.ResearchKinetic:
+            case TechnologyType.ResearchKinetic:
                 effectText = $"+1 kinetic power for all units";
-                currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must research <u>+1 thermal power for all units</u> first</b>\n\n";
+                currentEffectText = $"\n(Current kinetic bonus: +{level - 1 + modifier})";
                 break;
-            case ResearchType.ResearchThermal:
+            case TechnologyType.ResearchThermal:
                 effectText = $"+1 thermal power for all units";
-                currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must research <u>+1 explosive power for all units</u> first</b>\n\n";
+                currentEffectText = $"\n(Current thermal bonus: +{level - 1 + modifier})";
                 break;
-            case ResearchType.ResearchExplosive:
+            case TechnologyType.ResearchExplosive:
                 effectText = $"+1 explosive power for all units";
-                currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
+                currentEffectText = $"\n(Current explosive bonus: +{level - 1 + modifier})";
                 break;
-            case ResearchType.ResearchMining:
+            case TechnologyType.ResearchMining:
                 effectText = $"+1 mining power for all units";
-                currentEffectText = $"\n(Current bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must research <u>+2 max HP for all units</u> first</b>\n\n";
+                currentEffectText = $"\n(Current HP bonus: +{(level - 1 + modifier)*2})";
+                requirementText = "<b>Must research <u>HP for all units</u> first</b>\n\n";
                 break;
             default:
                 break;    
@@ -107,19 +105,19 @@ public class Technology
         if (currentAmount >= neededAmount || currentAmount < 0) {
             switch (researchId)
             {
-                case ResearchType.ResearchHP:
+                case TechnologyType.ResearchHP:
                     station.researchHP(modifier);
                     break;
-                case ResearchType.ResearchKinetic:
+                case TechnologyType.ResearchKinetic:
                     station.researchKinetic(modifier);
                     break;
-                case ResearchType.ResearchThermal:
+                case TechnologyType.ResearchThermal:
                     station.researchThermal(modifier);
                     break;
-                case ResearchType.ResearchExplosive:
+                case TechnologyType.ResearchExplosive:
                     station.researchExplosive(modifier);
                     break;
-                case ResearchType.ResearchMining:
+                case TechnologyType.ResearchMining:
                     station.researchMining(modifier);
                     break;
                 default:
@@ -144,22 +142,22 @@ public class Technology
     {
         switch (researchId)
         {
-            case ResearchType.ResearchFleetLvl:
-                return level < GameManager.i.MyStation.technology[(int)ResearchType.ResearchStationLvl].level;
-            case ResearchType.ResearchMaxFleets:
-                return level < GameManager.i.MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-            //case ResearchType.ResearchHP:
-            //    canQueue = tech.level < MyStation.technology[(int)ResearchType.ResearchFleetLvl].level;
-            //    break;
-            case ResearchType.ResearchMining:
-                return level < GameManager.i.MyStation.technology[(int)ResearchType.ResearchHP].level;
-            case ResearchType.ResearchKinetic:
-                return level <= GameManager.i.MyStation.technology[(int)ResearchType.ResearchThermal].level;
-            case ResearchType.ResearchThermal:
-                return level <= GameManager.i.MyStation.technology[(int)ResearchType.ResearchExplosive].level;
-            //case ResearchType.ResearchExplosive:
-            //    canQueue = tech.level <= MyStation.technology[(int)ResearchType.ResearchThermal].level;
-            //    break;
+            case TechnologyType.ResearchFleetLvl:
+                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchStationLvl].level;
+            case TechnologyType.ResearchMaxFleets:
+                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchFleetLvl].level;
+            case TechnologyType.ResearchHP:
+                return level < (GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level+
+                    GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level+
+                    GameManager.i.MyStation.technology[(int)TechnologyType.ResearchThermal].level);
+            case TechnologyType.ResearchMining:
+                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchHP].level;
+            case TechnologyType.ResearchKinetic:
+                return level <= GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
+            case TechnologyType.ResearchThermal:
+                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level;
+            case TechnologyType.ResearchExplosive:
+                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchThermal].level;
             default: return true;
         }
     }

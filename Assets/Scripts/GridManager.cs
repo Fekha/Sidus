@@ -216,7 +216,7 @@ public class GridManager : MonoBehaviour
                 spawnY = 1;
                 facing = Direction.Left;
             }
-            stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid);
+            stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
         }
     }
 

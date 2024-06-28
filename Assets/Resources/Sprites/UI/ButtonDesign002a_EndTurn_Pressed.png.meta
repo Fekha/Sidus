@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 551df6a7a49d6d04c94e7910893790e7
+guid: f4285e6ea8d100c4b8cd5fe8c895c072
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3054476879340656723
-    second: 15a_0
+      213: 7369346831378792175
+    second: ButtonDesign002a_EndTurn_Pressed_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -134,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 15a_0
+      name: ButtonDesign002a_EndTurn_Pressed_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 500
-        height: 500
+        width: 59
+        height: 59
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3585eb7d98ea36a20800000000000000
-      internalID: 3054476879340656723
+      spriteID: feebbfe06ed254660800000000000000
+      internalID: 7369346831378792175
       vertices: []
       indices: 
       edges: []
@@ -157,15 +157,14 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      15a_0: 3054476879340656723
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

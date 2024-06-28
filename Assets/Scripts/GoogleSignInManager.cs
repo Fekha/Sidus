@@ -15,7 +15,7 @@ public class GoogleSignInManager : MonoBehaviour
 #if UNITY_EDITOR
         Globals.DebugMode = true;
         //Uncomment to run as exo
-        //PlayerPrefs.SetString("AccountId", "108002382745613062728"); 
+        //PlayerPrefs.SetString("AccountId", "108002382745613062728");
         //PlayerPrefs.Save();
 
         //Uncomment to run as feca

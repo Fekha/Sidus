@@ -140,7 +140,7 @@ public class LoginManager : MonoBehaviour
     public void JoinGame(GameMatch gameMatch)
     {
         loadingPanel.SetActive(true);
-        gameMatch.GameTurns.FirstOrDefault().Players.Add(GetNewPlayer(gameMatch.GameGuid,1));
+        gameMatch.GameTurns.FirstOrDefault().Players.Add(GetNewPlayer(gameMatch.GameGuid, gameMatch.GameTurns.FirstOrDefault().Players.Count()));
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
     }
@@ -173,7 +173,7 @@ public class LoginManager : MonoBehaviour
                     IsStation = false,
                 },
             },
-            Credits = 3,
+            Credits = Constants.StartingCredits,
         };
     }
 

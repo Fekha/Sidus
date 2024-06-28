@@ -31,14 +31,14 @@ public enum ActionType
     [Description("Research Max Fleets")]
     ResearchMaxFleets,
     [Description("Research Mining Power")]
+    ResearchKinetic,
+    [Description("Research HP")]
     ResearchHP,
     [Description("Research Kinetic Power")]
-    ResearchKinetic,
+    ResearchMining,
     [Description("Research Thermal Power")]
     ResearchThermal,
     [Description("Research Explosive Power")]
     ResearchExplosive,
-    [Description("Research HP")]
-    ResearchMining,
 }
 

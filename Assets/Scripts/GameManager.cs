@@ -461,10 +461,15 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
-            var extraBonus = action.selectedUnit.level % 2 == 0 ? "+1 Movement" : "+2 Mining Power";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+1 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
-            //if (action.actionType == ActionType.UpgradeStation)
-            //    message += "\n+1 Credit per turn.";
+            var bonusHp = 3;
+            var bonusPower = 1;
+            var extraBonus = action.selectedUnit.level == 2 ? "+1 Mining Power" : action.selectedUnit.level == 3 ? "+1 Movement" : "";
+            if (action.selectedUnit.level == 4)
+            {
+                bonusHp = 6;
+                bonusPower = 2;
+            }
+            var message = $"{action.selectedUnit.unitName} will gain:\n+{bonusHp} Max HP\n+{bonusPower} Kinetic, Thermal, and Explosive Power\n{extraBonus}";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
@@ -523,16 +528,30 @@ public class GameManager : MonoBehaviour
         {
             DeselectMovement();
             ClearTechnologyObjects();
-            for (int j = 0; j < MyStation.technology.Count; j++)
+            for (int j = 0; j < MyStation.technology.Count-Constants.ShadowTechAmount; j++)
             {
                 int i = j;
+                var techLevel = MyStation.technology[i].level;
+                if (i == (int)TechnologyType.ResearchKinetic)
+                {
+                    techLevel = MyStation.technology[(int)TechnologyType.ResearchKinetic].level 
+                        + MyStation.technology[(int)TechnologyType.ResearchThermal].level 
+                        + MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
+                    if (MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchThermal].level)
+                    {
+                        i = (int)TechnologyType.ResearchThermal;
+                    }else if(MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchExplosive].level)
+                    {
+                        i = (int)TechnologyType.ResearchExplosive;
+                    }
+                }
                 var tech = MyStation.technology[i];
                 var canQueue = tech.GetCanQueueTech();
                 var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
                 TechnologyObjects.Add(techObject);
                 var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
                 techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
-                techObject.transform.Find("AmountNeeded").GetComponent<TextMeshProUGUI>().text = $"{tech.currentAmount}/{tech.neededAmount}";
+                techObject.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = $"{techLevel}";
                 var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
                 researchButton.interactable = canQueue;
                 researchButton.onClick.AddListener(() => Research(i));
@@ -897,12 +916,12 @@ public class GameManager : MonoBehaviour
     {
         var station = GetStationByGuid(unit.playerGuid);
         var currentLevel = unit.level;
-        var maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].level;
-        var maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
+        var maxFleetLvl = station.technology[(int)TechnologyType.ResearchFleetLvl].level;
+        var maxStationLvl = station.technology[(int)TechnologyType.ResearchStationLvl].level;
         if (countQueue) {
             currentLevel += GetStationByGuid(unit.playerGuid).actions.Count(x => x.selectedUnit.unitGuid == unit.unitGuid && x.actionType == actionType);
-            maxFleetLvl = station.technology[(int)ResearchType.ResearchFleetLvl].level;
-            maxStationLvl = station.technology[(int)ResearchType.ResearchStationLvl].level;
+            maxFleetLvl = station.technology[(int)TechnologyType.ResearchFleetLvl].level;
+            maxStationLvl = station.technology[(int)TechnologyType.ResearchStationLvl].level;
         } 
         if (actionType == ActionType.UpgradeFleet)
             return currentLevel <= maxFleetLvl;
@@ -913,11 +932,11 @@ public class GameManager : MonoBehaviour
     private bool IsUnderMaxFleets(Station station, bool countQueue)
     {
         var currentFleets = station.fleets.Count;
-        var maxNumFleets = station.technology[(int)ResearchType.ResearchMaxFleets].level + 1;
+        var maxNumFleets = station.technology[(int)TechnologyType.ResearchMaxFleets].level + 1;
         if (countQueue)
         {
             currentFleets += station.actions.Count(x => x.actionType == ActionType.CreateFleet);
-            maxNumFleets = station.technology[(int)ResearchType.ResearchMaxFleets].level + 1;
+            maxNumFleets = station.technology[(int)TechnologyType.ResearchMaxFleets].level + 1;
         }
         return currentFleets < maxNumFleets;
     }
@@ -1472,7 +1491,7 @@ public class GameManager : MonoBehaviour
         int i = 0;
         do
         {
-            if (i == 1)
+            if (i == 1 && submitTurnPanel.activeInHierarchy)
             {
                 var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
                 customAlertText.text = $"Your orders were transmitted to your units!";
@@ -1897,8 +1916,6 @@ public class GameManager : MonoBehaviour
                     isMoving = true;
                     if (unit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= unit.getMaxMovementRange())
                     {
-                        nextActionButton.SetActive(false);
-                        skipActionsButton.SetActive(false);
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
                         Debug.Log("Moving to position: " + unit.currentPathNode.transform.position);
@@ -2181,38 +2198,32 @@ public class GameManager : MonoBehaviour
     #endregion
     private void LevelUpUnit(Unit unit, int modifier)
     {
-        unit.level += modifier;
+        if (modifier == Constants.Remove)
+            unit.level--;
         unit.maxAttachedModules += modifier;
         unit.maxAttachedModules = Mathf.Min(unit.maxAttachedModules, Constants.MaxModules);
         unit.maxAttachedModules = Mathf.Max(unit.maxAttachedModules, Constants.MinModules);
-        if (modifier == 1)
+        if (unit.level == 1)
         {
-            if (unit.level % 2 == 0)
-            {
-                unit.maxMovement += modifier;
-                unit.movementLeft += modifier;
-            }
-            if (unit.level % 2 != 0)
-            {
-                unit.IncreaseMaxMining(2 * modifier);
-            }
+            unit.IncreaseMaxMining(1 * modifier);
         }
-        else
+        else if (unit.level == 2)
         {
-            if (unit.level % 2 == 0)
-            {
-                unit.IncreaseMaxMining(2 * modifier);
-            }
-            if (unit.level % 2 != 0)
-            {
-                unit.maxMovement += modifier;
-                unit.movementLeft += modifier;
-            }
+            unit.IncreaseMaxMovement(1 * modifier);
+        }
+        else if (unit.level == 3)
+        {
+            unit.IncreaseMaxHP(3 * modifier);
+            unit.kineticPower += modifier;
+            unit.explosivePower += modifier;
+            unit.thermalPower += modifier;
         }
         unit.IncreaseMaxHP(3 * modifier);
         unit.kineticPower += modifier;
         unit.explosivePower += modifier;
         unit.thermalPower += modifier;
+        if (modifier == Constants.Create)
+            unit.level++;
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
         if (unit is Station)
         {
@@ -2222,6 +2233,7 @@ public class GameManager : MonoBehaviour
         {
             spriteRenderer.sprite = GridManager.i.fleetSprites[(int)unit.playerColor, unit.level-1];
         }
+        
     }
     public void RepairFleet()
     {
