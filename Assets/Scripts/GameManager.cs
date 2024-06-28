@@ -1315,7 +1315,7 @@ public class GameManager : MonoBehaviour
                 unitMoving.currentPathNode.unitOnPath = null;
                 Destroy(unitMoving.gameObject);
             }
-            GetStationByGuid(unitOnPath.playerGuid).modules.AddRange(unitOnPath.attachedModules);
+            GetStationByGuid(unitOnPath.playerGuid).modules.AddRange(unitOnPath.attachedModules.Where(x => x.moduleId != 50));
             AllUnits.Remove(unitOnPath);
             node.unitOnPath = null;
             if (unitOnPath is Fleet)
