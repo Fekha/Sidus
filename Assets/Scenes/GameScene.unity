@@ -21280,7 +21280,7 @@ MonoBehaviour:
     Leveling up:
 
     Each level up provides
-    +3 Max HP and +1 of each combat stat. At level 2 you will also gain +1 mining
+    +5 Max HP and +2 of each combat stat. At level 2 you will also gain +1 mining
     Power. Level 3 will gain +1 movement. Level 4 will gain double the normal combat
     and max HP bonus.
 

@@ -15,6 +15,6 @@ public static class Constants{
     internal static int SpyModule = 49;
     internal static int Create = 1;
     internal static int Remove = -1;
-    internal static int StartingCredits = 4;
+    internal static int StartingCredits = 5;
     internal static float MovementSpeed = .8f;
 }

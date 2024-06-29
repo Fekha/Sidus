@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
         MatchName.text = $"{Globals.GameMatch.GameGuid.ToString().Substring(0, 6)}";
         TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
         ColorText.text = $"{Globals.Account.Username}";
-        UpdateColors(GridManager.i.playerColors[(int)MyStation.playerColor]); 
+        UpdateColors((int)MyStation.playerColor); 
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
@@ -181,18 +181,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void UpdateColors(Color playerColor)
+    private void UpdateColors(int playerId)
     {
+        Color playerColor = GridManager.i.playerColors[playerId];
+        Color uiColor = GridManager.i.uiColors[playerId];
         ColorText.color = playerColor;
-        canvas.Find("UnlockInfoPanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("TurnArchivePanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("CustomAlertPanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("ExitPanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("ForfeitPanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("SubmitTurnPanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("AreYouSurePanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("HelpPanel/Background").GetComponent<Image>().color = playerColor;
-        canvas.Find("TurnLabel").GetComponent<Image>().color = playerColor;
+        canvas.Find("UnlockInfoPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("CustomAlertPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("ExitPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("ForfeitPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("SubmitTurnPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("AreYouSurePanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("HelpPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("TurnLabel").GetComponent<Image>().color = uiColor;
+        canvas.Find("ActionPanel/ModulePanel").GetComponent<Image>().color = uiColor;
+        canvas.Find("UnitPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("MarketPanel/MarketBar").GetComponent<Image>().color = uiColor;
+        canvas.Find("Technology/TechBar").GetComponent<Image>().color = uiColor;
+        canvas.Find("SelectModulePanel/SelectedModuleGrid").GetComponent<Image>().color = uiColor;
+        canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = uiColor;
+        canvas.Find("TurnArchivePanel/Background/Foreground").GetComponent<Image>().color = uiColor;
     }
 
     private IEnumerator GetIsTurnReady()
@@ -306,6 +314,7 @@ public class GameManager : MonoBehaviour
             ThermalValueText.text = $"{thermalPower}";
             ExplosiveValueText.text = $"{explosivePower}";
         }
+        infoPanel.transform.Find("Background").GetComponent<Image>().color = GridManager.i.uiColors[(int)unit.playerColor];
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
         upgradeButton.interactable = true;
         upgradeButton.gameObject.SetActive(false);
@@ -461,19 +470,20 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
-            var bonusHp = 3;
-            var bonusPower = 1;
+            var bonusHp = 5;
+            var bonusPower = 2;
             var extraBonus = action.selectedUnit.level == 2 ? "+1 Mining Power" : action.selectedUnit.level == 3 ? "+1 Movement" : "";
             if (action.selectedUnit.level == 4)
             {
-                bonusHp = 6;
-                bonusPower = 2;
+                bonusHp *= 2;
+                bonusPower *= 2;
             }
             var message = $"{action.selectedUnit.unitName} will gain:\n+{bonusHp} Max HP\n+{bonusPower} Kinetic, Thermal, and Explosive Power\n{extraBonus}";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
         {
+            canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = GridManager.i.uiColors[(int)MyStation.playerColor];
             SetModuleInfo(AllModules.FirstOrDefault(x => x.moduleGuid == action.selectedModuleGuid));
         }
         else if (TechActions.Contains(action.actionType))
@@ -575,6 +585,7 @@ public class GameManager : MonoBehaviour
         moduleMarket.SetActive(active);
         if (active)
         {
+            canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = GridManager.i.uiColors[4];
             DeselectMovement();
             ClearAuctionObjects();
             for(int j = 0; j < AuctionModules.Count; j++)
@@ -2213,15 +2224,15 @@ public class GameManager : MonoBehaviour
         }
         else if (unit.level == 3)
         {
-            unit.IncreaseMaxHP(3 * modifier);
-            unit.kineticPower += modifier;
-            unit.explosivePower += modifier;
-            unit.thermalPower += modifier;
+            unit.IncreaseMaxHP(5 * modifier);
+            unit.kineticPower += (2 * modifier);
+            unit.explosivePower += (2 * modifier);
+            unit.thermalPower += (2 * modifier);
         }
-        unit.IncreaseMaxHP(3 * modifier);
-        unit.kineticPower += modifier;
-        unit.explosivePower += modifier;
-        unit.thermalPower += modifier;
+        unit.IncreaseMaxHP(5 * modifier);
+        unit.kineticPower += (2 * modifier);
+        unit.explosivePower += (2 * modifier);
+        unit.thermalPower += (2 * modifier);
         if (modifier == Constants.Create)
             unit.level++;
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
@@ -2322,6 +2333,7 @@ public class GameManager : MonoBehaviour
     }
     private void SetModuleBar(Unit unit)
     {
+        canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = GridManager.i.uiColors[(int)unit.playerColor];
         for (int i = 0; i < Constants.MaxModules; i++)
         {
             UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
