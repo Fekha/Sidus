@@ -7,7 +7,7 @@ public static class Constants{
     internal static int ShadowTechAmount = 2;
     internal static int MinTech = 11;
     internal static int MaxTech = MinTech+TechAmount;
-    internal static int GridSize = 9;
+    internal static int GridSize = 10;
     internal static int MaxActions = 5;
     internal static int MaxPlayers = 4;
     internal static int MaxModules = 4;

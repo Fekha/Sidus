@@ -36,7 +36,7 @@ public class GridManager : MonoBehaviour
         //Blue, Red, Purple, Orange,
         playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0, 1), new Color(.776f, 0, 1, 1), new Color(1, 0.5f, 0, 1), };
         tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), };
-        uiColors = new List<Color>() { new Color(0.2824255f, .3930371f, .5283019f, 1), new Color(0.3396226f, 0.09825558f, 0.1029435f, 1), new Color(0.1921593f, 0.1135635f, 0.3113208f, 1), new Color(0.63f, 0.2878966f, 0.09012694f, 1), new Color(0.3773585f, 0.3773585f, 0.3773585f, 1), };
+        uiColors = new List<Color>() { new Color(0.2824255f, .3930371f, .5283019f, 1), new Color(0.3396226f, 0.09825558f, 0.1029435f, 1), new Color(0.1921593f, 0.1135635f, 0.3113208f, 1), new Color(0.545f, 0.2878966f, 0.106f, 1), new Color(0.3773585f, 0.3773585f, 0.3773585f, 1), };
         fleetSprites = new Sprite[4, 4];
         stationSprites = new Sprite[4, 4];
 
@@ -117,15 +117,17 @@ public class GridManager : MonoBehaviour
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
         List<Coords> asteroids = new List<Coords>()
         {
-            new Coords(1, 0), new Coords(1, 1), new Coords(0, 4), new Coords(1, 7),
-            new Coords(2, 7), new Coords(3, 5), new Coords(3, 4), new Coords(3, 3),
-            new Coords(6, 8), new Coords(7, 7), new Coords(6, 5), new Coords(5, 4),
-            new Coords(6, 3), new Coords(6, 1), new Coords(7, 1), new Coords(8, 4)
+            new Coords(1, 0), new Coords(1, 1), new Coords(0, 5), new Coords(3, 8),
+            new Coords(4, 8), new Coords(3, 5), new Coords(3, 4), new Coords(3, 3),
+            new Coords(8, 9), new Coords(8, 8), new Coords(6, 6), new Coords(6, 5),
+            new Coords(6, 4), new Coords(6, 1),new Coords(6, 2), new Coords(5, 1), 
+            new Coords(9, 4), new Coords(3, 7), new Coords(8, 1), new Coords(1, 8),
         };
         List<Coords> rifts = new List<Coords>()
         {
-            new Coords(0, 8), new Coords(1, 6), new Coords(1, 5), new Coords(4, 4),
-            new Coords(8, 3), new Coords(7, 2), new Coords(8, 0)
+            new Coords(0, 9), new Coords(1, 6), new Coords(6, 8), new Coords(3, 1),
+            new Coords(1, 5), new Coords(4, 4), new Coords(8, 4), new Coords(8, 3), 
+            new Coords(5, 5), new Coords(9, 0)
         }; 
         for (int x = 0; x < gridSize.x; x++)
         {
@@ -202,20 +204,20 @@ public class GridManager : MonoBehaviour
             Direction facing = Direction.Left;
             if (stationColor == 1)
             {
-                spawnX = 6;
-                spawnY = 4;
+                spawnX = 7;
+                spawnY = 5;
                 facing = Direction.Right;
             }
             else if (stationColor == 2)
             {
-                spawnX = 3;
+                spawnX = 4;
                 spawnY = 7;
                 facing = Direction.Right;
             }
             else if (stationColor == 3)
             {
                 spawnX = 5;
-                spawnY = 1;
+                spawnY = 2;
                 facing = Direction.Left;
             }
             stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid, serverPlayer?.Credits ?? Constants.StartingCredits);

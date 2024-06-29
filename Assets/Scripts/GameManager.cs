@@ -371,11 +371,11 @@ public class GameManager : MonoBehaviour
                         targetUnit = targetNode.unitOnPath;
                     }
                     //Original click on unit
-                    if (SelectedUnit == null && targetUnit != null && targetUnit.playerGuid == MyStation.playerGuid)
+                    if (SelectedUnit == null && targetUnit != null)
                     {
                         SelectedUnit = targetUnit;
                         SetUnitTextValues(SelectedUnit);
-                        if (HasQueuedMovement(SelectedUnit))
+                        if (SelectedUnit.playerGuid == MyStation.playerGuid && HasQueuedMovement(SelectedUnit))
                         {
                             HighlightQueuedMovement(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == SelectedUnit.unitGuid));
                         }
@@ -386,12 +386,12 @@ public class GameManager : MonoBehaviour
                         }
                     }
                     //Double click confirm to movement early
-                    else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && !HasQueuedMovement(SelectedUnit))
+                    else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && SelectedUnit.playerGuid == MyStation.playerGuid && !HasQueuedMovement(SelectedUnit))
                     {
                         QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     }
                     //Create Movement
-                    else if (SelectedUnit != null && targetNode != null && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
+                    else if (SelectedUnit != null && targetNode != null && SelectedUnit.playerGuid == MyStation.playerGuid && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
                     {
                         SelectedNode = targetNode;
                         if (SelectedPath == null || SelectedPath.Count == 0)

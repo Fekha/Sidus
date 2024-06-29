@@ -48,12 +48,12 @@ public class GoogleSignInManager : MonoBehaviour
         Debug.Log(user["name"]);
         Debug.Log(user["email"]);
         Debug.Log(user["sub"]);
-        if (user.ContainsKey("sub") && user.ContainsKey("name")&& user.ContainsKey("email"))
+        if (user.ContainsKey("sub") && user.ContainsKey("name") && user.ContainsKey("email"))
         {
             Globals.Account = new Account()
             {
                 AccountId = user["sub"],
-                Username = user["name"],
+                Username = user["name"].Split(' ')[0],
                 Email = user["email"],
             };
             try
@@ -107,6 +107,7 @@ public class GoogleSignInManager : MonoBehaviour
         if(account != null)
         {
             Globals.Account = account;
+            account.Username = account.Username.Split(' ')[0];
             SceneManager.LoadScene((int)Scene.Lobby);
         }
         else
