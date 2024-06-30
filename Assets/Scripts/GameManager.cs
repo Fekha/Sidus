@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     public GameObject nextActionButton;
     public GameObject skipActionsButton;
     private Image moduleInfoIcon;
-
+    public AudioSource turnDing;
     internal List<ActionType> TechActions = new List<ActionType>();
     internal List<Unit> AllUnits = new List<Unit>();
     internal List<Module> AllModules = new List<Module>();
@@ -162,6 +162,7 @@ public class GameManager : MonoBehaviour
         {
             BuildTurnObjects();
             previousTurnButton.interactable = true;
+            yield return StartCoroutine(DoEndTurn());
         }
         if (Winner == Guid.Empty)
         {
@@ -211,6 +212,7 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={searchType}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
                 if (Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.TurnIsOver ?? false)
                 {
+                    //turnDing.Play();
                     yield return StartCoroutine(DoEndTurn());
                 }
                 yield return new WaitForSeconds(.5f);
@@ -2147,6 +2149,7 @@ public class GameManager : MonoBehaviour
         BuildTurnObjects();
         ResetAfterSelection();
         isEndingTurn = false;
+        customAlertPanel.SetActive(false);
         if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null); }
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
