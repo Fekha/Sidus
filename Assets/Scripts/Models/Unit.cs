@@ -88,7 +88,12 @@ public class Unit : Node
         globalCreditGain = unit.GlobalCreditGain;
         maxAttachedModules = unit.MaxAttachedModules;
         attachedModules = GameManager.i.AllModules.Where(x => unit.AttachedModules.Contains(x.moduleGuid.ToString())).ToList();
-        moduleEffects = unit.ModuleEffects.Select(x => (ModuleEffect)x).ToList();
+        if (!String.IsNullOrEmpty(unit.ModuleEffects))
+        {
+            var moduleEffectList = unit.ModuleEffects.Split(",");
+            if (moduleEffectList.Any())
+                moduleEffects = moduleEffectList.Select(x => (ModuleEffect)int.Parse(x)).ToList();
+        }
         GetUIComponents();
     }
     private void GetUIComponents()

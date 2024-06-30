@@ -254,6 +254,7 @@ public class LoginManager : MonoBehaviour
             PlayerPrefs.Save();
             SceneManager.LoadScene((int)Scene.Game);
         } else {
+            loadingPanel.SetActive(false);
             UpdateWaitingText();
         }
     }
