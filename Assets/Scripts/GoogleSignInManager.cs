@@ -59,7 +59,7 @@ public class GoogleSignInManager : MonoBehaviour
             try
             {
                 var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(Globals.Account);
-                StartCoroutine(sql.PostRoutine<Guid>($"Login/CreateAccount", stringToPost, AccountCreated));
+                StartCoroutine(sql.PostRoutine<Guid>($"Login/CreateAccount?clientVersion={Constants.ClientVersion}", stringToPost, AccountCreated));
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ public class GoogleSignInManager : MonoBehaviour
         var accountId = PlayerPrefs.GetString("AccountId");
         if (!String.IsNullOrEmpty(accountId))
         {
-            StartCoroutine(sql.GetRoutine<Account>($"Login/GetAccount?accountId={accountId}", SetAccount));
+            StartCoroutine(sql.GetRoutine<Account>($"Login/GetAccount?accountId={accountId}&clientVersion={Constants.ClientVersion}", SetAccount));
         }
         else
         {

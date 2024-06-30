@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 
 public static class Constants{
+    internal static int ClientVersion = 0;
     internal static int TechAmount = 8;
     internal static int ShadowTechAmount = 2;
     internal static int MinTech = 11;

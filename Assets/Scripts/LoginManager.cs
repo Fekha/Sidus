@@ -78,7 +78,7 @@ public class LoginManager : MonoBehaviour
             HealthCheck = DateTime.Now 
         };
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
-        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/CreateGame", stringToPost, SetMatchGuid));
+        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/CreateGame?clientVersion={Constants.ClientVersion}", stringToPost, SetMatchGuid));
     }
     public void ViewOpenGames(bool active)
     {
@@ -125,24 +125,24 @@ public class LoginManager : MonoBehaviour
     }
     public void FindGames()
     {
-        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames", GetAllMatches));
+        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames?clientVersion={Constants.ClientVersion}", GetAllMatches));
     }
     public void FindActiveGames()
     {
-        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames?playerGuid={Globals.Account.PlayerGuid}", GetActiveMatches));
+        StartCoroutine(sql.GetRoutine<List<GameMatch>>($"Game/FindGames?clientVersion={Constants.ClientVersion}&playerGuid={Globals.Account.PlayerGuid}", GetActiveMatches));
     }
     public void JoinActiveGame(GameMatch gameMatch)
     {
         loadingPanel.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
-        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
+        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame?clientVersion={Constants.ClientVersion}", stringToPost, SetMatchGuid));
     }
     public void JoinGame(GameMatch gameMatch)
     {
         loadingPanel.SetActive(true);
         gameMatch.GameTurns.FirstOrDefault().Players.Add(GetNewPlayer(gameMatch.GameGuid, gameMatch.GameTurns.FirstOrDefault().Players.Count()));
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
-        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame", stringToPost, SetMatchGuid));
+        StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame?clientVersion={Constants.ClientVersion}", stringToPost, SetMatchGuid));
     }
     private GamePlayer GetNewPlayer(Guid gameGuid, int playerId)
     {
@@ -235,7 +235,7 @@ public class LoginManager : MonoBehaviour
     {
         while (PlayersNeeded() != 0)
         {
-            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber=0", UpdateGameStatus));
+            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber=0&searchType={(int)SearchType.lobbySearch}&clientVersion={Constants.ClientVersion}", UpdateGameStatus));
         }
     }
 

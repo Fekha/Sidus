@@ -120,8 +120,6 @@ public class GameManager : MonoBehaviour
     internal int TurnNumber = 0;
     private bool infoToggle = false;
     private int helpPageNumber = 0;
-    private bool isWaitingForTurns = false;
-    private bool SubmittedTurn = false;
     private List<Action> lastSubmittedTurn = new List<Action>();
     List<Tuple<string,string>> turnArchive = new List<Tuple<string, string>>();
     //Got game icons from https://game-icons.net/
@@ -164,7 +162,6 @@ public class GameManager : MonoBehaviour
         {
             BuildTurnObjects();
             previousTurnButton.interactable = true;
-            yield return StartCoroutine(DoEndTurn());
         }
         if (Winner == Guid.Empty)
         {
@@ -175,10 +172,10 @@ public class GameManager : MonoBehaviour
                     QueueAction(new Action(serverAction), true);
                 }
                 lastSubmittedTurn = MyStation.actions;
-                yield return StartCoroutine(CheckEndTurn());
             }
-            StartCoroutine(GetIsTurnReady());
         }
+        //Make shift update loop that I can control the speed of
+        StartCoroutine(GetIsTurnReady());
     }
 
     private void UpdateColors(int playerId)
@@ -205,14 +202,19 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GetIsTurnReady()
     {
-        //while not Practice game
-        while (Globals.GameMatch.MaxPlayers > 1)
+        while (Winner == Guid.Empty)
         {
+            int i = 0; 
             while (!isEndingTurn && TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
             {
-                yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/HasTakenTurn?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}", UpdateGameTurnStatus));
-                if(!skipTurn)
-                    yield return new WaitForSeconds(.5f);
+                int searchType = (int)(i == 0 ? SearchType.quickSearch : SearchType.gameSearch);
+                yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={searchType}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
+                if (Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.TurnIsOver ?? false)
+                {
+                    yield return StartCoroutine(DoEndTurn());
+                }
+                yield return new WaitForSeconds(.5f);
+                i++;
             }
             yield return new WaitForSeconds(1f);
         }
@@ -1496,24 +1498,6 @@ public class GameManager : MonoBehaviour
             currentMovementRange.Add(rangeComponent);
         }
     }
-    private IEnumerator GetTurnsFromServer()
-    {
-        isWaitingForTurns = true;
-        int i = 0;
-        do
-        {
-            if (i == 1 && submitTurnPanel.activeInHierarchy)
-            {
-                var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-                customAlertText.text = $"Your orders were transmitted to your units!";
-                customAlertPanel.SetActive(true);
-                submitTurnPanel.SetActive(false);
-            }
-            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&quickSearch={i == 0}", UpdateCurrentTurn));
-            i++;
-        }
-        while (Globals.GameMatch.GameTurns.LastOrDefault().TurnNumber < TurnNumber || Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber).Players.Count() < Globals.GameMatch.MaxPlayers);
-    }
 
     private void UpdateCurrentTurn(GameTurn turn)
     {
@@ -1640,46 +1624,17 @@ public class GameManager : MonoBehaviour
     private IEnumerator SubmitEndTurn(GameTurn gameTurn)
     {
         submitTurnPanel.SetActive(true);
-        TurnOrderObjects[(TurnNumber - 1 + (int)MyStation.playerColor) % Stations.Count].transform.Find("ReadyState").gameObject.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
-        yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn", stringToPost, SubmitResponse));
-        if (SubmittedTurn)
-        {
-            yield return StartCoroutine(CheckEndTurn());
-        }
-        else
-        {
-            customAlertText.text = $"Your orders were NOT transmitted successfully. \n\n Please try again.";
-            customAlertPanel.SetActive(true);
-            submitTurnPanel.SetActive(false);
-        }
-    }
-
-    private IEnumerator CheckEndTurn()
-    {
-        SubmittedTurn = false;
-        endTurnButton.sprite = endTurnButtonPressed;
-        if (!isWaitingForTurns)
-        {
-            yield return StartCoroutine(GetTurnsFromServer());
-            yield return StartCoroutine(DoEndTurn());
-        }
-        else
-        {
-            var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
-            customAlertText.text = $"Your new orders were transmitted to your units in time to replace your previous ones.";
-            customAlertPanel.SetActive(true);
-            submitTurnPanel.SetActive(false);
-        }
+        yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn?clientVersion={Constants.ClientVersion}", stringToPost, SubmitResponse));
     }
 
     private IEnumerator DoEndTurn()
     {
+        isEndingTurn = true;
         customAlertPanel.SetActive(false); 
         submitTurnPanel.SetActive(false);
         infoToggle = true;
         ToggleAll();
-        isEndingTurn = true;
         turnValue.text = $"Turn #{TurnNumber} Complete!";
         for(int i=0;i<Stations.Count;i++)
         {
@@ -1687,7 +1642,6 @@ public class GameManager : MonoBehaviour
         }
         turnLabel.SetActive(true);
         yield return StartCoroutine(WaitforSecondsOrTap(1));
-        isWaitingForTurns = false;
         var turnsFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
         if (turnsFromServer != null)
         {
@@ -1725,7 +1679,7 @@ public class GameManager : MonoBehaviour
                 }
                 Winner = GridManager.i.CheckForWin();
             }
-            yield return StartCoroutine(sql.GetRoutine<Guid>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}", GetWinner));
+            yield return StartCoroutine(sql.GetRoutine<Guid>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}&clientVersion={Constants.ClientVersion}", GetWinner));
         }
     }
 
@@ -1851,7 +1805,20 @@ public class GameManager : MonoBehaviour
 
     private void SubmitResponse(bool response)
     {
-        SubmittedTurn = response;
+        if (response)
+        {
+            endTurnButton.sprite = endTurnButtonPressed;
+            var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
+            customAlertText.text = $"Your orders were successfully transmitted to your units!";
+            customAlertPanel.SetActive(true);
+            submitTurnPanel.SetActive(false);
+        }
+        else
+        {
+            customAlertText.text = $"Your orders were NOT transmitted to your units.\n\n Please try again.";
+            customAlertPanel.SetActive(true);
+            submitTurnPanel.SetActive(false);
+        }
     }
     public void ExitToLobby()
     {
@@ -1879,7 +1846,7 @@ public class GameManager : MonoBehaviour
         }
         else if (exitOption == 3)
         {
-            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).playerGuid}"));
+            StartCoroutine(sql.GetRoutine<int>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Stations.LastOrDefault(x => x.teamId != MyStation.teamId).playerGuid}&clientVersion={Constants.ClientVersion}"));
             loadingPanel.SetActive(true);
             EndTurn(true);
             ExitToLobby();
@@ -2174,12 +2141,13 @@ public class GameManager : MonoBehaviour
         turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
-        BuildTurnObjects();
         infoToggle = false;
         ViewModuleMarket(false);
         ViewTechnology(false);
+        BuildTurnObjects();
         ResetAfterSelection();
         isEndingTurn = false;
+        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null); }
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
 
@@ -2204,7 +2172,6 @@ public class GameManager : MonoBehaviour
             //orderObj.transform.Find("CreditText").GetComponent<TextMeshProUGUI>().color = playerColor;
             TurnOrderObjects.Add(orderObj);
         }
-        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null); }
     }
     #endregion
     private void LevelUpUnit(Unit unit, int modifier)
