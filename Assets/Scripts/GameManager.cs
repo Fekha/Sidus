@@ -1545,6 +1545,14 @@ public class GameManager : MonoBehaviour
     {
        hamburgerButton.GetComponent<Animator>().SetTrigger("Toggle");
     }
+
+    public void CloseBurger()
+    {
+        hamburgerButton.GetComponent<Animator>().SetTrigger("Close");
+    }
+
+
+    
 #region Complete Turn
     public void EndTurn(bool theyAreSure)
     {

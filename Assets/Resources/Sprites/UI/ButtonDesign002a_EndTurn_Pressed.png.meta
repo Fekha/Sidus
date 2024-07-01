@@ -164,7 +164,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      ButtonDesign002a_EndTurn_Pressed_0: 7369346831378792175
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
