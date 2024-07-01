@@ -1549,6 +1549,8 @@ public class GameManager : MonoBehaviour
     public void CloseBurger()
     {
         hamburgerButton.GetComponent<Animator>().SetTrigger("Close");
+    
+
     }
 
 
