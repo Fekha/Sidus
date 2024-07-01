@@ -135,6 +135,7 @@ public class GameManager : MonoBehaviour
 #endif
         loadingPanel.SetActive(true);
         audioToggleOn = PlayerPrefs.GetString("AudioOn") != "False";
+        
     }
     void Start()
     { 
@@ -1545,6 +1546,15 @@ public class GameManager : MonoBehaviour
     {
        hamburgerButton.GetComponent<Animator>().SetTrigger("Toggle");
     }
+
+    public void CloseBurger()
+    {
+        Debug.Log("Close the burger");
+        hamburgerButton.GetComponent<Animator>().SetTrigger("Close");
+    }
+
+
+    
 #region Complete Turn
     public void EndTurn(bool theyAreSure)
     {
@@ -1624,6 +1634,7 @@ public class GameManager : MonoBehaviour
             else
             {
                 ShowAreYouSurePanel(true);
+                CloseBurger(); //for testing
             }
         }
     }
