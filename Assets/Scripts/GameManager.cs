@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI MatchName;
     public TextMeshProUGUI TurnNumberText;
 
+    public Image Audio;
     public GameObject nextActionButton;
     public GameObject skipActionsButton;
     private Image moduleInfoIcon;
@@ -119,6 +120,7 @@ public class GameManager : MonoBehaviour
     private SqlManager sql;
     internal int TurnNumber = 0;
     private bool infoToggle = false;
+    private bool audioToggleOn = true;
     private int helpPageNumber = 0;
     private List<Action> lastSubmittedTurn = new List<Action>();
     List<Tuple<string,string>> turnArchive = new List<Tuple<string, string>>();
@@ -132,6 +134,7 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene((int)Scene.Login);
 #endif
         loadingPanel.SetActive(true);
+        audioToggleOn = PlayerPrefs.GetString("AudioOn") != "False";
     }
     void Start()
     { 
@@ -212,7 +215,8 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={searchType}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
                 if (Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.TurnIsOver ?? false)
                 {
-                    //turnDing.Play();
+                    if(audioToggleOn)
+                        turnDing.Play();
                     yield return StartCoroutine(DoEndTurn());
                 }
                 yield return new WaitForSeconds(.5f);
@@ -270,6 +274,7 @@ public class GameManager : MonoBehaviour
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
         customAlertText = customAlertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
+        Audio.sprite = audioToggleOn ? Resources.Load<Sprite>("Sprites/UI/soundOff") : Resources.Load<Sprite>("Sprites/UI/soundOn");
     }
     public void SetUnitTextValues(Unit unit)
     {
@@ -2361,5 +2366,13 @@ public class GameManager : MonoBehaviour
     public void SkipTurns()
     {
         skipTurn = true;
+    }
+
+    public void ToggleAudio()
+    {
+        audioToggleOn = !audioToggleOn;
+        PlayerPrefs.SetString("AudioOn", $"{audioToggleOn}");
+        PlayerPrefs.Save();
+        Audio.sprite = audioToggleOn ? Resources.Load<Sprite>("Sprites/UI/soundOff") : Resources.Load<Sprite>("Sprites/UI/soundOn");
     }
 }

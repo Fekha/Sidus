@@ -77,7 +77,6 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-
     }
     void Start()
     {
@@ -89,7 +88,7 @@ public class GridManager : MonoBehaviour
             GameManager.i.AllModules = currentGameTurn.AllModules.Select(x => new Module(x)).ToList();
         }
         CreateGrid(currentGameTurn);
-        characterParent = GameObject.Find("Characters").transform;
+        characterParent = GameObject.Find("Nodes/Characters").transform;
         if (Globals.GameMatch.MaxPlayers == 1)
         {
             for (int i = 0; i < Constants.MaxPlayers; i++)

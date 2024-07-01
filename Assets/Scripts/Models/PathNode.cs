@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PathNode : MonoBehaviour
 {
@@ -29,7 +30,43 @@ public class PathNode : MonoBehaviour
     public Coords[] offSet { get { return isEvenCol ? evenOffsets : oddOffsets; } }
 
     public bool isAsteroid { get { return minerals > 0; } }
+    private bool isDragging = false;
+    private Vector3 offset;
+    private Transform parentTransform;
+    private Vector3 originalPosition;
 
+    void Start()
+    {
+        parentTransform = transform.parent;
+        originalPosition = transform.parent.position;
+    }
+
+    void OnMouseDown()
+    {
+        // Calculate the offset between the mouse position and the GameObject position
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = parentTransform.position.z; // Keep the Z position constant
+        offset = parentTransform.position - mousePosition;
+        //isDragging = true; //Uncomment out when ready to drag
+    }
+
+    void OnMouseDrag()
+    {
+        if (isDragging)
+        {
+            // Get the current mouse position
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = parentTransform.position.z; // Keep the Z position constant
+            // Set the new position of the parent GameObject
+            parentTransform.position = mousePosition + offset;
+        }
+    }
+
+    void OnMouseUp()
+    {
+        isDragging = false;
+        parentTransform.position = originalPosition;
+    }
     public void InitializeNode(int _x, int _y, int _minerals, int _maxCredits, int _creditRegin, bool _isRift)
     {
         isRift = _isRift;
