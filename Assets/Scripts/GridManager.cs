@@ -150,9 +150,9 @@ public class GridManager : MonoBehaviour
                     bool isRift = false;
                     if (asteroids.Any(x => x.CoordsEquals(coords)))
                     {
-                        startCredits = 4;
-                        maxCredits = 12;
-                        creditRegin = 1;
+                        startCredits = 2+Globals.GameMatch.MaxPlayers;
+                        maxCredits = 8+(Globals.GameMatch.MaxPlayers*2);
+                        creditRegin = (Globals.GameMatch.MaxPlayers==4?2:1);
                     }
                     else if (rift != null)
                     {

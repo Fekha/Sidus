@@ -41,7 +41,41 @@ public class PathNode : MonoBehaviour
     {
         parentTransform = transform.parent;
     }
+    public void InitializeNode(int _x, int _y, int _minerals, int _maxCredits, int _creditRegin, bool _isRift)
+    {
+        isRift = _isRift;
+        maxCredits = _maxCredits;
+        minerals = _minerals;
+        creditRegin = _creditRegin;
+        actualCoords = new Coords(_x, _y);
+        GetUIComponents();
+    }
 
+    public void InitializeNode(ServerNode node)
+    {
+        isRift = node.IsRift;
+        maxCredits = node.MaxCredits;
+        minerals = node.Minerals;
+        creditRegin = node.CreditRegin;
+        actualCoords = new Coords(node.X, node.Y);
+        ownedByGuid = node.OwnedByGuid;
+        GetUIComponents();
+    }
+
+    private void GetUIComponents()
+    {
+        minedAsteriodSprite = transform.Find("MinedAsteroid").GetComponent<SpriteRenderer>();
+        minedAsteriodSprite.gameObject.SetActive(false);
+        asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
+        asteriodSprite.gameObject.SetActive(isAsteroid);
+        mineIcon = transform.Find("Asteroid/Mine").gameObject;
+        mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
+        coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
+        coordsText.text = $"{actualCoords.x},{actualCoords.y}";
+        SetNodeColor(ownedByGuid);
+        //coordsText.gameObject.SetActive(true); //Helpful for debugging
+        GridManager.i.AllNodes.Add(this);
+    }
     void OnMouseDown()
     {
         if (!GameManager.i.isEndingTurn)
@@ -106,41 +140,6 @@ public class PathNode : MonoBehaviour
             if (unitOnPath != null)
                 unitOnPath.transform.position = newPostion;
         }
-    }
-    public void InitializeNode(int _x, int _y, int _minerals, int _maxCredits, int _creditRegin, bool _isRift)
-    {
-        isRift = _isRift;
-        maxCredits = _maxCredits;
-        minerals = _minerals;
-        creditRegin = _creditRegin;
-        actualCoords = new Coords(_x, _y);
-        GetUIComponents();
-    }
-
-    public void InitializeNode(ServerNode node)
-    {
-        isRift = node.IsRift;
-        maxCredits = node.MaxCredits;
-        minerals = node.Minerals;
-        creditRegin = node.CreditRegin;
-        actualCoords = new Coords(node.X,node.Y);
-        ownedByGuid = node.OwnedByGuid;
-        GetUIComponents();
-    }
-
-    private void GetUIComponents()
-    {
-        minedAsteriodSprite = transform.Find("MinedAsteroid").GetComponent<SpriteRenderer>();
-        minedAsteriodSprite.gameObject.SetActive(false);
-        asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
-        asteriodSprite.gameObject.SetActive(isAsteroid);
-        mineIcon = transform.Find("Asteroid/Mine").gameObject;
-        mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
-        coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
-        coordsText.text = $"{actualCoords.x},{actualCoords.y}";
-        SetNodeColor(ownedByGuid);
-        //coordsText.gameObject.SetActive(true); //Helpful for debugging
-        GridManager.i.AllNodes.Add(this);
     }
 
     public ServerNode ToServerNode()
