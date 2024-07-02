@@ -1635,7 +1635,6 @@ public class GameManager : MonoBehaviour
             else
             {
                 ShowAreYouSurePanel(true);
-                CloseBurger(); //for testing
             }
         }
     }
