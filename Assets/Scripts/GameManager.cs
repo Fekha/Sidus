@@ -1240,8 +1240,9 @@ public class GameManager : MonoBehaviour
     {
         float elapsedTime = 0f;
         var startPos = unitMoving.transform.position;
+        bool edgeOfMap = Math.Abs(startPos.x - endPos.x) > 5f || Math.Abs(startPos.y - endPos.y) > 5f;
         // Move to final position
-        while (elapsedTime <= totalTime && !tapped && !skipTurn)
+        while (elapsedTime <= totalTime && !tapped && !skipTurn && !edgeOfMap)
         {
             if(toRot != null)
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, (Quaternion)toRot, elapsedTime / totalTime);
@@ -1649,6 +1650,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator DoEndTurn()
     {
         isEndingTurn = true;
+        AllUnits.ForEach(x => x.trail.enabled = true);
         customAlertPanel.SetActive(false); 
         submitTurnPanel.SetActive(false);
         infoToggle = true;
@@ -2121,6 +2123,7 @@ public class GameManager : MonoBehaviour
     }
     private void StartTurn()
     {
+        AllUnits.ForEach(x => x.trail.enabled = false);
         UpdateModulesFromServer(TurnNumber);
         TurnNumber++;
         skipTurn = false;
