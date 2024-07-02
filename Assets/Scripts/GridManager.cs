@@ -116,11 +116,11 @@ public class GridManager : MonoBehaviour
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
         List<Coords> asteroids = new List<Coords>()
         {
-            new Coords(1, 0), new Coords(1, 1), new Coords(0, 5), new Coords(3, 8),
-            new Coords(4, 8), new Coords(3, 5), new Coords(3, 4), new Coords(3, 3),
-            new Coords(8, 9), new Coords(8, 8), new Coords(6, 6), new Coords(6, 5),
-            new Coords(6, 4), new Coords(6, 1),new Coords(6, 2), new Coords(5, 1), 
-            new Coords(9, 4), new Coords(3, 7), new Coords(8, 1), new Coords(1, 8),
+            new Coords(4, 5), new Coords(1, 1), new Coords(0, 5), new Coords(3, 9),
+            new Coords(2, 9), new Coords(2, 6), new Coords(2, 2), new Coords(3, 3),
+            new Coords(5, 4), new Coords(8, 8), new Coords(6, 6), new Coords(7, 7),
+            new Coords(7, 3), new Coords(6, 0),new Coords(5, 3), new Coords(7, 0), 
+            new Coords(9, 4), new Coords(4, 6), new Coords(9, 1), new Coords(0, 8),
         };
         List<Coords> rifts = new List<Coords>()
         {
@@ -199,24 +199,24 @@ public class GridManager : MonoBehaviour
         else 
         {
             int spawnX = 2;
-            int spawnY = 4;
+            int spawnY = 3;
             Direction facing = Direction.Left;
             if (stationColor == 1)
             {
                 spawnX = 7;
-                spawnY = 5;
+                spawnY = 6;
                 facing = Direction.Right;
             }
             else if (stationColor == 2)
             {
-                spawnX = 4;
-                spawnY = 7;
+                spawnX = 2;
+                spawnY = 8;
                 facing = Direction.Right;
             }
             else if (stationColor == 3)
             {
-                spawnX = 5;
-                spawnY = 2;
+                spawnX = 7;
+                spawnY = 1;
                 facing = Direction.Left;
             }
             stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid, serverPlayer?.Credits ?? Constants.StartingCredits);

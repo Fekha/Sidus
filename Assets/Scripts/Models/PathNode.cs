@@ -34,14 +34,12 @@ public class PathNode : MonoBehaviour
     private bool isDragging = false;
     private Vector3 offset;
     private Transform parentTransform;
-    private Vector3 originalPosition;
     private Vector3 initialMousePosition;
 
     public float dragThreshold = 0.5f;
     void Start()
     {
         parentTransform = transform.parent;
-        originalPosition = transform.parent.position;
     }
 
     void OnMouseDown()
@@ -67,7 +65,6 @@ public class PathNode : MonoBehaviour
             if (distance >= dragThreshold)
             {
                 GameManager.i.DeselectMovement();
-                GameManager.i.AllUnits.ForEach(x => x.trail.enabled = false);
                 // Calculate the offset between the mouse position and the GameObject position
                 offset = parentTransform.position - currentMousePosition;
                 isDragging = true;
@@ -83,7 +80,6 @@ public class PathNode : MonoBehaviour
     {
         canDrag = false;
         isDragging = false;
-        GameManager.i.AllUnits.ForEach(x => x.trail.enabled = true);
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
