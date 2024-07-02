@@ -116,11 +116,11 @@ public class GridManager : MonoBehaviour
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
         List<Coords> asteroids = new List<Coords>()
         {
-            new Coords(1, 0), new Coords(1, 1), new Coords(0, 5), new Coords(3, 8),
-            new Coords(4, 8), new Coords(3, 5), new Coords(3, 4), new Coords(3, 3),
-            new Coords(8, 9), new Coords(8, 8), new Coords(6, 6), new Coords(6, 5),
-            new Coords(6, 4), new Coords(6, 1),new Coords(6, 2), new Coords(5, 1), 
-            new Coords(9, 4), new Coords(3, 7), new Coords(8, 1), new Coords(1, 8),
+            new Coords(4, 5), new Coords(1, 1), new Coords(0, 5), new Coords(3, 9),
+            new Coords(2, 9), new Coords(2, 6), new Coords(2, 2), new Coords(3, 3),
+            new Coords(5, 4), new Coords(8, 8), new Coords(6, 6), new Coords(7, 7),
+            new Coords(7, 3), new Coords(6, 0),new Coords(5, 3), new Coords(7, 0), 
+            new Coords(9, 4), new Coords(4, 6), new Coords(9, 1), new Coords(0, 8),
         };
         List<Coords> rifts = new List<Coords>()
         {
@@ -150,9 +150,9 @@ public class GridManager : MonoBehaviour
                     bool isRift = false;
                     if (asteroids.Any(x => x.CoordsEquals(coords)))
                     {
-                        startCredits = 4;
-                        maxCredits = 12;
-                        creditRegin = 1;
+                        startCredits = 2+Globals.GameMatch.MaxPlayers;
+                        maxCredits = 8+(Globals.GameMatch.MaxPlayers*2);
+                        creditRegin = (Globals.GameMatch.MaxPlayers==4?2:1);
                     }
                     else if (rift != null)
                     {
@@ -199,24 +199,24 @@ public class GridManager : MonoBehaviour
         else 
         {
             int spawnX = 2;
-            int spawnY = 4;
+            int spawnY = 3;
             Direction facing = Direction.Left;
             if (stationColor == 1)
             {
                 spawnX = 7;
-                spawnY = 5;
+                spawnY = 6;
                 facing = Direction.Right;
             }
             else if (stationColor == 2)
             {
-                spawnX = 4;
-                spawnY = 7;
+                spawnX = 2;
+                spawnY = 8;
                 facing = Direction.Right;
             }
             else if (stationColor == 3)
             {
-                spawnX = 5;
-                spawnY = 2;
+                spawnX = 7;
+                spawnY = 1;
                 facing = Direction.Left;
             }
             stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
@@ -232,19 +232,19 @@ public class GridManager : MonoBehaviour
         int k = 0;
         while (startIndex == -1)
         {
-            Coords coords = stationNode.currentPathNode.coords.AddCoords(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
-            startIndex = hexesNearby.FindIndex(x => x.coords.CoordsEquals(coords));
+            Coords coords = stationNode.currentPathNode.actualCoords.AddCoords(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
+            startIndex = hexesNearby.FindIndex(x => x.actualCoords.CoordsEquals(coords));
             k++;
         }
         stationNode._didSpawn = false;
         for (int i = 0; i < hexesNearby.Count; i++) {
             int j = (i + startIndex)%hexesNearby.Count;
-            if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
+            if (CanSpawnFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y))
             {
                 var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, (int)stationNode.playerColor, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, stationNode, (int)stationNode.playerColor, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
                     StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
@@ -372,13 +372,13 @@ public class GridManager : MonoBehaviour
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
         {
-            var gridNode = grid[WrapAround(node.coords.x + node.offSet[i].x), WrapAround(node.coords.y + node.offSet[i].y)];
+            var gridNode = grid[WrapAround(node.actualCoords.x + node.offSet[i].x), WrapAround(node.actualCoords.y + node.offSet[i].y)];
             if (!gridNode.isRift)
                 neighbors.Add(gridNode);
         }
         if (node.isAsteroid && blockedByAsteroid && node.parent != null && neighbors.Count > 0)
         {
-            neighbors = GetNeighbors(node.parent, true).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
+            neighbors = GetNeighbors(node.parent, true).Where(x => !x.isAsteroid && neighbors.Any(y => y.actualCoords.CoordsEquals(x.actualCoords))).ToList();
             neighbors.Add(node.parent);
         }
         return neighbors;

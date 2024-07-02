@@ -37,6 +37,7 @@ public class Unit : Node
     internal GameObject selectIcon;
     internal GameObject inCombatIcon;
     internal Transform unitImage;
+    internal TrailRenderer trail;
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
     internal bool hasMoved = false;
 
@@ -105,6 +106,7 @@ public class Unit : Node
         selectIcon = transform.Find("Select").gameObject;
         inCombatIcon = transform.Find("InCombat").gameObject;
         unitImage = transform.Find("Unit");
+        trail = unitImage.GetComponent<TrailRenderer>();
         SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
         unitSprite.color = GridManager.i.playerColors[(int)playerColor];
         unitSprite.sprite = this is Station ? GridManager.i.stationSprites[(int)playerColor, level - 1] : GridManager.i.fleetSprites[(int)playerColor, level - 1];

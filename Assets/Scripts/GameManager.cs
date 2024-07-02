@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
     private bool tapped = false;
     private bool skipTurn = false;
     private bool isMoving = false;
-    private bool isEndingTurn = false;
+    internal bool isEndingTurn = false;
     private Button upgradeButton;
     public Button createFleetButton;
     public Button repairFleetButton;
@@ -115,6 +115,7 @@ public class GameManager : MonoBehaviour
     internal List<GameObject> TurnArchiveObjects = new List<GameObject>();
     internal List<GameObject> TurnOrderObjects = new List<GameObject>();
     internal Guid Winner;
+    private bool lastToSubmitTurn = false;
     internal Station MyStation {get {return Stations.FirstOrDefault(x=>x.playerGuid == Globals.Account.PlayerGuid);}}
     public GameObject turnLabel;
     private SqlManager sql;
@@ -216,7 +217,7 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={searchType}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
                 if (Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.TurnIsOver ?? false)
                 {
-                    if(audioToggleOn)
+                    if(audioToggleOn && !lastToSubmitTurn)
                         turnDing.Play();
                     yield return StartCoroutine(DoEndTurn());
                 }
@@ -362,9 +363,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             tapped = true;
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
             if (!isEndingTurn && hit.collider != null && !isMoving)
@@ -453,7 +451,8 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    DeselectMovement();
+                    if(!hit.collider.CompareTag("Wall"))
+                        DeselectMovement();
                 }
             }
         }
@@ -530,7 +529,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void DeselectMovement()
+    internal void DeselectMovement()
     {
         if (SelectedUnit != null)
         {
@@ -994,7 +993,7 @@ public class GameManager : MonoBehaviour
         return MyStation.actions.Any(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == selectedUnit.unitGuid);
     }
 
-    private void ResetAfterSelection()
+    internal void ResetAfterSelection()
     {
         Debug.Log($"Resetting UI");
         ToggleMineralText(false);
@@ -1009,6 +1008,7 @@ public class GameManager : MonoBehaviour
         SelectedPath = null;
         ViewAsteroidInformation(false);
         ViewUnitInformation(false);
+        CloseBurger();
     }
     private void UpdateCreditsAndHexesText()
     {
@@ -1136,7 +1136,7 @@ public class GameManager : MonoBehaviour
         var didTeleport = false;
         bool somethingOnPath = checkPath && (nextNode.isAsteroid || (nextNode.unitOnPath != null && nextNode.unitOnPath.teamId != unitMoving.teamId));
         // Check for wrap-around on the X-axis
-        if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1 && currentNode.coords.y == nextNode.coords.y)
+        if (Mathf.Abs(currentNode.transform.position.x - nextNode.transform.position.x) > 5 && currentNode.actualCoords.y == nextNode.actualCoords.y)
         {
             didTeleport = true;
             direction = (startPos.x < endPos.x) ? Direction.Left : Direction.Right;
@@ -1163,7 +1163,7 @@ public class GameManager : MonoBehaviour
                 endPos.z);
         }
         // Check for wrap-around on the Y-axis odd
-        else if (Mathf.Abs(currentNode.coords.y - nextNode.coords.y) > 1)
+        else if (Mathf.Abs(currentNode.transform.position.y - nextNode.transform.position.y) > 5)
         {
             didTeleport = true;
             if (startPos.x < endPos.x)
@@ -1195,7 +1195,7 @@ public class GameManager : MonoBehaviour
                 endPos.z);
         }
         // Check for wrap-around on the Y-axis even
-        else if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1)
+        else if (Mathf.Abs(currentNode.transform.position.x - nextNode.transform.position.x) > 5)
         {
             didTeleport = true;
             if (startPos.x < endPos.x)
@@ -1394,8 +1394,10 @@ public class GameManager : MonoBehaviour
     {
         if (direction == null)
         {
-            int x = toNode.coords.x - fromNode.coords.x;
-            int y = toNode.coords.y - fromNode.coords.y;
+            int x = toNode.actualCoords.x - fromNode.actualCoords.x;
+            int y = toNode.actualCoords.y - fromNode.actualCoords.y;
+            x = x == 9 ? -1: x == -9 ? 1 : x;
+            y = y == 9 ? -1: y == -9 ? 1 : y;
             var offSetCoords = fromNode.offSet.FirstOrDefault(c => c.x == x && c.y == y);
             unit.facing = (Direction)Array.IndexOf(fromNode.offSet, offSetCoords);
         }
@@ -1604,8 +1606,8 @@ public class GameManager : MonoBehaviour
                                     ActionOrder = actionOrders[j],
                                     ActionTypeId = (int)x.actionType,
                                     GeneratedGuid = x.generatedGuid,
-                                    XList = String.Join(",", x.selectedPath?.Select(x => x.coords.x)),
-                                    YList = String.Join(",", x.selectedPath?.Select(x => x.coords.y)),
+                                    XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
+                                    YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
                                     SelectedModuleGuid = x.selectedModuleGuid,
                                     SelectedUnitGuid = x.selectedUnit?.unitGuid,
                                     PlayerBid = x.playerBid,
@@ -1641,6 +1643,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator SubmitEndTurn(GameTurn gameTurn)
     {
+        if ((Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players?.Count() ?? 0) == Globals.GameMatch.MaxPlayers - 1)
+            lastToSubmitTurn = true;
         submitTurnPanel.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
         yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn?clientVersion={Constants.ClientVersion}", stringToPost, SubmitResponse));
@@ -1649,6 +1653,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator DoEndTurn()
     {
         isEndingTurn = true;
+        AllUnits.ForEach(x => x.trail.enabled = true);
         customAlertPanel.SetActive(false); 
         submitTurnPanel.SetActive(false);
         infoToggle = true;
@@ -2121,6 +2126,8 @@ public class GameManager : MonoBehaviour
     }
     private void StartTurn()
     {
+        lastToSubmitTurn = false;
+        AllUnits.ForEach(x => x.trail.enabled = false);
         UpdateModulesFromServer(TurnNumber);
         TurnNumber++;
         skipTurn = false;
@@ -2267,7 +2274,7 @@ public class GameManager : MonoBehaviour
     {
         selectModulePanel.SetActive(active);
     }
-    private void ClearMovementRange()
+    internal void ClearMovementRange()
     {
         while(currentMovementRange.Count > 0) { Destroy(currentMovementRange[0].gameObject); currentMovementRange.RemoveAt(0); }
     }
