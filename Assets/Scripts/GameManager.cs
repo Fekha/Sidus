@@ -84,6 +84,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI createFleetCost;
     private TextMeshProUGUI upgradeCost;
     private TextMeshProUGUI nameValue;
+    private TextMeshProUGUI playerNameValue;
     private TextMeshProUGUI levelValue;
     private TextMeshProUGUI HPValue;
     private TextMeshProUGUI miningValue;
@@ -259,6 +260,7 @@ public class GameManager : MonoBehaviour
         highlightParent = GameObject.Find("Highlights").transform;
         canvas = GameObject.Find("Canvas").transform;
         nameValue = infoPanel.transform.Find("NameValue").GetComponent<TextMeshProUGUI>();
+        playerNameValue = infoPanel.transform.Find("PlayerNameValue").GetComponent<TextMeshProUGUI>();
         levelValue = infoPanel.transform.Find("LevelValue").GetComponent<TextMeshProUGUI>();
         HPValue = infoPanel.transform.Find("HPValue").GetComponent<TextMeshProUGUI>();
         miningValue = infoPanel.transform.Find("MiningValue").GetComponent<TextMeshProUGUI>();
@@ -281,6 +283,7 @@ public class GameManager : MonoBehaviour
     public void SetUnitTextValues(Unit unit)
     {
         nameValue.text = unit.unitName;
+        playerNameValue.text = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.FirstOrDefault(x => x.PlayerGuid == unit.playerGuid)?.PlayerName ?? "CPU";
         levelValue.text = unit.level.ToString();
         if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats))
         {
@@ -1597,6 +1600,7 @@ public class GameManager : MonoBehaviour
                             TurnNumber = TurnNumber,
                             PlayerColor = Globals.localStationColor,
                             PlayerGuid = Globals.Account.PlayerGuid,
+                            PlayerName = Globals.Account.Username,
                             Actions = MyStation.actions.Select((x, j) =>
                                 new ServerAction()
                                 {
@@ -1631,22 +1635,17 @@ public class GameManager : MonoBehaviour
                 {
                     PerformUpdates(lastSubmittedTurn[i], Constants.Create, true);
                 }
-                StartCoroutine(SubmitEndTurn(gameTurn));
+                if ((Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players?.Count() ?? 0) == Globals.GameMatch.MaxPlayers - 1)
+                    lastToSubmitTurn = true;
+                submitTurnPanel.SetActive(true);
+                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
+                StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn?clientVersion={Constants.ClientVersion}", stringToPost, SubmitResponse));
             }
             else
             {
                 ShowAreYouSurePanel(true);
             }
         }
-    }
-
-    private IEnumerator SubmitEndTurn(GameTurn gameTurn)
-    {
-        if ((Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players?.Count() ?? 0) == Globals.GameMatch.MaxPlayers - 1)
-            lastToSubmitTurn = true;
-        submitTurnPanel.SetActive(true);
-        var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameTurn);
-        yield return StartCoroutine(sql.PostRoutine<bool>($"Game/EndTurn?clientVersion={Constants.ClientVersion}", stringToPost, SubmitResponse));
     }
 
     private IEnumerator DoEndTurn()
@@ -1829,6 +1828,7 @@ public class GameManager : MonoBehaviour
     {
         if (response)
         {
+            TurnOrderObjects[(TurnNumber - 1 + (int)MyStation.playerColor) % Stations.Count].transform.Find("ReadyState").gameObject.SetActive(true);
             endTurnButton.sprite = endTurnButtonPressed;
             var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
             customAlertText.text = $"Your orders were successfully transmitted to your units!";

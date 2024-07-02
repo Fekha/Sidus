@@ -57,6 +57,7 @@ namespace Models
     {
         public Guid GameGuid { get; set; }
         public Guid PlayerGuid { get; set; }
+        public string PlayerName { get; set; }
         public int TurnNumber { get; set; }
         public int PlayerColor { get; set; }
         public string? ModulesGuids { get; set; }

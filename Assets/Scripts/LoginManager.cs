@@ -151,6 +151,7 @@ public class LoginManager : MonoBehaviour
             GameGuid = gameGuid,
             TurnNumber = 0,
             PlayerColor = playerId,
+            PlayerName = Globals.Account.Username,
             PlayerGuid = Globals.Account.PlayerGuid,
             Units = new List<ServerUnit>()
             {
