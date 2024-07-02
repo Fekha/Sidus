@@ -13,7 +13,7 @@ public class PathNode : MonoBehaviour
     public int maxCredits = 0;
     public int minerals = 0;
     public int creditRegin = 0;
-    public Coords coords;
+    public Coords actualCoords;
     public Guid ownedByGuid;
 
     internal int gCost;
@@ -26,15 +26,18 @@ public class PathNode : MonoBehaviour
     private GameObject mineIcon;
     private Coords[] evenOffsets = { new Coords(1, 0), new Coords(1, -1), new Coords(0, -1), new Coords(-1, 0), new Coords(0, 1), new Coords(1, 1) }; // Clockwise from right
     private Coords[] oddOffsets = { new Coords(1, 0), new Coords(0, -1), new Coords(-1, -1), new Coords(-1, 0), new Coords(-1, 1), new Coords(0, 1) }; // Clockwise from right
-    public bool isEvenCol { get { return coords.y % 2 == 0; } }
+    public bool isEvenCol { get { return actualCoords.y % 2 == 0; } }
     public Coords[] offSet { get { return isEvenCol ? evenOffsets : oddOffsets; } }
 
     public bool isAsteroid { get { return minerals > 0; } }
+    private bool canDrag = false;
     private bool isDragging = false;
     private Vector3 offset;
     private Transform parentTransform;
     private Vector3 originalPosition;
+    private Vector3 initialMousePosition;
 
+    public float dragThreshold = 0.5f;
     void Start()
     {
         parentTransform = transform.parent;
@@ -43,29 +46,70 @@ public class PathNode : MonoBehaviour
 
     void OnMouseDown()
     {
-        // Calculate the offset between the mouse position and the GameObject position
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = parentTransform.position.z; // Keep the Z position constant
-        offset = parentTransform.position - mousePosition;
-        //isDragging = true; //Uncomment out when ready to drag
+        if (!GameManager.i.isEndingTurn)
+        {
+            // Calculate the offset between the mouse position and the GameObject position
+            initialMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            initialMousePosition.z = parentTransform.position.z; // Keep the Z position constant
+            canDrag = true; //Uncomment out when ready to drag
+        }
     }
 
     void OnMouseDrag()
     {
+        Vector3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        currentMousePosition.z = parentTransform.position.z; // Keep the Z position constant
+        if (canDrag && !isDragging)
+        {
+            // Calculate the distance between the initial mouse position and the current mouse position
+            float distance = Vector3.Distance(initialMousePosition, currentMousePosition);
+            // Start dragging if the distance exceeds the threshold
+            if (distance >= dragThreshold)
+            {
+                GameManager.i.DeselectMovement();
+                GameManager.i.AllUnits.ForEach(x => x.trail.enabled = false);
+                // Calculate the offset between the mouse position and the GameObject position
+                offset = parentTransform.position - currentMousePosition;
+                isDragging = true;
+            }
+        }
         if (isDragging)
         {
-            // Get the current mouse position
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = parentTransform.position.z; // Keep the Z position constant
-            // Set the new position of the parent GameObject
-            parentTransform.position = mousePosition + offset;
+            parentTransform.position = currentMousePosition + offset;
         }
     }
 
     void OnMouseUp()
     {
+        canDrag = false;
         isDragging = false;
-        parentTransform.position = originalPosition;
+        GameManager.i.AllUnits.ForEach(x => x.trail.enabled = true);
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Wall"))
+        {
+            Vector3 newPostion = new Vector3();
+            if (other.gameObject.name == "LeftWall")
+            {
+                newPostion = new Vector3(transform.position.x + 11.3f, transform.position.y, transform.position.z);
+            }
+            else if (other.gameObject.name == "RightWall")
+            {
+                newPostion = new Vector3(transform.position.x - 11.3f, transform.position.y, transform.position.z);
+            }
+            else if (other.gameObject.name == "TopWall")
+            {
+                newPostion = new Vector3(transform.position.x, transform.position.y - 9.7f, transform.position.z);
+            }
+            else if (other.gameObject.name == "BottomWall")
+            {
+                newPostion = new Vector3(transform.position.x, transform.position.y + 9.7f, transform.position.z);
+            }
+            transform.position = newPostion;
+            if (unitOnPath != null)
+                unitOnPath.transform.position = newPostion;
+        }
     }
     public void InitializeNode(int _x, int _y, int _minerals, int _maxCredits, int _creditRegin, bool _isRift)
     {
@@ -73,7 +117,7 @@ public class PathNode : MonoBehaviour
         maxCredits = _maxCredits;
         minerals = _minerals;
         creditRegin = _creditRegin;
-        coords = new Coords(_x, _y);
+        actualCoords = new Coords(_x, _y);
         GetUIComponents();
     }
 
@@ -83,7 +127,7 @@ public class PathNode : MonoBehaviour
         maxCredits = node.MaxCredits;
         minerals = node.Minerals;
         creditRegin = node.CreditRegin;
-        coords = new Coords(node.X,node.Y);
+        actualCoords = new Coords(node.X,node.Y);
         ownedByGuid = node.OwnedByGuid;
         GetUIComponents();
     }
@@ -97,7 +141,7 @@ public class PathNode : MonoBehaviour
         mineIcon = transform.Find("Asteroid/Mine").gameObject;
         mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
-        coordsText.text = $"{coords.x},{coords.y}";
+        coordsText.text = $"{actualCoords.x},{actualCoords.y}";
         SetNodeColor(ownedByGuid);
         //coordsText.gameObject.SetActive(true); //Helpful for debugging
         GridManager.i.AllNodes.Add(this);
@@ -113,8 +157,8 @@ public class PathNode : MonoBehaviour
             MaxCredits = maxCredits,
             Minerals = minerals,
             CreditRegin = creditRegin,
-            X = coords.x,
-            Y = coords.y,
+            X = actualCoords.x,
+            Y = actualCoords.y,
             OwnedByGuid = ownedByGuid,
         };
     }

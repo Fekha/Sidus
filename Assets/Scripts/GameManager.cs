@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
     private bool tapped = false;
     private bool skipTurn = false;
     private bool isMoving = false;
-    private bool isEndingTurn = false;
+    internal bool isEndingTurn = false;
     private Button upgradeButton;
     public Button createFleetButton;
     public Button repairFleetButton;
@@ -362,9 +362,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             tapped = true;
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
             if (!isEndingTurn && hit.collider != null && !isMoving)
@@ -453,7 +450,8 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    DeselectMovement();
+                    if(!hit.collider.CompareTag("Wall"))
+                        DeselectMovement();
                 }
             }
         }
@@ -530,7 +528,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void DeselectMovement()
+    internal void DeselectMovement()
     {
         if (SelectedUnit != null)
         {
@@ -994,7 +992,7 @@ public class GameManager : MonoBehaviour
         return MyStation.actions.Any(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == selectedUnit.unitGuid);
     }
 
-    private void ResetAfterSelection()
+    internal void ResetAfterSelection()
     {
         Debug.Log($"Resetting UI");
         ToggleMineralText(false);
@@ -1009,6 +1007,7 @@ public class GameManager : MonoBehaviour
         SelectedPath = null;
         ViewAsteroidInformation(false);
         ViewUnitInformation(false);
+        CloseBurger();
     }
     private void UpdateCreditsAndHexesText()
     {
@@ -1125,116 +1124,116 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator MoveUnit(Unit unitMoving, PathNode currentNode, PathNode nextNode, bool checkPath)
     {
-        // Determine the direction and detect if wrap-around is needed
-        Direction direction;
+        //// Determine the direction and detect if wrap-around is needed
+        //Direction direction;
         var toRot = GetDirection(unitMoving, currentNode, nextNode);
         float elapsedTime = 0f;
         float totalTime = Constants.MovementSpeed;
         Vector3 startPos = unitMoving.transform.position;
         Vector3 endPos = nextNode.transform.position;
-        float HexSize = .5f;
-        var didTeleport = false;
-        bool somethingOnPath = checkPath && (nextNode.isAsteroid || (nextNode.unitOnPath != null && nextNode.unitOnPath.teamId != unitMoving.teamId));
-        // Check for wrap-around on the X-axis
-        if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1 && currentNode.coords.y == nextNode.coords.y)
-        {
-            didTeleport = true;
-            direction = (startPos.x < endPos.x) ? Direction.Left : Direction.Right;
-            toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
-            Vector3 intermediatePosX = new Vector3(
-                (startPos.x < endPos.x) ? startPos.x - HexSize : startPos.x + HexSize,
-                startPos.y,
-                startPos.z);
+        //float HexSize = .5f;
+        //var didTeleport = false;
+        //bool somethingOnPath = checkPath && (nextNode.isAsteroid || (nextNode.unitOnPath != null && nextNode.unitOnPath.teamId != unitMoving.teamId));
+        //// Check for wrap-around on the X-axis
+        //if (Mathf.Abs(currentNode.actualCoords.x - nextNode.actualCoords.x) > 1 && currentNode.actualCoords.y == nextNode.actualCoords.y)
+        //{
+        //    didTeleport = true;
+        //    direction = (startPos.x < endPos.x) ? Direction.Left : Direction.Right;
+        //    toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
+        //    Vector3 intermediatePosX = new Vector3(
+        //        (startPos.x < endPos.x) ? startPos.x - HexSize : startPos.x + HexSize,
+        //        startPos.y,
+        //        startPos.z);
 
-            // Move to intermediate position
-            totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped && !skipTurn)
-            {
-                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
-                unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosX, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
+        //    // Move to intermediate position
+        //    totalTime = Constants.MovementSpeed / 2;
+        //    while (elapsedTime <= totalTime && !tapped && !skipTurn)
+        //    {
+        //        unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+        //        unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosX, elapsedTime / totalTime);
+        //        elapsedTime += Time.deltaTime;
+        //        yield return null;
+        //    }
 
-            // Teleport to the opposite edge
-            unitMoving.transform.position = new Vector3(
-                (startPos.x < endPos.x) ? endPos.x + HexSize : endPos.x - HexSize,
-                endPos.y,
-                endPos.z);
-        }
-        // Check for wrap-around on the Y-axis odd
-        else if (Mathf.Abs(currentNode.coords.y - nextNode.coords.y) > 1)
-        {
-            didTeleport = true;
-            if (startPos.x < endPos.x)
-            {
-                direction = (startPos.y < endPos.y) ? Direction.BottomRight : Direction.TopRight;
-            }
-            else
-            {
-                direction = (startPos.y < endPos.y) ? Direction.BottomLeft : Direction.TopLeft;
-            }
-            toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
-            Vector3 intermediatePosY = new Vector3(
-                (startPos.x < endPos.x) ? startPos.x + (HexSize / 2) : startPos.x - (HexSize / 2),
-                (startPos.y < endPos.y) ? startPos.y - HexSize : startPos.y + HexSize,
-                startPos.z);
-            // Move to intermediate position
-            totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped && !skipTurn)
-            {
-                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
-                unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            // Teleport to the opposite edge
-            unitMoving.transform.position = new Vector3(
-                (startPos.x < endPos.x) ? endPos.x - (HexSize / 2) : endPos.x + (HexSize / 2),
-                (startPos.y < endPos.y) ? endPos.y + HexSize : endPos.y - HexSize,
-                endPos.z);
-        }
-        // Check for wrap-around on the Y-axis even
-        else if (Mathf.Abs(currentNode.coords.x - nextNode.coords.x) > 1)
-        {
-            didTeleport = true;
-            if (startPos.x < endPos.x)
-            {
-                direction = (startPos.y < endPos.y) ? Direction.TopLeft : Direction.BottomLeft;
-            }
-            else
-            {
-                direction = (startPos.y < endPos.y) ? Direction.TopRight : Direction.BottomRight;
-            }
-            toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
-            Vector3 intermediatePosY = new Vector3(
-                (startPos.x < endPos.x) ? startPos.x - (HexSize / 2) : startPos.x + (HexSize / 2),
-                (startPos.y < endPos.y) ? startPos.y + HexSize : startPos.y - HexSize,
-                startPos.z);
-            // Move to intermediate position
-            totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped && !skipTurn)
-            {
-                unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
-                unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-            // Teleport to the opposite edge
-            unitMoving.transform.position = new Vector3(
-                (startPos.x < endPos.x) ? endPos.x + (HexSize / 2) : endPos.x - (HexSize / 2),
-                (startPos.y < endPos.y) ? endPos.y - HexSize : endPos.y + HexSize,
-                endPos.z);
-        }
-        else if (somethingOnPath)
-        {
-            totalTime = Constants.MovementSpeed / 2;
-            endPos = (startPos + endPos) / 2;
-        }
-        if ((didTeleport && !somethingOnPath) || somethingOnPath || !didTeleport)
-        {
+        //    // Teleport to the opposite edge
+        //    unitMoving.transform.position = new Vector3(
+        //        (startPos.x < endPos.x) ? endPos.x + HexSize : endPos.x - HexSize,
+        //        endPos.y,
+        //        endPos.z);
+        //}
+        //// Check for wrap-around on the Y-axis odd
+        //else if (Mathf.Abs(currentNode.actualCoords.y - nextNode.actualCoords.y) > 1)
+        //{
+        //    didTeleport = true;
+        //    if (startPos.x < endPos.x)
+        //    {
+        //        direction = (startPos.y < endPos.y) ? Direction.BottomRight : Direction.TopRight;
+        //    }
+        //    else
+        //    {
+        //        direction = (startPos.y < endPos.y) ? Direction.BottomLeft : Direction.TopLeft;
+        //    }
+        //    toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
+        //    Vector3 intermediatePosY = new Vector3(
+        //        (startPos.x < endPos.x) ? startPos.x + (HexSize / 2) : startPos.x - (HexSize / 2),
+        //        (startPos.y < endPos.y) ? startPos.y - HexSize : startPos.y + HexSize,
+        //        startPos.z);
+        //    // Move to intermediate position
+        //    totalTime = Constants.MovementSpeed / 2;
+        //    while (elapsedTime <= totalTime && !tapped && !skipTurn)
+        //    {
+        //        unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+        //        unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
+        //        elapsedTime += Time.deltaTime;
+        //        yield return null;
+        //    }
+        //    // Teleport to the opposite edge
+        //    unitMoving.transform.position = new Vector3(
+        //        (startPos.x < endPos.x) ? endPos.x - (HexSize / 2) : endPos.x + (HexSize / 2),
+        //        (startPos.y < endPos.y) ? endPos.y + HexSize : endPos.y - HexSize,
+        //        endPos.z);
+        //}
+        //// Check for wrap-around on the Y-axis even
+        //else if (Mathf.Abs(currentNode.actualCoords.x - nextNode.actualCoords.x) > 1)
+        //{
+        //    didTeleport = true;
+        //    if (startPos.x < endPos.x)
+        //    {
+        //        direction = (startPos.y < endPos.y) ? Direction.TopLeft : Direction.BottomLeft;
+        //    }
+        //    else
+        //    {
+        //        direction = (startPos.y < endPos.y) ? Direction.TopRight : Direction.BottomRight;
+        //    }
+        //    toRot = GetDirection(unitMoving, currentNode, nextNode, direction);
+        //    Vector3 intermediatePosY = new Vector3(
+        //        (startPos.x < endPos.x) ? startPos.x - (HexSize / 2) : startPos.x + (HexSize / 2),
+        //        (startPos.y < endPos.y) ? startPos.y + HexSize : startPos.y - HexSize,
+        //        startPos.z);
+        //    // Move to intermediate position
+        //    totalTime = Constants.MovementSpeed / 2;
+        //    while (elapsedTime <= totalTime && !tapped && !skipTurn)
+        //    {
+        //        unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
+        //        unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
+        //        elapsedTime += Time.deltaTime;
+        //        yield return null;
+        //    }
+        //    // Teleport to the opposite edge
+        //    unitMoving.transform.position = new Vector3(
+        //        (startPos.x < endPos.x) ? endPos.x + (HexSize / 2) : endPos.x - (HexSize / 2),
+        //        (startPos.y < endPos.y) ? endPos.y - HexSize : endPos.y + HexSize,
+        //        endPos.z);
+        //}
+        //else if (somethingOnPath)
+        //{
+        //    totalTime = Constants.MovementSpeed / 2;
+        //    endPos = (startPos + endPos) / 2;
+        //}
+        //if ((didTeleport && !somethingOnPath) || somethingOnPath || !didTeleport)
+        //{
             yield return StartCoroutine(MoveDirectly(unitMoving, endPos, totalTime, toRot));
-        }
+        //}
     }
 
     private IEnumerator MoveDirectly(Unit unitMoving, Vector3 endPos, float totalTime, Quaternion? toRot = null)
@@ -1394,8 +1393,10 @@ public class GameManager : MonoBehaviour
     {
         if (direction == null)
         {
-            int x = toNode.coords.x - fromNode.coords.x;
-            int y = toNode.coords.y - fromNode.coords.y;
+            int x = toNode.actualCoords.x - fromNode.actualCoords.x;
+            int y = toNode.actualCoords.y - fromNode.actualCoords.y;
+            x = x == 9 ? -1: x == -9 ? 1 : x;
+            y = y == 9 ? -1: y == -9 ? 1 : y;
             var offSetCoords = fromNode.offSet.FirstOrDefault(c => c.x == x && c.y == y);
             unit.facing = (Direction)Array.IndexOf(fromNode.offSet, offSetCoords);
         }
@@ -1604,8 +1605,8 @@ public class GameManager : MonoBehaviour
                                     ActionOrder = actionOrders[j],
                                     ActionTypeId = (int)x.actionType,
                                     GeneratedGuid = x.generatedGuid,
-                                    XList = String.Join(",", x.selectedPath?.Select(x => x.coords.x)),
-                                    YList = String.Join(",", x.selectedPath?.Select(x => x.coords.y)),
+                                    XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
+                                    YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
                                     SelectedModuleGuid = x.selectedModuleGuid,
                                     SelectedUnitGuid = x.selectedUnit?.unitGuid,
                                     PlayerBid = x.playerBid,
@@ -1634,7 +1635,6 @@ public class GameManager : MonoBehaviour
             else
             {
                 ShowAreYouSurePanel(true);
-                CloseBurger(); //for testing
             }
         }
     }
@@ -2267,7 +2267,7 @@ public class GameManager : MonoBehaviour
     {
         selectModulePanel.SetActive(active);
     }
-    private void ClearMovementRange()
+    internal void ClearMovementRange()
     {
         while(currentMovementRange.Count > 0) { Destroy(currentMovementRange[0].gameObject); currentMovementRange.RemoveAt(0); }
     }

@@ -232,19 +232,19 @@ public class GridManager : MonoBehaviour
         int k = 0;
         while (startIndex == -1)
         {
-            Coords coords = stationNode.currentPathNode.coords.AddCoords(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
-            startIndex = hexesNearby.FindIndex(x => x.coords.CoordsEquals(coords));
+            Coords coords = stationNode.currentPathNode.actualCoords.AddCoords(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
+            startIndex = hexesNearby.FindIndex(x => x.actualCoords.CoordsEquals(coords));
             k++;
         }
         stationNode._didSpawn = false;
         for (int i = 0; i < hexesNearby.Count; i++) {
             int j = (i + startIndex)%hexesNearby.Count;
-            if (CanSpawnFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y))
+            if (CanSpawnFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y))
             {
                 var fleet = Instantiate(unitPrefab);
                 fleet.transform.SetParent(characterParent);
                 var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].coords.x, hexesNearby[j].coords.y, stationNode, (int)stationNode.playerColor, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
+                fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, stationNode, (int)stationNode.playerColor, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
                 if (!originalSpawn)
                 {
                     StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
@@ -372,13 +372,13 @@ public class GridManager : MonoBehaviour
         List<PathNode> neighbors = new List<PathNode>();
         for (int i = 0; i < 6; i++)
         {
-            var gridNode = grid[WrapAround(node.coords.x + node.offSet[i].x), WrapAround(node.coords.y + node.offSet[i].y)];
+            var gridNode = grid[WrapAround(node.actualCoords.x + node.offSet[i].x), WrapAround(node.actualCoords.y + node.offSet[i].y)];
             if (!gridNode.isRift)
                 neighbors.Add(gridNode);
         }
         if (node.isAsteroid && blockedByAsteroid && node.parent != null && neighbors.Count > 0)
         {
-            neighbors = GetNeighbors(node.parent, true).Where(x => !x.isAsteroid && neighbors.Any(y => y.coords.CoordsEquals(x.coords))).ToList();
+            neighbors = GetNeighbors(node.parent, true).Where(x => !x.isAsteroid && neighbors.Any(y => y.actualCoords.CoordsEquals(x.actualCoords))).ToList();
             neighbors.Add(node.parent);
         }
         return neighbors;
