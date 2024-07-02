@@ -283,6 +283,7 @@ public class GameManager : MonoBehaviour
     public void SetUnitTextValues(Unit unit)
     {
         nameValue.text = unit.unitName;
+        playerNameValue.color = GridManager.i.playerColors[(int)unit.playerColor];
         playerNameValue.text = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.FirstOrDefault(x => x.PlayerGuid == unit.playerGuid)?.PlayerName ?? "CPU";
         levelValue.text = unit.level.ToString();
         if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats))
