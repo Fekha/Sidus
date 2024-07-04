@@ -23,7 +23,7 @@ public class GridManager : MonoBehaviour
     internal List<PathNode> AllNodes = new List<PathNode>();
     internal bool DoneLoading = false;
     internal Sprite[,] fleetSprites;
-    internal Sprite[,] stationSprites;
+    public Sprite[] stationSprites;
 
     public GameObject fx_Explosion;
     public List<Sprite> nebulaSprite;
@@ -34,11 +34,11 @@ public class GridManager : MonoBehaviour
         i = this;
         //Got colors from https://rgbcolorpicker.com/0-1
         //Blue, Red, Purple, Orange,
-        playerColors = new List<Color>() { new Color(0, 0.502f, 1, 1), new Color(1, 0, 0, 1), new Color(.776f, 0, 1, 1), new Color(1, 0.5f, 0, 1), };
+        playerColors = new List<Color>() { new Color(0.2117598f, 0.3275293f, 0.8113208f, 1), new Color(0.764151f, 0.01922386f, 0.01922386f, 1), new Color(0.5379764f, 0.01993586f, 0.7924528f, 1), new Color(1, 0.5f, 0, 1), };
         tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), };
         uiColors = new List<Color>() { new Color(0.2824255f, .3930371f, .5283019f, 1), new Color(0.3396226f, 0.09825558f, 0.1029435f, 1), new Color(0.1921593f, 0.1135635f, 0.3113208f, 1), new Color(0.545f, 0.2878966f, 0.106f, 1), new Color(0.3773585f, 0.3773585f, 0.3773585f, 1), };
         fleetSprites = new Sprite[4, 4];
-        stationSprites = new Sprite[4, 4];
+        //stationSprites = new Sprite[4];
 
         for (int i = 0; i < 4; i++)
         {
@@ -59,24 +59,24 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                string path = $"Sprites/Units/Stations/station_{i}_{j}";
-                stationSprites[i, j] = Resources.Load<Sprite>(path);
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    for (int j = 0; j < 4; j++)
+        //    {
+        //        string path = $"Sprites/Units/Stations/station_{i}_{j}";
+        //        stationSprites[i, j] = Resources.Load<Sprite>(path);
 
-                // Check if the sprite was loaded correctly
-                if (stationSprites[i, j] != null)
-                {
-                    Debug.Log($"Loaded sprite at [{i},{j}] from {path}");
-                }
-                else
-                {
-                    Debug.LogWarning($"Failed to load sprite at [{i},{j}] from {path}");
-                }
-            }
-        }
+        //        // Check if the sprite was loaded correctly
+        //        if (stationSprites[i, j] != null)
+        //        {
+        //            Debug.Log($"Loaded sprite at [{i},{j}] from {path}");
+        //        }
+        //        else
+        //        {
+        //            Debug.LogWarning($"Failed to load sprite at [{i},{j}] from {path}");
+        //        }
+        //    }
+        //}
     }
     void Start()
     {
@@ -178,7 +178,8 @@ public class GridManager : MonoBehaviour
     {
         GameObject stationPrefab = unitPrefab;
         SpriteRenderer unitSprite = stationPrefab.transform.Find("Unit").GetComponent<SpriteRenderer>();
-        unitSprite.sprite = stationSprites[stationColor,0];
+        unitSprite.sprite = stationSprites[0];
+        unitSprite.color = playerColors[stationColor];
         //unitSprite.color = playerColors[stationId];
         GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();

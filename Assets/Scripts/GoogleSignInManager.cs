@@ -43,6 +43,12 @@ public class GoogleSignInManager : MonoBehaviour
     // This function will be called from JavaScript with the ID token
     public void OnGoogleSignIn(string idToken)
     {
+        if(string.IsNullOrEmpty(idToken))
+        {
+            Debug.LogError("ID Token is null or empty");
+            loadingPanel.SetActive(false);
+            return;
+        }
         Debug.Log("Google ID Token: " + idToken);
         var user = DecodeIdToken(idToken);
         Debug.Log(user["name"]);
@@ -59,7 +65,7 @@ public class GoogleSignInManager : MonoBehaviour
             try
             {
                 var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(Globals.Account);
-                StartCoroutine(sql.PostRoutine<Guid>($"Login/CreateAccount?clientVersion={Constants.ClientVersion}", stringToPost, AccountCreated));
+                StartCoroutine(sql.PostRoutine<Account>($"Login/CreateAccount?clientVersion={Constants.ClientVersion}", stringToPost, AccountCreated));
             }
             catch (Exception ex)
             {
@@ -73,11 +79,12 @@ public class GoogleSignInManager : MonoBehaviour
         }
     }
 
-    private void AccountCreated(Guid playerGuid)
+    private void AccountCreated(Account player)
     {
-        if(playerGuid != Guid.Empty)
+        if(player != null)
         {
-            Globals.Account.PlayerGuid = playerGuid;
+            Globals.Account.PlayerGuid = player.PlayerGuid;
+            Globals.Account.Username = player.Username;
             PlayerPrefs.SetString("AccountId", Globals.Account.AccountId);
             PlayerPrefs.Save();
             SceneManager.LoadScene((int)Scene.Lobby);

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0129011a9d73eb8469742a2402b8817c
+guid: f386d146f89d7f743a6f2a670517f3ba
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7764218500773731753
-    second: fleet_green_01_0
+      213: 110395630786499210
+    second: fleetlvl1_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -46,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 400
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -134,22 +134,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: fleet_green_01_0
+      name: fleetlvl1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 500
-        height: 500
+        x: 70
+        y: 88
+        width: 116
+        height: 116
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 752addef864ff3490800000000000000
-      internalID: -7764218500773731753
+      spriteID: a82d8c5cd34388100800000000000000
+      internalID: 110395630786499210
       vertices: []
       indices: 
       edges: []
@@ -157,7 +157,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: bc4eee995662c174f9032728738b48a5
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      fleet_green_01_0: -7764218500773731753
+      fleetlvl1_0: 110395630786499210
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

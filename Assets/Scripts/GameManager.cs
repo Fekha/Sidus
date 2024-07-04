@@ -214,8 +214,7 @@ public class GameManager : MonoBehaviour
             int i = 0; 
             while (!isEndingTurn && TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
             {
-                int searchType = (int)(i == 0 ? SearchType.quickSearch : SearchType.gameSearch);
-                yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={searchType}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
+                yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={(int)SearchType.gameSearch}&startPlayers={Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players?.Count() ?? 0}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
                 if (Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.TurnIsOver ?? false)
                 {
                     if(audioToggleOn && !lastToSubmitTurn)
@@ -2231,7 +2230,8 @@ public class GameManager : MonoBehaviour
         var spriteRenderer = unit.unitImage.GetComponent<SpriteRenderer>();
         if (unit is Station)
         {
-            spriteRenderer.sprite = GridManager.i.stationSprites[(int)unit.playerColor, unit.level-1];
+            spriteRenderer.sprite = GridManager.i.stationSprites[unit.level - 1];
+            spriteRenderer.color = GridManager.i.playerColors[(int)unit.playerColor];
         }
         else
         {

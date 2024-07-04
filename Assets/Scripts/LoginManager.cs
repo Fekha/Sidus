@@ -236,7 +236,7 @@ public class LoginManager : MonoBehaviour
     {
         while (PlayersNeeded() != 0)
         {
-            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber=0&searchType={(int)SearchType.lobbySearch}&clientVersion={Constants.ClientVersion}", UpdateGameStatus));
+            yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber=0&searchType={(int)SearchType.lobbySearch}&startPlayers={Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.Count() ?? 0}&clientVersion={Constants.ClientVersion}", UpdateGameStatus));
         }
     }
 
