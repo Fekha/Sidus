@@ -1313,8 +1313,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -259.94}
-  m_SizeDelta: {x: -20, y: -539.87}
+  m_AnchoredPosition: {x: 0, y: -262.4375}
+  m_SizeDelta: {x: -10, y: -534.875}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &87251880
 GameObject:
@@ -9682,8 +9682,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -259.94}
-  m_SizeDelta: {x: -20, y: -539.88}
+  m_AnchoredPosition: {x: 0, y: -262.44}
+  m_SizeDelta: {x: -10, y: -534.88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &866062591
 MonoBehaviour:
@@ -10847,35 +10847,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Win by capturing hexes or destroying an enemy station. The amount of hexes
-    needed to win is displayed at the bottom right.
-
-
-    You capture hexes by moving
-    over them with your station or one of your fleets.
-
-
-    You can create more
-    fleets and upgrade your units through researching the needed technology.
-
-
-    Fleets
-    and upgrades cost credits, which you get by mining asteroids with your units.
-
-
-    Once
-    all players have submitted their actions, each action will be taken in the order
-    displayed at the top left.
-
-
-    If one unit moves into another, combat will
-    occur. Combat happens in three phases, Kinetic, Thermal, then Explosive. Power
-    levels are compared and the unit that has the lower amount will take the difference
-    in HP.
-
-
-    Gain an advantage in combat by leveling up your units, researching
-    more technology, and attaching modules.'
+  m_text: "Win by capturing enough hexes or destroying an enemy station. \n\nCapture
+    hexes by moving over them with one of your units.\n\nYou can create more fleets
+    and upgrade your units through research.\n\nFleets and upgrades cost credits,
+    which you get by mining asteroids with your units.\n\nOnce all players have submitted
+    their actions, each action will be taken in the order displayed at the top left.\n\nIf
+    one unit moves into another, combat will occur. Combat happens in three phases,
+    Kinetic, Thermal, then Explosive. Power levels are compared and the unit that
+    has the lower amount will take the difference in HP.\n\nGain an advantage in
+    combat by leveling up your units, researching more technology, and attaching
+    modules."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -16268,7 +16249,7 @@ MonoBehaviour:
   m_text: "Movement:\nYou may move each unit once per turn.\nMoving into an asteroid
     will mine it. \nEnding your turn on an invalid hex will return you to the last
     valid hex.\n\nRepairing:\nMoving over allied units repairs 1 of their HP.\nUnits
-    self repair 1 HP per unused movement.\nStations Repair 1 HP to each neighboring
+    self repair 2 HP per unused movement.\nStations Repair 1 HP to each neighboring
     allied unit and themsleives each turn.\n\nClaiming:\nYou immediatly claim any
     nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
     its movement on the hex, and you must already own a neighboring hex to claim
@@ -21913,7 +21894,7 @@ MonoBehaviour:
     Leveling up:
 
     Each level up provides
-    +5 Max HP and +2 of each combat stat. At level 2 you will also gain +1 mining
+    +5 Max HP and +2 of each combat stat. At level 2 you will also gain +2 mining
     Power. Level 3 will gain +1 movement. Level 4 will gain double the normal combat
     and max HP bonus.
 

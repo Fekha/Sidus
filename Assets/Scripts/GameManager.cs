@@ -10,6 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -330,21 +331,29 @@ public class GameManager : MonoBehaviour
         }
         infoPanel.transform.Find("Background").GetComponent<Image>().color = GridManager.i.uiColors[(int)unit.playerColor];
         var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
-        upgradeButton.interactable = true;
         upgradeButton.gameObject.SetActive(false);
         createFleetButton.gameObject.SetActive(false);
         repairFleetButton.gameObject.SetActive(false);
+        upgradeButton.interactable = false;
         if (unit.playerGuid == MyStation.playerGuid)
         {
-            if (CanLevelUp(unit, actionType, true))
+            if (unit.level < Constants.MaxUnitLevel)
             {
-                var cost = GetCostOfAction(actionType, unit, true);
-                upgradeCost.text = GetCostText(cost);
-                upgradeButton.interactable = MyStation.credits >= cost;
+                upgradeButton.interactable = true;
+                if (CanLevelUp(unit, actionType, true))
+                {
+                    var cost = GetCostOfAction(actionType, unit, true);
+                    upgradeCost.text = GetCostText(cost);
+                    upgradeButton.interactable = MyStation.credits >= cost;
+                }
+                else
+                {
+                    upgradeCost.text = "(Research Required)";
+                }
             }
             else
             {
-                upgradeCost.text = "(Technology Required)";
+                upgradeCost.text = "(Max Level)";
             }
             upgradeButton.gameObject.SetActive(true);
             if (unit is Station)
@@ -922,16 +931,24 @@ public class GameManager : MonoBehaviour
   
     private void UpdateCreateFleetCostText()
     {
-        createFleetButton.interactable = true;
-        if (IsUnderMaxFleets(MyStation, true))
+        createFleetButton.interactable = false;
+        if (MyStation.fleets.Count < Constants.MaxUnitLevel)
         {
-            var cost = GetCostOfAction(ActionType.CreateFleet, MyStation, true);
-            createFleetCost.text = GetCostText(cost);
-            createFleetButton.interactable = (MyStation.credits >= cost);
+            createFleetButton.interactable = true;
+            if (IsUnderMaxFleets(MyStation, true))
+            {
+                var cost = GetCostOfAction(ActionType.CreateFleet, MyStation, true);
+                createFleetCost.text = GetCostText(cost);
+                createFleetButton.interactable = (MyStation.credits >= cost);
+            }
+            else
+            {
+                createFleetCost.text = "(Research Required)";
+            }
         }
         else
         {
-            createFleetCost.text = "(Technology Required)";
+            createFleetCost.text = "(Max Level)";
         }
     }
 

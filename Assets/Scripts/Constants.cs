@@ -11,6 +11,7 @@ public static class Constants{
     internal static int GridSize = 10;
     internal static int MaxActions = 5;
     internal static int MaxPlayers = 4;
+    internal static int MaxUnitLevel = 4;
     internal static int MaxModules = 4;
     internal static int MinModules = 1;
     internal static List<int> SpyModules = new List<int>() { 49, 60, 61 };
