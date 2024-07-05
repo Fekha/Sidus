@@ -209,9 +209,8 @@ public class Unit : Node
                 kineticPower += (5 * modifer);
                 thermalArmor += (-1 * modifer);
                 break;
-            case 1:
+            case 1: //Roughly balancing everything on this module
                 thermalPower += (5 * modifer);
-                IncreaseMaxHP(1 * modifer);
                 break;
             case 2:
                 explosivePower += (5 * modifer);
@@ -392,6 +391,7 @@ public class Unit : Node
                 break; 
             case 41:
                 supportValue = modifer == 1 ? 1 : .5;
+                kineticPower += (-2 * modifer);
                 break;
             case 42:
                 thermalPower += (3 * modifer);
@@ -404,7 +404,7 @@ public class Unit : Node
                 else { moduleEffects.Remove(ModuleEffect.DoubleHeal); }
                 break;
             case 44:
-                explosivePower += (2 * modifer);
+                explosivePower += (3 * modifer);
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.CombatHeal3); }
                 else { moduleEffects.Remove(ModuleEffect.CombatHeal3); }
                 break;
@@ -421,7 +421,7 @@ public class Unit : Node
                 else { moduleEffects.Remove(ModuleEffect.CombatExplosive2); }
                 break;
             case 48:
-                IncreaseMaxMining(1 * modifer);
+                IncreaseMaxMining(2 * modifer);
                 if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidCredits3); }
                 else { moduleEffects.Remove(ModuleEffect.AsteroidCredits3); }
                 break;
@@ -467,6 +467,32 @@ public class Unit : Node
                 explosivePower += (3 * modifer);
                 kineticArmor += (1 * modifer);
                 thermalArmor += (2 * modifer);
+                break;
+            case 58:
+                supportValue = modifer == 1 ? 1 : .5;
+                thermalPower += (-2 * modifer);
+                break;
+            case 59:
+                supportValue = modifer == 1 ? 1 : .5;
+                explosivePower += (-2 * modifer);
+                break;
+            case 60:
+                thermalPower += (2 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.HiddenStats); }
+                else { moduleEffects.Remove(ModuleEffect.HiddenStats); }
+                break;
+            case 61:
+                explosivePower += (2 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.HiddenStats); }
+                else { moduleEffects.Remove(ModuleEffect.HiddenStats); }
+                break;
+            case 62:
+                kineticPower += (5 * modifer);
+                explosiveArmor += (-1 * modifer);
+                break;
+            case 63:
+                explosivePower += (5 * modifer);
+                thermalArmor += (1 * modifer);
                 break;
             default:
                 break;

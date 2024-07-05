@@ -484,7 +484,7 @@ public class GameManager : MonoBehaviour
         {
             var bonusHp = 5;
             var bonusPower = 2;
-            var extraBonus = action.selectedUnit.level == 2 ? "+1 Mining Power" : action.selectedUnit.level == 3 ? "+1 Movement" : "";
+            var extraBonus = action.selectedUnit.level == 2 ? "+2 Mining Power" : action.selectedUnit.level == 3 ? "+1 Movement" : "";
             if (action.selectedUnit.level == 4)
             {
                 bonusHp *= 2;
@@ -979,7 +979,7 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.UpgradeStation)
         {
-            return ((unit.level + 1 + countingQueue) * 5); //10,15,20
+            return ((unit.level + 1 + countingQueue) * 6); //12,18,24
         }
         else if (actionType == ActionType.BidOnModule)
         {
@@ -2155,7 +2155,7 @@ public class GameManager : MonoBehaviour
         }
         foreach (var unit in AllUnits)
         {
-            unit.RegenHP(unit.movementLeft);
+            unit.RegenHP(unit.movementLeft*2);
             GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain,unit,TurnNumber == 1);
             unit.hasMoved = false;
             unit.resetMining();
@@ -2208,7 +2208,7 @@ public class GameManager : MonoBehaviour
         unit.maxAttachedModules = Mathf.Max(unit.maxAttachedModules, Constants.MinModules);
         if (unit.level == 1)
         {
-            unit.IncreaseMaxMining(1 * modifier);
+            unit.IncreaseMaxMining(2 * modifier);
         }
         else if (unit.level == 2)
         {
@@ -2337,7 +2337,7 @@ public class GameManager : MonoBehaviour
                 {
                    
                     UnitModuleBar.Find($"Module{i}/Remove").gameObject.SetActive(unit.playerGuid == MyStation.playerGuid && !MyStation.actions.Any(x=>x.selectedModuleGuid == unit.attachedModules[i]?.moduleGuid || x.generatedGuid == unit.attachedModules[i]?.moduleGuid));
-                    if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && unit.attachedModules[i].moduleId != Constants.SpyModule)
+                    if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats) && !Constants.SpyModules.Contains(unit.attachedModules[i].moduleId))
                     {
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Image>().sprite = lockModuleBar;
                         UnitModuleBar.Find($"Module{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel("This units modules are hidden."));

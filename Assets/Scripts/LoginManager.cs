@@ -61,7 +61,7 @@ public class LoginManager : MonoBehaviour
         {
             GameGuid = gameGuid,
             MaxPlayers = MaxPlayers,
-            NumberOfModules = 51,
+            NumberOfModules = Constants.NumberOfModules,
             GameSettings = String.Join(",", GameSettings),
             GameTurns = new List<GameTurn>()
             {
@@ -98,6 +98,7 @@ public class LoginManager : MonoBehaviour
     }
     public void ViewGameCreation(bool active)
     {
+        MaxPlayers = 2;
         createGamePanel.SetActive(active);
     }
     public void EditMaxPlayers(bool plus)

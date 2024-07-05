@@ -51,8 +51,8 @@ public class Module
             case 0:
                 effectText = "+5 Kinetic Power\n+1 Thermal Damage Taken";
                 break;
-            case 1:
-                effectText = "+5 Thermal Power\n+1 Max HP";
+            case 1: //Roughly balancing everything on this module
+                effectText = "+5 Thermal Power";
                 break;
             case 2:
                 effectText = "+5 Explosive Power\n-1 Thermal Damage Taken";
@@ -175,7 +175,7 @@ public class Module
                 effectText = "-2 Thermal Power\n+7 Explosive Power\n+1 Thermal Damage Taken";
                 break;
             case 41:
-                effectText = "Support allies at full Power.";
+                effectText = "Support allies at full Power.\n-2 Kinetic Power";
                 rarity = Rarity.Rare;
                 break;
             case 42:
@@ -187,7 +187,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 44:
-                effectText = "Repair 3 HP when entering combat\n+2 Explosive Power";
+                effectText = "Repair 3 HP when entering combat\n+3 Explosive Power";
                 rarity = Rarity.Rare;
                 break;
             case 45:
@@ -203,7 +203,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 48:
-                effectText = "Gain 3 Credits after destroying an asteroid\n+1 Mining Power";
+                effectText = "Gain 3 Credits after destroying an asteroid\n+2 Mining Power";
                 rarity = Rarity.Rare;
                 break;
             case 49:
@@ -235,6 +235,28 @@ public class Module
                 break;
             case 57:
                 effectText = "+3 Explosive Power\n-1 Kinetic Damage Taken\n-2 Thermal Damage Taken"; 
+                break;
+            case 58:
+                effectText = "Support allies at full Power.\n-2 Thermal Power";
+                rarity = Rarity.Rare;
+                break;
+            case 59:
+                effectText = "Support allies at full Power.\n-2 Explosive Power";
+                rarity = Rarity.Rare;
+                break;
+            case 60:
+                effectText = "Stats are hidden from enemies\n+2 Thermal Power";
+                rarity = Rarity.Rare;
+                break;
+            case 61:
+                effectText = "Stats are hidden from enemies\n+2 Explosive Power";
+                rarity = Rarity.Rare;
+                break;
+            case 62:
+                effectText = "+5 Kinetic Power\n-1 Explosive Damage Taken";
+                break;
+            case 63:
+                effectText = "+5 Explosive Power\n-1 Thermal Damage Taken";
                 break;
             default:
                 break;

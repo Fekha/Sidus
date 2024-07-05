@@ -13,9 +13,10 @@ public static class Constants{
     internal static int MaxPlayers = 4;
     internal static int MaxModules = 4;
     internal static int MinModules = 1;
-    internal static int SpyModule = 49;
+    internal static List<int> SpyModules = new List<int>() { 49, 60, 61 };
     internal static int Create = 1;
     internal static int Remove = -1;
     internal static int StartingCredits = 5;
     internal static float MovementSpeed = .8f;
+    internal static int NumberOfModules = 63;
 }
