@@ -1415,8 +1415,8 @@ public class GameManager : MonoBehaviour
     {
         int s1Dmg = (s2.explosivePower+s2sExplosive) - (s1.explosivePower+s1sExplosive);
         int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
-        int s1Amr = s1.explosiveDamageModifier;
-        int s2Amr = s2.explosiveDamageModifier;
+        int s1Amr = s1.explosiveArmor;
+        int s2Amr = s2.explosiveArmor;
         string support1Text = (s1sExplosive > 0 ? $"({s1.explosivePower} base +{s1sExplosive} from support)" : "");
         string support2Text = (s2sExplosive > 0 ? $"({s2.explosivePower} base +{s2sExplosive} from support)" : "");
         string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower + s1sExplosive}";
@@ -1426,8 +1426,8 @@ public class GameManager : MonoBehaviour
         {
             s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
             s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
-            s1Amr = s1.kineticDamageModifier;
-            s2Amr = s2.kineticDamageModifier;
+            s1Amr = s1.kineticArmor;
+            s2Amr = s2.kineticArmor;
             support1Text = (s1sKinetic > 0 ? $"({s1.kineticPower} base +{s1sKinetic} from support)" : "");
             support2Text = (s2sKinetic > 0 ? $"({s2.kineticPower} base +{s2sKinetic} from support)" : "");
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower + s1sKinetic}";
@@ -1437,8 +1437,8 @@ public class GameManager : MonoBehaviour
         {
             s1Dmg = (s2.thermalPower+s2sThermal) - (s1.thermalPower+s1sThermal);
             s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
-            s1Amr = s1.thermalDamageModifier;
-            s2Amr = s2.thermalDamageModifier;
+            s1Amr = s1.thermalArmor;
+            s2Amr = s2.thermalArmor;
             support1Text = (s1sThermal > 0 ? $"({s1.thermalPower} base +{s1sThermal} from support)" : "");
             support2Text = (s2sThermal > 0 ? $"({s2.thermalPower} base +{s2sThermal} from support)" : "");
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower + s1sThermal}";
