@@ -612,7 +612,7 @@ public class Unit : Node
     {
         return new ServerUnit()
         {
-            UnitType = (int)(this is Station ? UnitType.Station : this is Fleet ? UnitType.Fleet : UnitType.Bomb),
+            UnitType = (int)unitType,
             GameGuid = Globals.GameMatch.GameGuid,
             TurnNumber = GameManager.i.TurnNumber,
             PlayerGuid = playerGuid,
@@ -636,6 +636,7 @@ public class Unit : Node
             KineticDeployPower = kineticDeployPower,
             ThermalDeployPower = thermalDeployPower,
             ExplosiveDeployPower = explosiveDeployPower,
+            DeployRange = deployRange,
             MaxMining = maxMining,
             MiningLeft = miningLeft,
             SupportValue = supportValue,

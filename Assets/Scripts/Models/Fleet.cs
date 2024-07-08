@@ -14,6 +14,7 @@ public class Fleet : Unit
         kineticDeployPower = 0;
         thermalDeployPower = 0;
         explosiveDeployPower = 0;
+        unitType = UnitType.Fleet;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, _mining, _station.facing, UnitType.Fleet);
         if (_bombGuid != null)
         {

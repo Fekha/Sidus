@@ -13,7 +13,6 @@ public class Station : Unit
     internal int maxActions;
     internal int credits;
     internal int fleetCount;
-    internal int bombCount;
     internal int bonusKinetic;
     internal int bonusThermal;
     internal int bonusExplosive;
@@ -31,6 +30,7 @@ public class Station : Unit
         playerColor = (PlayerColor)GameManager.i.Stations.Count;
         playerGuid = _stationGuid;
         unitName = $"{(PlayerColor)_color} Station";
+        unitType = UnitType.Station;
         credits = _credits;
         kineticDeployPower = 3;
         thermalDeployPower = 4;
@@ -55,13 +55,24 @@ public class Station : Unit
         bonusMining = player.BonusMining;
         score = player.Score;
         InitializeUnit(player.Units.FirstOrDefault(x=>x.UnitType == (int)UnitType.Station));
-        foreach (var fleet in player.Units.Where(x=>x.UnitType == (int)UnitType.Fleet))
+        foreach (var unit in player.Units)
         {
-            var fleetObj = Instantiate(GridManager.i.unitPrefab);
-            fleetObj.transform.SetParent(GridManager.i.characterParent);
-            var fleetNode = fleetObj.AddComponent<Fleet>();
-            fleetNode.InitializeUnit(fleet);
-            fleets.Add(fleetNode);
+            if (unit.UnitType == (int)UnitType.Bomb)
+            {
+                var bombObj = Instantiate(GridManager.i.bombPrefab);
+                bombObj.transform.SetParent(GridManager.i.characterParent);
+                var bombNode = bombObj.AddComponent<Bomb>();
+                bombNode.InitializeUnit(unit);
+                bombs.Add(bombNode);
+            }
+            else if (unit.UnitType == (int)UnitType.Fleet)
+            {
+                var fleetObj = Instantiate(GridManager.i.unitPrefab);
+                fleetObj.transform.SetParent(GridManager.i.characterParent);
+                var fleetNode = fleetObj.AddComponent<Fleet>();
+                fleetNode.InitializeUnit(unit);
+                fleets.Add(fleetNode);
+            }
         }
         actions = player.Actions.Select(x => new Action(x)).ToList();
     }

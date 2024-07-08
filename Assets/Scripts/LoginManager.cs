@@ -211,8 +211,8 @@ public class LoginManager : MonoBehaviour
             var prefab = Instantiate(openGamePrefab, activeContent);
             prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
             prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
-            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{game.GameTurns.Count-1}";
-            var players = game.GameTurns.Last().Players;
+            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{(game.GameTurns.OrderBy(x=>x.TurnNumber).LastOrDefault(x=>x.Players.Count() == game.MaxPlayers)?.TurnNumber??-1)+1}";
+            var players = game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault().Players;
             prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));
             openGamesObjects.Add(prefab);
         }

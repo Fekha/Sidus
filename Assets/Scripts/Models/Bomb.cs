@@ -9,8 +9,8 @@ public class Bomb : Unit
         playerColor = _station.playerColor;
         playerGuid = _station.playerGuid;
         _station.bombs.Add(this);
-        _station.bombCount++;
-        unitName = $"{(PlayerColor)_color} Fleet {_station.bombCount}";
+        unitName = $"{(PlayerColor)_color} Bomb";
+        unitType = UnitType.Bomb;
         InitializeUnit(_x, _y, _color, 0, 0, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, 0, _station.facing, UnitType.Bomb);
     }
 }
