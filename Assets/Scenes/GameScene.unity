@@ -11792,7 +11792,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19.85
+  m_fontSize: 21.35
   m_fontSizeBase: 19
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -17600,9 +17600,9 @@ MonoBehaviour:
     allied unit and themsleives each turn.\n\nClaiming:\nYou immediatly claim any
     nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
     its movement on the hex, and you must already own a neighboring hex to claim
-    it.\n\nCreating a fleet:\nA new fleet will first try to spawn in the direction
-    the station is facing, continueing clockwise, until it finds a hex that does
-    not already have a unit, asteroid, and is owned by that player.\n"
+    it.\n\nDeploying:\nA new fleet or bomb will try to be deployed where selected,
+    but if no longer valid it will continue clockwise, until it finds a hex that
+    does not already have a unit or asteroid.\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -23734,16 +23734,16 @@ MonoBehaviour:
     Leveling up:
 
     Each level up provides
-    +5 Max HP and +2 of each combat stat. At level 2 you will also gain +2 mining
-    Power. Level 3 will gain +1 movement. Level 4 will gain double the normal combat
-    and max HP bonus.
+    +3 Max HP, +2 of each Power type, and +1 of each Deploy Power type. At level
+    2 you will also gain +2 mining Power, Level 3 will gain +1 movement, and Level
+    4 will gain +1 Deploy range.
 
 
     Unused actions:
 
-    Whether you end your turn early
-    or have actions that are still locked, you will gain +1 credit per usused action
-    at the end of the turns.'
+    Whether you end your
+    turn early or have actions that are still locked, you will gain +1 credit per
+    usused action at the end of the turns.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
