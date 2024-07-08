@@ -1,7 +1,6 @@
 
 using Models;
 using System;
-using Unity.Android.Gradle.Manifest;
 
 public class Fleet : Unit
 {
