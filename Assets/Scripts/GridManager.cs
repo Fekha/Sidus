@@ -231,7 +231,7 @@ public class GridManager : MonoBehaviour
     public Unit Deploy(Unit unitNode, Guid fleetGuid, Coords coords, UnitType unitType, Guid? _bombGuid = null)
     {
         Station station = GameManager.i.Stations.FirstOrDefault(x => x.playerGuid == unitNode.playerGuid);
-        var hexesNearby = GameManager.i.GetNodesForDeploy(unitNode);
+        var hexesNearby = GameManager.i.GetNodesForDeploy(unitNode,false);
         var startIndex = hexesNearby.FindIndex(x => x.actualCoords.CoordsEquals(coords));
         if (startIndex != -1)
         {

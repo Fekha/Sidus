@@ -365,9 +365,12 @@ public class GameManager : MonoBehaviour
                 KineticDeployValueText.text = $"{unit.kineticDeployPower}";
                 ThermalDeployValueText.text = $"{unit.thermalDeployPower}";
                 ExplosiveDeployValueText.text = $"{unit.explosiveDeployPower}";
-                KineticTakenValueText.text = $"{unit.kineticDamageTaken}";
-                ThermalTakenValueText.text = $"{unit.thermalDamageTaken}";
-                ExplosiveTakenValueText.text = $"{unit.explosiveDamageTaken}";
+                var symbol = unit.kineticDamageTaken < 0 ? "+" : "";
+                KineticTakenValueText.text = $"{symbol}{unit.kineticDamageTaken*-1}";
+                symbol = unit.thermalDamageTaken < 0 ? "+" : "";
+                ThermalTakenValueText.text = $"{symbol}{unit.thermalDamageTaken * -1}";
+                symbol = unit.explosiveDamageTaken < 0 ? "+" : "";
+                ExplosiveTakenValueText.text = $"{symbol}{unit.explosiveDamageTaken * -1}";
             }
             infoPanel.transform.Find("Background").GetComponent<Image>().color = GridManager.i.uiColors[(int)unit.playerColor];
             var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
@@ -898,7 +901,7 @@ public class GameManager : MonoBehaviour
         {
             if (!requeing) ShowCustomAlertPanel("Can not create new fleet, you will hit max fleets for your station level");
         }
-        else if ((action.actionType == ActionType.DeployFleet || action.actionType == ActionType.DeployBomb) && !GetNodesForDeploy(action.selectedUnit).Contains(action.selectedPath.FirstOrDefault()))
+        else if ((action.actionType == ActionType.DeployFleet || action.actionType == ActionType.DeployBomb) && !GetNodesForDeploy(action.selectedUnit,true).Contains(action.selectedPath.FirstOrDefault()))
         {
             if (!requeing) ShowCustomAlertPanel("Selected node not within deploy range");
         }
@@ -1560,7 +1563,7 @@ public class GameManager : MonoBehaviour
     public void HighlightDeployRange(Unit unit)
     {
         ClearHighlightRange();
-        List<PathNode> nodesWithinRange = GetNodesForDeploy(unit);
+        List<PathNode> nodesWithinRange = GetNodesForDeploy(unit,true);
         foreach (PathNode node in nodesWithinRange)
         {
             GameObject range = Instantiate(deployPrefab, node.transform.position, Quaternion.identity);
@@ -1571,10 +1574,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    internal List<PathNode> GetNodesForDeploy(Unit unit)
+    internal List<PathNode> GetNodesForDeploy(Unit unit, bool queuing)
     {
-        return GridManager.i.GetNodesWithinRange(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveAndMine || x.actionType == ActionType.MoveUnit) && x.selectedUnit.unitGuid == unit.unitGuid)?.selectedPath?.LastOrDefault() ?? unit.currentPathNode,
-            unit.deployRange, 0).Where(x => !x.isAsteroid).ToList();
+        PathNode currentNode = queuing ? MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveAndMine || x.actionType == ActionType.MoveUnit) && x.selectedUnit.unitGuid == unit.unitGuid)?.selectedPath?.LastOrDefault() ?? unit.currentPathNode : unit.currentPathNode;
+        return GridManager.i.GetNodesWithinRange(currentNode, unit.deployRange, 0).Where(x => !x.isAsteroid).ToList();
     }
 
     private void UpdateCurrentTurn(GameTurn turn)
