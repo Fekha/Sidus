@@ -301,17 +301,17 @@ public class GameManager : MonoBehaviour
         ToggleHPText(true);
         if (unit.unitType == UnitType.Bomb)
         {
-            bool hasDeployPower = unit.kineticDeployPower > 0 || unit.thermalDeployPower > 0 || unit.explosiveDeployPower > 0;
+            bool hasDeployPower = unit.kineticPower > 0 || unit.thermalPower > 0 || unit.explosivePower > 0;
             if (unit.teamId == MyStation.teamId)
             {
                 var alertString = "Moving onto this bomb will disarm it.\n\nEnemies will lose 1 movement";
-                alertString += hasDeployPower ? $"\nand take {unit.kineticDeployPower} Kinetic, {unit.thermalDeployPower} Thermal, and {unit.explosiveDeployPower} Explosive\ndirect damage." : ".";
+                alertString += hasDeployPower ? $"\nand take {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage." : ".";
                 ShowCustomAlertPanel(alertString);
             }
             else
             {
                 var alertString = "Moving into this bomb will cause it to explode.\n\nResulting in the loss of 1 movement";
-                alertString += hasDeployPower ? $"\nand dealing {unit.kineticDeployPower} Kinetic, {unit.thermalDeployPower} Thermal, and {unit.explosiveDeployPower} Explosive\ndirect damage to the unit." : ".";
+                alertString += hasDeployPower ? $"\nand dealing {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage to the unit." : ".";
                 ShowCustomAlertPanel(alertString);
             }
         }
@@ -1153,9 +1153,9 @@ public class GameManager : MonoBehaviour
                     if (nextNode.unitOnPath.unitType == UnitType.Bomb)
                     {
                         unitMoving.subtractMovement(1);
-                        int damage = Math.Max(0, nextNode.unitOnPath.kineticPower-unitMoving.kineticDamageTaken);
-                        damage += Math.Max(0, nextNode.unitOnPath.thermalPower-unitMoving.thermalDamageTaken);
-                        damage += Math.Max(0, nextNode.unitOnPath.explosivePower-unitMoving.explosiveDamageTaken);
+                        int damage = nextNode.unitOnPath.kineticPower > 0 ? Math.Max(0, nextNode.unitOnPath.kineticPower-unitMoving.kineticDamageTaken) : 0;
+                        damage += nextNode.unitOnPath.thermalPower > 0 ? Math.Max(0, nextNode.unitOnPath.thermalPower-unitMoving.thermalDamageTaken) : 0;
+                        damage += nextNode.unitOnPath.explosivePower > 0 ? Math.Max(0, nextNode.unitOnPath.explosivePower-unitMoving.explosiveDamageTaken) : 0;
                         unitMoving.TakeDamage(damage, nextNode.unitOnPath);
                         StartCoroutine(GameManager.i.FloatingTextAnimation($"-1 Movement", unitMoving.transform, unitMoving, true));
                         turnValue.text = $"{unitMoving.unitName} moved into a bomb, losing 1 movement and taking {damage} damage.";
