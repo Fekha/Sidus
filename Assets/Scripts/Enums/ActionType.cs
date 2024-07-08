@@ -6,8 +6,8 @@ public enum ActionType
     RepairFleet,
     [Description("Move Unit")]
     MoveUnit,
-    [Description("Create Fleet")]
-    CreateFleet,
+    [Description("Deploy Fleet")]
+    DeployFleet,
     [Description("Upgrade Fleet")]
     UpgradeFleet,
     [Description("Upgrade Station")]
@@ -16,8 +16,8 @@ public enum ActionType
     AttachModule,
     [Description("Swap Module")]
     SwapModule,
-    [Description("Mine Asteroid")]
-    MineAsteroid,
+    [Description("Deploy Bomb")]
+    DeployBomb,
     [Description("Move & Mine")]
     MoveAndMine,
     [Description("Bid on module")]

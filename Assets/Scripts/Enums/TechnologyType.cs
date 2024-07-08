@@ -3,8 +3,8 @@ using System.ComponentModel;
 public enum TechnologyType
 {
     ResearchStationLvl,
-    ResearchFleetLvl,
     ResearchMaxFleets,
+    ResearchFleetLvl,
     ResearchKinetic,
     ResearchHP,
     ResearchMining,

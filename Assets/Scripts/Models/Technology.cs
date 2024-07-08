@@ -145,9 +145,9 @@ public class Technology
             case TechnologyType.ResearchStationLvl:
                 return level < 3;
             case TechnologyType.ResearchFleetLvl:
-                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchStationLvl].level && level < 3;
-            case TechnologyType.ResearchMaxFleets:
                 return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchFleetLvl].level && level < 3;
+            case TechnologyType.ResearchMaxFleets:
+                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchStationLvl].level && level < 3;
             case TechnologyType.ResearchHP:
                 return level < (GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level+
                     GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level+

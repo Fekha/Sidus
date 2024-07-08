@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7b4b879ec53a6174c9ceccff938e26d1
+guid: 24df19c0d3b1630408e9312a8bf281fa
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8409740767964767717
-    second: war-pick_0
+      213: 6287762132750933640
+    second: falling-bomb_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: war-pick_0
+      name: falling-bomb_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b1ad65804599a4b80800000000000000
-      internalID: -8409740767964767717
+      spriteID: 88e95c2885e924750800000000000000
+      internalID: 6287762132750933640
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      war-pick_0: -8409740767964767717
+      falling-bomb_0: 6287762132750933640
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

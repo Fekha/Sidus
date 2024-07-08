@@ -163,7 +163,7 @@ public class LoginManager : MonoBehaviour
                     GameGuid = gameGuid,
                     TurnNumber = 0,
                     PlayerColor = playerId,
-                    IsStation = true,
+                    UnitType = (int)UnitType.Station,
                 },
                 new ServerUnit()
                 {
@@ -172,7 +172,16 @@ public class LoginManager : MonoBehaviour
                     GameGuid = gameGuid,
                     TurnNumber = 0,
                     PlayerColor = playerId,
-                    IsStation = false,
+                    UnitType = (int)UnitType.Fleet,
+                },
+                new ServerUnit()
+                {
+                    PlayerGuid = Globals.Account.PlayerGuid,
+                    UnitGuid = Guid.NewGuid(),
+                    GameGuid = gameGuid,
+                    TurnNumber = 0,
+                    PlayerColor = playerId,
+                    UnitType = (int)UnitType.Bomb,
                 },
             },
             Credits = Constants.StartingCredits,

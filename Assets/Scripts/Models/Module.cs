@@ -73,13 +73,13 @@ public class Module
                 effectText = "+2 Kinetic Power\n+3 Thermal Power";
                 break;
             case 8:
-                effectText = "+6 Kinetic Power\n-1 Explosive Power\n+3 Thermal Damage Taken";
+                effectText = "+6 Kinetic Power\n-1 Explosive Power\n+2 Thermal Damage Taken";
                 break;
             case 9:
-                effectText = "+6 Thermal Power\n-1 Kinetic Power\n+2 Explosive Damage Taken";
+                effectText = "-1 Kinetic Power\n+6 Thermal Power\n+1 Explosive Damage Taken";
                 break;
             case 10:
-                effectText = "+6 Explosive Power\n-1 Thermal Power\n+1 Kinetic Damage Taken";
+                effectText = "-1 Thermal Power\n+6 Explosive Power";
                 break;
             case 11:
                 effectText = "+1 Kinetic Power\n+2 Thermal Power\n+2 Explosive Power";
@@ -127,29 +127,29 @@ public class Module
                 effectText = "+3 Explosive Power\n-2 Kinetic Damage Taken\n-1 Thermal Damage Taken";
                 break; 
             case 26:
-                effectText = "+5 Max HP\n+2 Thermal Power\n-2 Kinetic Damage Taken";
+                effectText = "+5 Max HP\n+3 Thermal Power\n-1 Kinetic Damage Taken";
                 break;
             case 27:
-                effectText = "+5 Max HP\n+2 Explosive Power\n-2 Thermal Damage Taken";
+                effectText = "+5 Max HP\n+3 Explosive Power\n-2 Kinetic Damage Taken";
                 break;
             case 28:
-                effectText = "+5 Max HP\n+2 Kinetic Power\n-1 Explosive Damage Taken";
-                break;
-            case 29:
                 effectText = "+5 Max HP\n+3 Kinetic Power";
                 break;
+            case 29:
+                effectText = "+5 Max HP\n+1 Kinetic Power\n+1 Explosive Deploy Power";
+                break;
             case 30:
-                effectText = "+5 Max HP\n+3 Thermal Power";
+                effectText = "+5 Max HP\n+1 Thermal Power\n+1 Thermal Deploy Power";
                 break;
             case 31:
-                effectText = "+5 Max HP\n+3 Explosive Power";
+                effectText = "+5 Max HP\n+1 Explosive Power\n+1 Kinetic Deploy Power";
                 break; 
             case 32:
                 effectText = "+1 credit per turn";
                 rarity = Rarity.Rare;
                 break; 
             case 33:
-                effectText = "+2 credits per turn\n-1 Mining Power";
+                effectText = "+2 credits per turn\n-2 Mining Power";
                 rarity = Rarity.Rare;
                 break; 
             case 34:
@@ -166,13 +166,13 @@ public class Module
                 effectText = "+3 Mining Power\n+2 Explosive Power\n-1 Kinetic Power";
                 break;
             case 38:
-                effectText = "+7 Kinetic Power\n-2 Thermal Power\n+3 Thermal Damage Taken";
+                effectText = "+7 Kinetic Power\n-2 Thermal Power\n+2 Thermal Damage Taken";
                 break;
             case 39:
-                effectText = "+7 Thermal Power\n-2 Explosive Power\n+2 Explosive Damage Taken";
+                effectText = "+7 Thermal Power\n-2 Explosive Power\n+1 Explosive Damage Taken";
                 break;
             case 40:
-                effectText = "-2 Thermal Power\n+7 Explosive Power\n+1 Thermal Damage Taken";
+                effectText = "-2 Thermal Power\n+7 Explosive Power";
                 break;
             case 41:
                 effectText = "Support allies at full Power.\n-2 Kinetic Power";
@@ -222,10 +222,10 @@ public class Module
                 effectText = "4 Kinetic Power\n+1 Explosive Power\n+1 Thermal Damage Taken";
                 break;
             case 53:
-                effectText = "+4 Thermal Power\n1 Explosive Power";
+                effectText = "+4 Thermal Power\n+1 Explosive Power";
                 break;
             case 54:
-                effectText = "1 Kinetic Power\n+4 Explosive Power\n-1 Thermal Damage Taken";
+                effectText = "+1 Kinetic Power\n+4 Explosive Power\n-1 Thermal Damage Taken";
                 break;
             case 55:
                 effectText = "+3 Kinetic Power\n-1 Thermal Damage Taken\n-2 Explosive Damage Taken";
@@ -253,10 +253,72 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 62:
-                effectText = "+5 Kinetic Power\n-1 Explosive Damage Taken";
+                effectText = "+5 Kinetic Power\n+1 Explosive Damage Taken";
                 break;
             case 63:
                 effectText = "+5 Explosive Power\n-1 Thermal Damage Taken";
+                break;
+            case 64:
+                effectText = "+6 Kinetic Power\n-1 Thermal Power\n+2 Explosive Damage Taken";
+                break;
+            case 65:
+                effectText = "+6 Thermal Power\n-1 Explosive Power\n+1 Kinetic Damage Taken";
+                break;
+            case 66:
+                effectText = "-1 Kinetic Power\n+6 Explosive Power";
+                break;
+            case 67:
+                effectText = "+1 Deploy Range\n-1 Kinetic Deploy Power";
+                break;
+            case 68:
+                effectText = "+1 Deploy Range\n-1 Thermal Deploy Power";
+                break;
+            case 69:
+                effectText = "+1 Deploy Range\n-1 Explosive Deploy Power";
+                break;
+            case 70:
+                effectText = "+1 Explosive Power\n+2 Kinetic Deploy Power\n+1 Thermal Damage Taken";
+                break;
+            case 71:
+                effectText = "+1 Explosive Power\n+2 Thermal Deploy Power";
+                break;
+            case 72:
+                effectText = "+1 Kinetic Power\n+2 Explosive Deploy Power\n-1 Thermal Damage Taken";
+                break;
+            case 73:
+                effectText = "Damage dealt reduces Max HP\n+3 Kinetic Power";
+                rarity = Rarity.Rare;
+                break;
+            case 74:
+                effectText = "Damage dealt reduces Max HP\n+3 Explosive Power";
+                rarity = Rarity.Rare;
+                break;
+            case 75:
+                effectText = "+5 Max HP\n+1 Kinetic Deploy Power\n-2 Explosive Damage Taken";
+                break;
+            case 76:
+                effectText = "+5 Max HP\n+1 Thermal Deploy Power\n-2 Kinetic Damage Taken";
+                break;
+            case 77:
+                effectText = "+5 Max HP\n+1 Explosive Deploy Power\n-2 Thermal Damage Taken";
+                break;
+            case 78:
+                effectText = "+6 Kinetic Power\n-1 Thermal Deploy Power\n+1 Thermal Damage Taken";
+                break;
+            case 79:
+                effectText = "+6 Thermal Power\n-1 Explosive Deploy Power\n+1 Explosive Damage Taken";
+                break;
+            case 80:
+                effectText = "+6 Explosive Power\n-1 Kinetic Deploy Power\n+1 Kinetic Damage Taken";
+                break;
+            case 81:
+                effectText = "+3 Kinetic Deploy Power\n-1 Thermal Deploy Power\n-1 Thermal Damage Taken";
+                break;
+            case 82:
+                effectText = "+3 Thermal Deploy Power\n-1 Explosive Deploy Power\n-1 Explosive Damage Taken";
+                break;
+            case 83:
+                effectText = "+3 Explosive Deploy Power\n-1 Kinetic Deploy Power\n-1 Kinetic Damage Taken";
                 break;
             default:
                 break;

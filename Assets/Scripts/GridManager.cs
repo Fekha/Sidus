@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -11,6 +12,7 @@ public class GridManager : MonoBehaviour
     public static GridManager i;
     public GameObject nodePrefab;
     public GameObject unitPrefab;
+    public GameObject bombPrefab;
     public TextMeshProUGUI amountToWinText;
     private Vector3 cellPrefabSize;
     internal Transform characterParent;
@@ -184,11 +186,13 @@ public class GridManager : MonoBehaviour
         GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
+        Guid bombGuid = Guid.NewGuid();
         if (Globals.GameMatch.MaxPlayers != 1 || stationColor == 0)
         {
-            serverPlayer = currentGameTurn.Players.FirstOrDefault(x=>x.PlayerColor ==stationColor);
+            serverPlayer = currentGameTurn.Players.FirstOrDefault(x=>x.PlayerColor == stationColor);
             stationGuid = (Guid)serverPlayer.PlayerGuid;
-            fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => !x.IsStation).UnitGuid;
+            fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Fleet).UnitGuid;
+            bombGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomb).UnitGuid;
         }
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
@@ -220,52 +224,42 @@ public class GridManager : MonoBehaviour
                 spawnY = 1;
                 facing = Direction.Left;
             }
-            stationNode.InitializeStation(spawnX, spawnY, stationColor, 12, 1, 5, 6, 7, stationGuid, facing, fleetGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
+            stationNode.InitializeStation(spawnX, spawnY, stationColor, 15, 1, 5, 6, 7, stationGuid, facing, fleetGuid,bombGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
         }
     }
 
-    public IEnumerator CreateFleet(Station stationNode, Guid fleetGuid, bool originalSpawn)
+    public Unit Deploy(Unit unitNode, Guid fleetGuid, Coords coords, UnitType unitType, Guid? _bombGuid = null)
     {
-        var hexesNearby = GetNeighbors(stationNode.currentPathNode);
-        if(!originalSpawn)
-            hexesNearby = hexesNearby.Where(x => x.ownedByGuid == stationNode.playerGuid).ToList();
-        var startIndex = -1;
-        int k = 0;
-        while (startIndex == -1)
+        Station station = GameManager.i.Stations.FirstOrDefault(x => x.playerGuid == unitNode.playerGuid);
+        var hexesNearby = GameManager.i.GetNodesForDeploy(unitNode);
+        var startIndex = hexesNearby.FindIndex(x => x.actualCoords.CoordsEquals(coords));
+        if (startIndex != -1)
         {
-            Coords coords = stationNode.currentPathNode.actualCoords.AddCoords(stationNode.currentPathNode.offSet[((int)stationNode.facing+k)%6]);
-            startIndex = hexesNearby.FindIndex(x => x.actualCoords.CoordsEquals(coords));
-            k++;
-        }
-        stationNode._didSpawn = false;
-        for (int i = 0; i < hexesNearby.Count; i++) {
-            int j = (i + startIndex)%hexesNearby.Count;
-            if (CanSpawnFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y))
+            for (int i = 0; i < hexesNearby.Count; i++)
             {
-                var fleet = Instantiate(unitPrefab);
-                fleet.transform.SetParent(characterParent);
-                var fleetNode = fleet.AddComponent<Fleet>();
-                fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, stationNode, (int)stationNode.playerColor, 9+stationNode.bonusHP, 2, 1+stationNode.bonusMining,stationNode.bonusKinetic+3, stationNode.bonusThermal+4, stationNode.bonusExplosive+5, fleetGuid);
-                if (!originalSpawn)
+                int j = (i + startIndex) % hexesNearby.Count;
+                if (CanSpawnFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y))
                 {
-                    StartCoroutine(GameManager.i.FloatingTextAnimation($"New Fleet", fleet.transform, fleetNode)); //floater7
-                    fleetNode.selectIcon.SetActive(true);
-                    yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
-                    fleetNode.selectIcon.SetActive(false);
+                    if (unitType == UnitType.Fleet)
+                    {
+                        var fleet = Instantiate(unitPrefab);
+                        fleet.transform.SetParent(characterParent);
+                        var fleetNode = fleet.AddComponent<Fleet>();
+                        fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 10 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, station.bonusThermal + station.thermalDamageTaken, station.bonusExplosive + station.explosiveDeployPower, fleetGuid, _bombGuid);
+                        return fleetNode;
+                    }
+                    else
+                    {
+                        var bomb = Instantiate(bombPrefab);
+                        bomb.transform.SetParent(characterParent);
+                        var bombNode = bomb.AddComponent<Bomb>();
+                        bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, unitNode.kineticDeployPower, unitNode.thermalDeployPower, unitNode.explosiveDeployPower, fleetGuid);
+                        return bombNode;
+                    }
                 }
-                else
-                {
-                    fleetNode.currentPathNode.SetNodeColor(fleetNode.playerGuid);
-                }
-                stationNode._didSpawn = true;
-                break;
             }
         }
-        if (!stationNode._didSpawn)
-        {
-            GameManager.i.turnValue.text += "\nNo valid location to spawn fleet.";
-            yield return StartCoroutine(GameManager.i.WaitforSecondsOrTap(1));
-        }
+        return null;
     }
     bool CanSpawnFleet(int x, int y)
     {
@@ -320,9 +314,8 @@ public class GridManager : MonoBehaviour
     {
         return 1;
     }
-    internal List<PathNode> GetNodesWithinRange(PathNode startNode, Unit unit)
+    internal List<PathNode> GetNodesWithinRange(PathNode startNode, int movementLeft, int miningLeft)
     {
-        var range = unit.getMovementRange();
         List<PathNode> nodesWithinRange = new List<PathNode>();
         Queue<PathNode> queue = new Queue<PathNode>();
         HashSet<PathNode> visited = new HashSet<PathNode>();
@@ -334,12 +327,12 @@ public class GridManager : MonoBehaviour
             PathNode currentNode = queue.Dequeue();
             if (currentNode != startNode)
                 nodesWithinRange.Add(currentNode);
-            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals > unit.miningLeft);
+            List<PathNode> neighbors = GetNeighbors(currentNode, currentNode.minerals > miningLeft);
             foreach (PathNode neighbor in neighbors)
             {
                 // Check if enemy owned tile and adjust cost
                 int moveCost = currentNode.gCost + GetGCost(neighbor); 
-                if (!visited.Contains(neighbor) && moveCost <= range)
+                if (!visited.Contains(neighbor) && moveCost <= movementLeft)
                 {
                     neighbor.gCost = moveCost;
                     neighbor.parent = currentNode;

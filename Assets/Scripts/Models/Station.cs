@@ -7,20 +7,21 @@ public class Station : Unit
 {
     internal List<Action> actions = new List<Action>();
     internal List<Fleet> fleets = new List<Fleet>();
+    internal List<Bomb> bombs = new List<Bomb>();
     internal List<Module> modules = new List<Module>();
     internal List<Technology> technology = new List<Technology>();
     internal int maxActions;
     internal int credits;
     internal int fleetCount;
+    internal int bombCount;
     internal int bonusKinetic;
     internal int bonusThermal;
     internal int bonusExplosive;
     internal int bonusHP;
     internal int bonusMining;
     internal int score;
-    internal bool _didSpawn;
 
-    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid, int _credits)
+    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid, Guid _bombGuid, int _credits)
     {
         GameManager.i.Stations.Add(this);
         for (int i = 0; i < Constants.TechAmount; i++)
@@ -31,9 +32,13 @@ public class Station : Unit
         playerGuid = _stationGuid;
         unitName = $"{(PlayerColor)_color} Station";
         credits = _credits;
-        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction);
+        kineticDeployPower = 3;
+        thermalDeployPower = 4;
+        explosiveDeployPower = 5;
+        InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction, UnitType.Station);
         currentPathNode.SetNodeColor(playerGuid);
-        StartCoroutine(GridManager.i.CreateFleet(this, _fleetGuid, true));
+        var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Fleet, _bombGuid);
+        fleet.currentPathNode.SetNodeColor(playerGuid);
     }
     public void InitializeStation(GamePlayer player)
     {
@@ -49,8 +54,8 @@ public class Station : Unit
         bonusHP = player.BonusHP;
         bonusMining = player.BonusMining;
         score = player.Score;
-        InitializeUnit(player.Units.FirstOrDefault(x=>x.IsStation));
-        foreach (var fleet in player.Units.Where(x=>!x.IsStation))
+        InitializeUnit(player.Units.FirstOrDefault(x=>x.UnitType == (int)UnitType.Station));
+        foreach (var fleet in player.Units.Where(x=>x.UnitType == (int)UnitType.Fleet))
         {
             var fleetObj = Instantiate(GridManager.i.unitPrefab);
             fleetObj.transform.SetParent(GridManager.i.characterParent);
@@ -118,8 +123,9 @@ public class Station : Unit
     internal List<ServerUnit> GetServerUnits()
     {
         var serverUnits = new List<ServerUnit>();
-        serverUnits.Add(this.ToServerUnit());
+        serverUnits.Add(ToServerUnit());
         serverUnits.AddRange(fleets.Select(x => x.ToServerUnit()));
+        serverUnits.AddRange(bombs.Select(x => x.ToServerUnit()));
         return serverUnits;
     }
 }

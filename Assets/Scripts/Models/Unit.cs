@@ -2,6 +2,7 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,12 +18,16 @@ public class Unit : Node
     internal int HP;
     internal int maxMovement;
     internal int movementLeft;
+    internal int deployRange;
     internal int kineticPower;
     internal int thermalPower;
     internal int explosivePower;
-    internal int kineticArmor;
-    internal int thermalArmor;
-    internal int explosiveArmor;
+    internal int kineticDamageTaken;
+    internal int thermalDamageTaken;
+    internal int explosiveDamageTaken;
+    internal int kineticDeployPower;
+    internal int thermalDeployPower;
+    internal int explosiveDeployPower;
     internal int maxMining;
     internal int miningLeft;
     internal double supportValue;
@@ -32,6 +37,7 @@ public class Unit : Node
     internal Direction facing;
     internal List<Module> attachedModules = new List<Module>();
     internal List<ModuleEffect> moduleEffects = new List<ModuleEffect>();
+    internal UnitType unitType;
     internal TextMeshPro HPText;
     internal TextMeshPro statText;
     internal GameObject selectIcon;
@@ -41,7 +47,7 @@ public class Unit : Node
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
     internal bool hasMoved = false;
 
-    public void InitializeUnit(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction)
+    public void InitializeUnit(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction, UnitType _unitType)
     {
         teamId = _color % Globals.Teams;
         facing = _direction;
@@ -61,11 +67,14 @@ public class Unit : Node
         supportValue = .5;
         globalCreditGain = 0;
         maxAttachedModules = 1;
+        deployRange = 1;
+        unitType = _unitType;
         GetUIComponents();
     }
     internal void InitializeUnit(ServerUnit unit)
     {
         unitGuid = unit.UnitGuid;
+        unitType = (UnitType)unit.UnitType;
         facing = (Direction)unit.Facing;
         location = new Coords(unit.X,unit.Y);
         unitName = unit.UnitName;
@@ -79,15 +88,19 @@ public class Unit : Node
         kineticPower = unit.KineticPower;
         thermalPower = unit.ThermalPower;
         explosivePower = unit.ExplosivePower;
-        kineticArmor = unit.KineticDamageModifier;
-        thermalArmor = unit.ThermalDamageModifier;
-        explosiveArmor = unit.ExplosiveDamageModifier;
+        kineticDamageTaken = unit.KineticDamageModifier;
+        thermalDamageTaken = unit.ThermalDamageModifier;
+        explosiveDamageTaken = unit.ExplosiveDamageModifier;
+        kineticDeployPower = unit.KineticDeployPower;
+        thermalDeployPower = unit.ThermalDeployPower;
+        explosiveDeployPower = unit.ExplosiveDeployPower;
         maxMining = unit.MaxMining;
         miningLeft = unit.MiningLeft;
         supportValue = unit.SupportValue;
         level = unit.Level;
         globalCreditGain = unit.GlobalCreditGain;
         maxAttachedModules = unit.MaxAttachedModules;
+        deployRange = unit.DeployRange;
         attachedModules = GameManager.i.AllModules.Where(x => unit.AttachedModules.Contains(x.moduleGuid.ToString())).ToList();
         if (!String.IsNullOrEmpty(unit.ModuleEffects))
         {
@@ -102,22 +115,30 @@ public class Unit : Node
         currentPathNode.unitOnPath = this;
         transform.position = currentPathNode.transform.position;
         HPText = transform.Find("HP").GetComponent<TextMeshPro>();
-        statText = transform.Find("HP/Stats").GetComponent<TextMeshPro>();
-        selectIcon = transform.Find("Select").gameObject;
-        inCombatIcon = transform.Find("InCombat").gameObject;
-        unitImage = transform.Find("Unit");
-        trail = unitImage.GetComponent<TrailRenderer>();
-        SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
-        unitSprite.color = GridManager.i.playerColors[(int)playerColor];
-        if (this is Station) {
-            unitSprite.sprite = GridManager.i.stationSprites[level - 1];
-            unitSprite.color = GridManager.i.playerColors[(int)playerColor];
+        statText = transform.Find("Stats").GetComponent<TextMeshPro>();
+        if (unitType == UnitType.Bomb)
+        {
+            GetComponent<SpriteRenderer>().color = GridManager.i.playerColors[(int)playerColor];
         }
         else
         {
-            unitSprite.sprite = GridManager.i.fleetSprites[(int)playerColor, level - 1];
-        };
-        unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
+            selectIcon = transform.Find("Select").gameObject;
+            inCombatIcon = transform.Find("InCombat").gameObject;
+            unitImage = transform.Find("Unit");
+            SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
+            unitSprite.color = GridManager.i.playerColors[(int)playerColor];
+            if (this is Station)
+            {
+                unitSprite.sprite = GridManager.i.stationSprites[level - 1];
+                unitSprite.color = GridManager.i.playerColors[(int)playerColor];
+            }
+            else
+            {
+                unitSprite.sprite = GridManager.i.fleetSprites[(int)playerColor, level - 1];
+            }
+            trail = unitImage.GetComponent<TrailRenderer>();
+            unitImage.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, 270 - (facing == Direction.TopRight ? -60 : (int)facing * 60));
+        }
         GameManager.i.AllUnits.Add(this);
     }
 
@@ -129,11 +150,12 @@ public class Unit : Node
             StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this));
         HP += regen;
     }
-    public void TakeDamage(int damage,bool maxHpDamage = false)
+    public void TakeDamage(int damage, Unit unit)
     {
+        StartCoroutine(GameManager.i.FloatingTextAnimation($"-{damage} HP", transform, this));
         HP -= Mathf.Max(damage,0);
         HP = Mathf.Max(0, HP);
-        if (maxHpDamage)
+        if (unit.moduleEffects.Contains(ModuleEffect.ReduceMaxHp))
         {
             maxHP -= Mathf.Max(damage, 0);
         }
@@ -168,16 +190,6 @@ public class Unit : Node
         miningLeft = maxMining;
     }
 
-    internal void clearMovementRange()
-    {
-        movementLeft = 0;
-    }
-
-    internal int getMovementRange()
-    {
-        return movementLeft;
-    }
-
     internal int getMaxMovementRange()
     {
         return maxMovement;
@@ -199,7 +211,9 @@ public class Unit : Node
             HPText.text = $"{Mathf.Min(maxHP, HP)}";
             statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
         }
-        HPText.gameObject.SetActive(value);
+        if(unitType != UnitType.Bomb)
+            HPText.gameObject.SetActive(value);
+        statText.gameObject.SetActive(value);
     }
     internal void EditModule(int id, int modifer = 1)
     {
@@ -207,14 +221,14 @@ public class Unit : Node
         {
             case 0:
                 kineticPower += (5 * modifer);
-                thermalArmor += (-1 * modifer);
+                thermalDamageTaken += (-1 * modifer);
                 break;
             case 1: //Roughly balancing everything on this module
                 thermalPower += (5 * modifer);
                 break;
             case 2:
                 explosivePower += (5 * modifer);
-                kineticArmor += (1 * modifer);
+                kineticDamageTaken += (1 * modifer);
                 break;
             case 3:
                 IncreaseMaxMovement(1 * modifer);
@@ -239,17 +253,16 @@ public class Unit : Node
             case 8:
                 kineticPower += (6 * modifer);
                 explosivePower += (-1 * modifer);
-                thermalArmor += (-3 * modifer);
+                thermalDamageTaken += (-2 * modifer);
                 break;
             case 9:
                 thermalPower += (6 * modifer);
                 kineticPower += (-1 * modifer);
-                explosiveArmor += (-2 * modifer);
+                explosiveDamageTaken += (-1 * modifer);
                 break;
             case 10:
                 explosivePower += (6 * modifer);
                 thermalPower += (-1 * modifer);
-                kineticArmor += (-1 * modifer);
                 break;
             case 11:
                 kineticPower += (1 * modifer);
@@ -263,17 +276,17 @@ public class Unit : Node
             case 13:
                 IncreaseMaxMining(2 * modifer);
                 kineticPower += (2 * modifer);
-                kineticArmor += (2 * modifer);
+                kineticDamageTaken += (2 * modifer);
                 break;
             case 14:
                 IncreaseMaxMining(2 * modifer);
                 thermalPower += (2 * modifer);
-                thermalArmor += (2 * modifer);
+                thermalDamageTaken += (2 * modifer);
                 break;
             case 15:
                 IncreaseMaxMining(2 * modifer);
                 explosivePower += (2 * modifer);
-                explosiveArmor += (2 * modifer);
+                explosiveDamageTaken += (2 * modifer);
                 break;
             case 16:
                 kineticPower += (3 * modifer);
@@ -297,64 +310,66 @@ public class Unit : Node
                 break;
             case 20:
                 IncreaseMaxMovement(1 * modifer);
-                kineticArmor += (2 * modifer); 
+                kineticDamageTaken += (2 * modifer); 
                 break;
             case 21:
                 IncreaseMaxMovement(1 * modifer);
-                thermalArmor += (2 * modifer);
+                thermalDamageTaken += (2 * modifer);
                 break;
             case 22:
                 IncreaseMaxMovement(1 * modifer);
-                explosiveArmor += (2 * modifer);
+                explosiveDamageTaken += (2 * modifer);
                 break;
             case 23:
                 kineticPower += (3 * modifer);
-                thermalArmor += (2 * modifer);
-                explosiveArmor += (1 * modifer);
+                thermalDamageTaken += (2 * modifer);
+                explosiveDamageTaken += (1 * modifer);
                 break;
             case 24:
                 thermalPower += (3 * modifer);
-                explosiveArmor += (2 * modifer);
-                kineticArmor += (1 * modifer);
+                explosiveDamageTaken += (2 * modifer);
+                kineticDamageTaken += (1 * modifer);
                 break;
             case 25:
                 explosivePower += (3 * modifer);
-                kineticArmor += (2 * modifer);
-                thermalArmor += (1 * modifer);
+                kineticDamageTaken += (2 * modifer);
+                thermalDamageTaken += (1 * modifer);
                 break;
             case 26:
                 IncreaseMaxHP(5 * modifer);
-                kineticArmor += (2 * modifer);
-                thermalPower += (2 * modifer);
+                kineticDamageTaken += (1 * modifer);
+                thermalPower += (3 * modifer);
                 break;
             case 27:
                 IncreaseMaxHP(5 * modifer);
-                thermalArmor += (2 * modifer);
-                explosivePower += (2 * modifer);
+                kineticDamageTaken += (2 * modifer);
+                explosivePower += (3 * modifer);
                 break;
             case 28:
                 IncreaseMaxHP(5 * modifer);
-                explosiveArmor += (1 * modifer);
-                kineticPower += (2 * modifer);
+                kineticPower += (3 * modifer);
                 break;
             case 29:
                 IncreaseMaxHP(5 * modifer);
-                kineticPower += (3 * modifer);
+                kineticPower += (1 * modifer);
+                explosiveDeployPower += (1 * modifer);
                 break;
             case 30:
                 IncreaseMaxHP(5 * modifer);
-                thermalPower += (3 * modifer);
+                thermalPower += (1 * modifer);
+                thermalDeployPower += (1 * modifer);
                 break;
             case 31:
                 IncreaseMaxHP(5 * modifer);
-                explosivePower += (3 * modifer);
+                kineticDeployPower += (1 * modifer);
+                explosivePower += (1 * modifer);
                 break;  
             case 32:
                 globalCreditGain += (1 * modifer);
                 break; 
             case 33:
                 globalCreditGain += (2 * modifer);
-                IncreaseMaxMining(-1 * modifer);
+                IncreaseMaxMining(-2 * modifer);
                 break; 
             case 34:
                 globalCreditGain += (4 * modifer);
@@ -377,17 +392,16 @@ public class Unit : Node
             case 38:
                 kineticPower += (7 * modifer);
                 thermalPower += (-2 * modifer);
-                explosiveArmor += (-3 * modifer);
+                explosiveDamageTaken += (-2 * modifer);
                 break;
             case 39:
                 thermalPower += (7 * modifer);
                 explosivePower += (-2 * modifer);
-                kineticArmor += (-2 * modifer);
+                kineticDamageTaken += (-1 * modifer);
                 break;
             case 40:
                 kineticPower += (-2 * modifer);
                 explosivePower += (7 * modifer);
-                thermalArmor += (-1 * modifer);
                 break; 
             case 41:
                 supportValue = modifer == 1 ? 1 : .5;
@@ -442,7 +456,7 @@ public class Unit : Node
             case 52:
                 kineticPower += (4 * modifer);
                 explosivePower += (1 * modifer);
-                thermalArmor += (-1 * modifer);
+                thermalDamageTaken += (-1 * modifer);
                 break;
             case 53:
                 thermalPower += (4 * modifer);
@@ -451,22 +465,22 @@ public class Unit : Node
             case 54:
                 kineticPower += (1 * modifer);
                 explosivePower += (4 * modifer);
-                thermalArmor += (1 * modifer);
+                thermalDamageTaken += (1 * modifer);
                 break;
             case 55:
                 kineticPower += (3 * modifer);
-                thermalArmor += (1 * modifer);
-                explosiveArmor += (2 * modifer);
+                thermalDamageTaken += (1 * modifer);
+                explosiveDamageTaken += (2 * modifer);
                 break;
             case 56:
                 thermalPower += (3 * modifer);
-                explosiveArmor += (1 * modifer);
-                kineticArmor += (2 * modifer);
+                explosiveDamageTaken += (1 * modifer);
+                kineticDamageTaken += (2 * modifer);
                 break;
             case 57:
                 explosivePower += (3 * modifer);
-                kineticArmor += (1 * modifer);
-                thermalArmor += (2 * modifer);
+                kineticDamageTaken += (1 * modifer);
+                thermalDamageTaken += (2 * modifer);
                 break;
             case 58:
                 supportValue = modifer == 1 ? 1 : .5;
@@ -488,11 +502,106 @@ public class Unit : Node
                 break;
             case 62:
                 kineticPower += (5 * modifer);
-                explosiveArmor += (-1 * modifer);
+                explosiveDamageTaken += (-1 * modifer);
                 break;
             case 63:
                 explosivePower += (5 * modifer);
-                thermalArmor += (1 * modifer);
+                thermalDamageTaken += (1 * modifer);
+                break;
+            case 64:
+                kineticPower += (6 * modifer);
+                thermalPower += (-1 * modifer);
+                explosiveDamageTaken += (-2 * modifer);
+                break;
+            case 65:
+                thermalPower += (6 * modifer);
+                explosivePower += (-1 * modifer);
+                kineticDamageTaken += (-1 * modifer);
+                break;
+            case 66:
+                explosivePower += (6 * modifer);
+                kineticPower += (-1 * modifer);
+                break;
+            case 67:
+                deployRange += (1 * modifer);
+                kineticDeployPower += (-1 * modifer);
+                break;
+            case 68:
+                deployRange += (1 * modifer);
+                thermalDeployPower += (-1 * modifer);
+                break;
+            case 69:
+                deployRange += (1 * modifer);
+                explosiveDeployPower += (-1 * modifer);
+                break;
+            case 70:
+                kineticDeployPower += (2 * modifer);
+                explosivePower += (1 * modifer);
+                thermalDamageTaken += (-1 * modifer);
+                break;
+            case 71:
+                thermalDeployPower += (2 * modifer);
+                explosivePower += (1 * modifer);
+                break;
+            case 72:
+                kineticPower += (1 * modifer);
+                explosiveDeployPower += (2 * modifer);
+                thermalDamageTaken += (1 * modifer);
+                break;
+            case 73:
+                kineticPower += (3 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.ReduceMaxHp); }
+                else { moduleEffects.Remove(ModuleEffect.ReduceMaxHp); }
+                break;
+            case 74:
+                explosivePower += (3 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.ReduceMaxHp); }
+                else { moduleEffects.Remove(ModuleEffect.ReduceMaxHp); }
+                break;
+            case 75:
+                IncreaseMaxHP(5 * modifer);
+                kineticDeployPower += (1 * modifer);
+                explosiveDamageTaken += (2 * modifer);
+                break;
+            case 76:
+                IncreaseMaxHP(5 * modifer);
+                thermalDeployPower += (1 * modifer);
+                kineticDamageTaken += (2 * modifer);
+                break;
+            case 77:
+                IncreaseMaxHP(5 * modifer);
+                explosiveDeployPower += (1 * modifer);
+                thermalDamageTaken += (2 * modifer);
+                break;
+            case 78:
+                kineticPower += (6 * modifer);
+                thermalDeployPower += (-1 * modifer);
+                thermalDamageTaken += (-1 * modifer);
+                break;
+            case 79:
+                thermalPower += (6 * modifer);
+                explosiveDeployPower += (-1 * modifer);
+                explosiveDamageTaken += (-1 * modifer);
+                break;
+            case 80:
+                explosivePower += (6 * modifer);
+                kineticDeployPower += (-1 * modifer);
+                kineticDamageTaken += (-1 * modifer);
+                break;
+            case 81:
+                kineticDeployPower += (3 * modifer);
+                thermalDeployPower += (-1 * modifer);
+                thermalDamageTaken += (1 * modifer);
+                break;
+            case 82:
+                thermalDeployPower += (3 * modifer);
+                explosiveDeployPower += (-1 * modifer);
+                explosiveDamageTaken += (1 * modifer);
+                break;
+            case 83:
+                explosiveDeployPower += (3 * modifer);
+                kineticDeployPower += (-1 * modifer);
+                kineticDamageTaken += (1 * modifer);
                 break;
             default:
                 break;
@@ -503,7 +612,7 @@ public class Unit : Node
     {
         return new ServerUnit()
         {
-            IsStation = this is Station,
+            UnitType = (int)(this is Station ? UnitType.Station : this is Fleet ? UnitType.Fleet : UnitType.Bomb),
             GameGuid = Globals.GameMatch.GameGuid,
             TurnNumber = GameManager.i.TurnNumber,
             PlayerGuid = playerGuid,
@@ -521,9 +630,12 @@ public class Unit : Node
             KineticPower = kineticPower,
             ThermalPower = thermalPower,
             ExplosivePower = explosivePower,
-            KineticDamageModifier = kineticArmor,
-            ThermalDamageModifier = thermalArmor,
-            ExplosiveDamageModifier = explosiveArmor,
+            KineticDamageModifier = kineticDamageTaken,
+            ThermalDamageModifier = thermalDamageTaken,
+            ExplosiveDamageModifier = explosiveDamageTaken,
+            KineticDeployPower = kineticDeployPower,
+            ThermalDeployPower = thermalDeployPower,
+            ExplosiveDeployPower = explosiveDeployPower,
             MaxMining = maxMining,
             MiningLeft = miningLeft,
             SupportValue = supportValue,
@@ -559,6 +671,57 @@ public class Unit : Node
                 var minedAmount = selectedPath[i].MineCredits(this, true);
                 _minedPath.Add(new Tuple<int, int>(i, minedAmount));
             }
+        }
+    }
+
+    internal void DestroyUnit()
+    {
+        GameManager.i.AllUnits.Remove(this);
+        currentPathNode.unitOnPath = null;
+        if (unitType != UnitType.Station)
+            Destroy(gameObject);
+    }
+
+    internal void CheckDestruction(Unit unitOnPath)
+    {
+        if (HP <= 0)
+        {
+            Debug.Log($"{unitOnPath.unitName} destroyed {unitName}");
+            if (this is Station)
+            {
+                var station = (this as Station);
+                //while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
+                GameManager.i.Winner = unitOnPath.playerGuid;
+            }
+            else if (this is Fleet)
+            {
+                GameManager.i.GetStationByGuid(playerGuid).fleets.Remove(this as Fleet);
+            }
+            GameManager.i.GetStationByGuid(playerGuid).modules.AddRange(attachedModules);
+            DestroyUnit();
+        }
+        if (unitOnPath.HP <= 0)
+        {
+            Debug.Log($"{unitName} destroyed {unitOnPath.unitName}");
+            if (unitOnPath is Station)
+            {
+                var station = (unitOnPath as Station);
+                //while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
+                GameManager.i.Winner = playerGuid;
+            }
+            else if (unitOnPath is Fleet)
+            {
+                GameManager.i.GetStationByGuid(unitOnPath.playerGuid).fleets.Remove(unitOnPath as Fleet);
+            }
+            if (this is Fleet && unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct))
+            {
+                GameManager.i.GetStationByGuid(playerGuid).fleets.Remove(this as Fleet);
+                GameManager.i.AllUnits.Remove(this);
+                currentPathNode.unitOnPath = null;
+                Destroy(gameObject);
+            }
+            GameManager.i.GetStationByGuid(unitOnPath.playerGuid).modules.AddRange(unitOnPath.attachedModules.Where(x => x.moduleId != 50));
+            unitOnPath.DestroyUnit();
         }
     }
 }

@@ -959,7 +959,8 @@ MonoBehaviour:
   floatingTextPrefab: {fileID: 3012913576608231180, guid: 37afb242c64ae9e4294f584e11c345ce, type: 3}
   selectPrefab: {fileID: 2892300046146373026, guid: 60e19938acfbede4584c9c54342348ea, type: 3}
   pathPrefab: {fileID: 2892300046146373026, guid: e66b32493abf0f94082d2090a7712982, type: 3}
-  movementRangePrefab: {fileID: 5456294327097982956, guid: c54ccc24843cb744ba04b55618d0a13b, type: 3}
+  deployPrefab: {fileID: 5456294327097982956, guid: c54ccc24843cb744ba04b55618d0a13b, type: 3}
+  movementRangePrefab: {fileID: 5456294327097982956, guid: 0849293c7414368468b459944b935f4a, type: 3}
   movementMinePrefab: {fileID: 5456294327097982956, guid: 7043b56b7af6a43439b188f90e1636e2, type: 3}
   turnOrderPrefab: {fileID: 1138177071084337234, guid: 975e2301ebfa46a46bbd6b56f643d1f5, type: 3}
   modulePrefab: {fileID: 5773023096341298856, guid: c4e94c9784c241d4da85b78f82411fce, type: 3}
@@ -999,7 +1000,7 @@ MonoBehaviour:
   unReadyCircle: {fileID: 21300000, guid: fbdaaa9079296614bb95c2cd987e386a, type: 3}
   readyCircle: {fileID: 21300000, guid: 3c72903403a92b640abf180dab54ace6, type: 3}
   createFleetButton: {fileID: 1365777131}
-  repairFleetButton: {fileID: 824363567}
+  deployBombButton: {fileID: 824363567}
   generateModuleButton: {fileID: 994743634}
   previousTurnButton: {fileID: 478472632}
   hamburgerButton: {fileID: 1617389285}
@@ -5883,7 +5884,7 @@ GameObject:
   - component: {fileID: 532623157}
   - component: {fileID: 532623156}
   m_Layer: 5
-  m_Name: EffectBackground
+  m_Name: ModuleInformationBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6356,7 +6357,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Repair Fleet
+  m_text: Deploy Bomb
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7041,7 +7042,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: (+5 HP)
+  m_text: (-1 Movement)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9139,7 +9140,7 @@ GameObject:
   - component: {fileID: 824363567}
   - component: {fileID: 824363569}
   m_Layer: 5
-  m_Name: RepairFleetButton
+  m_Name: DeployBombButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9191,7 +9192,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 54156308}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: RepairFleet
+        m_MethodName: DeployBomb
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19493,6 +19494,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodePrefab: {fileID: 7058775101325988351, guid: 44f977c7fda6b36439c2aa32ad336618, type: 3}
   unitPrefab: {fileID: 6217036810452598218, guid: 7822457c8722ec7428f749feaa071a78, type: 3}
+  bombPrefab: {fileID: 6870456923850421102, guid: a991d9fef8f21d244b62c5986dacd349, type: 3}
   amountToWinText: {fileID: 1219080371}
   stationSprites:
   - {fileID: 21300000, guid: d216a40b504e5734288a9fbea99abad7, type: 3}
@@ -23225,7 +23227,7 @@ GameObject:
   - component: {fileID: 2043081785}
   - component: {fileID: 2043081784}
   m_Layer: 5
-  m_Name: DamageTakenValue
+  m_Name: ModuleInformation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

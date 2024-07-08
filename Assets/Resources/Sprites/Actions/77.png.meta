@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d352f0e8797fac84bba23e58b43098da
+guid: 7b4b879ec53a6174c9ceccff938e26d1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5730037679989265150
-    second: laser-sparks_0
+      213: -8409740767964767717
+    second: war-pick_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -134,7 +134,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: laser-sparks_0
+      name: war-pick_0
       rect:
         serializedVersion: 2
         x: 0
@@ -148,8 +148,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 20de2aec611da70b0800000000000000
-      internalID: -5730037679989265150
+      spriteID: b1ad65804599a4b80800000000000000
+      internalID: -8409740767964767717
       vertices: []
       indices: 
       edges: []
@@ -165,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      laser-sparks_0: -5730037679989265150
+      war-pick_0: -8409740767964767717
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
