@@ -301,13 +301,18 @@ public class GameManager : MonoBehaviour
         ToggleHPText(true);
         if (unit.unitType == UnitType.Bomb)
         {
+            bool hasDeployPower = unit.kineticDeployPower > 0 || unit.thermalDeployPower > 0 || unit.explosiveDeployPower > 0;
             if (unit.teamId == MyStation.teamId)
             {
-                ShowCustomAlertPanel($"Moving onto this bomb will disarm it.\n\nEnemies will lose 1 movement\nand take {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage.");
+                var alertString = "Moving onto this bomb will disarm it.\n\nEnemies will lose 1 movement";
+                alertString += hasDeployPower ? $"\nand take {unit.kineticDeployPower} Kinetic, {unit.thermalDeployPower} Thermal, and {unit.explosiveDeployPower} Explosive\ndirect damage." : ".";
+                ShowCustomAlertPanel(alertString);
             }
             else
             {
-                ShowCustomAlertPanel($"Moving into this bomb will cause it to explode.\n\nResulting in the loss of 1 movement\nand dealing {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage to the unit.");
+                var alertString = "Moving into this bomb will cause it to explode.\n\nResulting in the loss of 1 movement";
+                alertString += hasDeployPower ? $"\nand dealing {unit.kineticDeployPower} Kinetic, {unit.thermalDeployPower} Thermal, and {unit.explosiveDeployPower} Explosive\ndirect damage to the unit." : ".";
+                ShowCustomAlertPanel(alertString);
             }
         }
         if (unit.unitType == UnitType.Station || unit.unitType == UnitType.Fleet)
@@ -736,7 +741,7 @@ public class GameManager : MonoBehaviour
 
     public void ShowUnlockPanel(int unlock)
     {
-        alertText.text = $"This action slot will unlock once you own {unlock} hexes.";
+        alertText.text = $"This action slot is unlocked while you own {unlock} hexes.";
         alertPanel.SetActive(true);
     }
     public void ShowCustomAlertPanel(string message)
@@ -2428,7 +2433,7 @@ public class GameManager : MonoBehaviour
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];   
             } else {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
-                int k = Convert.ToInt32(Math.Floor(i == 2 ? 3.0 : i == 3 ? (GridManager.i.scoreToWin * .33) : (GridManager.i.scoreToWin * .66)));
+                int k = Convert.ToInt32(Math.Floor(i == 2 ? 4.0 : i == 3 ? (GridManager.i.scoreToWin * .33) : (GridManager.i.scoreToWin * .66)));
                 ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(k));
             }
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);

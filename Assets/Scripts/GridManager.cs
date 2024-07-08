@@ -245,7 +245,7 @@ public class GridManager : MonoBehaviour
                         var fleet = Instantiate(unitPrefab);
                         fleet.transform.SetParent(characterParent);
                         var fleetNode = fleet.AddComponent<Fleet>();
-                        fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 10 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, station.bonusThermal + station.thermalDamageTaken, station.bonusExplosive + station.explosiveDeployPower, fleetGuid, _bombGuid);
+                        fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 10 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, station.bonusThermal + station.thermalDeployPower, station.bonusExplosive + station.explosiveDeployPower, fleetGuid, _bombGuid);
                         return fleetNode;
                     }
                     else
