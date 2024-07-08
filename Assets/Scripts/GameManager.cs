@@ -949,7 +949,7 @@ public class GameManager : MonoBehaviour
                 action.costOfAction = costOfAction;
                 MyStation.actions.Add(action);
                 AddActionBarImage(action.actionType, MyStation.actions.Count() - 1);
-                PerformUpdates(action, Constants.Create, true);
+                PerformUpdates(action, Constants.Create, true, requeing);
                 ResetAfterSelection();
             }
         }
