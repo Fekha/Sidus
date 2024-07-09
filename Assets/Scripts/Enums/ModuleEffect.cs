@@ -10,4 +10,7 @@ public enum ModuleEffect
     HiddenStats,
     SelfDestruct,
     AsteroidHP5,
+    FullKineticSupport,
+    FullThermalSupport,
+    FullExplosiveSupport,
 }

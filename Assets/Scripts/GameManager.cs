@@ -357,9 +357,9 @@ public class GameManager : MonoBehaviour
                 var explosivePower = $"{unit.explosivePower}";
                 if (supportingFleets.Any())
                 {
-                    int kineticSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * x.supportValue)));
-                    int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * x.supportValue)));
-                    int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * x.supportValue)));
+                    int kineticSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * (x.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5))));
+                    int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * (x.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5))));
+                    int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * (x.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5))));
                     kineticPower += kineticSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
                     thermalPower += thermalSupportValue > 0 ? $" (+{thermalSupportValue})" : "";
                     explosivePower += explosiveSupportValue > 0 ? $" (+{explosiveSupportValue})" : "";
@@ -1378,17 +1378,20 @@ public class GameManager : MonoBehaviour
         int s2sExplosive = 0;
         foreach (var supportFleet in supportingFleets)
         {
+            var kineticSupport = Convert.ToInt32(Math.Floor(supportFleet.kineticPower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5)));
+            var thermalSupport = Convert.ToInt32(Math.Floor(supportFleet.thermalPower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5)));
+            var explosiveSupport = Convert.ToInt32(Math.Floor(supportFleet.explosivePower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5)));
             if (supportFleet.teamId == unitMoving.teamId)
             {
-                s1sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * supportFleet.supportValue));
-                s1sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * supportFleet.supportValue));
-                s1sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * supportFleet.supportValue));
+                s1sKinetic += kineticSupport;
+                s1sThermal += thermalSupport;
+                s1sExplosive += explosiveSupport;
             }
             else if (supportFleet.teamId == unitOnPath.teamId)
             {
-                s2sKinetic += Convert.ToInt32(Math.Floor(supportFleet.kineticPower * supportFleet.supportValue));
-                s2sThermal += Convert.ToInt32(Math.Floor(supportFleet.thermalPower * supportFleet.supportValue));
-                s2sExplosive += Convert.ToInt32(Math.Floor(supportFleet.explosivePower * supportFleet.supportValue));
+                s2sKinetic += kineticSupport;
+                s2sThermal += thermalSupport;
+                s2sExplosive += explosiveSupport;
             }
         }
         phaseText.gameObject.SetActive(true);

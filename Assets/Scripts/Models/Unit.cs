@@ -404,8 +404,8 @@ public class Unit : Node
                 explosivePower += (7 * modifer);
                 break; 
             case 41:
-                supportValue = modifer == 1 ? 1 : .5;
-                kineticPower += (-2 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.FullKineticSupport); }
+                else { moduleEffects.Remove(ModuleEffect.FullKineticSupport); }
                 break;
             case 42:
                 thermalPower += (3 * modifer);
@@ -483,12 +483,12 @@ public class Unit : Node
                 thermalDamageTaken += (2 * modifer);
                 break;
             case 58:
-                supportValue = modifer == 1 ? 1 : .5;
-                thermalPower += (-2 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.FullThermalSupport); }
+                else { moduleEffects.Remove(ModuleEffect.FullThermalSupport); }
                 break;
             case 59:
-                supportValue = modifer == 1 ? 1 : .5;
-                explosivePower += (-2 * modifer);
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.FullExplosiveSupport); }
+                else { moduleEffects.Remove(ModuleEffect.FullExplosiveSupport); }
                 break;
             case 60:
                 thermalPower += (2 * modifer);

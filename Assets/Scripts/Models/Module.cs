@@ -175,7 +175,7 @@ public class Module
                 effectText = "-2 Thermal Power\n+7 Explosive Power";
                 break;
             case 41:
-                effectText = "Support allies at full Power.\n-2 Kinetic Power";
+                effectText = "Provide full Kinetic Power amount while supporting.";
                 rarity = Rarity.Rare;
                 break;
             case 42:
@@ -237,11 +237,11 @@ public class Module
                 effectText = "+3 Explosive Power\n-1 Kinetic Damage Taken\n-2 Thermal Damage Taken"; 
                 break;
             case 58:
-                effectText = "Support allies at full Power.\n-2 Thermal Power";
+                effectText = "Provide full Thermal Power amount while supporting.";
                 rarity = Rarity.Rare;
                 break;
             case 59:
-                effectText = "Support allies at full Power.\n-2 Explosive Power";
+                effectText = "Provide full Explosive Power amount while supporting.";
                 rarity = Rarity.Rare;
                 break;
             case 60:

@@ -11,9 +11,9 @@ public class Fleet : Unit
         _station.fleets.Add(this);
         _station.fleetCount++;
         unitName = $"{(PlayerColor)_color} Fleet {_station.fleetCount}";
-        kineticDeployPower = 0;
-        thermalDeployPower = 0;
-        explosiveDeployPower = 0;
+        kineticDeployPower = 1;
+        thermalDeployPower = 1;
+        explosiveDeployPower = 1;
         unitType = UnitType.Fleet;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, _mining, _station.facing, UnitType.Fleet);
         if (_bombGuid != null)
