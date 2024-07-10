@@ -797,9 +797,10 @@ public class GameManager : MonoBehaviour
             DeselectMovement();
             ClearSelectableModules();
             List<Module> availableModules = new List<Module>(MyStation.modules);
-            if(selectedUnit.unitGuid != MyStation.unitGuid)
-                availableModules.AddRange(MyStation.attachedModules);
-            availableModules.AddRange(MyStation.fleets.Where(x=>x.unitGuid != selectedUnit.unitGuid).SelectMany(x=>x.attachedModules).ToList());
+            List<Module> availableModulesFromUnits = MyStation.fleets.Where(x => x.unitGuid != selectedUnit.unitGuid).SelectMany(x => x.attachedModules).ToList();
+            if (selectedUnit.unitGuid != MyStation.unitGuid)
+                availableModulesFromUnits.AddRange(MyStation.attachedModules);
+            availableModules.AddRange(availableModulesFromUnits);
             List<Guid?> assignedModules = MyStation.actions.Select(x => x.selectedModuleGuid).ToList();
             availableModules = availableModules.Where(x => !assignedModules.Contains(x.moduleGuid)).ToList();
             if (availableModules.Count > 0)
@@ -810,6 +811,7 @@ public class GameManager : MonoBehaviour
                     moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetSelectedModule(module, selectedUnit, actionType, dettachGuid));
                     moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
                     moduleObject.transform.Find("Queued").gameObject.SetActive(false);
+                    moduleObject.transform.Find("OnUnit").gameObject.SetActive(availableModulesFromUnits.Any(x=>x.moduleGuid == module.moduleGuid));
                     currentModulesForSelection.Add(moduleObject);
                 }
                 ViewModuleSelection(true);
@@ -1441,13 +1443,13 @@ public class GameManager : MonoBehaviour
     }
     private void CheckDestroyAsteroidModules(Unit unit)
     {
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidHP5))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining2))
         {
-            unit.IncreaseMaxHP(5);
+            unit.IncreaseMaxMining(2);
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits3))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits4))
         {
-            GetStationByGuid(unit.playerGuid).GainCredits(3, unit,false,false);
+            GetStationByGuid(unit.playerGuid).GainCredits(4,unit,false,false);
         }
     }
 
@@ -2372,6 +2374,7 @@ public class GameManager : MonoBehaviour
             moduleObject.GetComponentInChildren<Button>().onClick.AddListener(() => SetModuleInfo(module));
             moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
             moduleObject.transform.Find("Queued").gameObject.SetActive(false);
+            moduleObject.transform.Find("OnUnit").gameObject.SetActive(false);
             currentModules.Add(moduleObject);
         }
     }

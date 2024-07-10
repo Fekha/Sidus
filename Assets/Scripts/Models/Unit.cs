@@ -436,8 +436,8 @@ public class Unit : Node
                 break;
             case 48:
                 IncreaseMaxMining(2 * modifer);
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidCredits3); }
-                else { moduleEffects.Remove(ModuleEffect.AsteroidCredits3); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidCredits4); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidCredits4); }
                 break;
             case 49:
                 kineticPower += (2 * modifer);
@@ -450,8 +450,8 @@ public class Unit : Node
                 break; 
             case 51:
                 IncreaseMaxMining(1 * modifer);
-                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidHP5); }
-                else { moduleEffects.Remove(ModuleEffect.AsteroidHP5); }
+                if (modifer == 1) { moduleEffects.Add(ModuleEffect.AsteroidMining2); }
+                else { moduleEffects.Remove(ModuleEffect.AsteroidMining2); }
                 break;
             case 52:
                 kineticPower += (4 * modifer);
