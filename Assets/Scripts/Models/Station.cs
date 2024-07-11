@@ -6,7 +6,7 @@ using System.Linq;
 public class Station : Unit
 {
     internal List<Action> actions = new List<Action>();
-    internal List<Fleet> fleets = new List<Fleet>();
+    internal List<Bomber> fleets = new List<Bomber>();
     internal List<Bomb> bombs = new List<Bomb>();
     internal List<Module> modules = new List<Module>();
     internal List<Technology> technology = new List<Technology>();
@@ -38,7 +38,7 @@ public class Station : Unit
         deployRange = 1;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction, UnitType.Station);
         currentPathNode.SetNodeColor(playerGuid);
-        var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Fleet, _bombGuid);
+        var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Bomber, _bombGuid);
         fleet.currentPathNode.SetNodeColor(playerGuid);
     }
     public void InitializeStation(GamePlayer player)
@@ -66,11 +66,11 @@ public class Station : Unit
                 bombNode.InitializeUnit(unit);
                 bombs.Add(bombNode);
             }
-            else if (unit.UnitType == (int)UnitType.Fleet)
+            else if (unit.UnitType == (int)UnitType.Bomber)
             {
                 var fleetObj = Instantiate(GridManager.i.unitPrefab);
                 fleetObj.transform.SetParent(GridManager.i.characterParent);
-                var fleetNode = fleetObj.AddComponent<Fleet>();
+                var fleetNode = fleetObj.AddComponent<Bomber>();
                 fleetNode.InitializeUnit(unit);
                 fleets.Add(fleetNode);
             }

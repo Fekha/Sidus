@@ -1,6 +1,6 @@
 public enum UnitType
 {
-    Fleet,
+    Bomber,
     Station,
     Bomb
 }

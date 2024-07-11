@@ -175,7 +175,7 @@ public class LoginManager : MonoBehaviour
                     GameGuid = gameGuid,
                     TurnNumber = 0,
                     PlayerColor = playerId,
-                    UnitType = (int)UnitType.Fleet,
+                    UnitType = (int)UnitType.Bomber,
                 },
                 new ServerUnit()
                 {

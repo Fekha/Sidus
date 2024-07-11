@@ -700,9 +700,9 @@ public class Unit : Node
                 //while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
                 GameManager.i.Winner = playerGuid;
             }
-            else if (unitOnPath is Fleet)
+            else if (unitOnPath is Bomber)
             {
-                GameManager.i.GetStationByGuid(unitOnPath.playerGuid).fleets.Remove(unitOnPath as Fleet);
+                GameManager.i.GetStationByGuid(unitOnPath.playerGuid).fleets.Remove(unitOnPath as Bomber);
                 GameManager.i.GetStationByGuid(unitOnPath.playerGuid).modules.AddRange(unitOnPath.attachedModules.Where(x => x.moduleId != 50));
             }
             else if (this is Bomb)
@@ -710,7 +710,7 @@ public class Unit : Node
                 GameManager.i.GetStationByGuid(playerGuid).bombs.Remove(this as Bomb);
             }
         }
-        if (HP <= 0 || (unitOnPathDestroyed && this is Fleet && unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct)))
+        if (HP <= 0 || (unitOnPathDestroyed && this is Bomber && unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct)))
         {
             unitDestroyed = true;
             Debug.Log($"{unitOnPath.unitName} destroyed {unitName}");
@@ -720,9 +720,9 @@ public class Unit : Node
                 //while (station.fleets.Count > 0) { AllUnits.Remove(station.fleets[0]); Destroy(station.fleets[0].gameObject); station.fleets.RemoveAt(0); }
                 GameManager.i.Winner = unitOnPath.playerGuid;
             }
-            else if (this is Fleet)
+            else if (this is Bomber)
             {
-                GameManager.i.GetStationByGuid(playerGuid).fleets.Remove(this as Fleet);
+                GameManager.i.GetStationByGuid(playerGuid).fleets.Remove(this as Bomber);
                 GameManager.i.GetStationByGuid(playerGuid).modules.AddRange(attachedModules);
             }
             else if (this is Bomb)

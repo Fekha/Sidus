@@ -325,7 +325,7 @@ public class GameManager : MonoBehaviour
                 ShowCustomAlertPanel(alertString);
             }
         }
-        if (unit.unitType == UnitType.Station || unit.unitType == UnitType.Fleet)
+        if (unit.unitType == UnitType.Station || unit.unitType == UnitType.Bomber)
         {
             nameValue.text = unit.unitName;
             playerNameValue.color = GridManager.i.playerColors[(int)unit.playerColor];
@@ -2061,7 +2061,7 @@ public class GameManager : MonoBehaviour
                     if (IsUnderMaxFleets(currentStation, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
-                        var newFleet = GridManager.i.Deploy(currentStation, (Guid)action.generatedGuid, action.selectedPath.FirstOrDefault().actualCoords, UnitType.Fleet);
+                        var newFleet = GridManager.i.Deploy(currentStation, (Guid)action.generatedGuid, action.selectedPath.FirstOrDefault().actualCoords, UnitType.Bomber);
                         if (newFleet != null)
                         {
                             currentStation.GainCredits(-1 * action.costOfAction, currentStation);

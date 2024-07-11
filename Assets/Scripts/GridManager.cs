@@ -191,7 +191,7 @@ public class GridManager : MonoBehaviour
         {
             serverPlayer = currentGameTurn.Players.FirstOrDefault(x=>x.PlayerColor == stationColor);
             stationGuid = (Guid)serverPlayer.PlayerGuid;
-            fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Fleet).UnitGuid;
+            fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomber).UnitGuid;
             bombGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomb).UnitGuid;
         }
         var station = Instantiate(stationPrefab);
@@ -239,24 +239,27 @@ public class GridManager : MonoBehaviour
             {
                 int j = (i + startIndex) % hexesNearby.Count;
                 var unitOnPath = grid[hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y].unitOnPath;
-                if (unitType == UnitType.Fleet)
+                if (unitType == UnitType.Bomber)
                 {
                     if (unitOnPath == null)
                     {
                         var fleet = Instantiate(unitPrefab);
                         fleet.transform.SetParent(characterParent);
-                        var fleetNode = fleet.AddComponent<Fleet>();
+                        var fleetNode = fleet.AddComponent<Bomber>();
                         fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 10 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, station.bonusThermal + station.thermalDeployPower, station.bonusExplosive + station.explosiveDeployPower, fleetGuid, _bombGuid);
                         return fleetNode;
                     }
                 }
                 else
                 {
-                    var bomb = Instantiate(bombPrefab);
-                    bomb.transform.SetParent(characterParent);
-                    var bombNode = bomb.AddComponent<Bomb>();
-                    bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, unitNode.kineticDeployPower, unitNode.thermalDeployPower, unitNode.explosiveDeployPower, fleetGuid);  
-                    return bombNode;
+                    if (unitOnPath == null || (unitOnPath != null && unitOnPath.teamId != unitNode.teamId))
+                    {
+                        var bomb = Instantiate(bombPrefab);
+                        bomb.transform.SetParent(characterParent);
+                        var bombNode = bomb.AddComponent<Bomb>();
+                        bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, unitNode.kineticDeployPower, unitNode.thermalDeployPower, unitNode.explosiveDeployPower, fleetGuid);
+                        return bombNode;
+                    }
                 }
             }
         }
