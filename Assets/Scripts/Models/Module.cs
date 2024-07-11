@@ -211,7 +211,7 @@ public class Module
                 rarity = Rarity.Rare;
                 break;
             case 50:
-                effectText = "If destroyed while defending\nalso destroy the attacking fleet\nand this module";
+                effectText = "If destroyed while defending\nalso destroy the attacking bomber\nand this module";
                 rarity = Rarity.Rare;
                 break;
             case 51:

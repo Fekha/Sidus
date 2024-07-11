@@ -928,7 +928,7 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.DeployFleet && !IsUnderMaxFleets(MyStation, true))
         {
-            if (!requeing) ShowCustomAlertPanel("Can not create new fleet, you will hit max fleets for your station level");
+            if (!requeing) ShowCustomAlertPanel("Can not create new bomber, you will hit max fleets for your station level");
         }
         else if ((action.actionType == ActionType.DeployFleet || action.actionType == ActionType.DeployBomb) && !GetNodesForDeploy(action.selectedUnit,true).Contains(action.selectedPath.FirstOrDefault()))
         {
@@ -2075,7 +2075,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            turnValue.text += "\nNo valid location to spawn fleet.";
+                            turnValue.text += "\nNo valid location to spawn bomber.";
                         }
                     }
                     else

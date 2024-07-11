@@ -63,13 +63,13 @@ public class Technology
                 currentEffectText = $"\n(Current max level: {modifier + level})";
                 break;
             case TechnologyType.ResearchFleetLvl:
-                effectText = $"Increase max fleet level to {modifier + 1 + level}";
+                effectText = $"Increase max bomber level to {modifier + 1 + level}";
                 currentEffectText = $"\n(Current max level: {modifier + level})";
-                requirementText = "<b>Must research <u>max number of fleets</u> first</b>\n\n";
+                requirementText = "<b>Must research <u>max number of bombers</u> first</b>\n\n";
                 break;
             case TechnologyType.ResearchMaxFleets:
-                effectText = $"Increase max number of fleets to {modifier + 1 + level}";
-                currentEffectText = $"\n(Current max fleets: {modifier + level})";
+                effectText = $"Increase max number of bombers to {modifier + 1 + level}";
+                currentEffectText = $"\n(Current max bombers: {modifier + level})";
                 requirementText = "<b>Must research <u>max station level</u> first</b>\n\n";
                 break;
             case TechnologyType.ResearchHP:
