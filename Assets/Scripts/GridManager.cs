@@ -238,9 +238,10 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < hexesNearby.Count; i++)
             {
                 int j = (i + startIndex) % hexesNearby.Count;
-                if (CanSpawnFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y))
+                var unitOnPath = grid[hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y].unitOnPath;
+                if (unitType == UnitType.Fleet)
                 {
-                    if (unitType == UnitType.Fleet)
+                    if (unitOnPath == null)
                     {
                         var fleet = Instantiate(unitPrefab);
                         fleet.transform.SetParent(characterParent);
@@ -248,31 +249,18 @@ public class GridManager : MonoBehaviour
                         fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 10 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, station.bonusThermal + station.thermalDeployPower, station.bonusExplosive + station.explosiveDeployPower, fleetGuid, _bombGuid);
                         return fleetNode;
                     }
-                    else
-                    {
-                        var bomb = Instantiate(bombPrefab);
-                        bomb.transform.SetParent(characterParent);
-                        var bombNode = bomb.AddComponent<Bomb>();
-                        bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, unitNode.kineticDeployPower, unitNode.thermalDeployPower, unitNode.explosiveDeployPower, fleetGuid);
-                        return bombNode;
-                    }
+                }
+                else
+                {
+                    var bomb = Instantiate(bombPrefab);
+                    bomb.transform.SetParent(characterParent);
+                    var bombNode = bomb.AddComponent<Bomb>();
+                    bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, unitNode.kineticDeployPower, unitNode.thermalDeployPower, unitNode.explosiveDeployPower, fleetGuid);  
+                    return bombNode;
                 }
             }
         }
         return null;
-    }
-    bool CanSpawnFleet(int x, int y)
-    {
-        if (grid[x, y].unitOnPath == null && !grid[x, y].isAsteroid)
-        {
-            Debug.Log($"Can Spawn at {x},{y}");
-            return true;
-        }
-        else
-        {
-            Debug.Log($"{x},{y} is blocked");
-            return false;
-        }   
     }
 
     internal List<PathNode> FindPath(PathNode startNode, PathNode targetNode, Unit unit, bool checkAsteroids = true)

@@ -14,6 +14,7 @@ public class Fleet : Unit
         kineticDeployPower = 1;
         thermalDeployPower = 1;
         explosiveDeployPower = 1;
+        deployRange = 2;
         unitType = UnitType.Fleet;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, _mining, _station.facing, UnitType.Fleet);
         currentPathNode.SetNodeColor(playerGuid);

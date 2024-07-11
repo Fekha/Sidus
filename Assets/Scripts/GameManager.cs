@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -136,6 +137,9 @@ public class GameManager : MonoBehaviour
     private int helpPageNumber = 0;
     private List<Action> lastSubmittedTurn = new List<Action>();
     List<Tuple<string,string>> turnArchive = new List<Tuple<string, string>>();
+    public GameObject clientOutOfSyncPanel;
+    private bool isClientOutOfSync = false;
+
     //Got game icons from https://game-icons.net/
     private void Awake()
     {
@@ -147,7 +151,6 @@ public class GameManager : MonoBehaviour
 #endif
         loadingPanel.SetActive(true);
         audioToggleOn = PlayerPrefs.GetString("AudioOn") != "False";
-        
     }
     void Start()
     { 
@@ -222,7 +225,7 @@ public class GameManager : MonoBehaviour
         while (Winner == Guid.Empty)
         {
             int i = 0; 
-            while (!isEndingTurn && TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
+            while (!isEndingTurn && !isClientOutOfSync && TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
             {
                 yield return StartCoroutine(sql.GetRoutine<GameTurn>($"Game/GetTurns?gameGuid={Globals.GameMatch.GameGuid}&turnNumber={TurnNumber}&searchType={(int)SearchType.gameSearch}&startPlayers={Globals.GameMatch.GameTurns.FirstOrDefault(x=>x.TurnNumber == TurnNumber)?.Players?.Count() ?? 0}&clientVersion={Constants.ClientVersion}", UpdateGameTurnStatus));
                 if (Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.TurnIsOver ?? false)
@@ -238,9 +241,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void UpdateGameTurnStatus(GameTurn? turn)
+    private void UpdateGameTurnStatus(GameTurn? turn, string clientOutOfSync)
     {
-        if (!isEndingTurn)
+        if (!String.IsNullOrEmpty(clientOutOfSync))
+        {
+            isClientOutOfSync = true;
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+        else if (!isEndingTurn)
         {
             UpdateCurrentTurn(turn);
             if (TurnOrderObjects.Count >= Globals.GameMatch.MaxPlayers)
@@ -302,15 +311,16 @@ public class GameManager : MonoBehaviour
         if (unit.unitType == UnitType.Bomb)
         {
             bool hasDeployPower = unit.kineticPower > 0 || unit.thermalPower > 0 || unit.explosivePower > 0;
+            var alertString = $"{GetPlayerName(unit.playerGuid)}'s Bomb\n\nMoving into this bomb will ";
             if (unit.teamId == MyStation.teamId)
             {
-                var alertString = "Moving onto this bomb will disarm it.\n\nEnemies will lose 1 movement";
+                alertString += "disarm it.\n\nEnemies will lose 1 movement";
                 alertString += hasDeployPower ? $"\nand take {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage." : ".";
                 ShowCustomAlertPanel(alertString);
             }
             else
             {
-                var alertString = "Moving into this bomb will cause it to explode.\n\nResulting in the loss of 1 movement";
+                alertString += "cause it to explode.\n\nResulting in the loss of 1 movement";
                 alertString += hasDeployPower ? $"\nand dealing {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage to the unit." : ".";
                 ShowCustomAlertPanel(alertString);
             }
@@ -319,7 +329,7 @@ public class GameManager : MonoBehaviour
         {
             nameValue.text = unit.unitName;
             playerNameValue.color = GridManager.i.playerColors[(int)unit.playerColor];
-            playerNameValue.text = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.FirstOrDefault(x => x.PlayerGuid == unit.playerGuid)?.PlayerName ?? "CPU";
+            playerNameValue.text = GetPlayerName(unit.playerGuid);
             levelValue.text = unit.level.ToString();
             if (unit.teamId != MyStation.teamId && unit.moduleEffects.Contains(ModuleEffect.HiddenStats))
             {
@@ -428,6 +438,12 @@ public class GameManager : MonoBehaviour
             infoPanel.gameObject.SetActive(true);
         }
     }
+
+    private string GetPlayerName(Guid playerGuid)
+    {
+        return Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.FirstOrDefault(x => x.PlayerGuid == playerGuid)?.PlayerName ?? "CPU";
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonUp(0))
@@ -1154,17 +1170,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (nextNode.unitOnPath.unitType == UnitType.Bomb)
                     {
-                        unitMoving.subtractMovement(1);
-                        int damage = nextNode.unitOnPath.kineticPower > 0 ? Math.Max(0, nextNode.unitOnPath.kineticPower-unitMoving.kineticDamageTaken) : 0;
-                        damage += nextNode.unitOnPath.thermalPower > 0 ? Math.Max(0, nextNode.unitOnPath.thermalPower-unitMoving.thermalDamageTaken) : 0;
-                        damage += nextNode.unitOnPath.explosivePower > 0 ? Math.Max(0, nextNode.unitOnPath.explosivePower-unitMoving.explosiveDamageTaken) : 0;
-                        unitMoving.TakeDamage(damage, nextNode.unitOnPath);
-                        StartCoroutine(GameManager.i.FloatingTextAnimation($"-1 Movement", unitMoving.transform, unitMoving, true));
-                        turnValue.text = $"{unitMoving.unitName} moved into a bomb, losing 1 movement and taking {damage} damage.";
-                        ToggleHPText(true);
-                        yield return StartCoroutine(WaitforSecondsOrTap(1));
-                        ToggleHPText(false);
-                        unitMoving.CheckDestruction(nextNode.unitOnPath);
+                        yield return StartCoroutine(DoBombDamage(unitMoving, nextNode.unitOnPath as Bomb, 1, nextNode.unitOnPath.kineticPower, nextNode.unitOnPath.thermalPower, nextNode.unitOnPath.explosivePower));
                     }
                     else
                     {
@@ -1185,7 +1191,7 @@ public class GameManager : MonoBehaviour
                 //if ally reapir, not yourself
                 else if (nextNode.unitOnPath.teamId == unitMoving.teamId && nextNode.unitOnPath.unitGuid != unitMoving.unitGuid)
                 {
-                    if (nextNode.unitOnPath.unitType == UnitType.Bomb && i == path.Count())
+                    if (nextNode.unitOnPath.unitType == UnitType.Bomb)
                     {
                         nextNode.unitOnPath.DestroyUnit();
                     }
@@ -1231,6 +1237,29 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
     }
+
+    internal IEnumerator DoBombDamage(Unit unitMoving, Bomb bomb, int movementLost, int kineticPower, int thermalPower, int explosivePower)
+    {
+        unitMoving.subtractMovement(movementLost);
+        int damage = kineticPower > 0 ? Math.Max(0, kineticPower - unitMoving.kineticDamageTaken) : 0;
+        damage += thermalPower > 0 ? Math.Max(0, thermalPower - unitMoving.thermalDamageTaken) : 0;
+        damage += explosivePower > 0 ? Math.Max(0, explosivePower - unitMoving.explosiveDamageTaken) : 0;
+        unitMoving.TakeDamage(damage, unitMoving);
+        StartCoroutine(GameManager.i.FloatingTextAnimation($"-1 Movement", unitMoving.transform, unitMoving, true));
+        if (unitMoving.unitType == UnitType.Bomb)
+        {
+            turnValue.text = $"Mutually Assured Destruction:\n\nBoth bombs detonated destroying each other.";
+        }
+        else
+        {
+            turnValue.text = $"Bomb Detonation:\n\n{unitMoving.unitName} lost 1 movement and took {damage} damage.";
+        }
+        ToggleHPText(true);
+        yield return StartCoroutine(WaitforSecondsOrTap(1));
+        ToggleHPText(false);
+        unitMoving.CheckDestruction(bomb);
+    }
+
     IEnumerator MoveUnit(Unit unitMoving, PathNode currentNode, PathNode nextNode, bool checkPath)
     {
         // Determine the direction and detect if wrap-around is needed
@@ -1908,11 +1937,17 @@ public class GameManager : MonoBehaviour
         UpdateCreditsAndHexesText();
     }
 
-    private void SubmitResponse(bool response)
+    private void SubmitResponse(bool response, string clientOutOfSync)
     {
+        if (!String.IsNullOrEmpty(clientOutOfSync))
+        {
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+
         if (response)
         {
-            TurnOrderObjects[(TurnNumber - 1 + (int)MyStation.playerColor) % Stations.Count].transform.Find("ReadyState").gameObject.SetActive(true);
+            //TurnOrderObjects[(TurnNumber - 1 + (int)MyStation.playerColor) % Stations.Count].transform.Find("ReadyState").gameObject.SetActive(true);
             endTurnButton.sprite = endTurnButtonPressed;
             var plural = Globals.GameMatch.MaxPlayers > 2 ? "s" : "";
             customAlertText.text = $"Your orders were successfully transmitted to your units!";
@@ -1965,22 +2000,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GetWinner(Guid _winner)
+    private void GetWinner(Guid _winner, string clientOutOfSync)
     {
-        Winner = _winner;
-        if (Winner != Guid.Empty)
+        if (!String.IsNullOrEmpty(clientOutOfSync))
         {
-            nextActionButton.SetActive(false);
-            skipActionsButton.SetActive(false);
-            ToggleHPText(true);
-            turnValue.text = $"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns";
-            Debug.Log($"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns");
-            //Add EOG Stats
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
         }
         else
         {
-            previousTurnButton.interactable = true;
-            StartTurn();
+            Winner = _winner;
+            if (Winner != Guid.Empty)
+            {
+                nextActionButton.SetActive(false);
+                skipActionsButton.SetActive(false);
+                ToggleHPText(true);
+                turnValue.text = $"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns";
+                Debug.Log($"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns");
+                //Add EOG Stats
+            }
+            else
+            {
+                previousTurnButton.interactable = true;
+                StartTurn();
+            }
         }
     }
 
@@ -2048,19 +2091,27 @@ public class GameManager : MonoBehaviour
                         {
                             PerformUpdates(action, Constants.Create);
                             StartCoroutine(FloatingTextAnimation($"New Bomb", newBomb.transform, newBomb));
+                            unit.selectIcon.SetActive(true);
+                            yield return StartCoroutine(WaitforSecondsOrTap(1));
+                            unit.selectIcon.SetActive(false);
+                            if (newBomb.currentPathNode.unitOnPath.unitGuid != newBomb.unitGuid)
+                                yield return StartCoroutine(DoBombDamage(newBomb.currentPathNode.unitOnPath, newBomb as Bomb, 1, unit.kineticDeployPower, unit.thermalDeployPower, unit.explosiveDeployPower));
                         }
                         else
                         {
                             turnValue.text += "\nNo valid location to spawn Bomb.";
+                            unit.selectIcon.SetActive(true);
+                            yield return StartCoroutine(WaitforSecondsOrTap(1));
+                            unit.selectIcon.SetActive(false);
                         }
                     }
                     else
                     {
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
+                        unit.selectIcon.SetActive(true);
+                        yield return StartCoroutine(WaitforSecondsOrTap(1));
+                        unit.selectIcon.SetActive(false);
                     }
-                    unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(1));
-                    unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
                 {
@@ -2291,7 +2342,7 @@ public class GameManager : MonoBehaviour
         ResetAfterSelection();
         isEndingTurn = false;
         customAlertPanel.SetActive(false);
-        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null); }
+        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null,""); }
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
 

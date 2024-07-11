@@ -67,7 +67,6 @@ public class Unit : Node
         supportValue = .5;
         globalCreditGain = 0;
         maxAttachedModules = 1;
-        deployRange = 1;
         unitType = _unitType;
         GetUIComponents();
     }
@@ -112,7 +111,10 @@ public class Unit : Node
     }
     private void GetUIComponents()
     {
-        currentPathNode.unitOnPath = this;
+        if (currentPathNode.unitOnPath == null)
+        {
+            currentPathNode.unitOnPath = this;
+        }
         transform.position = currentPathNode.transform.position;
         HPText = transform.Find("HP").GetComponent<TextMeshPro>();
         statText = transform.Find("Stats").GetComponent<TextMeshPro>();
@@ -142,12 +144,12 @@ public class Unit : Node
         GameManager.i.AllUnits.Add(this);
     }
 
-    public void RegenHP(int regen, bool queuing = false)
+    public void RegenHP(int regen, bool queuing = false, bool staggered = false)
     {
         if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
             regen *= 2;
         if (regen != 0 && HP < maxHP && !queuing)
-            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this));
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this,staggered));
         HP += regen;
     }
     public void TakeDamage(int damage, Unit unit)
@@ -678,7 +680,8 @@ public class Unit : Node
     internal void DestroyUnit()
     {
         GameManager.i.AllUnits.Remove(this);
-        currentPathNode.unitOnPath = null;
+        if(currentPathNode.unitOnPath.unitGuid == unitGuid)
+            currentPathNode.unitOnPath = null;
         if (unitType != UnitType.Station)
             Destroy(gameObject);
     }

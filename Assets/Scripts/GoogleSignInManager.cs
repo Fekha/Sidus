@@ -5,11 +5,13 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Models;
+using TMPro;
 
 public class GoogleSignInManager : MonoBehaviour
 {
     private SqlManager sql;
     public GameObject loadingPanel;
+    public GameObject clientOutOfSyncPanel;
     public void Start()
     {
 #if UNITY_EDITOR
@@ -79,20 +81,28 @@ public class GoogleSignInManager : MonoBehaviour
         }
     }
 
-    private void AccountCreated(Account player)
+    private void AccountCreated(Account player, string clientOutOfSync)
     {
-        if(player != null)
+        if (!String.IsNullOrEmpty(clientOutOfSync))
         {
-            Globals.Account.PlayerGuid = player.PlayerGuid;
-            Globals.Account.Username = player.Username;
-            PlayerPrefs.SetString("AccountId", Globals.Account.AccountId);
-            PlayerPrefs.Save();
-            SceneManager.LoadScene((int)Scene.Lobby);
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
         }
         else
         {
-            Debug.Log("Account creation failed");
-            loadingPanel.SetActive(false);
+            if (player != null)
+            {
+                Globals.Account.PlayerGuid = player.PlayerGuid;
+                Globals.Account.Username = player.Username;
+                PlayerPrefs.SetString("AccountId", Globals.Account.AccountId);
+                PlayerPrefs.Save();
+                SceneManager.LoadScene((int)Scene.Lobby);
+            }
+            else
+            {
+                Debug.Log("Account creation failed");
+                loadingPanel.SetActive(false);
+            }
         }
     }
 
@@ -109,18 +119,26 @@ public class GoogleSignInManager : MonoBehaviour
         }
     }
 
-    private void SetAccount(Account account)
+    private void SetAccount(Account account, string clientOutOfSync)
     {
-        if(account != null)
+        if (!String.IsNullOrEmpty(clientOutOfSync))
         {
-            Globals.Account = account;
-            account.Username = account.Username.Split(' ')[0];
-            SceneManager.LoadScene((int)Scene.Lobby);
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
         }
         else
         {
-            Debug.Log("Account retrieve failed");
-            loadingPanel.SetActive(false);
+            if (account != null)
+            {
+                Globals.Account = account;
+                account.Username = account.Username.Split(' ')[0];
+                SceneManager.LoadScene((int)Scene.Lobby);
+            }
+            else
+            {
+                Debug.Log("Account retrieve failed");
+                loadingPanel.SetActive(false);
+            }
         }
     }
 

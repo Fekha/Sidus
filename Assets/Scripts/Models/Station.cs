@@ -35,6 +35,7 @@ public class Station : Unit
         kineticDeployPower = 3;
         thermalDeployPower = 4;
         explosiveDeployPower = 5;
+        deployRange = 1;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction, UnitType.Station);
         currentPathNode.SetNodeColor(playerGuid);
         var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Fleet, _bombGuid);
@@ -109,13 +110,13 @@ public class Station : Unit
 
     internal void AOERegen(int amount)
     {
-        RegenHP(amount);
+        RegenHP(amount, false, true);
         var neighbors = GridManager.i.GetNeighbors(currentPathNode, false);
         foreach (var neighbor in neighbors)
         {
             if (neighbor.unitOnPath != null && neighbor.unitOnPath.playerGuid == playerGuid)
             {
-                neighbor.unitOnPath.RegenHP(amount);
+                neighbor.unitOnPath.RegenHP(amount, false, true);
             }
         }
     }

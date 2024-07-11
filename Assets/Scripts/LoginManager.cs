@@ -27,6 +27,8 @@ public class LoginManager : MonoBehaviour
     private List<GameObject> openGamesObjects = new List<GameObject>();
     private int MaxPlayers = 2;
     private List<string> GameSettings = new List<string>();
+    public GameObject clientOutOfSyncPanel;
+    internal bool goingToNextScene = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -134,6 +136,7 @@ public class LoginManager : MonoBehaviour
     }
     public void JoinActiveGame(GameMatch gameMatch)
     {
+        goingToNextScene = true;
         loadingPanel.SetActive(true);
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame?clientVersion={Constants.ClientVersion}", stringToPost, SetMatchGuid));
@@ -188,33 +191,49 @@ public class LoginManager : MonoBehaviour
         };
     }
 
-    private void GetAllMatches(List<GameMatch> _newGames)
+    private void GetAllMatches(List<GameMatch> _newGames, string clientOutOfSync)
     {
-        ClearOpenGames();
-        var newGames = _newGames.Where(x => !x.GameTurns.FirstOrDefault().Players.Any(y => y.PlayerGuid == Globals.Account.PlayerGuid));
-        foreach (var newGame in newGames)
+        if (!String.IsNullOrEmpty(clientOutOfSync))
         {
-            var game = newGame;
-            var prefab = Instantiate(openGamePrefab, findContent);
-            prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
-            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
-            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns.FirstOrDefault().Players.Count(x=>x!=null)}/{game.MaxPlayers}";
-            openGamesObjects.Add(prefab);
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+        else
+        {
+            ClearOpenGames();
+            var newGames = _newGames.Where(x => !x.GameTurns.FirstOrDefault().Players.Any(y => y.PlayerGuid == Globals.Account.PlayerGuid));
+            foreach (var newGame in newGames)
+            {
+                var game = newGame;
+                var prefab = Instantiate(openGamePrefab, findContent);
+                prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
+                prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
+                prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns.FirstOrDefault().Players.Count(x => x != null)}/{game.MaxPlayers}";
+                openGamesObjects.Add(prefab);
+            }
         }
     }
-    private void GetActiveMatches(List<GameMatch> newGames)
+    private void GetActiveMatches(List<GameMatch> newGames, string clientOutOfSync)
     {
-        ClearOpenGames();
-        foreach (var newGame in newGames.Where(x=>x.MaxPlayers > 1))
+        if (!String.IsNullOrEmpty(clientOutOfSync))
         {
-            var game = newGame;
-            var prefab = Instantiate(openGamePrefab, activeContent);
-            prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
-            prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
-            prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{(game.GameTurns.OrderBy(x=>x.TurnNumber).LastOrDefault(x=>x.Players.Count() == game.MaxPlayers)?.TurnNumber??-1)+1}";
-            var players = game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault().Players;
-            prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));
-            openGamesObjects.Add(prefab);
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+        else
+        {
+            ClearOpenGames();
+            foreach (var newGame in newGames.Where(x => x.MaxPlayers > 1))
+            {
+                var game = newGame;
+                var prefab = Instantiate(openGamePrefab, activeContent);
+                prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
+                prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
+                prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{(game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault(x => x.Players.Count() == game.MaxPlayers)?.TurnNumber ?? -1) + 1}";
+                var players = game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault().Players;
+                prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));
+                openGamesObjects.Add(prefab);
+            }
         }
     }
     private void ClearOpenGames()
@@ -222,9 +241,14 @@ public class LoginManager : MonoBehaviour
         while (openGamesObjects.Count > 0) { Destroy(openGamesObjects[0].gameObject); openGamesObjects.RemoveAt(0); }
     }
 
-    private void SetMatchGuid(GameMatch game)
+    private void SetMatchGuid(GameMatch game, string clientOutOfSync)
     {
-        if (game != null)
+        if (!String.IsNullOrEmpty(clientOutOfSync))
+        {
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+        else if (game != null)
         {
             Globals.GameMatch = game;
             MaxPlayers = game.MaxPlayers;
@@ -232,7 +256,7 @@ public class LoginManager : MonoBehaviour
             createGamePanel.SetActive(false);
             joinGamePanel.SetActive(false);
             activeGamePanel.SetActive(false);
-            UpdateGameStatus(game.GameTurns.FirstOrDefault());
+            UpdateGameStatus(game.GameTurns.FirstOrDefault(),"");
             StartCoroutine(CheckIfGameHasStarted());
         }
     }
@@ -255,18 +279,29 @@ public class LoginManager : MonoBehaviour
         return Globals.GameMatch.MaxPlayers - Globals.GameMatch.GameTurns.FirstOrDefault().Players.Count();
     }
 
-    private void UpdateGameStatus(GameTurn newTurn)
+    private void UpdateGameStatus(GameTurn newTurn, string clientOutOfSync)
     {
-        Globals.GameMatch.GameTurns[0] = newTurn;
-        if (PlayersNeeded() == 0) {
-            Globals.localStationColor = Globals.GameMatch.GameTurns.FirstOrDefault().Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerColor;
-            Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.GameMatch.MaxPlayers == 1 ? 4 : Globals.GameMatch.MaxPlayers;
-            PlayerPrefs.SetString("GameGuid", newTurn.GameGuid.ToString());
-            PlayerPrefs.Save();
-            SceneManager.LoadScene((int)Scene.Game);
-        } else {
-            loadingPanel.SetActive(false);
-            UpdateWaitingText();
+        if (!String.IsNullOrEmpty(clientOutOfSync))
+        {
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+        else
+        {
+            Globals.GameMatch.GameTurns[0] = newTurn;
+            if (PlayersNeeded() == 0)
+            {
+                Globals.localStationColor = Globals.GameMatch.GameTurns.FirstOrDefault().Players.FirstOrDefault(x => x.PlayerGuid == Globals.Account.PlayerGuid).PlayerColor;
+                Globals.Teams = Globals.GameMatch.GameSettings.Contains(GameSettingType.Teams.ToString()) ? 2 : Globals.GameMatch.MaxPlayers == 1 ? 4 : Globals.GameMatch.MaxPlayers;
+                PlayerPrefs.SetString("GameGuid", newTurn.GameGuid.ToString());
+                PlayerPrefs.Save();
+                SceneManager.LoadScene((int)Scene.Game);
+            }
+            else
+            {
+                loadingPanel.SetActive(!goingToNextScene);
+                UpdateWaitingText();
+            }
         }
     }
 }
