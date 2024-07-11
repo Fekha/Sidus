@@ -586,6 +586,10 @@ public class GameManager : MonoBehaviour
             var tech = MyStation.technology[(int)action.actionType - Constants.MinTech];
             ShowCustomAlertPanel(tech.effectText + "." + tech.currentEffectText);
         }
+        else if(action.actionType == ActionType.DeployFleet || action.actionType == ActionType.DeployBomb)
+        {
+            HighlightQueuedMovement(action, true);
+        }
         else 
         {
             SetUnitTextValues(action.selectedUnit);
@@ -593,21 +597,23 @@ public class GameManager : MonoBehaviour
                 ViewUnitInformation(true);
         }
     }
-    private void HighlightQueuedMovement(Action movementAction)
+    private void HighlightQueuedMovement(Action movementAction, bool deploy = false)
     {
         SelectedUnit = movementAction.selectedUnit;
         SetUnitTextValues(SelectedUnit);
         ViewUnitInformation(true);
-        DrawPath(movementAction.selectedPath);
+        DrawPath(movementAction.selectedPath, deploy);
         Debug.Log($"{SelectedUnit.unitName} already has a pending movement action.");
     }
 
-    private void DrawPath(List<PathNode> selectedPath)
+    private void DrawPath(List<PathNode> selectedPath, bool deploy = false)
     {
         ClearMovementPath();
         foreach (var node in selectedPath)
         {
-            if (node == selectedPath.Last())
+            if(deploy)
+                currentPathObjects.Add(Instantiate(deployPrefab, node.transform.position, Quaternion.identity));
+            else if (node == selectedPath.Last())
                 currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
             else
                 currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
@@ -2091,6 +2097,7 @@ public class GameManager : MonoBehaviour
                         {
                             PerformUpdates(action, Constants.Create);
                             StartCoroutine(FloatingTextAnimation($"New Bomb", newBomb.transform, newBomb));
+                            StartCoroutine(FloatingTextAnimation($"-1 Movement", unit.transform, unit, true));
                             unit.selectIcon.SetActive(true);
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
                             unit.selectIcon.SetActive(false);
