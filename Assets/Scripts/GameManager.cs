@@ -6,12 +6,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
 
 public class GameManager : MonoBehaviour
 {
@@ -171,6 +171,8 @@ public class GameManager : MonoBehaviour
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
             TechActions.Add((ActionType)i);
+            var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
+            TechnologyObjects.Add(techObject);
         }
         loadingPanel.SetActive(false);
         if (TurnNumber == 0)
@@ -508,7 +510,10 @@ public class GameManager : MonoBehaviour
                         SelectedUnit.AddMinedPath(SelectedPath);
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                         DrawPath(SelectedPath);
-                        HighlightMovementRange(SelectedNode, SelectedUnit);
+                        if(SelectedUnit.movementLeft > 0)
+                            HighlightMovementRange(SelectedNode, SelectedUnit);
+                        else
+                            QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     }
                     //Clicked on invalid tile, clear
                     else
@@ -518,6 +523,7 @@ public class GameManager : MonoBehaviour
                         {
                             if (targetUnit != null)
                             {
+                                targetUnit.selectIcon.SetActive(false);
                                 SetUnitTextValues(targetUnit);
                                 if(targetUnit.unitType != UnitType.Bomb)
                                     ViewUnitInformation(true);
@@ -611,12 +617,7 @@ public class GameManager : MonoBehaviour
         ClearMovementPath();
         foreach (var node in selectedPath)
         {
-            if(deploy)
-                currentPathObjects.Add(Instantiate(deployPrefab, node.transform.position, Quaternion.identity));
-            else if (node == selectedPath.Last())
-                currentPathObjects.Add(Instantiate(selectPrefab, node.transform.position, Quaternion.identity));
-            else
-                currentPathObjects.Add(Instantiate(pathPrefab, node.transform.position, Quaternion.identity));
+            currentPathObjects.Add(Instantiate(deploy ? deployPrefab : node == selectedPath.Last() ? selectPrefab : pathPrefab, node.transform.position, Quaternion.identity));
         }
     }
 
@@ -631,86 +632,85 @@ public class GameManager : MonoBehaviour
         }
         ResetAfterSelection();
     }
-    public void ViewTechnology(bool active)
+    public void ViewTechnology()
     {
-        technologyPanel.SetActive(active);
-        if (active)
+        technologyPanel.SetActive(true);
+        DeselectMovement();
+        ClearTechnologyObjects();
+        for (int j = 0; j < MyStation.technology.Count-Constants.ShadowTechAmount; j++)
         {
-            DeselectMovement();
-            ClearTechnologyObjects();
-            for (int j = 0; j < MyStation.technology.Count-Constants.ShadowTechAmount; j++)
+            int i = j;
+            var techLevel = MyStation.technology[i].level;
+            if (i == (int)TechnologyType.ResearchKinetic)
             {
-                int i = j;
-                var techLevel = MyStation.technology[i].level;
-                if (i == (int)TechnologyType.ResearchKinetic)
+                techLevel = MyStation.technology[(int)TechnologyType.ResearchKinetic].level 
+                    + MyStation.technology[(int)TechnologyType.ResearchThermal].level 
+                    + MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
+                if (MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchThermal].level)
                 {
-                    techLevel = MyStation.technology[(int)TechnologyType.ResearchKinetic].level 
-                        + MyStation.technology[(int)TechnologyType.ResearchThermal].level 
-                        + MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
-                    if (MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchThermal].level)
-                    {
-                        i = (int)TechnologyType.ResearchThermal;
-                    }else if(MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchExplosive].level)
-                    {
-                        i = (int)TechnologyType.ResearchExplosive;
-                    }
+                    i = (int)TechnologyType.ResearchThermal;
+                }else if(MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchExplosive].level)
+                {
+                    i = (int)TechnologyType.ResearchExplosive;
                 }
-                var tech = MyStation.technology[i];
-                var canQueue = tech.GetCanQueueTech();
-                var techObject = Instantiate(techPrefab, technologyPanel.transform.Find("TechBar"));
-                TechnologyObjects.Add(techObject);
-                var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
-                techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
-                techObject.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = $"{techLevel}";
-                var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
-                researchButton.interactable = canQueue;
-                researchButton.onClick.AddListener(() => Research(i));
-                techObject.transform.Find("Queued").gameObject.SetActive(!canQueue);
-                techObject.transform.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{i+Constants.MinTech}");
             }
+            var tech = MyStation.technology[i];
+            var canQueue = tech.GetCanQueueTech();
+            var techObject = TechnologyObjects[i];
+            techObject.transform.SetParent(technologyPanel.transform.Find("TechBar"));
+            var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
+            techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
+            techObject.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = $"{techLevel}";
+            var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
+            researchButton.interactable = canQueue;
+            researchButton.onClick.RemoveAllListeners();
+            researchButton.onClick.AddListener(() => Research(i));
+            techObject.transform.Find("Queued").gameObject.SetActive(!canQueue);
+            techObject.transform.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Sprites/Actions/{i+Constants.MinTech}");
         }
     }
 
     private void Research(int i)
     {
         QueueAction(new Action((ActionType)i+Constants.MinTech));
-        //if(MyStation.actions.Count == MyStation.maxActions)
-        //{
+        if (MyStation.actions.Count == MyStation.maxActions)
+        {
             technologyPanel.SetActive(false);
-        //}
+        }
+        else
+        {
+            ViewTechnology();
+        }
     }
 
-    public void ViewModuleMarket(bool active)
+    public void ViewModuleMarket()
     {
-        moduleMarket.SetActive(active);
-        if (active)
+        moduleMarket.SetActive(true);
+        canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = GridManager.i.uiColors[4];
+        DeselectMovement();
+        ClearAuctionObjects();
+        for(int j = 0; j < AuctionModules.Count; j++)
         {
-            canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = GridManager.i.uiColors[4];
-            DeselectMovement();
-            ClearAuctionObjects();
-            for(int j = 0; j < AuctionModules.Count; j++)
-            {
-                int i = j;
-                var module = AuctionModules[i];
-                var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModuleGuid == module.moduleGuid);
-                if (!hasQueued) { module.currentBid = module.minBid; }
-                var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
-                AuctionObjects.Add(moduleObject);
-                moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module));
-                var addButton = moduleObject.transform.Find("Add").GetComponent<Button>();
-                addButton.onClick.AddListener(() => ModifyBid(true, i));
-                addButton.interactable = !hasQueued && MyStation.credits > module.currentBid;
-                var subtractButton = moduleObject.transform.Find("Subtract").GetComponent<Button>();
-                subtractButton.interactable = !hasQueued && module.minBid < module.currentBid;
-                subtractButton.onClick.AddListener(() => ModifyBid(false,i));
-                var bidButton = moduleObject.transform.Find("Bid").GetComponent<Button>();
-                bidButton.interactable = !hasQueued && MyStation.credits >= module.currentBid;
-                bidButton.onClick.AddListener(() => BidOn(i, module.currentBid));
-                moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
-                moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued || MyStation.credits < module.currentBid);
-                moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"{module.turnsLeftOnMarket} Turns Left" : "Last Turn!!!";
-                moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
-            }
+            int i = j;
+            var module = AuctionModules[i];
+            var hasQueued = MyStation.actions.Any(x => x.actionType == ActionType.BidOnModule && x.selectedModuleGuid == module.moduleGuid);
+            if (!hasQueued) { module.currentBid = module.minBid; }
+            var moduleObject = Instantiate(auctionPrefab, moduleMarket.transform.Find("MarketBar"));
+            AuctionObjects.Add(moduleObject);
+            moduleObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => SetModuleInfo(module));
+            var addButton = moduleObject.transform.Find("Add").GetComponent<Button>();
+            addButton.onClick.AddListener(() => ModifyBid(true, i));
+            addButton.interactable = !hasQueued && MyStation.credits > module.currentBid;
+            var subtractButton = moduleObject.transform.Find("Subtract").GetComponent<Button>();
+            subtractButton.interactable = !hasQueued && module.minBid < module.currentBid;
+            subtractButton.onClick.AddListener(() => ModifyBid(false,i));
+            var bidButton = moduleObject.transform.Find("Bid").GetComponent<Button>();
+            bidButton.interactable = !hasQueued && MyStation.credits >= module.currentBid;
+            bidButton.onClick.AddListener(() => BidOn(i, module.currentBid));
+            moduleObject.transform.Find("Bid/BidText").GetComponent<TextMeshProUGUI>().text = $"Bid {module.currentBid}";
+            moduleObject.transform.Find("Queued").gameObject.SetActive(hasQueued || MyStation.credits < module.currentBid);
+            moduleObject.transform.Find("TurnTimer").GetComponent<TextMeshProUGUI>().text = module.turnsLeftOnMarket > 1 ? $"{module.turnsLeftOnMarket} Turns Left" : "Last Turn!!!";
+            moduleObject.transform.Find("Image").GetComponent<Image>().sprite = module.icon;
         }
     }
 
@@ -733,7 +733,7 @@ public class GameManager : MonoBehaviour
 
     private void BidOn(int index, int currentBid)
     {
-        ViewModuleMarket(false);
+        moduleMarket.SetActive(false);
         QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,0,null,null,currentBid));
     }
 
@@ -863,7 +863,7 @@ public class GameManager : MonoBehaviour
         if (IsUnderMaxFleets(MyStation, true))
             HighlightDeployRange(MyStation);
         else
-            ViewTechnology(true);
+            ViewTechnology();
     }
 
     public void UpgradeStructure()
@@ -872,7 +872,7 @@ public class GameManager : MonoBehaviour
         if (CanLevelUp(SelectedUnit, actionType, true)){
             QueueAction(new Action(actionType, SelectedUnit));
         } else {
-            ViewTechnology(true);
+            ViewTechnology();
         }
     }
 
@@ -2343,8 +2343,8 @@ public class GameManager : MonoBehaviour
         ClearActionBar();
         GridManager.i.GetScores();
         infoToggle = false;
-        ViewModuleMarket(false);
-        ViewTechnology(false);
+        moduleMarket.SetActive(false);
+        technologyPanel.SetActive(false);
         BuildTurnObjects();
         ResetAfterSelection();
         isEndingTurn = false;
@@ -2481,7 +2481,7 @@ public class GameManager : MonoBehaviour
     }
     private void ClearTechnologyObjects()
     {
-        while (TechnologyObjects.Count > 0) { Destroy(TechnologyObjects[0].gameObject); TechnologyObjects.RemoveAt(0); }
+       foreach (var child in TechnologyObjects) { child.transform.SetParent(null); }
     }
     private void ClearTurnOrderObjects()
     {
