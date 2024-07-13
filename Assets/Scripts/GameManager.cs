@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -166,7 +165,7 @@ public class GameManager : MonoBehaviour
         }
         MatchName.text = $"{Globals.GameMatch.GameGuid.ToString().Substring(0, 6)}";
         TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
-        ColorText.text = $"{Globals.Account.Username}";
+        ColorText.text = $"{Globals.Account.Username.Split(' ')[0]}";
         UpdateColors((int)MyStation.playerColor);
         for (int i = Constants.MinTech; i <= Constants.MaxTech; i++)
         {
@@ -443,7 +442,7 @@ public class GameManager : MonoBehaviour
 
     private string GetPlayerName(Guid playerGuid)
     {
-        return Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.FirstOrDefault(x => x.PlayerGuid == playerGuid)?.PlayerName ?? "CPU";
+        return Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == 0)?.Players?.FirstOrDefault(x => x.PlayerGuid == playerGuid)?.PlayerName.Split(' ')[0] ?? "CPU";
     }
 
     void Update()
@@ -509,11 +508,15 @@ public class GameManager : MonoBehaviour
                         }
                         SelectedUnit.AddMinedPath(SelectedPath);
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
-                        DrawPath(SelectedPath);
-                        if(SelectedUnit.movementLeft > 0)
+                        if (SelectedUnit.movementLeft > 0)
+                        {
+                            DrawPath(SelectedPath);
                             HighlightMovementRange(SelectedNode, SelectedUnit);
+                        }
                         else
-                            QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+                        {
+                            StartCoroutine(QueueMovement());
+                        }
                     }
                     //Clicked on invalid tile, clear
                     else
@@ -555,6 +558,15 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator QueueMovement()
+    {
+        var selectedPath = SelectedPath;
+        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+        DrawPath(selectedPath);
+        yield return new WaitForSeconds(.3f);
+        ClearMovementPath();
     }
 
     private void SetAsteroidTextValues(PathNode targetNode)
@@ -1713,7 +1725,7 @@ public class GameManager : MonoBehaviour
                             TurnNumber = TurnNumber,
                             PlayerColor = Globals.localStationColor,
                             PlayerGuid = Globals.Account.PlayerGuid,
-                            PlayerName = Globals.Account.Username,
+                            PlayerName = Globals.Account.Username.Split(' ')[0],
                             Actions = MyStation.actions.Select((x, j) =>
                                 new ServerAction()
                                 {
