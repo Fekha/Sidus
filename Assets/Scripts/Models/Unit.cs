@@ -200,6 +200,7 @@ public class Unit : Node
     internal void subtractMovement(int i)
     {
         movementLeft -= i;
+        movementLeft = Mathf.Min(movementLeft, maxMovement);
     }
     internal void ShowHPText(bool value)
     {

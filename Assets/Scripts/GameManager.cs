@@ -544,7 +544,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            if(SelectedUnit.movementLeft <= 0 && !HasQueuedMovement(SelectedUnit))
+                            if(SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
                                 QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                             DeselectMovement();
                         }
@@ -552,7 +552,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if(SelectedUnit != null && SelectedUnit.movementLeft <= 0 && !HasQueuedMovement(SelectedUnit))
+                    if(SelectedUnit != null && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
                         QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     if (!hit.collider.CompareTag("Wall"))
                         DeselectMovement();
@@ -627,15 +627,22 @@ public class GameManager : MonoBehaviour
 
     internal void DeselectMovement()
     {
+        Debug.Log($"Invalid tile selected, reseting path and selection.");
+        ResetSelectedUnitMovement();
+        ResetAfterSelection();
+    }
+
+    private void ResetSelectedUnitMovement()
+    {
         if (SelectedUnit != null && SelectedUnit.unitType != UnitType.Bomb)
         {
-            Debug.Log($"Invalid tile selected, reseting path and selection.");
             SelectedUnit.subtractMovement(-1 * (SelectedPath?.Count ?? 0));
             SelectedUnit.ClearMinedPath(SelectedPath);
             SelectedUnit.selectIcon.SetActive(false);
+            ClearMovementPath();
         }
-        ResetAfterSelection();
     }
+
     public void ViewTechnology()
     {
         technologyPanel.SetActive(true);
@@ -1146,7 +1153,7 @@ public class GameManager : MonoBehaviour
             didFightLastMove = false;
             //Check that no one hacked their client to send back bad results, currently not full working and stopping real moves, todo come back to later
             //if (GridManager.i.GetNeighbors(currentNode, currentNode.minerals > unitMoving.miningLeft).Contains(nextNode) &&
-            if (unitMoving == null || !AllUnits.Contains(unitMoving) || unitMoving.movementLeft < 1)
+            if (unitMoving == null || !AllUnits.Contains(unitMoving) || unitMoving.movementLeft <= 0)
             {
                 break;
             }
@@ -2424,6 +2431,8 @@ public class GameManager : MonoBehaviour
     {
         if (SelectedUnit != null && SelectedUnit.movementLeft > 0)
         {
+            if (!HasQueuedMovement(SelectedUnit))
+                ResetSelectedUnitMovement();
             HighlightDeployRange(SelectedUnit);
         }
     }
