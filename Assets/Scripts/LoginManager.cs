@@ -47,6 +47,15 @@ public class LoginManager : MonoBehaviour
         PlayerPrefs.Save();
         SceneManager.LoadScene((int)Scene.Login);
     }
+    public void ExitScene()
+    {
+        goingToNextScene = false;
+        loadingPanel.SetActive(false);
+        waitingPanel.SetActive(false);
+        createGamePanel.SetActive(false);
+        joinGamePanel.SetActive(false);
+        activeGamePanel.SetActive(false);
+    }
     public void CreateGame(bool cpuGame)
     {
         GameSettings.Clear();
@@ -207,7 +216,8 @@ public class LoginManager : MonoBehaviour
                 var game = newGame;
                 var prefab = Instantiate(openGamePrefab, findContent);
                 prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
-                prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
+                prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = $"Game Id: {game.GameGuid.ToString().Substring(0, 6)}";
+                prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = $"Created By: {game.GameTurns.FirstOrDefault().Players.FirstOrDefault()?.PlayerName}";
                 prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns.FirstOrDefault().Players.Count(x => x != null)}/{game.MaxPlayers}";
                 openGamesObjects.Add(prefab);
             }
@@ -228,7 +238,8 @@ public class LoginManager : MonoBehaviour
                 var game = newGame;
                 var prefab = Instantiate(openGamePrefab, activeContent);
                 prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
-                prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = game.GameGuid.ToString().Substring(0, 6);
+                prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = $"Game Id: {game.GameGuid.ToString().Substring(0, 6)}";
+                prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = $"Created By: {game.GameTurns.FirstOrDefault().Players.FirstOrDefault()?.PlayerName}";
                 prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{(game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault(x => x.Players.Count() == game.MaxPlayers)?.TurnNumber ?? -1) + 1}";
                 var players = game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault().Players;
                 prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));
@@ -299,7 +310,7 @@ public class LoginManager : MonoBehaviour
             }
             else
             {
-                loadingPanel.SetActive(!goingToNextScene);
+                loadingPanel.SetActive(goingToNextScene);
                 UpdateWaitingText();
             }
         }

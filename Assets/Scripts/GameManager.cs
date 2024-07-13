@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI ThermalTakenValueText;
     private TextMeshProUGUI ExplosiveTakenValueText;
     private TextMeshProUGUI ModuleEffectText;
+    private TextMeshProUGUI DeployRangeValueText;
     internal TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
     private TextMeshProUGUI moduleInfoValue;
@@ -294,6 +295,7 @@ public class GameManager : MonoBehaviour
         ThermalTakenValueText = infoPanel.transform.Find("S/V/C/ThermalTakenValue").GetComponent<TextMeshProUGUI>();
         ExplosiveTakenValueText = infoPanel.transform.Find("S/V/C/ExplosiveTakenValue").GetComponent<TextMeshProUGUI>();
         ModuleEffectText = infoPanel.transform.Find("S/V/C/ModuleInformation").GetComponent<TextMeshProUGUI>();
+        DeployRangeValueText = infoPanel.transform.Find("S/V/C/DeployRangeValue").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         phaseText = turnLabel.transform.Find("PhaseText").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
@@ -347,12 +349,14 @@ public class GameManager : MonoBehaviour
                 KineticTakenValueText.text = "?";
                 ThermalTakenValueText.text = "?";
                 ExplosiveTakenValueText.text = "?";
+                DeployRangeValueText.text = "?";
             }
             else
             {
                 HPValue.text = Mathf.Min(unit.maxHP, unit.HP) + "/" + unit.maxHP;
                 rangeValue.text = $"{unit.movementLeft}/{unit.maxMovement}";
                 ModuleEffectText.text = "No Modules Installed";
+                DeployRangeValueText.text = unit.deployRange.ToString();
                 if (unit.attachedModules.Count > 0)
                 {
                     ModuleEffectText.text = unit.attachedModules[0].effectText.Replace("\n", ", ");
@@ -508,15 +512,8 @@ public class GameManager : MonoBehaviour
                         }
                         SelectedUnit.AddMinedPath(SelectedPath);
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
-                        if (SelectedUnit.movementLeft > 0)
-                        {
-                            DrawPath(SelectedPath);
-                            HighlightMovementRange(SelectedNode, SelectedUnit);
-                        }
-                        else
-                        {
-                            StartCoroutine(QueueMovement());
-                        }
+                        DrawPath(SelectedPath);
+                        HighlightMovementRange(SelectedNode, SelectedUnit);
                     }
                     //Clicked on invalid tile, clear
                     else
@@ -547,26 +544,21 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
+                            if(SelectedUnit.movementLeft <= 0 && !HasQueuedMovement(SelectedUnit))
+                                QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                             DeselectMovement();
                         }
                     }
                 }
                 else
                 {
-                    if(!hit.collider.CompareTag("Wall"))
+                    if(SelectedUnit != null && SelectedUnit.movementLeft <= 0 && !HasQueuedMovement(SelectedUnit))
+                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+                    if (!hit.collider.CompareTag("Wall"))
                         DeselectMovement();
                 }
             }
         }
-    }
-
-    private IEnumerator QueueMovement()
-    {
-        var selectedPath = SelectedPath;
-        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
-        DrawPath(selectedPath);
-        yield return new WaitForSeconds(.3f);
-        ClearMovementPath();
     }
 
     private void SetAsteroidTextValues(PathNode targetNode)

@@ -566,10 +566,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1590898257}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1345632150}
+        m_TargetAssemblyTypeName: LoginManager, Assembly-CSharp
+        m_MethodName: ExitScene
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -762,14 +762,14 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 222763568}
+  m_TargetGraphic: {fileID: 1444249422}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1345632150}
         m_TargetAssemblyTypeName: LoginManager, Assembly-CSharp
-        m_MethodName: ViewOpenGames
-        m_Mode: 6
+        m_MethodName: ExitScene
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2448,14 +2448,14 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 835824121}
+  m_TargetGraphic: {fileID: 1444249422}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1345632150}
         m_TargetAssemblyTypeName: LoginManager, Assembly-CSharp
-        m_MethodName: ViewActiveGames
-        m_Mode: 6
+        m_MethodName: ExitScene
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5119,8 +5119,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1345632150}
         m_TargetAssemblyTypeName: LoginManager, Assembly-CSharp
-        m_MethodName: ViewGameCreation
-        m_Mode: 6
+        m_MethodName: ExitScene
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
