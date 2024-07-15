@@ -10,6 +10,8 @@ namespace Models
         public string? Username { get; set; }
         public string? Email { get; set; }
         public Guid PlayerGuid { get; set; }
+        public double? Rating { get; set; }
+        public int? Wins { get; set; }
     }
 
     [Serializable]

@@ -486,7 +486,7 @@ public class GameManager : MonoBehaviour
                         }
                     }
                     //Double click confirm to movement early
-                    else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && SelectedUnit.playerGuid == MyStation.playerGuid && !HasQueuedMovement(SelectedUnit))
+                    else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && SelectedUnit.playerGuid == MyStation.playerGuid && SelectedUnit.unitType != UnitType.Bomb && !HasQueuedMovement(SelectedUnit))
                     {
                         QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     }
@@ -544,7 +544,7 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            if(SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
+                            if(SelectedUnit.unitType != UnitType.Bomb && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
                                 QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                             DeselectMovement();
                         }
@@ -552,7 +552,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if(SelectedUnit != null && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
+                    if(SelectedUnit.unitType != UnitType.Bomb && SelectedUnit != null && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
                         QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     if (!hit.collider.CompareTag("Wall"))
                         DeselectMovement();

@@ -20,7 +20,7 @@ public class GoogleSignInManager : MonoBehaviour
         //PlayerPrefs.SetString("AccountId", "108002382745613062728");
         //PlayerPrefs.Save();
 
-        //Uncomment to run as feca
+        //Uncomment to run as fekha
         //PlayerPrefs.SetString("AccountId", "112550575566380218480");
         //PlayerPrefs.Save();
 #endif
@@ -63,6 +63,8 @@ public class GoogleSignInManager : MonoBehaviour
                 AccountId = user["sub"],
                 Username = user["name"].Split(' ')[0],
                 Email = user["email"],
+                Rating = 1500,
+                Wins = 0
             };
             try
             {
