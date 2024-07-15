@@ -544,16 +544,16 @@ public class GameManager : MonoBehaviour
                         }
                         else
                         {
-                            if(SelectedUnit.unitType != UnitType.Bomb && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
-                                QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+                            if (SelectedUnit != null && (SelectedPath?.Count ?? 0) > 0 && !HasQueuedMovement(SelectedUnit))
+                                ShowCustomAlertPanel("Movement cancelled. \n\n Double click selected hex to confirm movement.");
                             DeselectMovement();
                         }
                     }
                 }
                 else
                 {
-                    if(SelectedUnit != null && SelectedUnit.unitType != UnitType.Bomb && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
-                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+                    if (SelectedUnit != null && (SelectedPath?.Count ?? 0) > 0 && !HasQueuedMovement(SelectedUnit))
+                        ShowCustomAlertPanel("Movement cancelled. \n\n Double click selected hex to confirm movement.");
                     if (!hit.collider.CompareTag("Wall"))
                         DeselectMovement();
                 }
