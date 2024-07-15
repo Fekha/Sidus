@@ -552,7 +552,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if(SelectedUnit.unitType != UnitType.Bomb && SelectedUnit != null && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
+                    if(SelectedUnit != null && SelectedUnit.unitType != UnitType.Bomb && SelectedUnit.movementLeft == 0 && !HasQueuedMovement(SelectedUnit))
                         QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
                     if (!hit.collider.CompareTag("Wall"))
                         DeselectMovement();

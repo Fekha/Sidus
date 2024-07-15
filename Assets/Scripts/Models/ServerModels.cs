@@ -12,6 +12,7 @@ namespace Models
         public Guid PlayerGuid { get; set; }
         public double? Rating { get; set; }
         public int? Wins { get; set; }
+        public bool? NotifiyByEmail { get; set; }
     }
 
     [Serializable]

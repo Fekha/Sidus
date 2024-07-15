@@ -64,7 +64,8 @@ public class GoogleSignInManager : MonoBehaviour
                 Username = user["name"].Split(' ')[0],
                 Email = user["email"],
                 Rating = 1500,
-                Wins = 0
+                Wins = 0,
+                NotifiyByEmail = true
             };
             try
             {
