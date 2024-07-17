@@ -26,6 +26,7 @@ namespace Models
         public bool IsDeleted { get; set; }
         public DateTime HealthCheck { get; set; }
         public List<GameTurn> GameTurns { get; set; }
+        public string? ModuleJson { get; set; }
     }
 
     [Serializable]

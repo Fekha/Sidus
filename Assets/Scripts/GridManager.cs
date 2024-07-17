@@ -40,45 +40,14 @@ public class GridManager : MonoBehaviour
         tileColors = new List<Color>() { new Color(0.529f, 0.769f, 1, 1), new Color(0.98f, 0.561f, 0.561f, 1), new Color(0.871f, 0.514f, 1f, 1), new Color(1, .714f, .42f, 1), };
         uiColors = new List<Color>() { new Color(0.2824255f, .3930371f, .5283019f, 1), new Color(0.3396226f, 0.09825558f, 0.1029435f, 1), new Color(0.1921593f, 0.1135635f, 0.3113208f, 1), new Color(0.545f, 0.2878966f, 0.106f, 1), new Color(0.3773585f, 0.3773585f, 0.3773585f, 1), };
         fleetSprites = new Sprite[4, 4];
-        //stationSprites = new Sprite[4];
-
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
                 string path = $"Sprites/Units/Fleets/fleet_{i}_{j}";
                 fleetSprites[i, j] = Resources.Load<Sprite>(path);
-
-                // Check if the sprite was loaded correctly
-                if (fleetSprites[i, j] != null)
-                {
-                    Debug.Log($"Loaded sprite at [{i},{j}] from {path}");
-                }
-                else
-                {
-                    Debug.LogWarning($"Failed to load sprite at [{i},{j}] from {path}");
-                }
             }
         }
-
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    for (int j = 0; j < 4; j++)
-        //    {
-        //        string path = $"Sprites/Units/Stations/station_{i}_{j}";
-        //        stationSprites[i, j] = Resources.Load<Sprite>(path);
-
-        //        // Check if the sprite was loaded correctly
-        //        if (stationSprites[i, j] != null)
-        //        {
-        //            Debug.Log($"Loaded sprite at [{i},{j}] from {path}");
-        //        }
-        //        else
-        //        {
-        //            Debug.LogWarning($"Failed to load sprite at [{i},{j}] from {path}");
-        //        }
-        //    }
-        //}
     }
     void Start()
     {
@@ -224,7 +193,7 @@ public class GridManager : MonoBehaviour
                 spawnY = 1;
                 facing = Direction.Left;
             }
-            stationNode.InitializeStation(spawnX, spawnY, stationColor, 15, 1, 5, 6, 7, stationGuid, facing, fleetGuid,bombGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
+            stationNode.InitializeStation(spawnX, spawnY, stationColor, 15, 1, 7, 6, 5, stationGuid, facing, fleetGuid,bombGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
         }
     }
 
@@ -370,7 +339,11 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x=>x.teamId).Distinct().Count())+Globals.Teams;
+        var scoreToWin = (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x => x.teamId).Distinct().Count()) + Globals.Teams;
+        Constants.UnlockAction3 = 4;
+        Constants.UnlockAction4 = Convert.ToInt32(Math.Ceiling(scoreToWin * .25));
+        Constants.UnlockAction5 = Convert.ToInt32(Math.Ceiling(scoreToWin * .5));
+        return scoreToWin;
     }
     internal Guid CheckForWin()
     {

@@ -139,6 +139,7 @@ public class GameManager : MonoBehaviour
     List<Tuple<string,string>> turnArchive = new List<Tuple<string, string>>();
     public GameObject clientOutOfSyncPanel;
     private bool isClientOutOfSync = false;
+    internal List<ModuleStats> AllModulesStats;
 
     //Got game icons from https://game-icons.net/
     private void Awake()
@@ -164,6 +165,8 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
+        string jsonString = Globals.GameMatch.ModuleJson.Replace("\\\"", "\"").Trim('"');
+        AllModulesStats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ModuleStats>>(jsonString);
         MatchName.text = $"{Globals.GameMatch.GameGuid.ToString().Substring(0, 6)}";
         TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
         ColorText.text = $"{Globals.Account.Username.Split(' ')[0]}";
@@ -360,6 +363,7 @@ public class GameManager : MonoBehaviour
                 if (unit.attachedModules.Count > 0)
                 {
                     ModuleEffectText.text = unit.attachedModules[0].effectText.Replace("\n", ", ");
+                    ModuleEffectText.text = unit.attachedModules[0].effectText.Replace(":,", ":");
                     for (int i = 1; i < unit.attachedModules.Count; i++)
                     {
                         ModuleEffectText.text += $"\n {unit.attachedModules[i].effectText.Replace("\n", ", ")}";
@@ -1474,15 +1478,15 @@ public class GameManager : MonoBehaviour
         {
             unit.RegenHP(3);
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic2))
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic3))
         {
             unit.kineticPower += 2;
         }  
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal2))
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal3))
         {
             unit.thermalPower += 2;
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive2))
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive3))
         {
             unit.explosivePower += 2;
         }
@@ -1493,9 +1497,9 @@ public class GameManager : MonoBehaviour
         {
             unit.IncreaseMaxMining(2);
         }
-        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits4))
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits5))
         {
-            GetStationByGuid(unit.playerGuid).GainCredits(4,unit,false,false);
+            GetStationByGuid(unit.playerGuid).GainCredits(5,unit,false,false);
         }
     }
 
@@ -1521,8 +1525,8 @@ public class GameManager : MonoBehaviour
     {
         int s1Dmg = (s2.explosivePower+s2sExplosive) - (s1.explosivePower+s1sExplosive);
         int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
-        int s1Amr = s1.explosiveDamageTaken;
-        int s2Amr = s2.explosiveDamageTaken;
+        int s1DT = s1.explosiveDamageTaken;
+        int s2DT = s2.explosiveDamageTaken;
         string support1Text = (s1sExplosive > 0 ? $"({s1.explosivePower} base +{s1sExplosive} from support)" : "");
         string support2Text = (s2sExplosive > 0 ? $"({s2.explosivePower} base +{s2sExplosive} from support)" : "");
         string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower + s1sExplosive}";
@@ -1532,8 +1536,8 @@ public class GameManager : MonoBehaviour
         {
             s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
             s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
-            s1Amr = s1.kineticDamageTaken;
-            s2Amr = s2.kineticDamageTaken;
+            s1DT = s1.kineticDamageTaken;
+            s2DT = s2.kineticDamageTaken;
             support1Text = (s1sKinetic > 0 ? $"({s1.kineticPower} base +{s1sKinetic} from support)" : "");
             support2Text = (s2sKinetic > 0 ? $"({s2.kineticPower} base +{s2sKinetic} from support)" : "");
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower + s1sKinetic}";
@@ -1543,8 +1547,8 @@ public class GameManager : MonoBehaviour
         {
             s1Dmg = (s2.thermalPower+s2sThermal) - (s1.thermalPower+s1sThermal);
             s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
-            s1Amr = s1.thermalDamageTaken;
-            s2Amr = s2.thermalDamageTaken;
+            s1DT = s1.thermalDamageTaken;
+            s2DT = s2.thermalDamageTaken;
             support1Text = (s1sThermal > 0 ? $"({s1.thermalPower} base +{s1sThermal} from support)" : "");
             support2Text = (s2sThermal > 0 ? $"({s2.thermalPower} base +{s2sThermal} from support)" : "");
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower + s1sThermal}";
@@ -1553,27 +1557,27 @@ public class GameManager : MonoBehaviour
         var returnText = "";
         if (s1Dmg > 0)
         {
-            var damage = Mathf.Max(s1Dmg - s1Amr, 0);
+            var damage = Mathf.Max(s1Dmg + s1DT, 0);
             s1.TakeDamage(damage, s2);
             string hpText = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.HP}";
             returnText += $"<u><b>{s1.playerColor.ToString()} took {damage} damage</u></b> and has {hpText} HP left.";
-            if (s1Amr != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
-            {
-                var modifierSymbol = s1Amr > 0 ? "-" : "+";
-                returnText += $"\n({s1Dmg} base damage {modifierSymbol}{Mathf.Abs(s1Amr)} from modules)";
-            }
+            //if (s1DT != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
+            //{
+            //    var modifierSymbol = s1DT > 0 ? "+" : "";
+            //    returnText += $"\n({s1Dmg} base damage, {modifierSymbol}{s1DT} from damage)";
+            //}
         }
         else if (s2Dmg > 0)
         {
-            var damage = Mathf.Max(s2Dmg - s2Amr, 0);
+            var damage = Mathf.Max(s2Dmg + s2DT, 0);
             s2.TakeDamage(damage, s1);
             string hpText = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.HP}";
             returnText += $"<u><b>{s2.playerColor.ToString()} took {damage} damage</u></b> and has {hpText} HP left.";
-            if (s2Amr != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
-            {
-                var modifierSymbol = s2Amr > 0 ? "-" : "+";
-                returnText += $"\n({s2Dmg} base damage {modifierSymbol}{Mathf.Abs(s2Amr)} from modules)";
-            }
+            //if (s2DT != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
+            //{
+            //    var modifierSymbol = s2DT > 0 ? "+" : "";
+            //    returnText += $"\n({s2Dmg} base damage {modifierSymbol}{s2DT} from modules)";
+            //}
         }
         else
         {
@@ -1864,9 +1868,9 @@ public class GameManager : MonoBehaviour
                 }
 
             }
-            action.selectedUnit.EditModule(actionModule.moduleId, modifier);
+            actionModule.EditUnitStats(action.selectedUnit, modifier);
             if (!action._statonInventory)
-                UnitToRemoveFrom.EditModule(actionModule.moduleId, modifier * -1);
+                actionModule.EditUnitStats(UnitToRemoveFrom, modifier * -1);
             if (modifier == Constants.Create)
             {
                 action._parentGuid = UnitToRemoveFrom.unitGuid;
@@ -1895,12 +1899,12 @@ public class GameManager : MonoBehaviour
             {
                 inventoryRemoveFrom = unitToRemoveFrom?.attachedModules;
             }
-            action.selectedUnit.EditModule(actionModule.moduleId, modifier);
-            action.selectedUnit.EditModule(dettachedModule.moduleId, modifier * -1);
+            actionModule.EditUnitStats(action.selectedUnit, modifier);
+            dettachedModule.EditUnitStats(action.selectedUnit, modifier * -1);
             if (unitToRemoveFrom != null)
             {
-                unitToRemoveFrom.EditModule(actionModule.moduleId, modifier * -1);
-                unitToRemoveFrom.EditModule(dettachedModule.moduleId, modifier);
+                actionModule.EditUnitStats(unitToRemoveFrom, modifier * -1);
+                dettachedModule.EditUnitStats(unitToRemoveFrom, modifier);
             }
             if (modifier == Constants.Create)
             {
@@ -2324,15 +2328,15 @@ public class GameManager : MonoBehaviour
                     var station = unit as Station;
                     station.AOERegen(1);
                     station.actions.Clear();
-                    if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.66))))
+                    if (station.score >= Constants.UnlockAction5)
                     {
                         station.maxActions = 5;
                     }
-                    else if (station.score >= Convert.ToInt32(Math.Floor(GridManager.i.scoreToWin * (.33))))
+                    else if (station.score >= Constants.UnlockAction4)
                     {
                         station.maxActions = 4;
                     }
-                    else if (station.score >= 4)
+                    else if (station.score >= Constants.UnlockAction3)
                     {
                         station.maxActions = 3;
                     }
@@ -2510,7 +2514,7 @@ public class GameManager : MonoBehaviour
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];   
             } else {
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
-                int k = Convert.ToInt32(Math.Floor(i == 2 ? 4.0 : i == 3 ? (GridManager.i.scoreToWin * .33) : (GridManager.i.scoreToWin * .66)));
+                int k = Convert.ToInt32(i == 2 ? Constants.UnlockAction3 : i == 3 ? Constants.UnlockAction4 : Constants.UnlockAction5);
                 ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(k));
             }
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
