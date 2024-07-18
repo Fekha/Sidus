@@ -72,7 +72,6 @@ public class LoginManager : MonoBehaviour
         {
             GameGuid = gameGuid,
             MaxPlayers = MaxPlayers,
-            NumberOfModules = Constants.NumberOfModules,
             GameSettings = String.Join(",", GameSettings),
             GameTurns = new List<GameTurn>()
             {

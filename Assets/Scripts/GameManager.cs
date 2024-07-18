@@ -316,20 +316,16 @@ public class GameManager : MonoBehaviour
         ToggleHPText(true);
         if (unit.unitType == UnitType.Bomb)
         {
-            bool hasDeployPower = unit.kineticPower > 0 || unit.thermalPower > 0 || unit.explosivePower > 0;
-            var alertString = $"{GetPlayerName(unit.playerGuid)}'s Bomb\n\nMoving into this bomb will ";
+            var alertString = $"{GetPlayerName(unit.playerGuid)}'s Bomb\n\nThis bomb has {unit.explosivePower} Explosive Power\n\nMoving into this bomb will ";
             if (unit.teamId == MyStation.teamId)
             {
-                alertString += "disarm it.\n\nEnemies will lose 1 movement";
-                alertString += hasDeployPower ? $"\nand take {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage." : ".";
-                ShowCustomAlertPanel(alertString);
+                alertString += "disarm it.";
             }
             else
             {
-                alertString += "cause it to explode.\n\nResulting in the loss of 1 movement";
-                alertString += hasDeployPower ? $"\nand dealing {unit.kineticPower} Kinetic, {unit.thermalPower} Thermal, and {unit.explosivePower} Explosive\ndirect damage to the unit." : ".";
-                ShowCustomAlertPanel(alertString);
+                alertString += "cause it to explode. One round of Explosive combat will take place, if you take damage you will also lose 1 movement.";
             }
+            ShowCustomAlertPanel(alertString);
         }
         if (unit.unitType == UnitType.Station || unit.unitType == UnitType.Bomber)
         {
@@ -358,17 +354,15 @@ public class GameManager : MonoBehaviour
             {
                 HPValue.text = Mathf.Min(unit.maxHP, unit.HP) + "/" + unit.maxHP;
                 rangeValue.text = $"{unit.movementLeft}/{unit.maxMovement}";
-                ModuleEffectText.text = "No Modules Installed";
                 DeployRangeValueText.text = unit.deployRange.ToString();
-                if (unit.attachedModules.Count > 0)
+                ModuleEffectText.text = "";
+                for (int i = 0; i < unit.attachedModules.Count; i++)
                 {
-                    ModuleEffectText.text = unit.attachedModules[0].effectText.Replace("\n", ", ");
-                    ModuleEffectText.text = unit.attachedModules[0].effectText.Replace(":,", ":");
-                    for (int i = 1; i < unit.attachedModules.Count; i++)
-                    {
-                        ModuleEffectText.text += $"\n {unit.attachedModules[i].effectText.Replace("\n", ", ")}";
-                    }
+                    ModuleEffectText.text += $"{unit.attachedModules[i].effectText.Replace("\n", ", ").Replace(":,", ":")}\n";
                 }
+                if(String.IsNullOrEmpty(ModuleEffectText.text))
+                    ModuleEffectText.text = "No Modules Installed\n";
+                ModuleEffectText.text.Substring(0, ModuleEffectText.text.Length - 1);
                 miningValue.text = unit.maxMining.ToString();
                 var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId);
                 var kineticPower = $"{unit.kineticPower}";
@@ -1189,21 +1183,14 @@ public class GameManager : MonoBehaviour
                 //if enemy, attack, if you didn't destroy them, stay blocked and move back
                 if (nextNode.unitOnPath.teamId != unitMoving.teamId)
                 {
-                    if (nextNode.unitOnPath.unitType == UnitType.Bomb)
-                    {
-                        yield return StartCoroutine(DoBombDamage(unitMoving, nextNode.unitOnPath as Bomb, 1, nextNode.unitOnPath.kineticPower, nextNode.unitOnPath.thermalPower, nextNode.unitOnPath.explosivePower));
-                    }
-                    else
-                    {
-                        ToggleHPText(true);
-                        yield return StartCoroutine(FightEnemyUnit(unitMoving, nextNode));
-                        ToggleHPText(false);
-                        didFightLastMove = true;
-                        if (unitMoving == null || !AllUnits.Contains(unitMoving))
-                            break;
-                        blockedMovement = nextNode.unitOnPath != null && AllUnits.Contains(nextNode.unitOnPath);
+                    ToggleHPText(true);
+                    yield return StartCoroutine(FightEnemyUnit(unitMoving, nextNode));
+                    ToggleHPText(false);
+                    didFightLastMove = true;
+                    if (unitMoving == null || !AllUnits.Contains(unitMoving))
+                        break;
+                    blockedMovement = nextNode.unitOnPath != null && AllUnits.Contains(nextNode.unitOnPath);
                         isValidHex = nextNode.unitOnPath == null;
-                    }
                     if (!blockedMovement && isValidHex)
                         yield return StartCoroutine(MoveDirectly(unitMoving, nextNode.transform.position, Constants.MovementSpeed / 2));
                     if (i != path.Count() && !blockedMovement && Winner == Guid.Empty)
@@ -1257,28 +1244,6 @@ public class GameManager : MonoBehaviour
         {
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
-    }
-
-    internal IEnumerator DoBombDamage(Unit unitMoving, Bomb bomb, int movementLost, int kineticPower, int thermalPower, int explosivePower)
-    {
-        unitMoving.subtractMovement(movementLost);
-        int damage = kineticPower > 0 ? Math.Max(0, kineticPower - unitMoving.kineticDamageTaken) : 0;
-        damage += thermalPower > 0 ? Math.Max(0, thermalPower - unitMoving.thermalDamageTaken) : 0;
-        damage += explosivePower > 0 ? Math.Max(0, explosivePower - unitMoving.explosiveDamageTaken) : 0;
-        unitMoving.TakeDamage(damage, unitMoving);
-        StartCoroutine(GameManager.i.FloatingTextAnimation($"-1 Movement", unitMoving.transform, unitMoving, true));
-        if (unitMoving.unitType == UnitType.Bomb)
-        {
-            turnValue.text = $"Mutually Assured Destruction:\n\nBoth bombs detonated destroying each other.";
-        }
-        else
-        {
-            turnValue.text = $"Bomb Detonation:\n\n{unitMoving.unitName} lost 1 movement and took {damage} damage.";
-        }
-        ToggleHPText(true);
-        yield return StartCoroutine(WaitforSecondsOrTap(1));
-        ToggleHPText(false);
-        unitMoving.CheckDestruction(bomb);
     }
 
     IEnumerator MoveUnit(Unit unitMoving, PathNode currentNode, PathNode nextNode, bool checkPath)
@@ -1446,18 +1411,26 @@ public class GameManager : MonoBehaviour
                 s2sExplosive += explosiveSupport;
             }
         }
-        phaseText.gameObject.SetActive(true);
-        for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
+        if (unitMoving.unitType == UnitType.Bomb || unitOnPath.unitType == UnitType.Bomb)
         {
-            if (unitMoving.HP > 0 && unitOnPath.HP > 0)
+            turnValue.text = DoCombat(unitMoving, unitOnPath, AttackType.Explosive);
+            yield return StartCoroutine(WaitforSecondsOrTap(1));
+        }
+        else
+        {
+            phaseText.gameObject.SetActive(true);
+            for (int attackType = 0; attackType <= (int)AttackType.Explosive; attackType++)
             {
-                turnValue.text = DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
-                yield return StartCoroutine(WaitforSecondsOrTap(1));
+                if (unitMoving.HP > 0 && unitOnPath.HP > 0)
+                {
+                    turnValue.text = DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                }
             }
+            unitOnPath.inCombatIcon.SetActive(false);
+            unitMoving.selectIcon.SetActive(false);
         }
         phaseText.gameObject.SetActive(false);
-        unitOnPath.inCombatIcon.SetActive(false);
-        unitMoving.selectIcon.SetActive(false);
         unitMoving.CheckDestruction(unitOnPath);
     }
     internal IEnumerator FloatingTextAnimation(string text, Transform spawnTransform, Unit unit, bool stagger = false)
@@ -1521,25 +1494,24 @@ public class GameManager : MonoBehaviour
         return Quaternion.Euler(unit.transform.rotation.x, unit.transform.rotation.y, 270 - (unit.facing == Direction.TopRight ? -60 : (int)unit.facing * 60));
     }
 
-    private string DoCombat(Unit s1, Unit s2, AttackType type, int s1sKinetic, int s1sThermal, int s1sExplosive, int s2sKinetic, int s2sThermal, int s2sExplosive)
+    private string DoCombat(Unit s1, Unit s2, AttackType type, int s1sKinetic = 0, int s1sThermal = 0, int s1sExplosive = 0, int s2sKinetic = 0, int s2sThermal = 0, int s2sExplosive = 0)
     {
         int s1Dmg = (s2.explosivePower+s2sExplosive) - (s1.explosivePower+s1sExplosive);
         int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
         int s1DT = s1.explosiveDamageTaken;
         int s2DT = s2.explosiveDamageTaken;
-        string support1Text = (s1sExplosive > 0 ? $"({s1.explosivePower} base +{s1sExplosive} from support)" : "");
-        string support2Text = (s2sExplosive > 0 ? $"({s2.explosivePower} base +{s2sExplosive} from support)" : "");
+        string support1Text = (s1sThermal > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.explosivePower}+{s1sExplosive})" : "";
+        string support2Text = (s2sThermal > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.explosivePower}+{s2sExplosive})" : "";
         string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower + s1sExplosive}";
         string power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.explosivePower + s2sExplosive}";
-
         if (type == AttackType.Kinetic)
         {
             s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
             s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
             s1DT = s1.kineticDamageTaken;
             s2DT = s2.kineticDamageTaken;
-            support1Text = (s1sKinetic > 0 ? $"({s1.kineticPower} base +{s1sKinetic} from support)" : "");
-            support2Text = (s2sKinetic > 0 ? $"({s2.kineticPower} base +{s2sKinetic} from support)" : "");
+            support1Text = (s1sThermal > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.kineticPower}+{s1sKinetic})" : "";
+            support2Text = (s2sThermal > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.kineticPower}+{s2sKinetic})" : "";
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower + s1sKinetic}";
             power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.kineticPower + s2sKinetic}";
         }
@@ -1549,41 +1521,55 @@ public class GameManager : MonoBehaviour
             s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
             s1DT = s1.thermalDamageTaken;
             s2DT = s2.thermalDamageTaken;
-            support1Text = (s1sThermal > 0 ? $"({s1.thermalPower} base +{s1sThermal} from support)" : "");
-            support2Text = (s2sThermal > 0 ? $"({s2.thermalPower} base +{s2sThermal} from support)" : "");
+            support1Text = (s1sThermal > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.thermalPower}+{s1sThermal})" : "";
+            support2Text = (s2sThermal > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.thermalPower}+{s2sThermal})" : "";
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower + s1sThermal}";
             power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower + s2sThermal}";
         }
         var returnText = "";
+        var modifytext = ""; 
         if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg + s1DT, 0);
             s1.TakeDamage(damage, s2);
             string hpText = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.HP}";
-            returnText += $"<u><b>{s1.playerColor.ToString()} took {damage} damage</u></b> and has {hpText} HP left.";
-            //if (s1DT != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
-            //{
-            //    var modifierSymbol = s1DT > 0 ? "+" : "";
-            //    returnText += $"\n({s1Dmg} base damage, {modifierSymbol}{s1DT} from damage)";
-            //}
+            if (s1DT != 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats))
+            {
+                var modifierSymbol = s1DT > 0 ? "+" : "";
+                modifytext = $"({s1Dmg}{modifierSymbol}{s1DT})";
+            }
+            returnText += $"<u><b>{s1.playerColor.ToString()} took {damage}{modifytext} damage</u></b>";
+            if (s2.unitType == UnitType.Bomb && damage > 0)
+            {
+                s1.subtractMovement(1);
+                returnText += $", lost 1 movement,";
+            }
+            returnText += $" and has {hpText} HP left.";
+            
         }
         else if (s2Dmg > 0)
         {
             var damage = Mathf.Max(s2Dmg + s2DT, 0);
             s2.TakeDamage(damage, s1);
             string hpText = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.HP}";
-            returnText += $"<u><b>{s2.playerColor.ToString()} took {damage} damage</u></b> and has {hpText} HP left.";
-            //if (s2DT != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
-            //{
-            //    var modifierSymbol = s2DT > 0 ? "+" : "";
-            //    returnText += $"\n({s2Dmg} base damage {modifierSymbol}{s2DT} from modules)";
-            //}
+            if (s2DT != 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats))
+            {
+                var modifierSymbol = s2DT > 0 ? "+" : "";
+                modifytext = $"({s2Dmg}{modifierSymbol}{s2DT})";
+            }
+            returnText += $"<u><b>{s2.playerColor.ToString()} took {damage}{modifytext} damage</u></b>";
+            if (s1.unitType == UnitType.Bomb && damage > 0)
+            {
+                s2.subtractMovement(1);
+                returnText += $", lost 1 movement,";
+            }
+            returnText += $" and has {hpText} HP left.";
         }
         else
         {
             returnText += $"<u><b>Niether unit took damage.</u></b>";
         }
-        returnText += $"\n\n{s1.playerColor.ToString()} had {power1Text} Power{support1Text}.\n{s2.playerColor.ToString()} had {power2Text} Power{support2Text}.\n";
+        returnText += $"\n\n{s1.playerColor.ToString()} had {power1Text}{support1Text} Power.\n{s2.playerColor.ToString()} had {power2Text}{support2Text} Power.\n";
         phaseText.text = "Phase:\n";
         if (type is AttackType.Kinetic)
         {
@@ -2112,12 +2098,11 @@ public class GameManager : MonoBehaviour
                         {
                             PerformUpdates(action, Constants.Create);
                             StartCoroutine(FloatingTextAnimation($"New Bomb", newBomb.transform, newBomb));
-                            StartCoroutine(FloatingTextAnimation($"-1 Movement", unit.transform, unit, true));
                             unit.selectIcon.SetActive(true);
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
                             unit.selectIcon.SetActive(false);
                             if (newBomb.currentPathNode.unitOnPath.unitGuid != newBomb.unitGuid)
-                                yield return StartCoroutine(DoBombDamage(newBomb.currentPathNode.unitOnPath, newBomb as Bomb, 1, unit.kineticDeployPower, unit.thermalDeployPower, unit.explosiveDeployPower));
+                                yield return StartCoroutine(FightEnemyUnit(newBomb, newBomb.currentPathNode));
                         }
                         else
                         {
@@ -2346,7 +2331,8 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 unit.trail.enabled = false;
-                unit.RegenHP(unit.movementLeft * 2);
+                if(unit.movementLeft > 0)
+                    unit.RegenHP(unit.movementLeft * 2);
                 GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain, unit, TurnNumber == 1);
                 unit.hasMoved = false;
                 unit.resetMining();

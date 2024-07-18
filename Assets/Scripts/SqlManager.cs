@@ -31,14 +31,14 @@ public class SqlManager
     }
     private void DoCallback<T>(UnityWebRequest request, Action<T, string> callback, string requestString)
     {
-        var clientOutOfSync = request.result != UnityWebRequest.Result.Success && request.error.Contains("400 Bad Request");
+        var clientOutOfSync = request.result != UnityWebRequest.Result.Success;
         if (request.result == UnityWebRequest.Result.Success || clientOutOfSync)
         {
             Debug.Log($"{requestString}\n{request.downloadHandler.text}");
             if (callback != null)
             {
                 if (clientOutOfSync)
-                    callback(default, $"Please refresh broswer.\n{request.downloadHandler.text}.");
+                    callback(default, $"Please refresh broswer.\n{request.downloadHandler?.text}.");
                 else
                     callback(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(request.downloadHandler.text), "");
             }

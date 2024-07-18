@@ -212,7 +212,10 @@ public class Unit : Node
         else
         {
             HPText.text = $"{Mathf.Min(maxHP, HP)}";
-            statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+            if (unitType != UnitType.Bomb)
+                statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+            else
+                statText.text = $"{explosivePower}";
         }
         if(unitType != UnitType.Bomb)
             HPText.gameObject.SetActive(value);
@@ -298,7 +301,7 @@ public class Unit : Node
             GameManager.i.GetStationByGuid(playerGuid).bombs.Remove(this as Bomb);
         }
         GameManager.i.AllUnits.Remove(this);
-        if (currentPathNode.unitOnPath.unitGuid == unitGuid)
+        if (currentPathNode?.unitOnPath?.unitGuid == unitGuid)
             currentPathNode.unitOnPath = null;
         if (unitType != UnitType.Station)
             Destroy(gameObject);

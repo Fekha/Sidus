@@ -19,7 +19,6 @@ namespace Models
     public class GameMatch
     {
         public int MaxPlayers { get; set; }
-        public int NumberOfModules { get; set; }
         public Guid GameGuid { get; set; }
         public string? GameSettings { get; set; }
         public Guid Winner { get; set; }

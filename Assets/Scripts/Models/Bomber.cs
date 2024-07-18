@@ -20,7 +20,7 @@ public class Bomber : Unit
         currentPathNode.SetNodeColor(playerGuid);
         if (_bombGuid != null)
         {
-            var bomb = GridManager.i.Deploy(this, (Guid)_bombGuid, _station.currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)(_station.facing+1)%6]), UnitType.Bomb);
+            var bomb = GridManager.i.Deploy(this, (Guid)_bombGuid, _station.currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)(_station.facing+1)%6]), UnitType.Bomb,null,true);
             bomb.currentPathNode.SetNodeColor(playerGuid);
         }
     }

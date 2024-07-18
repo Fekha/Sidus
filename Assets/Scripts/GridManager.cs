@@ -197,7 +197,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public Unit Deploy(Unit unitNode, Guid fleetGuid, Coords coords, UnitType unitType, Guid? _bombGuid = null)
+    public Unit Deploy(Unit unitNode, Guid fleetGuid, Coords coords, UnitType unitType, Guid? _bombGuid = null, bool initialSpawn = false)
     {
         Station station = GameManager.i.Stations.FirstOrDefault(x => x.playerGuid == unitNode.playerGuid);
         var hexesNearby = GameManager.i.GetNodesForDeploy(unitNode,false);
@@ -226,7 +226,7 @@ public class GridManager : MonoBehaviour
                         var bomb = Instantiate(bombPrefab);
                         bomb.transform.SetParent(characterParent);
                         var bombNode = bomb.AddComponent<Bomb>();
-                        bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, unitNode.kineticDeployPower, unitNode.thermalDeployPower, unitNode.explosiveDeployPower, fleetGuid);
+                        bombNode.InitializeBomb(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 0, 0, (initialSpawn ? 10 : unitNode.explosivePower), fleetGuid);
                         return bombNode;
                     }
                 }
