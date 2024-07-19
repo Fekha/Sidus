@@ -364,7 +364,7 @@ public class GameManager : MonoBehaviour
                     ModuleEffectText.text = "No Modules Installed\n";
                 ModuleEffectText.text.Substring(0, ModuleEffectText.text.Length - 1);
                 miningValue.text = unit.maxMining.ToString();
-                var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId);
+                var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId && x.unitType != UnitType.Bomb);
                 var kineticPower = $"{unit.kineticPower}";
                 var thermalPower = $"{unit.thermalPower}";
                 var explosivePower = $"{unit.explosivePower}";
@@ -474,7 +474,7 @@ public class GameManager : MonoBehaviour
                         SetUnitTextValues(SelectedUnit);
                         if (SelectedUnit.playerGuid == MyStation.playerGuid && HasQueuedMovement(SelectedUnit))
                         {
-                            HighlightQueuedMovement(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == SelectedUnit.unitGuid));
+                            HighlightQueuedMovement(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit) && x.selectedUnit.unitGuid == SelectedUnit.unitGuid));
                         }
                         else
                         {
@@ -574,14 +574,14 @@ public class GameManager : MonoBehaviour
         DeselectUnitIcons();
         var action = MyStation.actions[i];
         action.selectedUnit.selectIcon.SetActive(true);
-        if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
+        if (action.actionType == ActionType.MoveUnit)
         {
             HighlightQueuedMovement(action);
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
             var extraBonus = action.selectedUnit.level == 2 ? "+2 Mining Power" : action.selectedUnit.level == 3 ? "+1 Max Movement" : "+1 Deploy Range";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+2 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP.\n+2 Kinetic, Thermal, and Explosive Power.\n{extraBonus}.";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
@@ -927,7 +927,7 @@ public class GameManager : MonoBehaviour
         {
             if (!requeing) ShowCustomAlertPanel("Unit already has maximum attached modules.");
         }
-        else if ((action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine) && action.selectedPath.Count > action.selectedUnit.getMaxMovementRange())
+        else if ((action.actionType == ActionType.MoveUnit) && action.selectedPath.Count > action.selectedUnit.getMaxMovementRange())
         {
             if (!requeing) ShowCustomAlertPanel("The selected hex is out of range.");
         }
@@ -1384,9 +1384,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"{unitMoving.unitName} is attacking {unitOnPath.unitName}");
         CheckEnterCombatModules(unitMoving);
         CheckEnterCombatModules(unitOnPath);
-        //unitMoving.selectIcon.SetActive(true);
-        //unitOnPath.inCombatIcon.SetActive(true);
-        var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.unitOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid);
+        var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.unitOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid && x.unitType != UnitType.Bomb);
         int s1sKinetic = 0;
         int s2sKinetic = 0;
         int s1sThermal = 0;
@@ -1398,13 +1396,13 @@ public class GameManager : MonoBehaviour
             var kineticSupport = Convert.ToInt32(Math.Floor(supportFleet.kineticPower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5)));
             var thermalSupport = Convert.ToInt32(Math.Floor(supportFleet.thermalPower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5)));
             var explosiveSupport = Convert.ToInt32(Math.Floor(supportFleet.explosivePower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5)));
-            if (supportFleet.teamId == unitMoving.teamId)
+            if (supportFleet.teamId == unitMoving.teamId && unitMoving.unitType != UnitType.Bomb)
             {
                 s1sKinetic += kineticSupport;
                 s1sThermal += thermalSupport;
                 s1sExplosive += explosiveSupport;
             }
-            else if (supportFleet.teamId == unitOnPath.teamId)
+            else if (supportFleet.teamId == unitOnPath.teamId && unitOnPath.unitType != UnitType.Bomb)
             {
                 s2sKinetic += kineticSupport;
                 s2sThermal += thermalSupport;
@@ -1427,8 +1425,6 @@ public class GameManager : MonoBehaviour
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                 }
             }
-            unitOnPath.inCombatIcon.SetActive(false);
-            unitMoving.selectIcon.SetActive(false);
         }
         phaseText.gameObject.SetActive(false);
         unitMoving.CheckDestruction(unitOnPath);

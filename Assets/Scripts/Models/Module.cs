@@ -49,6 +49,12 @@ public class Module
         icon = Resources.Load<Sprite>($"Sprites/Modules/{moduleId}");
         if(!GameManager.i.AllModules.Any(x=>x.moduleGuid == _moduleGuid))
             GameManager.i.AllModules.Add(this);
+        if(moduleStats == null)
+        {
+            Debug.LogError($"Module {moduleId} not found in AllModulesStats");
+            effectText = $"Module {moduleId} not found in AllModulesStats";
+            return;
+        }
         if (moduleStats.MovementRange != 0)
         {
             var sign = moduleStats.MovementRange > 0 ? "+" : "";

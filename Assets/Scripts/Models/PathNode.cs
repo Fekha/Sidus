@@ -122,19 +122,19 @@ public class PathNode : MonoBehaviour
             Vector3 newPostion = new Vector3();
             if (other.gameObject.name == "LeftWall")
             {
-                newPostion = new Vector3(transform.position.x + 11.3f, transform.position.y, transform.position.z);
+                newPostion = new Vector3(transform.position.x + 11.35f, transform.position.y, transform.position.z);
             }
             else if (other.gameObject.name == "RightWall")
             {
-                newPostion = new Vector3(transform.position.x - 11.3f, transform.position.y, transform.position.z);
+                newPostion = new Vector3(transform.position.x - 11.35f, transform.position.y, transform.position.z);
             }
             else if (other.gameObject.name == "TopWall")
             {
-                newPostion = new Vector3(transform.position.x, transform.position.y - 9.7f, transform.position.z);
+                newPostion = new Vector3(transform.position.x, transform.position.y - 9.69f, transform.position.z);
             }
             else if (other.gameObject.name == "BottomWall")
             {
-                newPostion = new Vector3(transform.position.x, transform.position.y + 9.7f, transform.position.z);
+                newPostion = new Vector3(transform.position.x, transform.position.y + 9.69f, transform.position.z);
             }
             transform.position = newPostion;
             if (unitOnPath != null)

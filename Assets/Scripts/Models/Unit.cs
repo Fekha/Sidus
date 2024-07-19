@@ -41,7 +41,6 @@ public class Unit : Node
     internal TextMeshPro HPText;
     internal TextMeshPro statText;
     internal GameObject selectIcon;
-    internal GameObject inCombatIcon;
     internal Transform unitImage;
     internal TrailRenderer trail;
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
@@ -125,7 +124,6 @@ public class Unit : Node
         else
         {
             selectIcon = transform.Find("Select").gameObject;
-            inCombatIcon = transform.Find("InCombat").gameObject;
             unitImage = transform.Find("Unit");
             SpriteRenderer unitSprite = unitImage.GetComponent<SpriteRenderer>();
             unitSprite.color = GridManager.i.playerColors[(int)playerColor];
