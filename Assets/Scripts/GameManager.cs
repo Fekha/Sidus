@@ -165,8 +165,6 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
-        string jsonString = Globals.GameMatch.ModuleJson.Replace("\\\"", "\"").Trim('"');
-        AllModulesStats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ModuleStats>>(jsonString);
         MatchName.text = $"{Globals.GameMatch.GameGuid.ToString().Substring(0, 6)}";
         TurnNumberText.text = $"Turn #{TurnNumber.ToString()}";
         ColorText.text = $"{Globals.Account.Username.Split(' ')[0]}";

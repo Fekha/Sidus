@@ -52,6 +52,8 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
+        string jsonString = Globals.GameMatch.ModuleJson.Replace("\\\"", "\"").Trim('"');
+        GameManager.i.AllModulesStats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ModuleStats>>(jsonString);
         var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.Count() == Globals.GameMatch.MaxPlayers).Last();
         if (currentGameTurn.TurnNumber > 0)
         {

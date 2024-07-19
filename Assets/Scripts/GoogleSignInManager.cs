@@ -21,8 +21,8 @@ public class GoogleSignInManager : MonoBehaviour
         //PlayerPrefs.Save();
 
         //Uncomment to run as fekha
-        //PlayerPrefs.SetString("AccountId", "112550575566380218480");
-        //PlayerPrefs.Save();
+        PlayerPrefs.SetString("AccountId", "112550575566380218480");
+        PlayerPrefs.Save();
 #endif
         sql = new SqlManager();
         loadingPanel.SetActive(true);
