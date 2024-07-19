@@ -3527,8 +3527,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2.399994, y: -122.5}
-  m_SizeDelta: {x: -24.8, y: -278.14}
+  m_AnchoredPosition: {x: 0.05999756, y: -122.5}
+  m_SizeDelta: {x: -29.49, y: -278.14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &379360909
 MonoBehaviour:
@@ -7100,8 +7100,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.5001068, y: 2.97}
-  m_SizeDelta: {x: -42.58, y: -145.94}
+  m_AnchoredPosition: {x: -0.55999756, y: 2.9700012}
+  m_SizeDelta: {x: -81.94, y: -145.94}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &696530456
 MonoBehaviour:
@@ -7163,7 +7163,7 @@ MonoBehaviour:
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 12
-  m_fontSizeMax: 28
+  m_fontSizeMax: 32
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -10415,15 +10415,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Win by capturing enough hexes or destroying an enemy station. \n\nCapture
-    hexes by moving over them with one of your units.\n\nYou can create more fleets
-    and upgrade your units through research.\n\nFleets and upgrades cost credits,
-    which you get by mining asteroids with your units.\n\nOnce all players have submitted
-    their actions, each action will be taken in the order displayed at the top left.\n\nIf
-    one unit moves into another, combat will occur. Combat happens in three phases,
-    Kinetic, Thermal, then Explosive. Power levels are compared and the unit that
-    has the lower amount will take the difference in HP.\n\nGain an advantage in
-    combat by leveling up your units, researching more technology, and attaching
+  m_text: "Win by capturing hexes(boo) or destroying an enemy station(woohoo!). \n\nCapture
+    hexes by moving over them with your units.\n\nYou can create bombers and upgrade
+    your units through research.\n\nBombers and upgrades cost credits, which you
+    get by mining asteroids with your units.\n\nOnce all players have submitted their
+    actions, each action will be taken in the order of you scores in the middle of
+    your screen.\n\nIf one unit moves into another, combat will occur. Combat happens
+    in three phases, Kinetic, Thermal, then Explosive. Power levels are compared
+    and the unit that has the lower amount will take the difference in HP.\n\nGain
+    an advantage in combat by leveling up your units, researching, and attaching
     modules."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -14248,14 +14248,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Modules are gained in the market by queuing up a bid action, then winning
     the auction.\n\nThe market uses a \"second-price auction\" format to determine
-    the price of the module. \n\nOnce all players have ended their turns, if only
-    one player bid on a specific module, they pay the minimum bid price and gain
-    the module. \n\nIf multiple people bid on a module, the highest bidder wins,
-    but the credits paid is from the second-highest bid. If there is a tie, the winner
-    is determined by action order. Losing a bid counts as a no-action, which awards
-    the player 1 credit.\n\nEach turn a module is on the market the minimum bid required
-    becomes lower. Modules have a turn limit that they stay on the market for or
-    until they are won in auction, afterwards they wil be replaced by a new module.\n"
+    the price of the module. \n\nOnce all players have submitted their turns, if
+    only one player bid on a specific module, they pay the minimum bid price and
+    gain the module. \n\nIf multiple people bid on a module, the highest bidder wins,
+    but the amount of credits paid is that of the second-highest bid. If there is
+    a tie, the winner is determined by action order. Losing a bid counts as a no-action,
+    which awards the player 1 credit.\n\nEach turn a module is on the market the
+    minimum bid required becomes lower. Modules have a turn limit that they stay
+    on the market for or until they are won in auction, afterwards they wil be replaced
+    by a new module.\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -15976,10 +15977,10 @@ MonoBehaviour:
     allied unit and themsleives each turn.\n\nClaiming:\nYou immediatly claim any
     nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
     its movement on the hex, and you must already own a neighboring hex to claim
-    it.\n\nDeploying:\nA new fleet or bomb will try to be deployed where selected,
-    they will not spawn on an asteroid, and a fleet will not spawn on another unit.
-    If original location is not valid it will continue clockwise, until it finds
-    a valid one. Fleets will claim the hex they spawn on, bombs will not.\n"
+    it.\n\nDeploying:\nA new bomber or bomb will try to be deployed where selected,
+    they will not spawn on an asteroid, and a bomber will not spawn on another unit.
+    If original location is not valid it will continue clockwise until it finds a
+    valid one. Bombers will claim the hex they spawn on, bombs will not.\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -21991,16 +21992,15 @@ MonoBehaviour:
     Leveling up:
 
     Each level up provides
-    +3 Max HP, +2 of each Power type, and +1 of each Deploy Power type. At level
-    2 you will also gain +2 mining Power, Level 3 will gain +1 movement, and Level
-    4 will gain +1 Deploy range.
+    +3 Max HP, and +2 of each Power type. At level 2 you will also gain +2 mining
+    Power, Level 3 will gain +1 movement, and Level 4 will gain +1 Deploy range.
 
 
-    Unused actions:
+    Unused
+    actions:
 
-    Whether you end your
-    turn early or have actions that are still locked, you will gain +1 credit per
-    usused action at the end of the turns.'
+    Whether you end your turn early or have actions that are still
+    locked, you will gain +1 credit per usused action at the end of the turns.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

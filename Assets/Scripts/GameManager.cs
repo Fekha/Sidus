@@ -316,7 +316,7 @@ public class GameManager : MonoBehaviour
         ToggleHPText(true);
         if (unit.unitType == UnitType.Bomb)
         {
-            var alertString = $"{GetPlayerName(unit.playerGuid)}'s Bomb\n\nThis bomb has {unit.explosivePower} Explosive Power\n\nMoving into this bomb will ";
+            var alertString = $"{GetPlayerName(unit.playerGuid)}'s Bomb\n\nThis bomb has {unit.explosivePower} Explosive Power.\n\nMoving into this bomb will ";
             if (unit.teamId == MyStation.teamId)
             {
                 alertString += "disarm it.";
@@ -384,7 +384,7 @@ public class GameManager : MonoBehaviour
                 ThermalDeployValueText.text = $"{unit.thermalDeployPower}";
                 ExplosiveDeployValueText.text = $"{unit.explosiveDeployPower}";
                 var symbol = unit.kineticDamageTaken < 0 ? "+" : "";
-                KineticTakenValueText.text = $"{symbol}{unit.kineticDamageTaken*-1}";
+                KineticTakenValueText.text = $"{symbol}{unit.kineticDamageTaken * -1}";
                 symbol = unit.thermalDamageTaken < 0 ? "+" : "";
                 ThermalTakenValueText.text = $"{symbol}{unit.thermalDamageTaken * -1}";
                 symbol = unit.explosiveDamageTaken < 0 ? "+" : "";
@@ -581,7 +581,7 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
             var extraBonus = action.selectedUnit.level == 2 ? "+2 Mining Power" : action.selectedUnit.level == 3 ? "+1 Max Movement" : "+1 Deploy Range";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+2 Kinetic, Thermal, and Explosive Power\n+1 Kinetic, Thermal, and Explosive Deploy Power\n{extraBonus}";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP\n+2 Kinetic, Thermal, and Explosive Power\n{extraBonus}";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
