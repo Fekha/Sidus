@@ -472,7 +472,7 @@ public class GameManager : MonoBehaviour
                         SetUnitTextValues(SelectedUnit);
                         if (SelectedUnit.playerGuid == MyStation.playerGuid && HasQueuedMovement(SelectedUnit))
                         {
-                            HighlightQueuedMovement(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit) && x.selectedUnit.unitGuid == SelectedUnit.unitGuid));
+                            HighlightQueuedMovement(MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveUnit || x.actionType == ActionType.MoveAndMine) && x.selectedUnit.unitGuid == SelectedUnit.unitGuid));
                         }
                         else
                         {
@@ -572,7 +572,7 @@ public class GameManager : MonoBehaviour
         DeselectUnitIcons();
         var action = MyStation.actions[i];
         action.selectedUnit.selectIcon.SetActive(true);
-        if (action.actionType == ActionType.MoveUnit)
+        if (action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine)
         {
             HighlightQueuedMovement(action);
         }
@@ -925,7 +925,7 @@ public class GameManager : MonoBehaviour
         {
             if (!requeing) ShowCustomAlertPanel("Unit already has maximum attached modules.");
         }
-        else if ((action.actionType == ActionType.MoveUnit) && action.selectedPath.Count > action.selectedUnit.getMaxMovementRange())
+        else if ((action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine) && action.selectedPath.Count > action.selectedUnit.getMaxMovementRange())
         {
             if (!requeing) ShowCustomAlertPanel("The selected hex is out of range.");
         }
