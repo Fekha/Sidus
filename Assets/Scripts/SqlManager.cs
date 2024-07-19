@@ -31,7 +31,7 @@ public class SqlManager
     }
     private void DoCallback<T>(UnityWebRequest request, Action<T, string> callback, string requestString)
     {
-        var clientOutOfSync = request.result != UnityWebRequest.Result.Success;
+        var clientOutOfSync = request.result != UnityWebRequest.Result.Success && request.error.Contains("400 Bad Request");
         if (request.result == UnityWebRequest.Result.Success || clientOutOfSync)
         {
             Debug.Log($"{requestString}\n{request.downloadHandler.text}");
