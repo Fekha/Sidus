@@ -1538,8 +1538,16 @@ public class GameManager : MonoBehaviour
             power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower + s2sThermal}";
         }
         var returnText = "";
-        var modifytext = ""; 
-        if (s1Dmg > 0)
+        var modifytext = "";
+        if (s1.unitType == UnitType.Bomb && s2.unitType == UnitType.Bomb)
+        {
+            returnText += $"<u><b>Both bombs blew up destroying each other</u></b>";
+        }
+        else if (s1Dmg > 0 && s1.unitType == UnitType.Bomb)
+        {
+            returnText += $"<u><b>{s2.playerColor.ToString()} resisted the bombs damage</u></b>";
+        }
+        else if (s1Dmg > 0)
         {
             var damage = Mathf.Max(s1Dmg + s1DT, 0);
             s1.TakeDamage(damage, s2);
@@ -1556,7 +1564,10 @@ public class GameManager : MonoBehaviour
                 returnText += $", lost 1 movement,";
             }
             returnText += $" and has {hpText} HP left.";
-            
+        }
+        else if (s2Dmg > 0 && s2.unitType == UnitType.Bomb)
+        {
+            returnText += $"<u><b>{s1.playerColor.ToString()} resisted the bombs damage</u></b>";
         }
         else if (s2Dmg > 0)
         {
@@ -1578,7 +1589,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            returnText += $"<u><b>Niether unit took damage.</u></b>";
+            if (s1.unitType == UnitType.Bomb)
+            {
+                returnText += $"<u><b>{s2.playerColor.ToString()} resisted the bombs damage</u></b>";
+            }
+            else if (s2.unitType == UnitType.Bomb)
+            {
+                returnText += $"<u><b>{s1.playerColor.ToString()} resisted the bombs damage</u></b>";
+            }
+            else
+            {
+                returnText += $"<u><b>No damage taken.</u></b>";
+            }
         }
         returnText += $"\n\n{s1.playerColor.ToString()} had {power1Text}{support1Text} Power.\n{s2.playerColor.ToString()} had {power2Text}{support2Text} Power.\n";
         phaseText.text = "Phase:\n";
