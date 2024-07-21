@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     public GameObject moduleInfoPanel;
     public GameObject actionPanel;
     public GameObject infoPanel;
-    public GameObject alertPanel;
+    public GameObject unlockPanel;
     public GameObject customAlertPanel;
     public GameObject submitTurnPanel;
     public GameObject areYouSurePanel;
@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour
     private bool isMoving = false;
     internal bool isEndingTurn = false;
     private Button upgradeButton;
+    private Button unlockButton;
     public Button createFleetButton;
     public Button deployBombButton;
     public Button generateModuleButton;
@@ -107,7 +108,8 @@ public class GameManager : MonoBehaviour
     internal TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
     private TextMeshProUGUI moduleInfoValue;
-    private TextMeshProUGUI alertText;
+    private TextMeshProUGUI unlockText;
+    private TextMeshProUGUI unlockCostText;
     private TextMeshProUGUI customAlertText;
     public TextMeshProUGUI ColorText;
     public TextMeshProUGUI MatchName;
@@ -208,6 +210,7 @@ public class GameManager : MonoBehaviour
         ColorText.color = playerColor;
         canvas.Find("UnlockInfoPanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("CustomAlertPanel/Background").GetComponent<Image>().color = uiColor;
+        canvas.Find("AsteroidPanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("ExitPanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("ForfeitPanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("SubmitTurnPanel/Background").GetComponent<Image>().color = uiColor;
@@ -220,7 +223,7 @@ public class GameManager : MonoBehaviour
         canvas.Find("Technology/TechBar").GetComponent<Image>().color = uiColor;
         canvas.Find("SelectModulePanel/SelectedModuleGrid").GetComponent<Image>().color = uiColor;
         canvas.Find("ModuleInfoPanel/Background/Foreground").GetComponent<Image>().color = uiColor;
-        canvas.Find("TurnArchivePanel/Background/Foreground").GetComponent<Image>().color = uiColor;
+        canvas.Find("TurnArchivePanel/Background").GetComponent<Image>().color = uiColor;
     }
 
     private IEnumerator GetIsTurnReady()
@@ -305,7 +308,9 @@ public class GameManager : MonoBehaviour
         upgradeButton = infoPanel.transform.Find("UpgradeButton").GetComponent<Button>();
         upgradeCost = upgradeButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         deployCost = deployBombButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
-        alertText = alertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
+        unlockText = unlockPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
+        unlockButton = unlockPanel.transform.Find("Background/UnlockButton").GetComponent<Button>();
+        unlockCostText = unlockButton.transform.Find("Cost").GetComponent<TextMeshProUGUI>();
         customAlertText = customAlertPanel.transform.Find("Background/AlertText").GetComponent<TextMeshProUGUI>();
         Audio.sprite = audioToggleOn ? Resources.Load<Sprite>("Sprites/UI/soundOff") : Resources.Load<Sprite>("Sprites/UI/soundOn");
     }
@@ -381,12 +386,12 @@ public class GameManager : MonoBehaviour
                 KineticDeployValueText.text = $"{unit.kineticDeployPower}";
                 ThermalDeployValueText.text = $"{unit.thermalDeployPower}";
                 ExplosiveDeployValueText.text = $"{unit.explosiveDeployPower}";
-                var symbol = unit.kineticDamageTaken < 0 ? "+" : "";
-                KineticTakenValueText.text = $"{symbol}{unit.kineticDamageTaken * -1}";
-                symbol = unit.thermalDamageTaken < 0 ? "+" : "";
-                ThermalTakenValueText.text = $"{symbol}{unit.thermalDamageTaken * -1}";
-                symbol = unit.explosiveDamageTaken < 0 ? "+" : "";
-                ExplosiveTakenValueText.text = $"{symbol}{unit.explosiveDamageTaken * -1}";
+                var symbol = unit.kineticDamageTaken > 0 ? "+" : "";
+                KineticTakenValueText.text = $"{symbol}{unit.kineticDamageTaken}";
+                symbol = unit.thermalDamageTaken > 0 ? "+" : "";
+                ThermalTakenValueText.text = $"{symbol}{unit.thermalDamageTaken}";
+                symbol = unit.explosiveDamageTaken > 0 ? "+" : "";
+                ExplosiveTakenValueText.text = $"{symbol}{unit.explosiveDamageTaken}";
             }
             infoPanel.transform.Find("Background").GetComponent<Image>().color = GridManager.i.uiColors[(int)unit.playerColor];
             var actionType = unit is Station ? ActionType.UpgradeStation : ActionType.UpgradeFleet;
@@ -484,12 +489,12 @@ public class GameManager : MonoBehaviour
                     //Double click confirm to movement early
                     else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && SelectedUnit.playerGuid == MyStation.playerGuid && SelectedUnit.unitType != UnitType.Bomb && !HasQueuedMovement(SelectedUnit))
                     {
-                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, 0, SelectedPath));
+                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, SelectedPath));
                     }
                     //Create Deploy
                     else if (SelectedUnit != null && targetNode != null && SelectedUnit.playerGuid == MyStation.playerGuid && currentDeployRange.Select(x => x.currentPathNode).Contains(targetNode))
                     {
-                        QueueAction(new Action(SelectedUnit is Station ? ActionType.DeployFleet : ActionType.DeployBomb, SelectedUnit, null, 0, new List<PathNode>() { targetNode }, Guid.NewGuid()));
+                        QueueAction(new Action(SelectedUnit is Station ? ActionType.DeployFleet : ActionType.DeployBomb, SelectedUnit, null, new List<PathNode>() { targetNode }, Guid.NewGuid()));
                     }
                     //Create Movement
                     else if (SelectedUnit != null && targetNode != null && SelectedUnit.playerGuid == MyStation.playerGuid && currentMovementRange.Select(x => x.currentPathNode).Contains(targetNode) && !HasQueuedMovement(SelectedUnit))
@@ -741,7 +746,7 @@ public class GameManager : MonoBehaviour
     private void BidOn(int index, int currentBid)
     {
         moduleMarket.SetActive(false);
-        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,0,null,null,currentBid));
+        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,null,null,currentBid));
     }
 
     public void ViewHelpPanel(bool active)
@@ -770,8 +775,20 @@ public class GameManager : MonoBehaviour
 
     public void ShowUnlockPanel(int unlock)
     {
-        alertText.text = $"This action slot is unlocked while you own {unlock} hexes.";
-        alertPanel.SetActive(true);
+        unlockCostText.text = $"(Costs {unlock} Credits)";
+        if (unlock > 0)
+        {
+            unlockText.text = $"This action slot will cost 3 less to unlock each turn.";
+            unlockButton.interactable = unlock <= MyStation.credits;
+        }
+        else
+        {
+            unlockText.text = $"This action slot will unlock automatically next turn!";
+            unlockButton.interactable = false;
+        }
+        unlockButton.onClick.RemoveAllListeners();
+        unlockButton.onClick.AddListener(() => UnlockActionButton());
+        unlockPanel.SetActive(true);
     }
     public void ShowCustomAlertPanel(string message)
     {
@@ -781,7 +798,7 @@ public class GameManager : MonoBehaviour
     }
     public void HideAlertPanel()
     {
-        alertPanel.SetActive(false);
+        unlockPanel.SetActive(false);
         customAlertPanel.SetActive(false);
     }
     public void ShowAreYouSurePanel(bool value)
@@ -861,7 +878,7 @@ public class GameManager : MonoBehaviour
         else
         {
             ViewModuleSelection(false);
-            QueueAction(new Action(action, unit, module.moduleGuid, 0, null, dettachGuid));
+            QueueAction(new Action(action, unit, module.moduleGuid, null, dettachGuid));
             ClearSelectableModules();
         }
     }
@@ -921,6 +938,7 @@ public class GameManager : MonoBehaviour
     }
     private void QueueAction(Action action, bool requeing = false)
     {
+        action.selectedUnit = action.selectedUnit ?? SelectedUnit ?? MyStation;
         if (action.actionType == ActionType.AttachModule && action.selectedUnit.attachedModules.Count >= action.selectedUnit.maxAttachedModules)
         {
             if (!requeing) ShowCustomAlertPanel("Unit already has maximum attached modules.");
@@ -941,7 +959,7 @@ public class GameManager : MonoBehaviour
         {
             if (!requeing) ShowCustomAlertPanel("Selected node not within deploy range");
         }
-        else if (MyStation.actions.Count >= MyStation.maxActions)
+        else if (action.actionType != ActionType.UnlockAction && MyStation.actions.Count >= MyStation.maxActions)
         {
             if (!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {GetDescription(action.actionType)}.");
         }
@@ -950,7 +968,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            action.selectedUnit = action.selectedUnit ?? SelectedUnit ?? MyStation;
             action.selectedPath = SelectedPath ?? action.selectedPath;
             action.playerGuid = MyStation.playerGuid;
             if (action.actionType == ActionType.MoveUnit && (action.selectedPath.Any(x => x.isAsteroid) || action.selectedUnit._minedPath.Count > 0))
@@ -969,15 +986,14 @@ public class GameManager : MonoBehaviour
                     currentNode = nextNode;
                 }
             }
-            var costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.playerBid);
-            if (costOfAction > MyStation.credits)
+            action.costOfAction = GetCostOfAction(action.actionType, action.selectedUnit, true, action.playerBid);
+            if (action.costOfAction > MyStation.credits)
             {
                 if (!requeing) ShowCustomAlertPanel($"Can not afford to queue action: {GetDescription(action.actionType)}.");
             }
             else
             {
                 Debug.Log($"{MyStation.unitName} queuing up action {GetDescription(action.actionType)}");
-                action.costOfAction = costOfAction;
                 MyStation.actions.Add(action);
                 AddActionBarImage(action.actionType, MyStation.actions.Count() - 1);
                 PerformUpdates(action, Constants.Create, true, requeing);
@@ -1094,6 +1110,10 @@ public class GameManager : MonoBehaviour
         {
             return playerBid ?? 0;
         }
+        else if (actionType == ActionType.UnlockAction)
+        {
+            return GetUnlockCost(station.maxActions + 1);
+        }
         else
         {
             return 0;
@@ -1118,6 +1138,7 @@ public class GameManager : MonoBehaviour
         SelectedNode = null;
         SelectedUnit = null;
         SelectedPath = null;
+        unlockPanel.SetActive(false);
         ViewAsteroidInformation(false);
         ViewUnitInformation(false);
         CloseBurger();
@@ -1914,7 +1935,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                if(addingBack)
+                if (addingBack)
                     action.selectedUnit.subtractMovement(action.selectedPath.Count * modifier);
                 action.selectedUnit.AddMinedPath(action.selectedPath);
             }
@@ -1934,6 +1955,10 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.RepairFleet)
         {
             action.selectedUnit.RegenHP(5 * modifier, queued);
+        } else if (action.actionType == ActionType.UnlockAction) 
+        {
+            station.maxActions += modifier;
+            ClearActionBar(true);
         }
         UpdateCreditsAndHexesText();
     }
@@ -2235,6 +2260,13 @@ public class GameManager : MonoBehaviour
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                     unit.selectIcon.SetActive(false);
                 }
+                else if (action.actionType == ActionType.UnlockAction)
+                {
+                    turnValue.text += $"{GetDescription(action.actionType)}";
+                    StartCoroutine(FloatingTextAnimation($"+Action", unit.transform, unit));
+                    PerformUpdates(action, Constants.Create);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1));
+                }
                 else
                 {
                     turnValue.text += $"Unknown Error";
@@ -2307,21 +2339,13 @@ public class GameManager : MonoBehaviour
                     var station = unit as Station;
                     station.AOERegen(1);
                     station.actions.Clear();
-                    if (station.score >= Constants.UnlockAction5)
+                    for(int i = 1; i <= Constants.MaxActions; i++)
                     {
-                        station.maxActions = 5;
-                    }
-                    else if (station.score >= Constants.UnlockAction4)
-                    {
-                        station.maxActions = 4;
-                    }
-                    else if (station.score >= Constants.UnlockAction3)
-                    {
-                        station.maxActions = 3;
-                    }
-                    else
-                    {
-                        station.maxActions = 2;
+                        int unlockCost = GetUnlockCost(i);
+                        if (unlockCost < 0)
+                        {
+                            station.maxActions = Math.Max(station.maxActions, i);
+                        }
                     }
                 }
                 unit.trail.enabled = false;
@@ -2485,20 +2509,29 @@ public class GameManager : MonoBehaviour
         while (TurnOrderObjects.Count > 0) { Destroy(TurnOrderObjects[0].gameObject); TurnOrderObjects.RemoveAt(0); }
     }
 
-    private void ClearActionBar()
+    private void ClearActionBar(bool unlock = false)
     {
         for (int i = 0; i < Constants.MaxActions; i++)
         {
             ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
             if (i < MyStation.maxActions) {
-                ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];   
+                if(!unlock || ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite == lockActionBar)
+                ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];
             } else {
+                int unlockCost = GetUnlockCost(i+1);
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
-                int k = Convert.ToInt32(i == 2 ? Constants.UnlockAction3 : i == 3 ? Constants.UnlockAction4 : Constants.UnlockAction5);
-                ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(k));
+                ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(unlockCost));
             }
-            ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
+            if(!unlock)
+                ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
         }
+    }
+    public int GetUnlockCost(int i)
+    {
+        if (i == 3) { return 27 - (3 * TurnNumber); }
+        if (i == 4) { return 48 - (3 * TurnNumber); }
+        if (i == 5) { return 63 - (3 * TurnNumber); }
+        return -1;
     }
     private void SetModuleBar(Unit unit)
     {
@@ -2568,5 +2601,10 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetString("AudioOn", $"{audioToggleOn}");
         PlayerPrefs.Save();
         Audio.sprite = audioToggleOn ? Resources.Load<Sprite>("Sprites/UI/soundOff") : Resources.Load<Sprite>("Sprites/UI/soundOn");
+    }
+
+    public void UnlockActionButton()
+    {
+        QueueAction(new Action(ActionType.UnlockAction, null, null));
     }
 }

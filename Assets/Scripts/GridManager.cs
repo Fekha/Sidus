@@ -98,10 +98,11 @@ public class GridManager : MonoBehaviour
         };
         List<Coords> rifts = new List<Coords>()
         {
-             new Coords(1, 6), new Coords(6, 8), new Coords(3, 1), new Coords(4, 1),
+            new Coords(1, 6), new Coords(6, 8), new Coords(3, 1), new Coords(4, 1),
             new Coords(1, 5), new Coords(4, 4), new Coords(8, 4), new Coords(8, 3), 
             new Coords(5, 5), new Coords(5, 4),new Coords(4, 5), new Coords(5, 8),
-        }; 
+        };
+        int riftCount = 0;
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
@@ -111,7 +112,6 @@ public class GridManager : MonoBehaviour
                 cell.transform.SetParent(nodeParent);
                 grid[x, y] = cell.AddComponent<PathNode>();
                 var coords = new Coords(x, y);
-                var rift = rifts.FirstOrDefault(x => x.CoordsEquals(coords));
                 if (currentGameTurn.TurnNumber > 0)
                 {
                     grid[x, y].InitializeNode(currentGameTurn.AllNodes.FirstOrDefault(x => new Coords(x.X,x.Y).CoordsEquals(coords)));
@@ -128,7 +128,7 @@ public class GridManager : MonoBehaviour
                         maxCredits = 8+(Globals.GameMatch.MaxPlayers*2);
                         creditRegin = (Globals.GameMatch.MaxPlayers==4?2:1);
                     }
-                    else if (rift != null)
+                    else if (rifts.Any(x => x.CoordsEquals(coords)))
                     {
                         isRift = true;
                     }
@@ -136,7 +136,8 @@ public class GridManager : MonoBehaviour
                 }
                 if (grid[x, y].isRift)
                 {
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[rifts.IndexOf(rift) % nebulaSprite.Count];
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[riftCount % nebulaSprite.Count];
+                    riftCount++;
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
                     cell.transform.Find("Node/Background").gameObject.SetActive(false);
                     Animator animator = cell.AddComponent<Animator>();
@@ -342,11 +343,7 @@ public class GridManager : MonoBehaviour
     }
     internal int GetScoreToWin()
     {
-        var scoreToWin = (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x => x.teamId).Distinct().Count()) + Globals.Teams;
-        Constants.UnlockAction3 = 4;
-        Constants.UnlockAction4 = Convert.ToInt32(Math.Ceiling(scoreToWin * .25));
-        Constants.UnlockAction5 = Convert.ToInt32(Math.Ceiling(scoreToWin * .5));
-        return scoreToWin;
+        return (int)(gridSize.x * gridSize.y / GameManager.i.Stations.Select(x => x.teamId).Distinct().Count()) + Globals.Teams;
     }
     internal Guid CheckForWin()
     {

@@ -19,11 +19,10 @@ public class Action {
     internal bool _statonInventory = false;
     internal Guid? _parentGuid = null;
 
-    public Action(ActionType _actionType, Unit _selectedUnit = null, Guid? _selectedModule = null, int _cost = 0, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null, int? _playerBid = null)
+    public Action(ActionType _actionType, Unit _selectedUnit = null, Guid? _selectedModule = null, List<PathNode> _selectedPath = null, Guid? _generatedGuid = null, int? _playerBid = null)
     {
         actionType = _actionType;
         selectedUnit = _selectedUnit;
-        costOfAction = _cost;
         selectedModuleGuid = _selectedModule;
         selectedPath = _selectedPath ?? new List<PathNode>();
         generatedGuid = _generatedGuid;

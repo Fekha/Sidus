@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 public static class Constants{
-    internal static int ClientVersion = 20;
+    internal static int ClientVersion = 22;
     internal static int TechAmount = 8;
     internal static int ShadowTechAmount = 2;
     internal static int MinTech = 11;
@@ -19,9 +19,4 @@ public static class Constants{
     internal static int Remove = -1;
     internal static int StartingCredits = 5;
     internal static float MovementSpeed = .8f;
-    internal static int NumberOfModules = 83;
-    internal static int UnlockAction3 = 0;
-    internal static int UnlockAction4 = 0;
-    internal static int UnlockAction5 = 0;
-
 }

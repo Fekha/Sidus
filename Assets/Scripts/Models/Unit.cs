@@ -317,10 +317,6 @@ public class Unit : Node
             {
                 GameManager.i.Winner = playerGuid;
             }
-            else if (unitOnPath is Bomber)
-            {
-                GameManager.i.GetStationByGuid(unitOnPath.playerGuid).modules.AddRange(unitOnPath.attachedModules.Where(x => x.moduleId != 50));
-            }
         }
         if (HP <= 0 || (unitOnPathDestroyed && this is Bomber && unitOnPath.moduleEffects.Contains(ModuleEffect.SelfDestruct)))
         {
@@ -329,10 +325,6 @@ public class Unit : Node
             if (this is Station)
             {
                 GameManager.i.Winner = unitOnPath.playerGuid;
-            }
-            else if (this is Bomber)
-            {
-                GameManager.i.GetStationByGuid(playerGuid).modules.AddRange(attachedModules);
             }
         }
         if(unitOnPathDestroyed)

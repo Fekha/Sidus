@@ -22,8 +22,8 @@ public enum ActionType
     MoveAndMine,
     [Description("Bid on module")]
     BidOnModule,
-    [Description("Gain 1 Credit")]
-    GainCredit,
+    [Description("Unlock Action")]
+    UnlockAction,
     [Description("Research Station Level")]
     ResearchStationLvl,
     [Description("Research Fleet Level")]

@@ -15,6 +15,7 @@ public class LoginManager : MonoBehaviour
     public GameObject waitingPanel;
     public GameObject joinGamePanel;
     public GameObject activeGamePanel;
+    public Transform accountPanel;
     public GameObject createGamePanel;
     public GameObject loadingPanel;
     public Transform findContent;
@@ -36,11 +37,42 @@ public class LoginManager : MonoBehaviour
         Globals.HasBeenToLobby = true;
         waitingText = waitingPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>();
         playersText = createGamePanel.transform.Find("Value").GetComponent<TextMeshProUGUI>();
-        if(Globals.Account == null)
+        if (Globals.Account == null)
         {
             SceneManager.LoadScene((int)Scene.Login);
         }
+        else
+        {
+            accountPanel.Find("Elo").GetComponent<TextMeshProUGUI>().text = $"2 Player Elo: {(int)Globals.Account.Rating}";
+            //accountPanel.Find("Wins").GetComponent<TextMeshProUGUI>().text = $"Wins: {Globals.Account.Wins}";
+            accountPanel.Find("Username").GetComponent<TextMeshProUGUI>().text = Globals.Account.Username;
+            accountPanel.Find("Email").GetComponent<Toggle>().isOn = (bool)Globals.Account.NotifiyByEmail;
+        }
     }
+    public void ToggleEmailNotification()
+    {
+        try
+        {
+            Globals.Account.NotifiyByEmail = accountPanel.Find("Email").GetComponent<Toggle>().isOn;
+            var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(Globals.Account);
+            StartCoroutine(sql.PostRoutine<Account>($"Login/UpdateAccount?clientVersion={Constants.ClientVersion}", stringToPost, AccountCreated));
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Unable to create account");
+            loadingPanel.SetActive(false);
+        }
+    }
+
+    private void AccountCreated(Account account, string clientOutOfSync)
+    {
+        if (!String.IsNullOrEmpty(clientOutOfSync))
+        {
+            clientOutOfSyncPanel.SetActive(true);
+            clientOutOfSyncPanel.transform.Find("ClientVersion").GetComponent<TextMeshProUGUI>().text = clientOutOfSync;
+        }
+    }
+
     public void Logout()
     {
         PlayerPrefs.SetString("AccountId", "");
