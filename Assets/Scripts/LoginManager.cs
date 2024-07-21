@@ -43,7 +43,7 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
-            accountPanel.Find("Elo").GetComponent<TextMeshProUGUI>().text = $"2 Player Elo: {(int)Globals.Account.Rating}";
+            accountPanel.Find("Elo").GetComponent<TextMeshProUGUI>().text = $"2 Player Rating: {(int)Globals.Account.Rating}";
             //accountPanel.Find("Wins").GetComponent<TextMeshProUGUI>().text = $"Wins: {Globals.Account.Wins}";
             accountPanel.Find("Username").GetComponent<TextMeshProUGUI>().text = Globals.Account.Username;
             accountPanel.Find("Email").GetComponent<Toggle>().isOn = (bool)Globals.Account.NotifiyByEmail;

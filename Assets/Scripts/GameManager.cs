@@ -913,14 +913,10 @@ public class GameManager : MonoBehaviour
         if (action != null)
         {
             PerformUpdates(action, Constants.Remove, true);           
-            ClearActionBar();
             MyStation.actions.RemoveAt(slot);
-            for (int i = 0; i < MyStation.actions.Count; i++)
-            {
-                AddActionBarImage(MyStation.actions[i].actionType, i);
-            }
             if (!isRequeuing)
                 ReQueueActions();
+            ClearActionBar();
         }
         ResetAfterSelection();
     }
@@ -1224,7 +1220,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        nextNode.unitOnPath.RegenHP(1);
+                        nextNode.unitOnPath.RegenHP(2);
                     }
                 }
             }
@@ -1637,8 +1633,8 @@ public class GameManager : MonoBehaviour
 
     internal List<PathNode> GetNodesForDeploy(Unit unit, bool queuing)
     {
-        PathNode currentNode = queuing ? MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveAndMine || x.actionType == ActionType.MoveUnit) && x.selectedUnit.unitGuid == unit.unitGuid)?.selectedPath?.LastOrDefault() ?? unit.currentPathNode : unit.currentPathNode;
-        return GridManager.i.GetNodesWithinRange(currentNode, unit.deployRange, 0).Where(x => !x.isAsteroid).ToList();
+        PathNode currentNode = queuing ? MyStation.actions.FirstOrDefault(x => (x.actionType == ActionType.MoveAndMine || x.actionType == ActionType.MoveUnit) && x.selectedUnit.unitGuid == unit.unitGuid)?.selectedPath?.Where(x=>!x.isAsteroid).LastOrDefault() ?? unit.currentPathNode : unit.currentPathNode;
+        return GridManager.i.GetNodesWithinRange(currentNode, unit.deployRange, 0).ToList();
     }
 
     private void UpdateCurrentTurn(GameTurn turn)
@@ -1958,7 +1954,7 @@ public class GameManager : MonoBehaviour
         } else if (action.actionType == ActionType.UnlockAction) 
         {
             station.maxActions += modifier;
-            ClearActionBar(true);
+            ClearActionBar();
         }
         UpdateCreditsAndHexesText();
     }
@@ -2337,7 +2333,7 @@ public class GameManager : MonoBehaviour
                 if (unit.unitType == UnitType.Station)
                 {
                     var station = unit as Station;
-                    station.AOERegen(1);
+                    //station.AOERegen(1);
                     station.actions.Clear();
                     for(int i = 1; i <= Constants.MaxActions; i++)
                     {
@@ -2349,10 +2345,15 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 unit.trail.enabled = false;
+                var healing = 0;
+                if (!unit.hasTakenDamage)
+                    healing = 1;
                 if(unit.movementLeft > 0)
-                    unit.RegenHP(unit.movementLeft * 2);
-                GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain, unit, TurnNumber == 1);
+                    healing = unit.movementLeft * 2;
+                unit.RegenHP(healing);
                 unit.hasMoved = false;
+                unit.hasTakenDamage = false;
+                GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain, unit, TurnNumber == 1);
                 unit.resetMining();
                 unit.resetMovementRange();
             }
@@ -2509,21 +2510,22 @@ public class GameManager : MonoBehaviour
         while (TurnOrderObjects.Count > 0) { Destroy(TurnOrderObjects[0].gameObject); TurnOrderObjects.RemoveAt(0); }
     }
 
-    private void ClearActionBar(bool unlock = false)
+    private void ClearActionBar()
     {
         for (int i = 0; i < Constants.MaxActions; i++)
         {
             ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.RemoveAllListeners();
-            if (i < MyStation.maxActions) {
-                if(!unlock || ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite == lockActionBar)
+            ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
+            if (i < MyStation.actions.Count)
+                AddActionBarImage(MyStation.actions[i].actionType, i);
+            else if (i < MyStation.maxActions)
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];
-            } else {
-                int unlockCost = GetUnlockCost(i+1);
+            else
+            {
+                int unlockCost = GetUnlockCost(i + 1);
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = lockActionBar;
                 ActionBar.Find($"Action{i}/Image").GetComponent<Button>().onClick.AddListener(() => ShowUnlockPanel(unlockCost));
             }
-            if(!unlock)
-                ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
         }
     }
     public int GetUnlockCost(int i)

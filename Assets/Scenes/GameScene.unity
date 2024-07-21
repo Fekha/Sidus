@@ -16169,15 +16169,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Movement:\nYou may move each unit once per turn.\nMoving into an asteroid
     will mine it. \nEnding your turn on an invalid hex will return you to the last
-    valid hex.\n\nRepairing:\nMoving over allied units repairs 1 of their HP.\nUnits
-    self repair 2 HP per unused movement.\nStations Repair 1 HP to each neighboring
-    allied unit and themsleives each turn.\n\nClaiming:\nYou immediatly claim any
-    nuetral hexes that you move over. \nFor enemy owned hexes, your unit must end
-    its movement on the hex, and you must already own a neighboring hex to claim
-    it.\n\nDeploying:\nA new bomber or bomb will try to be deployed where selected,
-    they will not spawn on an asteroid, and a bomber will not spawn on another unit.
-    If original location is not valid it will continue clockwise until it finds a
-    valid one. Bombers will claim the hex they spawn on, bombs will not.\n"
+    valid hex.\n\nRepairing:\nMoving over allied units repairs 2 of their HP.\nUnits
+    self repair 2 HP per unused movement.\nUnits self repair 1 HP if they did not
+    take damage.\n\nClaiming:\nYou immediatly claim any nuetral hexes that you move
+    over. \nFor enemy owned hexes, your unit must end its movement on the hex, and
+    you must already own a neighboring hex to claim it.\n\nDeploying:\nA new bomber
+    or bomb will try to be deployed where selected, they will not spawn on an asteroid,
+    and a bomber will not spawn on another unit. If original location is not valid
+    it will continue clockwise until it finds a valid one. Bombers will claim the
+    hex they spawn on, bombs will not.\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

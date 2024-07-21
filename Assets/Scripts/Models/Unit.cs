@@ -45,6 +45,7 @@ public class Unit : Node
     internal TrailRenderer trail;
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
     internal bool hasMoved = false;
+    internal bool hasTakenDamage = false;
 
     public void InitializeUnit(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction, UnitType _unitType)
     {
@@ -144,20 +145,27 @@ public class Unit : Node
 
     public void RegenHP(int regen, bool queuing = false, bool staggered = false)
     {
-        if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
-            regen *= 2;
-        if (regen != 0 && HP < maxHP && !queuing)
-            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen,maxHP-HP)} HP",transform,this,staggered));
-        HP += regen;
+        if (regen > 0)
+        {
+            if (moduleEffects.Contains(ModuleEffect.DoubleHeal))
+                regen *= 2;
+            if (HP < maxHP && !queuing)
+                StartCoroutine(GameManager.i.FloatingTextAnimation($"+{Math.Min(regen, maxHP - HP)} HP", transform, this, staggered));
+            HP += regen;
+        }
     }
     public void TakeDamage(int damage, Unit unit)
     {
-        StartCoroutine(GameManager.i.FloatingTextAnimation($"-{damage} HP", transform, this));
-        HP -= Mathf.Max(damage,0);
-        HP = Mathf.Max(0, HP);
-        if (unit.moduleEffects.Contains(ModuleEffect.ReduceMaxHp))
+        if (damage > 0)
         {
-            maxHP -= Mathf.Max(damage, 0);
+            hasTakenDamage = true;
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"-{damage} HP", transform, this));
+            HP -= damage;
+            HP = Mathf.Max(0, HP);
+            if (unit.moduleEffects.Contains(ModuleEffect.ReduceMaxHp))
+            {
+                maxHP -= damage;
+            }
         }
         ShowHPText(true);
     }

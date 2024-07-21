@@ -2386,7 +2386,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &601900710
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3684,8 +3684,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 217}
-  m_SizeDelta: {x: -115.61, y: -691.78}
+  m_AnchoredPosition: {x: 0.36999512, y: 217}
+  m_SizeDelta: {x: -32.63, y: -689.55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1042085699
 MonoBehaviour:
@@ -3707,7 +3707,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '2 Player Elo: 1500'
+  m_text: '2 Player Rating: 15000'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -125,7 +125,7 @@ public class GridManager : MonoBehaviour
                     if (asteroids.Any(x => x.CoordsEquals(coords)))
                     {
                         startCredits = 2+Globals.GameMatch.MaxPlayers;
-                        maxCredits = 8+(Globals.GameMatch.MaxPlayers*2);
+                        maxCredits = 12+(Globals.GameMatch.MaxPlayers*2);
                         creditRegin = (Globals.GameMatch.MaxPlayers==4?2:1);
                     }
                     else if (rifts.Any(x => x.CoordsEquals(coords)))
@@ -211,7 +211,9 @@ public class GridManager : MonoBehaviour
             for (int i = 0; i < hexesNearby.Count; i++)
             {
                 int j = (i + startIndex) % hexesNearby.Count;
-                var unitOnPath = grid[hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y].unitOnPath;
+                if (hexesNearby[j].isAsteroid)
+                    continue;
+                var unitOnPath = hexesNearby[j].unitOnPath;
                 if (unitType == UnitType.Bomber)
                 {
                     if (unitOnPath == null)
