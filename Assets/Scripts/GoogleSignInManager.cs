@@ -95,8 +95,7 @@ public class GoogleSignInManager : MonoBehaviour
         {
             if (player != null)
             {
-                Globals.Account.PlayerGuid = player.PlayerGuid;
-                Globals.Account.Username = player.Username.Split(' ')[0];
+                Globals.Account = player;
                 PlayerPrefs.SetString("AccountId", Globals.Account.AccountId);
                 PlayerPrefs.Save();
                 SceneManager.LoadScene((int)Scene.Lobby);
