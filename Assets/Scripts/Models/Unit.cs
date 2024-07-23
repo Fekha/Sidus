@@ -22,6 +22,9 @@ public class Unit : Node
     internal int kineticPower;
     internal int thermalPower;
     internal int explosivePower;
+    internal int kineticSupportPower;
+    internal int thermalSupportPower;
+    internal int explosiveSupportPower;
     internal int kineticDamageTaken;
     internal int thermalDamageTaken;
     internal int explosiveDamageTaken;
@@ -30,7 +33,6 @@ public class Unit : Node
     internal int explosiveDeployPower;
     internal int maxMining;
     internal int miningLeft;
-    internal double supportValue;
     internal int level;
     internal int globalCreditGain;
     internal int maxAttachedModules; // 1+ station.level
@@ -44,6 +46,7 @@ public class Unit : Node
     internal Transform unitImage;
     internal TrailRenderer trail;
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
+    internal List<PathNode> _selectedPath = new List<PathNode>();
     internal bool hasMoved = false;
     internal bool hasTakenDamage = false;
 
@@ -64,7 +67,6 @@ public class Unit : Node
         maxMining = _mining;
         miningLeft = _mining;
         level = 1;
-        supportValue = .5;
         globalCreditGain = 0;
         maxAttachedModules = 1;
         unitType = _unitType;
@@ -95,7 +97,6 @@ public class Unit : Node
         explosiveDeployPower = unit.ExplosiveDeployPower;
         maxMining = unit.MaxMining;
         miningLeft = unit.MiningLeft;
-        supportValue = unit.SupportValue;
         level = unit.Level;
         globalCreditGain = unit.GlobalCreditGain;
         maxAttachedModules = unit.MaxAttachedModules;
@@ -259,7 +260,6 @@ public class Unit : Node
             DeployRange = deployRange,
             MaxMining = maxMining,
             MiningLeft = miningLeft,
-            SupportValue = supportValue,
             Level = level,
             GlobalCreditGain = globalCreditGain,
             MaxAttachedModules = maxAttachedModules,
@@ -339,5 +339,30 @@ public class Unit : Node
             unitOnPath.DestroyUnit();
         if (unitDestroyed)
             DestroyUnit();
+    }
+
+    internal void SetSupportValues(bool forPrediction = false, PathNode _currentPathNode = null)
+    {
+        if(unitType == UnitType.Bomb)
+            return;
+        if(_currentPathNode == null)
+            _currentPathNode = currentPathNode;
+        var neighbors = GridManager.i.GetNeighbors(_currentPathNode, true);
+        var supportingFleets = neighbors.Select(x => x.unitOnPath).Where(x => x != null && x.teamId == teamId && x.unitType != UnitType.Bomb);
+        if (forPrediction)
+            supportingFleets = GameManager.i.AllUnits.Where(x => x.teamId == teamId && x.unitType != UnitType.Bomb && x != this && (x._selectedPath.LastOrDefault() == null ? neighbors.Contains(x.currentPathNode) : neighbors.Contains(x._selectedPath.LastOrDefault())));
+        kineticSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * (x.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5))));
+        thermalSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * (x.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5))));
+        explosiveSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * (x.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5))));
+    }
+
+    internal int GetDamage(Unit attackedUnit, AttackType type)
+    {
+        if (type == AttackType.Kinetic)
+            return (attackedUnit.kineticPower + attackedUnit.kineticSupportPower) - (kineticPower + kineticSupportPower);
+        else if (type == AttackType.Thermal)
+            return (attackedUnit.thermalPower + attackedUnit.thermalSupportPower) - (thermalPower + thermalSupportPower);
+        else
+            return (attackedUnit.explosivePower + attackedUnit.explosiveSupportPower) - (explosivePower + explosiveSupportPower);
     }
 }

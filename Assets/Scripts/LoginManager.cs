@@ -248,7 +248,7 @@ public class LoginManager : MonoBehaviour
                 var prefab = Instantiate(openGamePrefab, findContent);
                 prefab.GetComponent<Button>().onClick.AddListener(() => JoinGame(game));
                 prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = $"Game Id: {game.GameGuid.ToString().Substring(0, 6)}";
-                prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = $"Created By: {game.GameTurns.FirstOrDefault().Players.FirstOrDefault()?.PlayerName}";
+                prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = $"Created By: {game.GameTurns.FirstOrDefault().Players.FirstOrDefault(x=>x.PlayerColor == 0)?.PlayerName}";
                 prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"{game.GameTurns.FirstOrDefault().Players.Count(x => x != null)}/{game.MaxPlayers}";
                 openGamesObjects.Add(prefab);
             }
@@ -269,8 +269,16 @@ public class LoginManager : MonoBehaviour
                 var game = newGame;
                 var prefab = Instantiate(openGamePrefab, activeContent);
                 prefab.GetComponent<Button>().onClick.AddListener(() => JoinActiveGame(game));
+                var playersNames = game.GameTurns.FirstOrDefault().Players.Where(x => x.PlayerGuid != Globals.Account.PlayerGuid).OrderBy(x => x.PlayerColor).Select(x => x.PlayerName);
                 prefab.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = $"Game Id: {game.GameGuid.ToString().Substring(0, 6)}";
-                prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = $"Created By: {game.GameTurns.FirstOrDefault().Players.FirstOrDefault()?.PlayerName}";
+                if (playersNames.Count() == 0)
+                {
+                    prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = "Waiting for players";
+                }
+                else
+                {
+                    prefab.transform.Find("PlayerText").GetComponent<TextMeshProUGUI>().text = $"Vs: {String.Join(", ", playersNames)}";
+                }
                 prefab.transform.Find("Players").GetComponent<TextMeshProUGUI>().text = $"Turn #{(game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault(x => x.Players.Count() == game.MaxPlayers)?.TurnNumber ?? -1) + 1}";
                 var players = game.GameTurns.OrderBy(x => x.TurnNumber).LastOrDefault().Players;
                 prefab.transform.Find("Ready").gameObject.SetActive(players.Count() == game.MaxPlayers || !players.Any(x => x?.PlayerGuid == Globals.Account.PlayerGuid));

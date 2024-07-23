@@ -367,19 +367,13 @@ public class GameManager : MonoBehaviour
                     ModuleEffectText.text = "No Modules Installed\n";
                 ModuleEffectText.text.Substring(0, ModuleEffectText.text.Length - 1);
                 miningValue.text = unit.maxMining.ToString();
-                var supportingFleets = GridManager.i.GetNeighbors(unit.currentPathNode).Select(x => x.unitOnPath).Where(x => x != null && x.teamId == unit.teamId && x.unitType != UnitType.Bomb);
                 var kineticPower = $"{unit.kineticPower}";
                 var thermalPower = $"{unit.thermalPower}";
                 var explosivePower = $"{unit.explosivePower}";
-                if (supportingFleets.Any())
-                {
-                    int kineticSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * (x.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5))));
-                    int thermalSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * (x.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5))));
-                    int explosiveSupportValue = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * (x.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5))));
-                    kineticPower += kineticSupportValue > 0 ? $" (+{kineticSupportValue})" : "";
-                    thermalPower += thermalSupportValue > 0 ? $" (+{thermalSupportValue})" : "";
-                    explosivePower += explosiveSupportValue > 0 ? $" (+{explosiveSupportValue})" : "";
-                }
+                unit.SetSupportValues(true);
+                kineticPower += unit.kineticSupportPower > 0 ? $" (+{unit.kineticSupportPower})" : "";
+                thermalPower += unit.thermalSupportPower > 0 ? $" (+{unit.thermalSupportPower})" : "";
+                explosivePower += unit.explosiveSupportPower > 0 ? $" (+{unit.explosiveSupportPower})" : "";
                 KineticValueText.text = $"{kineticPower}";
                 ThermalValueText.text = $"{thermalPower}";
                 ExplosiveValueText.text = $"{explosivePower}";
@@ -486,7 +480,7 @@ public class GameManager : MonoBehaviour
                                 HighlightMovementRange(SelectedUnit.currentPathNode, SelectedUnit);
                         }
                     }
-                    //Double click confirm to movement early
+                    //Double click confirm to movement
                     else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && SelectedUnit.playerGuid == MyStation.playerGuid && SelectedUnit.unitType != UnitType.Bomb && !HasQueuedMovement(SelectedUnit))
                     {
                         QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, SelectedPath));
@@ -515,6 +509,25 @@ public class GameManager : MonoBehaviour
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                         DrawPath(SelectedPath);
                         HighlightMovementRange(SelectedNode, SelectedUnit);
+                        if (SelectedPath.Last().unitOnPath != null && SelectedPath.Last().unitOnPath.teamId != SelectedUnit.teamId)
+                        {
+                            var unitOnPath = SelectedPath.Last().unitOnPath;
+                            unitOnPath.SetSupportValues();
+                            var unitKineticDmg = SelectedUnit.GetDamage(unitOnPath, AttackType.Kinetic);
+                            var unitThermalDmg = SelectedUnit.GetDamage(unitOnPath, AttackType.Thermal);
+                            var unitExplosiveDmg = SelectedUnit.GetDamage(unitOnPath, AttackType.Explosive);
+                            var kineticString = "\nKinetic Phase:\n" + (unitKineticDmg > 0 ? $"<b>{SelectedUnit.playerColor} loses <u>{unitKineticDmg+SelectedUnit.kineticDamageTaken} HP</u></b>" : unitKineticDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitKineticDmg)+ unitOnPath.kineticDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            var thermalString = "\nThermal Phase:\n" + (unitThermalDmg > 0 ? $"<b>{SelectedUnit.playerColor} loses <u>{unitThermalDmg + SelectedUnit.thermalDamageTaken} HP</u></b>" : unitThermalDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitThermalDmg) + unitOnPath.thermalDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            var explosiveString = "\nExplosive Phase:\n" + (unitExplosiveDmg > 0 ? $"<b>{SelectedUnit.playerColor} loses <u>{unitExplosiveDmg + SelectedUnit.explosiveDamageTaken} HP</u></b>" : unitExplosiveDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitExplosiveDmg) + unitOnPath.explosiveDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            if (unitOnPath.unitType == UnitType.Bomb || SelectedUnit.unitType == UnitType.Bomb)
+                            {
+                                kineticString = "";
+                                thermalString = "";
+                                if (unitExplosiveDmg != 0)
+                                    explosiveString += " and 1 movement.";
+                            }
+                            ShowCustomAlertPanel($"Predicted combat outcome:\n{kineticString}{thermalString}{explosiveString}");
+                        }
                     }
                     //Clicked on invalid tile, clear
                     else
@@ -1199,7 +1212,7 @@ public class GameManager : MonoBehaviour
                 if (nextNode.unitOnPath.teamId != unitMoving.teamId)
                 {
                     ToggleHPText(true);
-                    yield return StartCoroutine(FightEnemyUnit(unitMoving, nextNode));
+                    yield return StartCoroutine(DoCombat(unitMoving, nextNode));
                     ToggleHPText(false);
                     didFightLastMove = true;
                     if (unitMoving == null || !AllUnits.Contains(unitMoving))
@@ -1393,40 +1406,17 @@ public class GameManager : MonoBehaviour
         unitMoving.transform.position = endPos;
     }
 
-    internal IEnumerator FightEnemyUnit(Unit unitMoving, PathNode node)
+    internal IEnumerator DoCombat(Unit unitMoving, PathNode node)
     {
         var unitOnPath = node.unitOnPath;
         Debug.Log($"{unitMoving.unitName} is attacking {unitOnPath.unitName}");
         CheckEnterCombatModules(unitMoving);
         CheckEnterCombatModules(unitOnPath);
-        var supportingFleets = GridManager.i.GetNeighbors(node).Select(x => x.unitOnPath).Where(x => x != null && x.unitGuid != unitOnPath.unitGuid && x.unitType != UnitType.Bomb);
-        int s1sKinetic = 0;
-        int s2sKinetic = 0;
-        int s1sThermal = 0;
-        int s2sThermal = 0;
-        int s1sExplosive = 0;
-        int s2sExplosive = 0;
-        foreach (var supportFleet in supportingFleets)
-        {
-            var kineticSupport = Convert.ToInt32(Math.Floor(supportFleet.kineticPower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5)));
-            var thermalSupport = Convert.ToInt32(Math.Floor(supportFleet.thermalPower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5)));
-            var explosiveSupport = Convert.ToInt32(Math.Floor(supportFleet.explosivePower * (supportFleet.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5)));
-            if (supportFleet.teamId == unitMoving.teamId && unitMoving.unitType != UnitType.Bomb)
-            {
-                s1sKinetic += kineticSupport;
-                s1sThermal += thermalSupport;
-                s1sExplosive += explosiveSupport;
-            }
-            else if (supportFleet.teamId == unitOnPath.teamId && unitOnPath.unitType != UnitType.Bomb)
-            {
-                s2sKinetic += kineticSupport;
-                s2sThermal += thermalSupport;
-                s2sExplosive += explosiveSupport;
-            }
-        }
+        unitMoving.SetSupportValues();
+        unitOnPath.SetSupportValues();
         if (unitMoving.unitType == UnitType.Bomb || unitOnPath.unitType == UnitType.Bomb)
         {
-            turnValue.text = DoCombat(unitMoving, unitOnPath, AttackType.Explosive);
+            turnValue.text = PrintCombat(unitMoving, unitOnPath, AttackType.Explosive);
             yield return StartCoroutine(WaitforSecondsOrTap(1));
         }
         else
@@ -1436,7 +1426,7 @@ public class GameManager : MonoBehaviour
             {
                 if (unitMoving.HP > 0 && unitOnPath.HP > 0)
                 {
-                    turnValue.text = DoCombat(unitMoving, unitOnPath, (AttackType)attackType, s1sKinetic, s1sThermal, s1sExplosive, s2sKinetic, s2sThermal, s2sExplosive);
+                    turnValue.text = PrintCombat(unitMoving, unitOnPath, (AttackType)attackType);
                     yield return StartCoroutine(WaitforSecondsOrTap(1));
                 }
             }
@@ -1505,47 +1495,44 @@ public class GameManager : MonoBehaviour
         return Quaternion.Euler(unit.transform.rotation.x, unit.transform.rotation.y, 270 - (unit.facing == Direction.TopRight ? -60 : (int)unit.facing * 60));
     }
 
-    private string DoCombat(Unit s1, Unit s2, AttackType type, int s1sKinetic = 0, int s1sThermal = 0, int s1sExplosive = 0, int s2sKinetic = 0, int s2sThermal = 0, int s2sExplosive = 0)
+    private string PrintCombat(Unit s1, Unit s2, AttackType type)
     {
-        int s1Dmg = (s2.explosivePower+s2sExplosive) - (s1.explosivePower+s1sExplosive);
-        int s2Dmg = (s1.explosivePower+s1sExplosive) - (s2.explosivePower+s2sExplosive);
+        var eDmg = s1.GetDamage(s2, type);
+        int s1Dmg = eDmg > 0 ? eDmg : 0;
+        int s2Dmg = eDmg < 0 ? Mathf.Abs(eDmg) : 0;
         int s1DT = s1.explosiveDamageTaken;
         int s2DT = s2.explosiveDamageTaken;
-        string support1Text = (s1sThermal > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.explosivePower}+{s1sExplosive})" : "";
-        string support2Text = (s2sThermal > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.explosivePower}+{s2sExplosive})" : "";
-        string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower + s1sExplosive}";
-        string power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.explosivePower + s2sExplosive}";
+        string support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.explosivePower}+{ s1.explosiveSupportPower})" : "";
+        string support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.explosivePower}+{ s2.explosiveSupportPower})" : "";
+        string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower +  s1.explosiveSupportPower}";
+        string power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.explosivePower +  s2.explosiveSupportPower}";
         if (type == AttackType.Kinetic)
         {
-            s1Dmg = (s2.kineticPower+s2sKinetic) - (s1.kineticPower+s1sKinetic);
-            s2Dmg = (s1.kineticPower+s1sKinetic) - (s2.kineticPower+s2sKinetic);
             s1DT = s1.kineticDamageTaken;
             s2DT = s2.kineticDamageTaken;
-            support1Text = (s1sThermal > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.kineticPower}+{s1sKinetic})" : "";
-            support2Text = (s2sThermal > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.kineticPower}+{s2sKinetic})" : "";
-            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower + s1sKinetic}";
-            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.kineticPower + s2sKinetic}";
+            support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.kineticPower}+{ s1.kineticSupportPower})" : "";
+            support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.kineticPower}+{ s2.kineticSupportPower})" : "";
+            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower +  s1.kineticSupportPower}";
+            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.kineticPower +  s2.kineticSupportPower}";
         }
         else if (type == AttackType.Thermal)
         {
-            s1Dmg = (s2.thermalPower+s2sThermal) - (s1.thermalPower+s1sThermal);
-            s2Dmg = (s1.thermalPower+s1sThermal) - (s2.thermalPower+s2sThermal);
             s1DT = s1.thermalDamageTaken;
             s2DT = s2.thermalDamageTaken;
-            support1Text = (s1sThermal > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.thermalPower}+{s1sThermal})" : "";
-            support2Text = (s2sThermal > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.thermalPower}+{s2sThermal})" : "";
-            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower + s1sThermal}";
-            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower + s2sThermal}";
+            support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.thermalPower}+{ s1.thermalSupportPower})" : "";
+            support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.thermalPower}+{ s2.thermalSupportPower})" : "";
+            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower +  s1.thermalSupportPower}";
+            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower +  s2.thermalSupportPower}";
         }
         var returnText = "";
         var modifytext = "";
         if (s1.unitType == UnitType.Bomb && s2.unitType == UnitType.Bomb)
         {
-            returnText += $"<u><b>Both bombs blew up destroying each other</u></b>";
+            returnText += $"<b>Both bombs blew up <u>destroying each other</u></b>";
         }
         else if (s1Dmg > 0 && s1.unitType == UnitType.Bomb)
         {
-            returnText += $"<u><b>{s2.playerColor.ToString()} resisted the bombs damage</u></b>";
+            returnText += $"<b>{s2.playerColor.ToString()} <u>resisted the bombs damage</u></b>";
         }
         else if (s1Dmg > 0)
         {
@@ -1557,7 +1544,7 @@ public class GameManager : MonoBehaviour
                 var modifierSymbol = s1DT > 0 ? "+" : "";
                 modifytext = $"({s1Dmg}{modifierSymbol}{s1DT})";
             }
-            returnText += $"<u><b>{s1.playerColor.ToString()} took {damage}{modifytext} damage</u></b>";
+            returnText += $"<b>{s1.playerColor.ToString()} took <u>{damage}{modifytext} damage</u></b>";
             if (s2.unitType == UnitType.Bomb && damage > 0)
             {
                 s1.subtractMovement(1);
@@ -1567,7 +1554,7 @@ public class GameManager : MonoBehaviour
         }
         else if (s2Dmg > 0 && s2.unitType == UnitType.Bomb)
         {
-            returnText += $"<u><b>{s1.playerColor.ToString()} resisted the bombs damage</u></b>";
+            returnText += $"<b>{s1.playerColor.ToString()} <u>resisted the bombs damage</u></b>";
         }
         else if (s2Dmg > 0)
         {
@@ -1579,7 +1566,7 @@ public class GameManager : MonoBehaviour
                 var modifierSymbol = s2DT > 0 ? "+" : "";
                 modifytext = $"({s2Dmg}{modifierSymbol}{s2DT})";
             }
-            returnText += $"<u><b>{s2.playerColor.ToString()} took {damage}{modifytext} damage</u></b>";
+            returnText += $"<b>{s2.playerColor.ToString()} took <u>{damage}{modifytext} damage</u></b>";
             if (s1.unitType == UnitType.Bomb && damage > 0)
             {
                 s2.subtractMovement(1);
@@ -1591,11 +1578,11 @@ public class GameManager : MonoBehaviour
         {
             if (s1.unitType == UnitType.Bomb)
             {
-                returnText += $"<u><b>{s2.playerColor.ToString()} resisted the bombs damage</u></b>";
+                returnText += $"<b>{s2.playerColor.ToString()} <u>resisted the bombs damage</u></b>";
             }
             else if (s2.unitType == UnitType.Bomb)
             {
-                returnText += $"<u><b>{s1.playerColor.ToString()} resisted the bombs damage</u></b>";
+                returnText += $"<b>{s1.playerColor.ToString()} <u>resisted the bombs damage</u></b>";
             }
             else
             {
@@ -1950,12 +1937,14 @@ public class GameManager : MonoBehaviour
             {
                 action.selectedUnit.subtractMovement(action.selectedPath.Count * modifier);
                 action.selectedUnit.ClearMinedPath(action.selectedPath);
+                action.selectedUnit._selectedPath = new List<PathNode>();
             }
             else
             {
                 if (addingBack)
                     action.selectedUnit.subtractMovement(action.selectedPath.Count * modifier);
                 action.selectedUnit.AddMinedPath(action.selectedPath);
+                action.selectedUnit._selectedPath = action.selectedPath;
             }
         }
         else if (action.actionType == ActionType.DeployBomb)
@@ -2139,7 +2128,7 @@ public class GameManager : MonoBehaviour
                             yield return StartCoroutine(WaitforSecondsOrTap(1));
                             unit.selectIcon.SetActive(false);
                             if (newBomb.currentPathNode.unitOnPath.unitGuid != newBomb.unitGuid)
-                                yield return StartCoroutine(FightEnemyUnit(newBomb, newBomb.currentPathNode));
+                                yield return StartCoroutine(DoCombat(newBomb, newBomb.currentPathNode));
                         }
                         else
                         {
@@ -2379,6 +2368,8 @@ public class GameManager : MonoBehaviour
                 unit.resetMining();
                 unit.resetMovementRange();
             }
+            unit._selectedPath.Clear();
+            unit._minedPath.Clear();
             unit.HP = Mathf.Min(unit.maxHP, unit.HP);
         }
         turnLabel.SetActive(false);
