@@ -2358,9 +2358,9 @@ public class GameManager : MonoBehaviour
                 unit.trail.enabled = false;
                 var healing = 0;
                 if (!unit.hasTakenDamage)
-                    healing = 1;
+                    healing += 1;
                 if(unit.movementLeft > 0)
-                    healing = unit.movementLeft * 2;
+                    healing += unit.movementLeft * 2;
                 unit.RegenHP(healing);
                 unit.hasMoved = false;
                 unit.hasTakenDamage = false;
