@@ -78,12 +78,12 @@ public class PathNode : MonoBehaviour
     }
     void OnMouseDown()
     {
-        if (!GameManager.i.isEndingTurn)
+        if (!GameManager.i.isEndingTurn && Input.touchCount < 2)
         {
             // Calculate the offset between the mouse position and the GameObject position
             initialMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             initialMousePosition.z = parentTransform.position.z; // Keep the Z position constant
-            canDrag = true; //Uncomment out when ready to drag
+            canDrag = !GameManager.i.isZooming;
         }
     }
 
@@ -91,7 +91,7 @@ public class PathNode : MonoBehaviour
     {
         Vector3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentMousePosition.z = parentTransform.position.z; // Keep the Z position constant
-        if (canDrag && !isDragging)
+        if (canDrag && !isDragging && !GameManager.i.isZooming)
         {
             // Calculate the distance between the initial mouse position and the current mouse position
             float distance = Vector3.Distance(initialMousePosition, currentMousePosition);
@@ -104,7 +104,7 @@ public class PathNode : MonoBehaviour
                 isDragging = true;
             }
         }
-        if (isDragging)
+        if (isDragging && !GameManager.i.isZooming)
         {
             parentTransform.position = currentMousePosition + offset;
         }

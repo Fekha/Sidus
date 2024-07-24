@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour
     private bool skipTurn = false;
     private bool isMoving = false;
     internal bool isEndingTurn = false;
+    internal bool isZooming = false;
     private Button upgradeButton;
     private Button unlockButton;
     public Button createFleetButton;
@@ -569,7 +570,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (SelectedUnit != null && (SelectedPath?.Count ?? 0) > 0 && !HasQueuedMovement(SelectedUnit))
                         ShowCustomAlertPanel("Movement cancelled. \n\n Double click selected hex to confirm movement.");
-                    DeselectMovement();
+                    ResetSelectedUnitMovement();
                 }
             }
         }
