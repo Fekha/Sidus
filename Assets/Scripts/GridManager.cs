@@ -31,6 +31,7 @@ public class GridManager : MonoBehaviour
     public List<Sprite> nebulaSprite;
     public RuntimeAnimatorController nodeController;
     public AnimationClip nebulaRotationClip;
+    public GameObject burgerList;
     private void Awake()
     {
         i = this;
@@ -381,5 +382,13 @@ public class GridManager : MonoBehaviour
         {
             station.score = scores[station.playerGuid];
         }
+    }
+
+    public void CloseBurger()
+    {
+        burgerList.SetActive(false);
+    }
+    public void ToggleBurger(){
+        burgerList.SetActive(!burgerList.activeSelf);
     }
 }

@@ -9,6 +9,7 @@ using TMPro;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -134,7 +135,6 @@ public class GameManager : MonoBehaviour
     public GameObject turnLabel;
     private SqlManager sql;
     internal int TurnNumber = 0;
-    private bool infoToggle = false;
     private bool audioToggleOn = true;
     private int helpPageNumber = 0;
     private List<Action> lastSubmittedTurn = new List<Action>();
@@ -454,8 +454,9 @@ public class GameManager : MonoBehaviour
             if (!isEndingTurn && hit.collider != null && !isMoving)
             {
                 PathNode targetNode = hit.collider.GetComponent<PathNode>();
-                if (targetNode != null)
+                if (targetNode != null && !EventSystem.current.IsPointerOverGameObject())
                 {
+                    GridManager.i.CloseBurger();
                     moduleMarket.SetActive(false); 
                     technologyPanel.SetActive(false); 
                     Unit targetUnit = null;
@@ -568,8 +569,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (SelectedUnit != null && (SelectedPath?.Count ?? 0) > 0 && !HasQueuedMovement(SelectedUnit))
                         ShowCustomAlertPanel("Movement cancelled. \n\n Double click selected hex to confirm movement.");
-                    if (!hit.collider.CompareTag("Wall"))
-                        DeselectMovement();
+                    DeselectMovement();
                 }
             }
         }
@@ -650,6 +650,7 @@ public class GameManager : MonoBehaviour
     {
         if (SelectedUnit != null && SelectedUnit.unitType != UnitType.Bomb)
         {
+            Debug.Log($"Resetting Movement");
             SelectedUnit.subtractMovement(-1 * (SelectedPath?.Count ?? 0));
             SelectedUnit.ClearMinedPath(SelectedPath);
             SelectedUnit.selectIcon.SetActive(false);
@@ -781,7 +782,7 @@ public class GameManager : MonoBehaviour
         }
         if (active)
         {
-            ToggleBurger();
+            GridManager.i.CloseBurger();
             helpPanel.SetActive(active);
         }
     }
@@ -1138,8 +1139,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"Resetting UI");
         ToggleMineralText(false);
-        ToggleHPText(false);
-        DeselectUnitIcons();
         UpdateCreateFleetCostText();
         SetModuleGrid();
         ClearMovementPath();
@@ -1150,7 +1149,8 @@ public class GameManager : MonoBehaviour
         unlockPanel.SetActive(false);
         ViewAsteroidInformation(false);
         ViewUnitInformation(false);
-        CloseBurger();
+        ToggleHPText(false);
+        DeselectUnitIcons();
     }
     private void UpdateCreditsAndHexesText()
     {
@@ -1663,40 +1663,25 @@ public class GameManager : MonoBehaviour
     }
     public void ShowTurnArchive(bool active)
     {
-        
         if (!isEndingTurn)
         {
             turnArchivePanel.SetActive(active);
-            if(!active){
-                ToggleBurger();
-            }
+            GridManager.i.CloseBurger();
         }
     }
-    public void ToggleAll()
-    {
-        if (!isEndingTurn)
-        {
-            infoToggle = !infoToggle;
-            ToggleMineralText(infoToggle);
-            ToggleHPText(infoToggle);
-        }
-    }
-    public void ToggleBurger()
-    {
-       hamburgerButton.GetComponent<Animator>().SetTrigger("Toggle");
-    }
-
-    public void CloseBurger()
-    {
-        Debug.Log("Close the burger");
-        hamburgerButton.GetComponent<Animator>().SetTrigger("Close");
-    }
-
-
-    
+    //public void ToggleAll()
+    //{
+    //    if (!isEndingTurn)
+    //    {
+    //        infoToggle = !infoToggle;
+    //        ToggleMineralText(infoToggle);
+    //        ToggleHPText(infoToggle);
+    //    }
+    //}
 #region Complete Turn
     public void EndTurn(bool theyAreSure)
     {
+        GridManager.i.CloseBurger();
         if (!isEndingTurn)
         {
             if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
@@ -1788,8 +1773,8 @@ public class GameManager : MonoBehaviour
         AllUnits.Where(x => x.unitType != UnitType.Bomb).ToList().ForEach(x => x.trail.enabled = true);
         customAlertPanel.SetActive(false); 
         submitTurnPanel.SetActive(false);
-        infoToggle = true;
-        ToggleAll();
+        ToggleMineralText(false);
+        ToggleHPText(false);
         turnValue.text = $"Turn #{TurnNumber} Complete!";
         for(int i=0;i<Stations.Count;i++)
         {
@@ -2008,7 +1993,7 @@ public class GameManager : MonoBehaviour
                 exitPanel.SetActive(true);
             else
                 ExitToLobby();
-            ToggleBurger();
+            GridManager.i.CloseBurger();
         }
         else if (exitOption == 1)
         {
@@ -2029,7 +2014,6 @@ public class GameManager : MonoBehaviour
         {
             exitPanel.SetActive(false);
             forfietPanel.SetActive(false);
-            ToggleBurger();
         }
     }
 
@@ -2375,11 +2359,12 @@ public class GameManager : MonoBehaviour
         turnLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
-        infoToggle = false;
         moduleMarket.SetActive(false);
         technologyPanel.SetActive(false);
         BuildTurnObjects();
         ResetAfterSelection();
+        ToggleHPText(false);
+        DeselectUnitIcons();
         isEndingTurn = false;
         customAlertPanel.SetActive(false);
         if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null,""); }

@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 5213668841949090099}
   - component: {fileID: 1798251991150037266}
   - component: {fileID: 1190374901383637184}
+  - component: {fileID: 4220296867383815398}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -250,7 +251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 7482667652216324306, guid: e842554cefab50c43ac4da71a14c6a21, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -260,6 +261,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &4220296867383815398
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2218094006408377552}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3712367793655264761
 GameObject:
   m_ObjectHideFlags: 0
