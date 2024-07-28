@@ -137,10 +137,11 @@ public class GridManager : MonoBehaviour
                 }
                 if (grid[x, y].isRift)
                 {
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sprite = nebulaSprite[riftCount % nebulaSprite.Count];
-                    riftCount++;
-                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -3;
+                    cell.transform.Find("Nebula").GetComponent<SpriteRenderer>().sprite = nebulaSprite[riftCount % nebulaSprite.Count];
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
+                    cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -4;
                     cell.transform.Find("Node/Background").gameObject.SetActive(false);
+                    riftCount++;
                     Animator animator = cell.AddComponent<Animator>();
                     animator.runtimeAnimatorController = nodeController;
                     AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);

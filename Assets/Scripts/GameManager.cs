@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
     private bool isMoving = false;
     internal bool isEndingTurn = false;
     internal bool isZooming = false;
+    internal bool isDragging = false;
     private Button upgradeButton;
     private Button unlockButton;
     public Button createFleetButton;
@@ -1771,6 +1772,8 @@ public class GameManager : MonoBehaviour
     private IEnumerator DoEndTurn()
     {
         isEndingTurn = true;
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, -5.3f, Camera.main.transform.position.z);
+        Camera.main.orthographicSize = 11;
         AllUnits.Where(x => x.unitType != UnitType.Bomb).ToList().ForEach(x => x.trail.enabled = true);
         customAlertPanel.SetActive(false); 
         submitTurnPanel.SetActive(false);
@@ -1794,6 +1797,22 @@ public class GameManager : MonoBehaviour
             ClearModules();
             ToggleMineralText(true);
             ClearTurnArchiveObjects();
+            //Resync with Server
+            foreach (var player in turnsFromServer)
+            {
+                if (Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits != player.Credits)
+                {
+                    Debug.Log($"Player {player.PlayerName} credits are off by {Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits - player.Credits}");
+                }
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits = player.Credits;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusKinetic = player.BonusKinetic;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusThermal = player.BonusThermal;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusExplosive = player.BonusExplosive;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusMining = player.BonusMining;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).score = player.Score;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).fleetCount = player.FleetCount;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).maxActions = player.MaxActions;
+            }
             var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
             {

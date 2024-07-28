@@ -31,7 +31,6 @@ public class PathNode : MonoBehaviour
 
     public bool isAsteroid { get { return minerals > 0; } }
     private bool canDrag = false;
-    private bool isDragging = false;
     private Vector3 offset;
     private Transform parentTransform;
     private Vector3 initialMousePosition;
@@ -83,37 +82,45 @@ public class PathNode : MonoBehaviour
             // Calculate the offset between the mouse position and the GameObject position
             initialMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             initialMousePosition.z = parentTransform.position.z; // Keep the Z position constant
-            canDrag = !GameManager.i.isZooming;
+            canDrag = true;
         }
     }
 
     void OnMouseDrag()
     {
-        Vector3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        currentMousePosition.z = parentTransform.position.z; // Keep the Z position constant
-        if (canDrag && !isDragging && !GameManager.i.isZooming)
+        if (GameManager.i.isZooming)
         {
-            // Calculate the distance between the initial mouse position and the current mouse position
-            float distance = Vector3.Distance(initialMousePosition, currentMousePosition);
-            // Start dragging if the distance exceeds the threshold
-            if (distance >= dragThreshold)
-            {
-                GameManager.i.DeselectMovement();
-                // Calculate the offset between the mouse position and the GameObject position
-                offset = parentTransform.position - currentMousePosition;
-                isDragging = true;
-            }
+            canDrag = false;
+            GameManager.i.isDragging = false;
         }
-        if (isDragging && !GameManager.i.isZooming)
+        else
         {
-            parentTransform.position = currentMousePosition + offset;
+            Vector3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            currentMousePosition.z = parentTransform.position.z; // Keep the Z position constant
+            if (canDrag && !GameManager.i.isDragging)
+            {
+                // Calculate the distance between the initial mouse position and the current mouse position
+                float distance = Vector3.Distance(initialMousePosition, currentMousePosition);
+                // Start dragging if the distance exceeds the threshold
+                if (distance >= dragThreshold)
+                {
+                    GameManager.i.DeselectMovement();
+                    // Calculate the offset between the mouse position and the GameObject position
+                    offset = parentTransform.position - currentMousePosition;
+                    GameManager.i.isDragging = true;
+                }
+            }
+            if (GameManager.i.isDragging)
+            {
+                parentTransform.position = currentMousePosition + offset;
+            }
         }
     }
 
     void OnMouseUp()
     {
         canDrag = false;
-        isDragging = false;
+        GameManager.i.isDragging = false;
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
