@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerBackground
   - Wall
+  - Alert
   layers:
   - Default
   - TransparentFX

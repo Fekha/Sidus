@@ -6,22 +6,24 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Models;
 using TMPro;
+using UnityEngine.UI;
 
 public class GoogleSignInManager : MonoBehaviour
 {
+    public static GoogleSignInManager i;
     private SqlManager sql;
     public GameObject loadingPanel;
+    public TMP_InputField username;
     public GameObject clientOutOfSyncPanel;
+    public TMP_Text customAlertText;
+    public GameObject customAlertPanel;
+
     public void Start()
     {
+        i = this;
 #if UNITY_EDITOR
         Globals.DebugMode = true;
-        //Uncomment to run as exo
-        //PlayerPrefs.SetString("AccountId", "108002382745613062728");
-        //PlayerPrefs.Save();
-
-        //Uncomment to run as fekha
-        PlayerPrefs.SetString("AccountId", "112550575566380218480");
+        PlayerPrefs.SetString("AccountId", "101073745121773337609");
         PlayerPrefs.Save();
 #endif
         sql = new SqlManager();
@@ -31,56 +33,14 @@ public class GoogleSignInManager : MonoBehaviour
     // This function will be called when the Unity button is pressed
     public void OnSignInButtonPressed()
     {
-        loadingPanel.SetActive(true);
-        if (Globals.DebugMode)
+        if (username.text.Length > 2)
         {
-            OnGoogleSignIn("eyJhbGciOiJSUzI1NiIsImtpZCI6IjNkNTgwZjBhZjdhY2U2OThhMGNlZTdmMjMwYmNhNTk0ZGM2ZGJiNTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0OTU3Mjc4ODk5NTEtc3RtNzczdGFhYzRiNW1ocDN1OGo2dWsxMnVhaGdnMXEuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0OTU3Mjc4ODk5NTEtc3RtNzczdGFhYzRiNW1ocDN1OGo2dWsxMnVhaGdnMXEuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDEwNzM3NDUxMjE3NzMzMzc2MDkiLCJlbWFpbCI6ImphbW1vcmFuanJAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5iZiI6MTcxODc5NTY3MiwibmFtZSI6IkZlY2EiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jSU9BeU90eEt5NzZlbHlzaHBKUXNJUXFfQVRPa2l3bVdoekVWVjNNaEVhY2t2bWpvNVk9czk2LWMiLCJnaXZlbl9uYW1lIjoiRmVjYSIsImlhdCI6MTcxODc5NTk3MiwiZXhwIjoxNzE4Nzk5NTcyLCJqdGkiOiJmMjE0YjkxMjE5YzllNTQ2OTUzMzRlNWI5ODE2YzEzNThmOGY0NTNmIn0.Weu3h-HnlX3wXUBeTXyUPndcmPnkZDV8W-LY69DAHMBkFQ8vr8GNsVgXAr2Qso1Bgl769Vh5Gz0g2XUYyhppnosq6Md_RQ11O7dXI8eTRocLFChdDp17g8mCNH3Ks09wHlahPdxUW1H5-kT6dn1fG4xctwHmXe7vZejpgG3yB5Hn8flffVjBGZLjtb64WgNLRqSBUunQckHDVI69jn7ohFI4BP03MnzOieyau3i0CSna8rIusyDK8FYHINgkb26EoFuuTq-RHNH6FrVDrDZrrpGVt5qOIpUoQrBQpO50-GAqVz2Mo-QjNOqNorEA78XOW6G0U5wX9vMMTQw28QhJIw");
+            loadingPanel.SetActive(true);
+            StartCoroutine(sql.GetRoutine<Account?>($"Login/CheckAccountExists?username={username.text.ToUpper()}&clientVersion={Constants.ClientVersion}", SetAccount));
         }
         else
         {
-            Application.ExternalEval("initiateGoogleSignIn();");
-        }
-    }
-
-    // This function will be called from JavaScript with the ID token
-    public void OnGoogleSignIn(string idToken)
-    {
-        if(string.IsNullOrEmpty(idToken))
-        {
-            Debug.LogError("ID Token is null or empty");
-            loadingPanel.SetActive(false);
-            return;
-        }
-        Debug.Log("Google ID Token: " + idToken);
-        var user = DecodeIdToken(idToken);
-        Debug.Log(user["name"]);
-        Debug.Log(user["email"]);
-        Debug.Log(user["sub"]);
-        if (user.ContainsKey("sub") && user.ContainsKey("name") && user.ContainsKey("email"))
-        {
-            Globals.Account = new Account()
-            {
-                AccountId = user["sub"],
-                Username = user["name"].Split(' ')[0],
-                Email = user["email"],
-                Rating = 1500,
-                Wins = 0,
-                NotifiyByEmail = true
-            };
-            try
-            {
-                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(Globals.Account);
-                StartCoroutine(sql.PostRoutine<Account>($"Login/CreateAccount?clientVersion={Constants.ClientVersion}", stringToPost, AccountCreated));
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("Unable to create account");
-                loadingPanel.SetActive(false);
-            }
-        }
-        else
-        {
-            loadingPanel.SetActive(false);
+            ShowCustomAlertPanel("Username must be at least 3 characters");
         }
     }
 
@@ -138,42 +98,41 @@ public class GoogleSignInManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Account retrieve failed");
+                Globals.Account = new Account()
+                {
+                    AccountId = Guid.NewGuid().ToString(),
+                    Username = username.text,
+                    Email = "test@yahoo.com",
+                    Rating = 1500,
+                    Wins = 0,
+                    NotifiyByEmail = false
+                };
+                var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(Globals.Account);
+                StartCoroutine(sql.PostRoutine<Account>($"Login/CreateAccount?clientVersion={Constants.ClientVersion}", stringToPost, AccountCreated));
                 loadingPanel.SetActive(false);
             }
         }
     }
 
-    private Dictionary<string, string> DecodeIdToken(string idToken)
+    internal void Type(string letter)
     {
-        string[] parts = idToken.Split('.');
-        if (parts.Length != 3)
+        if (letter == "backspace")
         {
-            Debug.LogError("Invalid JWT token");
-            return null;
+            if (username.text.Length > 0)
+            {
+                username.text = username.text.Substring(0, username.text.Length - 1);
+            }
         }
-
-        // JWT consists of three parts: Header, Payload, Signature
-        // We need to decode the Payload (the second part)
-        string payload = parts[1];
-        // Fix Base64 padding
-        payload = payload.Replace('-', '+').Replace('_', '/');
-        switch (payload.Length % 4)
+        else
         {
-            case 2: payload += "=="; break;
-            case 3: payload += "="; break;
+            username.text += letter.ToUpper();
         }
+    }
 
-        string jsonPayload = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(payload));
-        Debug.Log("Decoded Payload: " + jsonPayload);
-
-        var payloadData = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonPayload);
-        if (payloadData != null)
-        {
-            return payloadData;
-        }
-
-        Debug.LogError("No 'sub' claim found in the token");
-        return null;
+    public void ShowCustomAlertPanel(string message)
+    {
+        customAlertText.text = message;
+        customAlertPanel.SetActive(true);
+        Debug.Log(message);
     }
 }
