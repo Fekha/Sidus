@@ -456,7 +456,7 @@ public class GameManager : MonoBehaviour
             tapped = true;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(ray.origin, Vector2.zero, Mathf.Infinity);
-            if (!isEndingTurn && hit.collider != null && !isMoving)
+            if (!isEndingTurn && hit.collider != null && !hit.collider.CompareTag("Wall") && !isMoving)
             {
                 PathNode targetNode = hit.collider.GetComponent<PathNode>();
                 if (targetNode != null && !EventSystem.current.IsPointerOverGameObject())
@@ -1443,6 +1443,7 @@ public class GameManager : MonoBehaviour
                     turnValue.text = PrintCombat(unitMoving, unitOnPath, (AttackType)attackType);
                     yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 }
+                tapped = false;
             }
         }
         phaseText.gameObject.SetActive(false);
@@ -1840,10 +1841,28 @@ public class GameManager : MonoBehaviour
             }
             if (Winner == Guid.Empty)
             {
+                turnValue.text = $"Generate credit phase.\n\n+1 Credit per un-used action.";
                 for (int i = 0; i < turnsFromServer.Count(); i++)
                 {
                     Stations[i].GainCredits(Constants.MaxActions - turnsFromServer.FirstOrDefault(x=>x.PlayerColor == i).Actions.Count(), Stations[i], false, false);
+                    yield return StartCoroutine(WaitforSecondsOrTap(.1f));
                 }
+                yield return StartCoroutine(WaitforSecondsOrTap(1f));
+                turnValue.text = $"Repair Phase.\n\n+3 HP per unused movement.";
+                foreach (var unit in AllUnits)
+                {
+                    var healing = 0;
+                    //if (!unit.hasTakenDamage)
+                    //    healing += 1;
+                    if (unit.movementLeft > 0)
+                        healing += unit.movementLeft * 3;
+                    if (healing > 0)
+                    {
+                        unit.RegenHP(healing);
+                        yield return StartCoroutine(WaitforSecondsOrTap(.1f));
+                    }
+                }
+                yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 foreach (var archive in turnArchive)
                 {
                     var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
@@ -2317,13 +2336,13 @@ public class GameManager : MonoBehaviour
         }
         if (!(action.actionType == ActionType.MoveUnit || action.actionType == ActionType.MoveAndMine))
             turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
-        yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+        yield return StartCoroutine(WaitforSecondsOrTap(.25f));
+        tapped = false;
     }
     internal IEnumerator WaitforSecondsOrTap(float time)
     {
         //nextActionButton.SetActive(true);
         skipActionsButton.SetActive(true);
-        tapped = false;
         if (!tapped && !skipTurn)
             yield return new WaitForSeconds(time);
     }
@@ -2374,12 +2393,6 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 unit.trail.enabled = false;
-                var healing = 0;
-                if (!unit.hasTakenDamage)
-                    healing += 1;
-                if(unit.movementLeft > 0)
-                    healing += unit.movementLeft * 2;
-                unit.RegenHP(healing);
                 unit.hasMoved = false;
                 unit.hasTakenDamage = false;
                 GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain, unit, TurnNumber == 1);
