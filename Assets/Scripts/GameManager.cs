@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -185,6 +186,7 @@ public class GameManager : MonoBehaviour
         if (TurnNumber == 0)
         {
             StartTurn();
+            ViewHelpPanel(true);
         }
         else
         {
@@ -768,19 +770,26 @@ public class GameManager : MonoBehaviour
         moduleMarket.SetActive(false);
         QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,null,null,currentBid));
     }
-
+    public void ExitHelpPanel()
+    {
+        GridManager.i.CloseBurger();
+        helpPanel.SetActive(false);
+    }
     public void ViewHelpPanel(bool active)
     {
-        
         helpPageNumber++;
-        if (helpPageNumber > 4)
+        if (active || helpPageNumber > 8)
         {
-            helpPageNumber = 0;
+            helpPageNumber = 1;
             helpPanel.SetActive(false);
             helpPanel.transform.Find("Page1").gameObject.SetActive(true);
             helpPanel.transform.Find("Page2").gameObject.SetActive(false);
             helpPanel.transform.Find("Page3").gameObject.SetActive(false);
             helpPanel.transform.Find("Page4").gameObject.SetActive(false);
+            helpPanel.transform.Find("Page5").gameObject.SetActive(false);
+            helpPanel.transform.Find("Page6").gameObject.SetActive(false);
+            helpPanel.transform.Find("Page7").gameObject.SetActive(false);
+            helpPanel.transform.Find("Page8").gameObject.SetActive(false);
         }
         else
         {
