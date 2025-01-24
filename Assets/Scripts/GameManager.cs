@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -770,11 +769,7 @@ public class GameManager : MonoBehaviour
         moduleMarket.SetActive(false);
         QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,null,null,currentBid));
     }
-    public void ExitHelpPanel()
-    {
-        GridManager.i.CloseBurger();
-        helpPanel.SetActive(false);
-    }
+
     public void ViewHelpPanel(bool active)
     {
         helpPageNumber++;
