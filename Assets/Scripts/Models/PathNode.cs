@@ -16,6 +16,7 @@ public class PathNode : MonoBehaviour
     public Coords actualCoords;
     public Guid ownedByGuid;
 
+    internal Vector3 originalPosition;
     internal int gCost;
     internal PathNode parent;
     internal bool hasBeenMinedThisTurn = false;
@@ -47,6 +48,7 @@ public class PathNode : MonoBehaviour
         minerals = _minerals;
         creditRegin = _creditRegin;
         actualCoords = new Coords(_x, _y);
+        originalPosition = transform.position;
         GetUIComponents();
     }
 

@@ -773,18 +773,15 @@ public class GameManager : MonoBehaviour
     public void ViewHelpPanel(bool active)
     {
         helpPageNumber++;
-        if (active || helpPageNumber > 8)
+        if (active || helpPageNumber > Constants.NumberHelpPages)
         {
             helpPageNumber = 1;
             helpPanel.SetActive(false);
             helpPanel.transform.Find("Page1").gameObject.SetActive(true);
-            helpPanel.transform.Find("Page2").gameObject.SetActive(false);
-            helpPanel.transform.Find("Page3").gameObject.SetActive(false);
-            helpPanel.transform.Find("Page4").gameObject.SetActive(false);
-            helpPanel.transform.Find("Page5").gameObject.SetActive(false);
-            helpPanel.transform.Find("Page6").gameObject.SetActive(false);
-            helpPanel.transform.Find("Page7").gameObject.SetActive(false);
-            helpPanel.transform.Find("Page8").gameObject.SetActive(false);
+            for (int i = 2; i <= Constants.NumberHelpPages; i++)
+            {
+                helpPanel.transform.Find($"Page{i}").gameObject.SetActive(false);
+            }
         }
         else
         {
@@ -2347,7 +2344,7 @@ public class GameManager : MonoBehaviour
     {
         //nextActionButton.SetActive(true);
         skipActionsButton.SetActive(true);
-        if (!tapped && !skipTurn)
+        if (!skipTurn) //&& !tapped
             yield return new WaitForSeconds(time);
     }
     public string GetDescription(ActionType value)

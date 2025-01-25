@@ -82,27 +82,27 @@ public class GridManager : MonoBehaviour
         amountToWinText.text = $"{scoreToWin}";
         DoneLoading = true;
     }
-
+    public void RecreateGrid()
+    {
+        GameManager.i.DeselectMovement();
+        foreach (Transform child in GameObject.Find("Nodes").transform)
+        {
+            PathNode node = child.GetComponent<PathNode>();
+            if (node != null) {
+                child.transform.position = node.originalPosition;
+                if (node.unitOnPath != null)
+                    node.unitOnPath.transform.position = node.originalPosition;
+            }
+        }
+    }
     void CreateGrid(GameTurn currentGameTurn)
     {
         var nodeParent = GameObject.Find("Nodes").transform;
         grid = new PathNode[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridSize.x / 2 - Vector3.up * gridSize.y / 2;
-        List<Coords> asteroids = new List<Coords>()
-        {
-            new Coords(1, 1), new Coords(0, 5), new Coords(3, 9), new Coords(5, 0),
-            new Coords(4, 9), new Coords(2, 6), new Coords(2, 2), new Coords(3, 3),
-            new Coords(8, 8), new Coords(6, 6), new Coords(7, 7),new Coords(0, 8),
-            new Coords(7, 3), new Coords(6, 0), new Coords(4, 2), new Coords(9, 1),
-            new Coords(9, 4), new Coords(5, 7),  new Coords(9, 0),new Coords(0, 9),
-            new Coords(9, 9),new Coords(0, 0),
-        };
-        List<Coords> rifts = new List<Coords>()
-        {
-            new Coords(1, 6), new Coords(6, 8), new Coords(3, 1), new Coords(4, 1),
-            new Coords(1, 5), new Coords(4, 4), new Coords(8, 4), new Coords(8, 3), 
-            new Coords(5, 5), new Coords(5, 4),new Coords(4, 5), new Coords(5, 8),
-        };
+        var mapType = Globals.GameMatch.GameSettings.Contains(GameSettingType.Map3.ToString()) ? 3 : Globals.GameMatch.GameSettings.Contains(GameSettingType.Map2.ToString()) ? 2 : 1;
+        List<Coords> asteroids = GetAsteriodsForMapType(mapType);
+        List<Coords> rifts = GetRiftsForMapType(mapType);
         int riftCount = 0;
         for (int x = 0; x < gridSize.x; x++)
         {
@@ -151,6 +151,66 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    private List<Coords> GetRiftsForMapType(int mapType)
+    {
+        if (mapType == 3)
+            return new List<Coords>()
+            {
+                new Coords(1,7), new Coords(1,6), new Coords(2,6), new Coords(6,7),
+                new Coords(6,8), new Coords(7,8), new Coords(2,1), new Coords(3,1),
+                new Coords(3,2), new Coords(7,3), new Coords(8,3), new Coords(8,2),
+            };
+        else if (mapType == 2)
+            return new List<Coords>()
+            {
+                new Coords(1, 1), new Coords(0, 5), new Coords(3, 9), new Coords(2, 6), 
+                new Coords(8, 8), new Coords(0, 8), new Coords(9, 4), new Coords(5, 7),
+                new Coords(7, 3), new Coords(6, 0), new Coords(4, 2), new Coords(9, 1),
+            };
+        else
+            return new List<Coords>()
+            {
+                new Coords(1, 6), new Coords(6, 8), new Coords(3, 1), new Coords(4, 1),
+                new Coords(1, 5), new Coords(4, 4), new Coords(8, 4), new Coords(8, 3),
+                new Coords(5, 5), new Coords(5, 4), new Coords(4, 5), new Coords(5, 8),
+            };
+    }
+
+    private List<Coords> GetAsteriodsForMapType(int mapType)
+    {
+        if (mapType == 3)
+            return new List<Coords>()
+            {
+                new Coords(5,9), new Coords(1,9), new Coords(0,8), new Coords(9,9),
+                new Coords(8,8), new Coords(9,8), new Coords(3,6), new Coords(4,6),
+                new Coords(5,6), new Coords(3,5), new Coords(6,5), new Coords(3,4),
+                new Coords(6,4), new Coords(4,3), new Coords(5,3), new Coords(6,3),
+                new Coords(0,1), new Coords(1,1), new Coords(9,1), new Coords(0,0),
+                new Coords(8,0), new Coords(4,0), new Coords(0,5), new Coords(9,4),
+            };
+        else if (mapType == 2)
+            return new List<Coords>()
+            {
+                new Coords(1,6), new Coords(6,8), new Coords(3,1), new Coords(4,1),
+                new Coords(1,5), new Coords(4,4), new Coords(8,4), new Coords(8,3),
+                new Coords(5,5), new Coords(5,4), new Coords(4,5), new Coords(5,8),
+                new Coords(4,3), new Coords(5,6), new Coords(9,6), new Coords(0,3),
+                new Coords(1,0), new Coords(8,9), new Coords(1,4), new Coords(8,5),
+                new Coords(2,8), new Coords(7,1), new Coords(9,2), new Coords(0,7),
+            };
+        else
+            return new List<Coords>()
+            {
+                new Coords(1,1), new Coords(0,5), new Coords(3,9), new Coords(5,0),
+                new Coords(4,9), new Coords(2,6), new Coords(2,2), new Coords(3,3),
+                new Coords(8,8), new Coords(6,6), new Coords(7,7), new Coords(0,8),
+                new Coords(7,3), new Coords(6,0), new Coords(4,2), new Coords(9,1),
+                new Coords(9,4), new Coords(5,7), new Coords(9,0), new Coords(0,9),
+                new Coords(9,9), new Coords(0,0), new Coords(3,6), new Coords(6,3),
+            };
+    }
+
     private void CreateStation(int stationColor, GameTurn currentGameTurn)
     {
         GameObject stationPrefab = unitPrefab;

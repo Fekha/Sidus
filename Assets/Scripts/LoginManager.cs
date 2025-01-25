@@ -99,6 +99,7 @@ public class LoginManager : MonoBehaviour
             MaxPlayers = 1;
         var gameGuid = Guid.NewGuid();
         var players = new List<GamePlayer>();
+        GameSettings.Add(((GameSettingType)(UnityEngine.Random.Range((int)GameSettingType.Map1, (int)GameSettingType.Map3+1))).ToString());
         players.Add(GetNewPlayer(gameGuid,0));
         var gameMatch = new GameMatch()
         {
