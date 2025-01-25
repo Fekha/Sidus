@@ -180,24 +180,24 @@ public class GridManager : MonoBehaviour
         {
             int spawnX = 2;
             int spawnY = 3;
-            Direction facing = Direction.Left;
+            Direction facing = Direction.TopLeft;
             if (stationColor == 1)
             {
                 spawnX = 7;
                 spawnY = 6;
-                facing = Direction.Right;
+                facing = Direction.BottomRight;
             }
             else if (stationColor == 2)
             {
                 spawnX = 3;
                 spawnY = 8;
-                facing = Direction.BottomLeft;
+                facing = Direction.Left;
             }
             else if (stationColor == 3)
             {
                 spawnX = 6;
                 spawnY = 1;
-                facing = Direction.TopRight;
+                facing = Direction.Right;
             }
             stationNode.InitializeStation(spawnX, spawnY, stationColor, 15, 1, 7, 6, 5, stationGuid, facing, fleetGuid,bombGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
         }

@@ -73,9 +73,9 @@ public class Technology
                 requirementText = "<b>Must research <u>max station level</u> first</b>\n\n";
                 break;
             case TechnologyType.ResearchHP:
-                effectText = $"+2 HP for all units";
-                currentEffectText = $"\n(Current mining bonus: +{level - 1 + modifier})";
-                requirementText = "<b>Must research <u>power for all units</u> first</b>\n\n";
+                effectText = $"+{Constants.HPGain} HP for all units";
+                currentEffectText = $"\n(Current HP bonus: +{(level - 1 + modifier)*Constants.HPGain})";
+                requirementText = "<b>Must research <u>mining for all units</u> first</b>\n\n";
                 break;
             case TechnologyType.ResearchKinetic:
                 effectText = $"+1 kinetic power for all units";
@@ -91,8 +91,8 @@ public class Technology
                 break;
             case TechnologyType.ResearchMining:
                 effectText = $"+1 mining power for all units";
-                currentEffectText = $"\n(Current HP bonus: +{(level - 1 + modifier)*2})";
-                requirementText = "<b>Must research <u>HP for all units</u> first</b>\n\n";
+                currentEffectText = $"\n(Current mining bonus: +{(level - 1 + modifier)*2})";
+                requirementText = "<b>Must research <u>power for all units</u> first</b>\n\n";
                 break;
             default:
                 break;    
@@ -142,24 +142,24 @@ public class Technology
     {
         switch (researchId)
         {
-            case TechnologyType.ResearchStationLvl:
-                return level < 3;
-            case TechnologyType.ResearchFleetLvl:
-                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchMaxFleets].level && level < 3;
-            case TechnologyType.ResearchMaxFleets:
-                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchStationLvl].level && level < 3;
+            //case TechnologyType.ResearchStationLvl:
+            //    return level < 3;
+            //case TechnologyType.ResearchFleetLvl:
+            //    return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchMaxFleets].level && level < 3;
+            //case TechnologyType.ResearchMaxFleets:
+            //    return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchStationLvl].level && level < 3;
             case TechnologyType.ResearchHP:
-                return level < (GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level+
-                    GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level+
-                    GameManager.i.MyStation.technology[(int)TechnologyType.ResearchThermal].level);
-            case TechnologyType.ResearchMining:
                 return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchHP].level;
-            case TechnologyType.ResearchKinetic:
-                return level <= GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
-            case TechnologyType.ResearchThermal:
-                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level;
-            case TechnologyType.ResearchExplosive:
-                return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchThermal].level;
+            case TechnologyType.ResearchMining:
+                return level < (GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level +
+                    GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level +
+                    GameManager.i.MyStation.technology[(int)TechnologyType.ResearchThermal].level);
+            //case TechnologyType.ResearchKinetic:
+            //    return level <= GameManager.i.MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
+            //case TechnologyType.ResearchThermal:
+            //    return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchKinetic].level;
+            //case TechnologyType.ResearchExplosive:
+            //    return level < GameManager.i.MyStation.technology[(int)TechnologyType.ResearchThermal].level;
             default: return true;
         }
     }

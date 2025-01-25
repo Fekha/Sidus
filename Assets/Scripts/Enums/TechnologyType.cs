@@ -6,8 +6,8 @@ public enum TechnologyType
     ResearchMaxFleets,
     ResearchFleetLvl,
     ResearchKinetic,
-    ResearchHP,
     ResearchMining,
+    ResearchHP,
     ResearchThermal,
     ResearchExplosive,
 }

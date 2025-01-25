@@ -18,10 +18,10 @@ public class Bomber : Unit
         unitType = UnitType.Bomber;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, _mining, _station.facing, UnitType.Bomber);
         currentPathNode.SetNodeColor(playerGuid);
-        if (_bombGuid != null)
-        {
-            var bomb = GridManager.i.Deploy(this, (Guid)_bombGuid, _station.currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)(_station.facing+1)%6]), UnitType.Bomb,null,true);
-            bomb.currentPathNode.SetNodeColor(playerGuid);
-        }
+        //if (_bombGuid != null)
+        //{
+        //    var bomb = GridManager.i.Deploy(this, (Guid)_bombGuid, _station.currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)(_station.facing+1)%6]), UnitType.Bomb,null,true);
+        //    bomb.currentPathNode.SetNodeColor(playerGuid);
+        //}
     }
 }

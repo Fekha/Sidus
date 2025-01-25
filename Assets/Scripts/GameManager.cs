@@ -332,7 +332,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                alertString += "cause it to explode. One round of Explosive combat will take place, if you take damage you will also lose 1 movement.";
+                alertString += "cause it to explode and you will lose 1 movement. One round of Explosive combat will also take place.";
             }
             ShowCustomAlertPanel(alertString);
         }
@@ -1251,7 +1251,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        nextNode.unitOnPath.RegenHP(2);
+                        nextNode.unitOnPath.RegenHP(Constants.HPGain);
                     }
                 }
             }
@@ -1564,7 +1564,7 @@ public class GameManager : MonoBehaviour
                 modifytext = $"({s1Dmg}{modifierSymbol}{s1DT})";
             }
             returnText += $"<b>{s1.playerColor.ToString()} took <u>{damage}{modifytext} damage</u></b>";
-            if (s2.unitType == UnitType.Bomb && damage > 0)
+            if (s2.unitType == UnitType.Bomb)
             {
                 s1.subtractMovement(1);
                 returnText += $", lost 1 movement,";
@@ -1586,7 +1586,7 @@ public class GameManager : MonoBehaviour
                 modifytext = $"({s2Dmg}{modifierSymbol}{s2DT})";
             }
             returnText += $"<b>{s2.playerColor.ToString()} took <u>{damage}{modifytext} damage</u></b>";
-            if (s1.unitType == UnitType.Bomb && damage > 0)
+            if (s1.unitType == UnitType.Bomb)
             {
                 s2.subtractMovement(1);
                 returnText += $", lost 1 movement,";
@@ -1849,21 +1849,21 @@ public class GameManager : MonoBehaviour
                 for (int i = 0; i < turnsFromServer.Count(); i++)
                 {
                     Stations[i].GainCredits(Constants.MaxActions - turnsFromServer.FirstOrDefault(x=>x.PlayerColor == i).Actions.Count(), Stations[i], false, false);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.1f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
                 }
                 yield return StartCoroutine(WaitforSecondsOrTap(1f));
-                turnValue.text = $"Repair Phase.\n\n+3 HP per unused movement.";
+                turnValue.text = $"Repair Phase.\n\n+{Constants.HPGain} HP per unused movement.";
                 foreach (var unit in AllUnits)
                 {
                     var healing = 0;
                     //if (!unit.hasTakenDamage)
                     //    healing += 1;
                     if (unit.movementLeft > 0)
-                        healing += unit.movementLeft * 3;
-                    if (healing > 0)
+                        healing += unit.movementLeft * Constants.HPGain;
+                    if (healing > 0 && unit.maxHP > unit.HP)
                     {
                         unit.RegenHP(healing);
-                        yield return StartCoroutine(WaitforSecondsOrTap(.1f));
+                        yield return StartCoroutine(WaitforSecondsOrTap(.5f));
                     }
                 }
                 yield return StartCoroutine(WaitforSecondsOrTap(1f));
@@ -2157,7 +2157,7 @@ public class GameManager : MonoBehaviour
                         Debug.Log($"{unit.unitName} not eligible for {GetDescription(action.actionType)}");
                     }
                     unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                     unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.DeployBomb)
@@ -2171,7 +2171,7 @@ public class GameManager : MonoBehaviour
                             PerformUpdates(action, Constants.Create);
                             StartCoroutine(FloatingTextAnimation($"New Bomb", newBomb.transform, newBomb));
                             unit.selectIcon.SetActive(true);
-                            yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                            yield return StartCoroutine(WaitforSecondsOrTap(1f));
                             unit.selectIcon.SetActive(false);
                             if (newBomb.currentPathNode.unitOnPath.unitGuid != newBomb.unitGuid)
                                 yield return StartCoroutine(DoCombat(newBomb, newBomb.currentPathNode));
@@ -2205,7 +2205,7 @@ public class GameManager : MonoBehaviour
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}";
                     }
                     unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                     unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.BidOnModule)
@@ -2226,7 +2226,7 @@ public class GameManager : MonoBehaviour
                         currentStation.GainCredits(1, currentStation);
                     }
                     unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                     unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.AttachModule)
@@ -2258,7 +2258,7 @@ public class GameManager : MonoBehaviour
                         turnValue.text += $"Could not perform {GetDescription(action.actionType)}, max attached modules";
                     }
                     unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                     unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.SwapModule)
@@ -2286,7 +2286,7 @@ public class GameManager : MonoBehaviour
                             turnValue.text += $"Could not perform {GetDescription(action.actionType)}, module not available";
                         }
                         unit.selectIcon.SetActive(true);
-                        yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                        yield return StartCoroutine(WaitforSecondsOrTap(1f));
                         unit.selectIcon.SetActive(false);
                     }
                     else
@@ -2300,7 +2300,7 @@ public class GameManager : MonoBehaviour
                     PerformUpdates(action, Constants.Create);
                     turnValue.text += $"New HP/Max: {Mathf.Min(unit.maxHP, unit.HP)}/{unit.maxHP}";
                     unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                     unit.selectIcon.SetActive(false);
                 }
                 else if (TechActions.Contains(action.actionType))
@@ -2310,7 +2310,7 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(FloatingTextAnimation($"+Tech", unit.transform, unit));
                     PerformUpdates(action, Constants.Create);
                     unit.selectIcon.SetActive(true);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                     unit.selectIcon.SetActive(false);
                 }
                 else if (action.actionType == ActionType.UnlockAction)
@@ -2318,7 +2318,7 @@ public class GameManager : MonoBehaviour
                     turnValue.text += $"{GetDescription(action.actionType)}";
                     StartCoroutine(FloatingTextAnimation($"+Action", unit.transform, unit));
                     PerformUpdates(action, Constants.Create);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 }
                 else
                 {

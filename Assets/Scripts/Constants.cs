@@ -19,4 +19,5 @@ public static class Constants{
     internal static int Remove = -1;
     internal static int StartingCredits = 5;
     internal static float MovementSpeed = .8f;
+    internal static int HPGain = 3;
 }
