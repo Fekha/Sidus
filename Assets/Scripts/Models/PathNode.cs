@@ -114,6 +114,7 @@ public class PathNode : MonoBehaviour
             }
             if (GameManager.i.isDragging)
             {
+                GameManager.i.recenterButton.SetActive(true);
                 parentTransform.position = currentMousePosition + offset;
             }
         }

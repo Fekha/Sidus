@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
     public GameObject loadingPanel;
     public GameObject exitPanel;
     public GameObject forfietPanel;
+    public GameObject recenterButton;
 
     private List<GameObject> currentPathObjects = new List<GameObject>();
     private List<PathNode> SelectedPath;

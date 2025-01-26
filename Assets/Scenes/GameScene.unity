@@ -941,6 +941,7 @@ MonoBehaviour:
   loadingPanel: {fileID: 1066338202}
   exitPanel: {fileID: 1916424797}
   forfietPanel: {fileID: 766857481}
+  recenterButton: {fileID: 480227143}
   ActionBar: {fileID: 1538388384}
   UnitModuleBar: {fileID: 2084846243}
   ModuleGrid: {fileID: 1330887038}
@@ -4904,7 +4905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &480227144
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4912,16 +4913,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 480227143}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: -1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.99988127, y: 0.99988127, z: 0.9998812}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1617389286}
+  m_Father: {fileID: 1494187847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150.5, y: -21.5}
+  m_AnchoredPosition: {x: 415, y: -389}
   m_SizeDelta: {x: 43, y: 43}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &480227145
@@ -17238,6 +17239,7 @@ RectTransform:
   - {fileID: 767348386}
   - {fileID: 1376014662}
   - {fileID: 1957323346}
+  - {fileID: 480227144}
   - {fileID: 1617389286}
   - {fileID: 1219080370}
   - {fileID: 1898863586}
@@ -18248,7 +18250,6 @@ RectTransform:
   - {fileID: 982619061}
   - {fileID: 998305392}
   - {fileID: 1213562557}
-  - {fileID: 480227144}
   - {fileID: 478472631}
   m_Father: {fileID: 1494187847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}

@@ -84,6 +84,7 @@ public class GridManager : MonoBehaviour
     }
     public void RecreateGrid()
     {
+        GameManager.i.recenterButton.SetActive(false);
         GameManager.i.DeselectMovement();
         foreach (Transform child in GameObject.Find("Nodes").transform)
         {
