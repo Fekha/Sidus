@@ -491,7 +491,26 @@ public class GameManager : MonoBehaviour
                     //Double click confirm to movement
                     else if (SelectedUnit != null && SelectedNode != null && targetNode == SelectedNode && SelectedPath != null && SelectedUnit.playerGuid == MyStation.playerGuid && SelectedUnit.unitType != UnitType.Bomb && !HasQueuedMovement(SelectedUnit))
                     {
-                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, SelectedPath));
+                        var unitOnPath = SelectedPath.Last().unitOnPath;
+                        var unit = SelectedUnit; 
+                        QueueAction(new Action(ActionType.MoveUnit, SelectedUnit, null, SelectedPath)); 
+                        if (unitOnPath != null && unitOnPath.teamId != unit.teamId)
+                        {                            
+                            unitOnPath.SetSupportValues();
+                            var unitKineticDmg = unit.GetDamage(unitOnPath, AttackType.Kinetic);
+                            var unitThermalDmg = unit.GetDamage(unitOnPath, AttackType.Thermal);
+                            var unitExplosiveDmg = unit.GetDamage(unitOnPath, AttackType.Explosive);
+                            var kineticString = "\nKinetic Phase:\n" + (unitKineticDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitKineticDmg + unit.kineticDamageTaken} HP</u></b>" : unitKineticDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitKineticDmg) + unitOnPath.kineticDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            var thermalString = "\nThermal Phase:\n" + (unitThermalDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitThermalDmg + unit.thermalDamageTaken} HP</u></b>" : unitThermalDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitThermalDmg) + unitOnPath.thermalDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            var explosiveString = "\nExplosive Phase:\n" + (unitExplosiveDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitExplosiveDmg + unit.explosiveDamageTaken} HP</u></b>" : unitExplosiveDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitExplosiveDmg) + unitOnPath.explosiveDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            if (unitOnPath.unitType == UnitType.Bomb || unit.unitType == UnitType.Bomb)
+                            {
+                                kineticString = "";
+                                thermalString = "";
+                                explosiveString += " and 1 movement.";
+                            }
+                            ShowCustomAttackPanel($"Movement Queued.\nPredicted combat outcome:\n{kineticString}{thermalString}{explosiveString}");
+                        }
                     }
                     //Create Deploy
                     else if (SelectedUnit != null && targetNode != null && SelectedUnit.playerGuid == MyStation.playerGuid && currentDeployRange.Select(x => x.currentPathNode).Contains(targetNode))
@@ -517,25 +536,6 @@ public class GameManager : MonoBehaviour
                         SelectedUnit.subtractMovement(SelectedPath.Last().gCost);
                         DrawPath(SelectedPath);
                         HighlightMovementRange(SelectedNode, SelectedUnit);
-                        if (SelectedPath.Last().unitOnPath != null && SelectedPath.Last().unitOnPath.teamId != SelectedUnit.teamId)
-                        {
-                            var unitOnPath = SelectedPath.Last().unitOnPath;
-                            unitOnPath.SetSupportValues();
-                            var unitKineticDmg = SelectedUnit.GetDamage(unitOnPath, AttackType.Kinetic);
-                            var unitThermalDmg = SelectedUnit.GetDamage(unitOnPath, AttackType.Thermal);
-                            var unitExplosiveDmg = SelectedUnit.GetDamage(unitOnPath, AttackType.Explosive);
-                            var kineticString = "\nKinetic Phase:\n" + (unitKineticDmg > 0 ? $"<b>{SelectedUnit.playerColor} loses <u>{unitKineticDmg+SelectedUnit.kineticDamageTaken} HP</u></b>" : unitKineticDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitKineticDmg)+ unitOnPath.kineticDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
-                            var thermalString = "\nThermal Phase:\n" + (unitThermalDmg > 0 ? $"<b>{SelectedUnit.playerColor} loses <u>{unitThermalDmg + SelectedUnit.thermalDamageTaken} HP</u></b>" : unitThermalDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitThermalDmg) + unitOnPath.thermalDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
-                            var explosiveString = "\nExplosive Phase:\n" + (unitExplosiveDmg > 0 ? $"<b>{SelectedUnit.playerColor} loses <u>{unitExplosiveDmg + SelectedUnit.explosiveDamageTaken} HP</u></b>" : unitExplosiveDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitExplosiveDmg) + unitOnPath.explosiveDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
-                            if (unitOnPath.unitType == UnitType.Bomb || SelectedUnit.unitType == UnitType.Bomb)
-                            {
-                                kineticString = "";
-                                thermalString = "";
-                                if (unitExplosiveDmg != 0)
-                                    explosiveString += " and 1 movement.";
-                            }
-                            ShowCustomAttackPanel($"Predicted combat outcome:\n{kineticString}{thermalString}{explosiveString}");
-                        }
                     }
                     //Clicked on invalid tile, clear
                     else
