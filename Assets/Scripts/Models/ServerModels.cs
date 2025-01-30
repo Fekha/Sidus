@@ -68,7 +68,7 @@ namespace Models
         public int MaxActions { get; set; }
         public int FleetCount { get; set; }
         public int BonusKinetic { get; set; }
-        public int BonusThermal { get; set; }
+        public int BonusThermal { get; set; } //TODO Remove
         public int BonusExplosive { get; set; }
         public int BonusHP { get; set; }
         public int BonusMining { get; set; }
@@ -87,7 +87,7 @@ namespace Models
         public int TechnologyId { get; set; }
         public int Level { get; set; }
         public int CurrentAmount { get; set; }
-        public int NeededAmount { get; set; }
+        public int NeededAmount { get; set; } //TODO Remove
         public string? EffectText { get; set; }
         public string? CurrentEffectText { get; set; }
         public string? RequirementText { get; set; }
@@ -129,13 +129,13 @@ namespace Models
         public int MovementLeft { get; set; }
         public int DeployRange { get; set; }
         public int KineticPower { get; set; }
-        public int ThermalPower { get; set; }
+        public int ThermalPower { get; set; }//TODO Remove
         public int ExplosivePower { get; set; }
         public int KineticDamageModifier { get; set; }
-        public int ThermalDamageModifier { get; set; }
+        public int ThermalDamageModifier { get; set; }//TODO Remove
         public int ExplosiveDamageModifier { get; set; }
         public int KineticDeployPower { get; set; }
-        public int ThermalDeployPower { get; set; }
+        public int ThermalDeployPower { get; set; }//TODO Remove
         public int ExplosiveDeployPower { get; set; }
         public int MaxMining { get; set; }
         public int MiningLeft { get; set; }

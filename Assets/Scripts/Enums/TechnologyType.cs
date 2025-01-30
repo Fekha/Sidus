@@ -8,7 +8,7 @@ public enum TechnologyType
     ResearchKinetic,
     ResearchMining,
     ResearchHP,
-    ResearchThermal,
+    //ResearchThermal,
     ResearchExplosive,
 }
 

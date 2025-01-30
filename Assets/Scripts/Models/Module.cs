@@ -85,11 +85,11 @@ public class Module
             var sign = moduleStats.KineticPower > 0 ? "+" : "";
             effectText += $"{sign}{moduleStats.KineticPower} Kinetic Power\n";
         }
-        if (moduleStats.ThermalPower != 0)
-        {
-            var sign = moduleStats.ThermalPower > 0 ? "+" : "";
-            effectText += $"{sign}{moduleStats.ThermalPower} Thermal Power\n";
-        }
+        //if (moduleStats.ThermalPower != 0)
+        //{
+        //    var sign = moduleStats.ThermalPower > 0 ? "+" : "";
+        //    effectText += $"{sign}{moduleStats.ThermalPower} Thermal Power\n";
+        //}
         if (moduleStats.ExplosivePower != 0)
         {
             var sign = moduleStats.ExplosivePower > 0 ? "+" : "";
@@ -100,11 +100,11 @@ public class Module
             var sign = moduleStats.KineticDamageTaken > 0 ? "+" : "";
             effectText += $"{sign}{moduleStats.KineticDamageTaken} Kinetic Damage Taken\n";
         }
-        if (moduleStats.ThermalDamageTaken != 0)
-        {
-            var sign = moduleStats.ThermalDamageTaken > 0 ? "+" : "";
-            effectText += $"{sign}{moduleStats.ThermalDamageTaken} Thermal Damage Taken\n";
-        }
+        //if (moduleStats.ThermalDamageTaken != 0)
+        //{
+        //    var sign = moduleStats.ThermalDamageTaken > 0 ? "+" : "";
+        //    effectText += $"{sign}{moduleStats.ThermalDamageTaken} Thermal Damage Taken\n";
+        //}
         if (moduleStats.ExplosiveDamageTaken != 0)
         {
             var sign = moduleStats.ExplosiveDamageTaken > 0 ? "+" : "";
@@ -131,14 +131,14 @@ public class Module
             unit.IncreaseMaxMining(moduleStats.MiningPower * modifier);
         if (moduleStats.KineticPower != 0)
             unit.kineticPower += moduleStats.KineticPower * modifier;
-        if (moduleStats.ThermalPower != 0)
-            unit.thermalPower += moduleStats.ThermalPower * modifier;
+        //if (moduleStats.ThermalPower != 0)
+        //    unit.thermalPower += moduleStats.ThermalPower * modifier;
         if (moduleStats.ExplosivePower != 0)
             unit.explosivePower += moduleStats.ExplosivePower * modifier;
         if (moduleStats.KineticDamageTaken != 0)
             unit.kineticDamageTaken += moduleStats.KineticDamageTaken * modifier;
-        if (moduleStats.ThermalDamageTaken != 0)
-            unit.thermalDamageTaken += moduleStats.ThermalDamageTaken * modifier;
+        //if (moduleStats.ThermalDamageTaken != 0)
+        //    unit.thermalDamageTaken += moduleStats.ThermalDamageTaken * modifier;
         if (moduleStats.ExplosiveDamageTaken != 0)
             unit.explosiveDamageTaken += moduleStats.ExplosiveDamageTaken * modifier;
         if (moduleStats.AbilityId != 0)

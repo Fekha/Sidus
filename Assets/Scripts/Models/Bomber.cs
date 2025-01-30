@@ -12,7 +12,7 @@ public class Bomber : Unit
         _station.fleetCount++;
         unitName = $"{(PlayerColor)_color} Bomber {_station.fleetCount}";
         kineticDeployPower = 1;
-        thermalDeployPower = 1;
+        //thermalDeployPower = 1;
         explosiveDeployPower = 1;
         deployRange = 2;
         unitType = UnitType.Bomber;

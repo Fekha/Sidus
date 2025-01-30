@@ -100,13 +100,13 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI miningValue;
     private TextMeshProUGUI rangeValue;
     private TextMeshProUGUI KineticValueText;
-    private TextMeshProUGUI ThermalValueText;
+    //private TextMeshProUGUI ThermalValueText;
     private TextMeshProUGUI ExplosiveValueText;
     private TextMeshProUGUI KineticDeployValueText;
-    private TextMeshProUGUI ThermalDeployValueText;
+    //private TextMeshProUGUI ThermalDeployValueText;
     private TextMeshProUGUI ExplosiveDeployValueText;
     private TextMeshProUGUI KineticTakenValueText;
-    private TextMeshProUGUI ThermalTakenValueText;
+    //private TextMeshProUGUI ThermalTakenValueText;
     private TextMeshProUGUI ExplosiveTakenValueText;
     private TextMeshProUGUI ModuleEffectText;
     private TextMeshProUGUI DeployRangeValueText;
@@ -296,13 +296,13 @@ public class GameManager : MonoBehaviour
         miningValue = infoPanel.transform.Find("S/V/C/MiningValue").GetComponent<TextMeshProUGUI>();
         rangeValue = infoPanel.transform.Find("S/V/C/MovementValue").GetComponent<TextMeshProUGUI>();        
         KineticValueText = infoPanel.transform.Find("S/V/C/KineticValue").GetComponent<TextMeshProUGUI>();
-        ThermalValueText = infoPanel.transform.Find("S/V/C/ThermalValue").GetComponent<TextMeshProUGUI>();
+        //ThermalValueText = infoPanel.transform.Find("S/V/C/ThermalValue").GetComponent<TextMeshProUGUI>();
         ExplosiveValueText = infoPanel.transform.Find("S/V/C/ExplosiveValue").GetComponent<TextMeshProUGUI>();
         KineticDeployValueText = infoPanel.transform.Find("S/V/C/KineticDeployValue").GetComponent<TextMeshProUGUI>();
-        ThermalDeployValueText = infoPanel.transform.Find("S/V/C/ThermalDeployValue").GetComponent<TextMeshProUGUI>();
+        //ThermalDeployValueText = infoPanel.transform.Find("S/V/C/ThermalDeployValue").GetComponent<TextMeshProUGUI>();
         ExplosiveDeployValueText = infoPanel.transform.Find("S/V/C/ExplosiveDeployValue").GetComponent<TextMeshProUGUI>();
         KineticTakenValueText = infoPanel.transform.Find("S/V/C/KineticTakenValue").GetComponent<TextMeshProUGUI>();
-        ThermalTakenValueText = infoPanel.transform.Find("S/V/C/ThermalTakenValue").GetComponent<TextMeshProUGUI>();
+        //ThermalTakenValueText = infoPanel.transform.Find("S/V/C/ThermalTakenValue").GetComponent<TextMeshProUGUI>();
         ExplosiveTakenValueText = infoPanel.transform.Find("S/V/C/ExplosiveTakenValue").GetComponent<TextMeshProUGUI>();
         ModuleEffectText = infoPanel.transform.Find("S/V/C/ModuleInformation").GetComponent<TextMeshProUGUI>();
         DeployRangeValueText = infoPanel.transform.Find("S/V/C/DeployRangeValue").GetComponent<TextMeshProUGUI>();
@@ -348,15 +348,15 @@ public class GameManager : MonoBehaviour
                 HPValue.text = "?/?";
                 rangeValue.text = "?/?";
                 KineticValueText.text = "?";
-                ThermalValueText.text = "?";
+                //ThermalValueText.text = "?";
                 ExplosiveValueText.text = "?";
                 ModuleEffectText.text = "?";
                 miningValue.text = "?";
                 KineticDeployValueText.text = "?";
-                ThermalDeployValueText.text = "?";
+                //ThermalDeployValueText.text = "?";
                 ExplosiveDeployValueText.text = "?";
                 KineticTakenValueText.text = "?";
-                ThermalTakenValueText.text = "?";
+                //ThermalTakenValueText.text = "?";
                 ExplosiveTakenValueText.text = "?";
                 DeployRangeValueText.text = "?";
             }
@@ -375,22 +375,22 @@ public class GameManager : MonoBehaviour
                 ModuleEffectText.text.Substring(0, ModuleEffectText.text.Length - 1);
                 miningValue.text = unit.maxMining.ToString();
                 var kineticPower = $"{unit.kineticPower}";
-                var thermalPower = $"{unit.thermalPower}";
+                //var thermalPower = $"{unit.thermalPower}";
                 var explosivePower = $"{unit.explosivePower}";
                 unit.SetSupportValues(true);
                 kineticPower += unit.kineticSupportPower > 0 ? $" (+{unit.kineticSupportPower})" : "";
-                thermalPower += unit.thermalSupportPower > 0 ? $" (+{unit.thermalSupportPower})" : "";
+                //thermalPower += unit.thermalSupportPower > 0 ? $" (+{unit.thermalSupportPower})" : "";
                 explosivePower += unit.explosiveSupportPower > 0 ? $" (+{unit.explosiveSupportPower})" : "";
                 KineticValueText.text = $"{kineticPower}";
-                ThermalValueText.text = $"{thermalPower}";
+                //ThermalValueText.text = $"{thermalPower}";
                 ExplosiveValueText.text = $"{explosivePower}";
                 KineticDeployValueText.text = $"{unit.kineticDeployPower}";
-                ThermalDeployValueText.text = $"{unit.thermalDeployPower}";
+                //ThermalDeployValueText.text = $"{unit.thermalDeployPower}";
                 ExplosiveDeployValueText.text = $"{unit.explosiveDeployPower}";
                 var symbol = unit.kineticDamageTaken > 0 ? "+" : "";
                 KineticTakenValueText.text = $"{symbol}{unit.kineticDamageTaken}";
-                symbol = unit.thermalDamageTaken > 0 ? "+" : "";
-                ThermalTakenValueText.text = $"{symbol}{unit.thermalDamageTaken}";
+                //symbol = unit.thermalDamageTaken > 0 ? "+" : "";
+                //ThermalTakenValueText.text = $"{symbol}{unit.thermalDamageTaken}";
                 symbol = unit.explosiveDamageTaken > 0 ? "+" : "";
                 ExplosiveTakenValueText.text = $"{symbol}{unit.explosiveDamageTaken}";
             }
@@ -498,18 +498,19 @@ public class GameManager : MonoBehaviour
                         {                            
                             unitOnPath.SetSupportValues();
                             var unitKineticDmg = unit.GetDamage(unitOnPath, AttackType.Kinetic);
-                            var unitThermalDmg = unit.GetDamage(unitOnPath, AttackType.Thermal);
+                            //var unitThermalDmg = unit.GetDamage(unitOnPath, AttackType.Thermal);
                             var unitExplosiveDmg = unit.GetDamage(unitOnPath, AttackType.Explosive);
                             var kineticString = "\nKinetic Phase:\n" + (unitKineticDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitKineticDmg + unit.kineticDamageTaken} HP</u></b>" : unitKineticDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitKineticDmg) + unitOnPath.kineticDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
-                            var thermalString = "\nThermal Phase:\n" + (unitThermalDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitThermalDmg + unit.thermalDamageTaken} HP</u></b>" : unitThermalDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitThermalDmg) + unitOnPath.thermalDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
+                            //var thermalString = "\nThermal Phase:\n" + (unitThermalDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitThermalDmg + unit.thermalDamageTaken} HP</u></b>" : unitThermalDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitThermalDmg) + unitOnPath.thermalDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
                             var explosiveString = "\nExplosive Phase:\n" + (unitExplosiveDmg > 0 ? $"<b>{unit.playerColor} loses <u>{unitExplosiveDmg + unit.explosiveDamageTaken} HP</u></b>" : unitExplosiveDmg < 0 ? $"<b>{unitOnPath.playerColor} loses <u>{Mathf.Abs(unitExplosiveDmg) + unitOnPath.explosiveDamageTaken} HP</u></b>" : "<b><u>No damage taken.</u></b>");
                             if (unitOnPath.unitType == UnitType.Bomb || unit.unitType == UnitType.Bomb)
                             {
                                 kineticString = "";
-                                thermalString = "";
+                                //thermalString = "";
                                 explosiveString += " and 1 movement.";
                             }
-                            ShowCustomAttackPanel($"Movement Queued.\nPredicted combat outcome:\n{kineticString}{thermalString}{explosiveString}");
+                            //ShowCustomAttackPanel($"Movement Queued.\nPredicted combat outcome:\n{kineticString}{thermalString}{explosiveString}");
+                            ShowCustomAttackPanel($"Movement Queued.\nPredicted combat outcome:\n{kineticString}{explosiveString}");
                         }
                     }
                     //Create Deploy
@@ -604,7 +605,8 @@ public class GameManager : MonoBehaviour
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
             var extraBonus = action.selectedUnit.level == 2 ? "+2 Mining Power" : action.selectedUnit.level == 3 ? "+1 Max Movement" : "+1 Deploy Range";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP.\n+2 Kinetic, Thermal, and Explosive Power.\n{extraBonus}.";
+            //var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP.\n+2 Kinetic, Thermal, and Explosive Power.\n{extraBonus}.";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP.\n+2 Kinetic and Explosive Power.\n{extraBonus}.";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
@@ -678,12 +680,13 @@ public class GameManager : MonoBehaviour
             if (i == (int)TechnologyType.ResearchKinetic)
             {
                 techLevel = MyStation.technology[(int)TechnologyType.ResearchKinetic].level 
-                    + MyStation.technology[(int)TechnologyType.ResearchThermal].level 
                     + MyStation.technology[(int)TechnologyType.ResearchExplosive].level;
-                if (MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchThermal].level)
-                {
-                    i = (int)TechnologyType.ResearchThermal;
-                }else if(MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchExplosive].level)
+                    //+ MyStation.technology[(int)TechnologyType.ResearchThermal].level 
+                //if (MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchThermal].level)
+                //{
+                //    i = (int)TechnologyType.ResearchThermal;
+                //}
+                if (MyStation.technology[(int)TechnologyType.ResearchKinetic].level > MyStation.technology[(int)TechnologyType.ResearchExplosive].level)
                 {
                     i = (int)TechnologyType.ResearchExplosive;
                 }
@@ -1473,10 +1476,10 @@ public class GameManager : MonoBehaviour
         {
             unit.kineticPower += 2;
         }  
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal3))
-        {
-            unit.thermalPower += 2;
-        }
+        //if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal3))
+        //{
+        //    unit.thermalPower += 2;
+        //}
         if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive3))
         {
             unit.explosivePower += 2;
@@ -1519,28 +1522,28 @@ public class GameManager : MonoBehaviour
         int s2Dmg = eDmg < 0 ? Mathf.Abs(eDmg) : 0;
         int s1DT = s1.explosiveDamageTaken;
         int s2DT = s2.explosiveDamageTaken;
-        string support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.explosivePower}+{ s1.explosiveSupportPower})" : "";
-        string support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.explosivePower}+{ s2.explosiveSupportPower})" : "";
+        string support1Text = ( s1.explosiveSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.explosivePower}+{s1.explosiveSupportPower})" : "";
+        string support2Text = ( s2.explosiveSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.explosivePower}+{s2.explosiveSupportPower})" : "";
         string power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.explosivePower +  s1.explosiveSupportPower}";
         string power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.explosivePower +  s2.explosiveSupportPower}";
         if (type == AttackType.Kinetic)
         {
             s1DT = s1.kineticDamageTaken;
             s2DT = s2.kineticDamageTaken;
-            support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.kineticPower}+{ s1.kineticSupportPower})" : "";
-            support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.kineticPower}+{ s2.kineticSupportPower})" : "";
+            support1Text = ( s1.kineticSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.kineticPower}+{s1.kineticSupportPower})" : "";
+            support2Text = ( s2.kineticSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.kineticPower}+{s2.kineticSupportPower})" : "";
             power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.kineticPower +  s1.kineticSupportPower}";
             power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.kineticPower +  s2.kineticSupportPower}";
         }
-        else if (type == AttackType.Thermal)
-        {
-            s1DT = s1.thermalDamageTaken;
-            s2DT = s2.thermalDamageTaken;
-            support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.thermalPower}+{ s1.thermalSupportPower})" : "";
-            support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.thermalPower}+{ s2.thermalSupportPower})" : "";
-            power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower +  s1.thermalSupportPower}";
-            power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower +  s2.thermalSupportPower}";
-        }
+        //else if (type == AttackType.Thermal)
+        //{
+        //    s1DT = s1.thermalDamageTaken;
+        //    s2DT = s2.thermalDamageTaken;
+        //    support1Text = ( s1.thermalSupportPower > 0 && !s1.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s1.thermalPower}+{ s1.thermalSupportPower})" : "";
+        //    support2Text = ( s2.thermalSupportPower > 0 && !s2.moduleEffects.Contains(ModuleEffect.HiddenStats)) ? $"({s2.thermalPower}+{ s2.thermalSupportPower})" : "";
+        //    power1Text = s1.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s1.thermalPower +  s1.thermalSupportPower}";
+        //    power2Text = s2.moduleEffects.Contains(ModuleEffect.HiddenStats) ? "?" : $"{s2.thermalPower +  s2.thermalSupportPower}";
+        //}
         var returnText = "";
         var modifytext = "";
         if (s1.unitType == UnitType.Bomb && s2.unitType == UnitType.Bomb)
@@ -1610,19 +1613,20 @@ public class GameManager : MonoBehaviour
         phaseText.text = "Phase:\n";
         if (type is AttackType.Kinetic)
         {
-            phaseText.text += $"<b>Kinetic</b> Thermal Explosive";
+            //phaseText.text += $"<b>Kinetic</b> Thermal Explosive";
+            phaseText.text += $"<b>Kinetic</b> Explosive";
             turnArchive.Add(new Tuple<string, string>($"    Combat: Kinetic Phase", returnText));
 
         }
-        else if (type is AttackType.Thermal)
-        {
-            phaseText.text += $"Kinetic <b>Thermal</b> Explosive";
-            turnArchive.Add(new Tuple<string, string>($"    Combat: Thermal Phase ", returnText));
-
-        }
+        //else if (type is AttackType.Thermal)
+        //{
+        //    phaseText.text += $"Kinetic <b>Thermal</b> Explosive";
+        //    turnArchive.Add(new Tuple<string, string>($"    Combat: Thermal Phase ", returnText));
+        //}
         else
         {
-            phaseText.text += $"Kinetic Thermal <b>Explosive</b>";
+            //phaseText.text += $"Kinetic Thermal <b>Explosive</b>";
+            phaseText.text += $"Kinetic <b>Explosive</b>";
             turnArchive.Add(new Tuple<string, string>($"    Combat: Explosive Phase", returnText));
 
         }
@@ -1757,7 +1761,7 @@ public class GameManager : MonoBehaviour
                             ModulesGuids = String.Join(",", MyStation.modules.Select(x => x.moduleGuid)),
                             Credits = MyStation.credits,
                             BonusKinetic = MyStation.bonusKinetic,
-                            BonusThermal = MyStation.bonusThermal,
+                            //BonusThermal = MyStation.bonusThermal,
                             BonusExplosive = MyStation.bonusExplosive,
                             BonusMining = MyStation.bonusMining,
                             Score = MyStation.score,
@@ -1828,7 +1832,7 @@ public class GameManager : MonoBehaviour
                 }
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits = player.Credits;
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusKinetic = player.BonusKinetic;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusThermal = player.BonusThermal;
+                //Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusThermal = player.BonusThermal;
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusExplosive = player.BonusExplosive;
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusMining = player.BonusMining;
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).score = player.Score;
@@ -2304,7 +2308,7 @@ public class GameManager : MonoBehaviour
                 else if (TechActions.Contains(action.actionType))
                 {
                     var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
-                    turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText} ({tech.currentAmount + 1}/{tech.neededAmount})";
+                    turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText}";// ({tech.currentAmount + 1}/{tech.neededAmount})"
                     StartCoroutine(FloatingTextAnimation($"+Tech", unit.transform, unit));
                     PerformUpdates(action, Constants.Create);
                     unit.selectIcon.SetActive(true);
@@ -2466,9 +2470,9 @@ public class GameManager : MonoBehaviour
         unit.IncreaseMaxHP(3 * modifier);
         unit.kineticPower += (2 * modifier);
         unit.explosivePower += (2 * modifier);
-        unit.thermalPower += (2 * modifier);
+        //unit.thermalPower += (2 * modifier);
         unit.kineticDeployPower += (1 * modifier);
-        unit.thermalDeployPower += (1 * modifier);
+        //unit.thermalDeployPower += (1 * modifier);
         unit.explosiveDeployPower += (1 * modifier);
         if (modifier == Constants.Create)
             unit.level++;

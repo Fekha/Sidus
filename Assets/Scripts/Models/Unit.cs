@@ -20,16 +20,16 @@ public class Unit : Node
     internal int movementLeft;
     internal int deployRange;
     internal int kineticPower;
-    internal int thermalPower;
+    //internal int thermalPower;
     internal int explosivePower;
     internal int kineticSupportPower;
-    internal int thermalSupportPower;
+    //internal int thermalSupportPower;
     internal int explosiveSupportPower;
     internal int kineticDamageTaken;
-    internal int thermalDamageTaken;
+    //internal int thermalDamageTaken;
     internal int explosiveDamageTaken;
     internal int kineticDeployPower;
-    internal int thermalDeployPower;
+    //internal int thermalDeployPower;
     internal int explosiveDeployPower;
     internal int maxMining;
     internal int miningLeft;
@@ -62,7 +62,7 @@ public class Unit : Node
         maxMovement = _range;
         movementLeft = _range;
         kineticPower = _electricAttack;
-        thermalPower = _thermalAttack;
+        //thermalPower = _thermalAttack;
         explosivePower = _voidAttack;
         maxMining = _mining;
         miningLeft = _mining;
@@ -87,13 +87,13 @@ public class Unit : Node
         maxMovement = unit.MaxMovement;
         movementLeft = unit.MovementLeft;
         kineticPower = unit.KineticPower;
-        thermalPower = unit.ThermalPower;
+        //thermalPower = unit.ThermalPower;
         explosivePower = unit.ExplosivePower;
         kineticDamageTaken = unit.KineticDamageModifier;
-        thermalDamageTaken = unit.ThermalDamageModifier;
+        //thermalDamageTaken = unit.ThermalDamageModifier;
         explosiveDamageTaken = unit.ExplosiveDamageModifier;
         kineticDeployPower = unit.KineticDeployPower;
-        thermalDeployPower = unit.ThermalDeployPower;
+        //thermalDeployPower = unit.ThermalDeployPower;
         explosiveDeployPower = unit.ExplosiveDeployPower;
         maxMining = unit.MaxMining;
         miningLeft = unit.MiningLeft;
@@ -220,7 +220,10 @@ public class Unit : Node
         {
             HPText.text = $"{Mathf.Min(maxHP, HP)}";
             if (unitType != UnitType.Bomb)
-                statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+            {
+                //statText.text = $"{kineticPower}|{thermalPower}|{explosivePower}";
+                statText.text = $"{kineticPower}|{explosivePower}";
+            }
             else
                 statText.text = $"{explosivePower}";
         }
@@ -249,13 +252,13 @@ public class Unit : Node
             MaxMovement = maxMovement,
             MovementLeft = movementLeft,
             KineticPower = kineticPower,
-            ThermalPower = thermalPower,
+            //ThermalPower = thermalPower,
             ExplosivePower = explosivePower,
             KineticDamageModifier = kineticDamageTaken,
-            ThermalDamageModifier = thermalDamageTaken,
+            //ThermalDamageModifier = thermalDamageTaken,
             ExplosiveDamageModifier = explosiveDamageTaken,
             KineticDeployPower = kineticDeployPower,
-            ThermalDeployPower = thermalDeployPower,
+            //ThermalDeployPower = thermalDeployPower,
             ExplosiveDeployPower = explosiveDeployPower,
             DeployRange = deployRange,
             MaxMining = maxMining,
@@ -352,7 +355,7 @@ public class Unit : Node
         if (forPrediction)
             supportingFleets = GameManager.i.AllUnits.Where(x => x.teamId == teamId && x.unitType != UnitType.Bomb && x != this && (x._selectedPath.LastOrDefault() == null ? neighbors.Contains(x.currentPathNode) : neighbors.Contains(x._selectedPath.LastOrDefault())));
         kineticSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.kineticPower * (x.moduleEffects.Contains(ModuleEffect.FullKineticSupport) ? 1 : .5))));
-        thermalSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * (x.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5))));
+        //thermalSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.thermalPower * (x.moduleEffects.Contains(ModuleEffect.FullThermalSupport) ? 1 : .5))));
         explosiveSupportPower = Convert.ToInt32(supportingFleets.Sum(x => Math.Floor(x.explosivePower * (x.moduleEffects.Contains(ModuleEffect.FullExplosiveSupport) ? 1 : .5))));
     }
 
@@ -360,8 +363,8 @@ public class Unit : Node
     {
         if (type == AttackType.Kinetic)
             return (attackedUnit.kineticPower + attackedUnit.kineticSupportPower) - (kineticPower + kineticSupportPower);
-        else if (type == AttackType.Thermal)
-            return (attackedUnit.thermalPower + attackedUnit.thermalSupportPower) - (thermalPower + thermalSupportPower);
+        //else if (type == AttackType.Thermal)
+        //    return (attackedUnit.thermalPower + attackedUnit.thermalSupportPower) - (thermalPower + thermalSupportPower);
         else
             return (attackedUnit.explosivePower + attackedUnit.explosiveSupportPower) - (explosivePower + explosiveSupportPower);
     }

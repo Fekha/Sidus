@@ -1,6 +1,6 @@
 public enum AttackType
 {
     Kinetic,
-    Thermal,
+    //Thermal,
     Explosive,
 }

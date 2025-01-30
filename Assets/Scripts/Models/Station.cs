@@ -14,7 +14,7 @@ public class Station : Unit
     internal int credits;
     internal int fleetCount;
     internal int bonusKinetic;
-    internal int bonusThermal;
+    //internal int bonusThermal;
     internal int bonusExplosive;
     internal int bonusHP;
     internal int bonusMining;
@@ -33,7 +33,7 @@ public class Station : Unit
         unitType = UnitType.Station;
         credits = _credits;
         kineticDeployPower = 3;
-        thermalDeployPower = 4;
+        //thermalDeployPower = 4;
         explosiveDeployPower = 5;
         deployRange = 1;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction, UnitType.Station);
@@ -50,7 +50,7 @@ public class Station : Unit
         credits = player.Credits;
         fleetCount = player.FleetCount;
         bonusKinetic = player.BonusKinetic;
-        bonusThermal = player.BonusThermal;
+        //bonusThermal = player.BonusThermal;
         bonusExplosive = player.BonusExplosive;
         bonusHP = player.BonusHP;
         bonusMining = player.BonusMining;
@@ -83,12 +83,12 @@ public class Station : Unit
         kineticPower += modifier;
         fleets.ForEach(x => x.kineticPower += modifier);
     }
-    internal void researchThermal(int modifier)
-    {
-        bonusThermal += modifier;
-        thermalPower += modifier;
-        fleets.ForEach(x => x.thermalPower += modifier);
-    }
+    //internal void researchThermal(int modifier)
+    //{
+    //    bonusThermal += modifier;
+    //    thermalPower += modifier;
+    //    fleets.ForEach(x => x.thermalPower += modifier);
+    //}
     internal void researchExplosive(int modifier)
     {
         bonusExplosive += modifier;

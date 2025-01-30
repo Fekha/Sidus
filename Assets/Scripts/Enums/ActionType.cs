@@ -36,8 +36,8 @@ public enum ActionType
     ResearchHP,
     [Description("Research Kinetic Power")]
     ResearchMining,
-    [Description("Research Thermal Power")]
-    ResearchThermal,
+    //[Description("Research Thermal Power")]
+    //ResearchThermal,
     [Description("Research Explosive Power")]
     ResearchExplosive,
 }

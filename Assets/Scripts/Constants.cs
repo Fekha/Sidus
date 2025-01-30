@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public static class Constants{
     internal static int ClientVersion = 25;
-    internal static int TechAmount = 8;
-    internal static int ShadowTechAmount = 2;
+    internal static int TechAmount = 7;
+    internal static int ShadowTechAmount = 1;
     internal static int MinTech = 11;
     internal static int MaxTech = MinTech+TechAmount;
     internal static int GridSize = 10;
@@ -19,6 +19,6 @@ public static class Constants{
     internal static int Remove = -1;
     internal static int StartingCredits = 5;
     internal static float MovementSpeed = .8f;
-    internal static int HPGain = 3;
+    internal static int HPGain = 2;
     internal static int NumberHelpPages = 9;
 }
