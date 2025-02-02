@@ -14,10 +14,14 @@ public enum ModuleEffect
     CombatHeal4,
     [Description("When entering combat:\nRepair 5 HP")]
     CombatHeal5,
+    [Description("When entering combat:\nGain 1 Kinetic Power")]
+    CombatKinetic1,
+    [Description("When entering combat:\nGain 1 Explosive Power")]
+    CombatExplosive1,
     [Description("When entering combat:\nGain 3 Kinetic Power")]
     CombatKinetic3,
-    [Description("When entering combat:\nGain 3 Thermal Power")]
-    CombatThermal3,
+    //[Description("When entering combat:\nGain 3 Thermal Power")]
+    //CombatThermal3,
     [Description("When entering combat:\nGain 3 Explosive Power")]
     CombatExplosive3,
     [Description("After destroying an asteroid:\nGain 3 Credits")]
@@ -38,8 +42,16 @@ public enum ModuleEffect
     AsteroidMining3,
     [Description("While supporting:\nProvide full Kinetic Power")]
     FullKineticSupport,
-    [Description("While supporting:\nProvide full Thermal Power")]
-    FullThermalSupport,
+    //[Description("While supporting:\nProvide full Thermal Power")]
+    //FullThermalSupport,
     [Description("While supporting:\nProvide full Explosive Power")]
     FullExplosiveSupport,
+    [Description("After destroying an asteroid:\nGain 2 Kinetic Power")]
+    AsteroidKinetic2,
+    [Description("After destroying an asteroid:\nGain 4 Kinetic Power")]
+    AsteroidKinetic4,
+    [Description("After destroying an asteroid:\nGain 2 Explosive Power")]
+    AsteroidExplosive2,
+    [Description("After destroying an asteroid:\nGain 4 Explosive Power")]
+    AsteroidExplosive4,
 }

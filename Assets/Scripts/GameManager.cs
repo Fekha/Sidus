@@ -1472,28 +1472,72 @@ public class GameManager : MonoBehaviour
         {
             unit.RegenHP(3);
         }
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatHeal5))
+        {
+            unit.RegenHP(5);
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic1))
+        {
+            unit.kineticPower += 1;
+        }  
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive1))
+        {
+            unit.explosivePower += 1;
+        }
         if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic3))
         {
-            unit.kineticPower += 2;
+            unit.kineticPower += 3;
         }  
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive3))
+        {
+            unit.explosivePower += 3;
+        }
         //if (unit.moduleEffects.Contains(ModuleEffect.CombatThermal3))
         //{
         //    unit.thermalPower += 2;
         //}
-        if (unit.moduleEffects.Contains(ModuleEffect.CombatExplosive3))
-        {
-            unit.explosivePower += 2;
-        }
     }
     private void CheckDestroyAsteroidModules(Unit unit)
     {
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining1))
+        {
+            unit.IncreaseMaxMining(1);
+        }
         if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining2))
         {
             unit.IncreaseMaxMining(2);
         }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidMining3))
+        {
+            unit.IncreaseMaxMining(3);
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits3))
+        {
+            GetStationByGuid(unit.playerGuid).GainCredits(3,unit,false,false);
+        }
         if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits5))
         {
             GetStationByGuid(unit.playerGuid).GainCredits(5,unit,false,false);
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidCredits7))
+        {
+            GetStationByGuid(unit.playerGuid).GainCredits(7,unit,false,false);
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidKinetic2))
+        {
+            unit.kineticPower+=2;
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidKinetic4))
+        {
+            unit.kineticPower += 4;
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidExplosive2))
+        {
+            unit.explosivePower += 2;
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.AsteroidExplosive4))
+        {
+            unit.explosivePower += 4;
         }
     }
 
