@@ -91,7 +91,7 @@ public class Technology
                 break;
             case TechnologyType.ResearchMining:
                 effectText = $"+1 mining power for all units.";
-                currentEffectText = $"\n(Current mining bonus: +{(level - 1 + modifier)*2})";
+                currentEffectText = $"\n(Current mining bonus: +{(level - 1 + modifier)})";
                 requirementText = "<b>Must research <u>power for all units</u> first</b>\n\n";
                 break;
             default:

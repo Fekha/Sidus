@@ -604,9 +604,9 @@ public class GameManager : MonoBehaviour
         }
         else if (action.actionType == ActionType.UpgradeFleet || action.actionType == ActionType.UpgradeStation)
         {
-            var extraBonus = action.selectedUnit.level == 2 ? "+2 Mining Power" : action.selectedUnit.level == 3 ? "+1 Max Movement" : "+1 Deploy Range";
+            var extraBonus = action.selectedUnit.level == 2 ? "Mining Power" : action.selectedUnit.level == 3 ? "Max Movement" : "Deploy Range";
             //var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP.\n+2 Kinetic, Thermal, and Explosive Power.\n{extraBonus}.";
-            var message = $"{action.selectedUnit.unitName} will gain:\n+3 Max HP.\n+2 Kinetic and Explosive Power.\n{extraBonus}.";
+            var message = $"{action.selectedUnit.unitName} will gain:\n+1 {extraBonus}.\n+{Constants.HPGain} Max HP.\n+3 Kinetic Power.\n+3 Explosive Power.";
             ShowCustomAlertPanel(message);
         }
         else if (action.actionType == ActionType.BidOnModule || action.actionType == ActionType.SwapModule || action.actionType == ActionType.AttachModule)
@@ -617,7 +617,7 @@ public class GameManager : MonoBehaviour
         else if (TechActions.Contains(action.actionType))
         {
             var tech = MyStation.technology[(int)action.actionType - Constants.MinTech];
-            ShowCustomAlertPanel(tech.effectText + "." + tech.currentEffectText);
+            ShowCustomAlertPanel(tech.effectText /*+ "." + tech.currentEffectText*/);
         }
         else if(action.actionType == ActionType.DeployFleet || action.actionType == ActionType.DeployBomb)
         {
@@ -695,7 +695,7 @@ public class GameManager : MonoBehaviour
             var canQueue = tech.GetCanQueueTech();
             var techObject = TechnologyObjects[i];
             techObject.transform.SetParent(technologyPanel.transform.Find("TechBar"));
-            var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText +"."+ tech.currentEffectText;
+            var infoText = (canQueue ? "" : tech.requirementText) + tech.effectText /*+"."+ tech.currentEffectText*/;
             techObject.transform.Find("Image").GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(infoText));
             techObject.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = $"{techLevel}";
             var researchButton = techObject.transform.Find("Research").GetComponent<Button>();
@@ -2457,7 +2457,7 @@ public class GameManager : MonoBehaviour
         unit.maxAttachedModules = Mathf.Max(unit.maxAttachedModules, Constants.MinModules);
         if (unit.level == 1)
         {
-            unit.IncreaseMaxMining(2 * modifier);
+            unit.IncreaseMaxMining(1 * modifier);
         }
         else if (unit.level == 2)
         {
@@ -2467,9 +2467,9 @@ public class GameManager : MonoBehaviour
         {
             unit.deployRange += (1 * modifier);
         }
-        unit.IncreaseMaxHP(3 * modifier);
-        unit.kineticPower += (2 * modifier);
-        unit.explosivePower += (2 * modifier);
+        unit.IncreaseMaxHP(Constants.HPGain * modifier);
+        unit.kineticPower += (3 * modifier);
+        unit.explosivePower += (3 * modifier);
         //unit.thermalPower += (2 * modifier);
         unit.kineticDeployPower += (1 * modifier);
         //unit.thermalDeployPower += (1 * modifier);
