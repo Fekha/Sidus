@@ -6,4 +6,5 @@ public enum GameSettingType
     Map1,
     Map2,
     Map3,
+    PracticeGame,
 }

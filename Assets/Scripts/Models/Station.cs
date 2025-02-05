@@ -20,7 +20,7 @@ public class Station : Unit
     internal int bonusMining;
     internal int score;
 
-    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid, Guid _bombGuid, int _credits)
+    public void InitializeStation(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _stationGuid, Direction _direction, Guid _fleetGuid, int _credits)
     {
         GameManager.i.Stations.Add(this);
         for (int i = 0; i < Constants.TechAmount; i++)
@@ -38,7 +38,7 @@ public class Station : Unit
         deployRange = 1;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction, UnitType.Station);
         currentPathNode.SetNodeColor(playerGuid);
-        var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Bomber, _bombGuid);
+        var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Bomber);
         fleet.currentPathNode.SetNodeColor(playerGuid);
     }
     public void InitializeStation(GamePlayer player)

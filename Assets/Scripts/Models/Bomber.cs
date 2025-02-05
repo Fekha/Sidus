@@ -4,7 +4,7 @@ using System;
 
 public class Bomber : Unit
 {
-    public void InitializeFleet(int _x, int _y, Station _station, int _color, int _hp, int _range, int _mining, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, Guid? _bombGuid)
+    public void InitializeFleet(int _x, int _y, Station _station, int _color, int _hp, int _range, int _mining, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid)
     {
         playerColor = _station.playerColor;
         playerGuid = _station.playerGuid;
@@ -18,10 +18,5 @@ public class Bomber : Unit
         unitType = UnitType.Bomber;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, _mining, _station.facing, UnitType.Bomber);
         currentPathNode.SetNodeColor(playerGuid);
-        //if (_bombGuid != null)
-        //{
-        //    var bomb = GridManager.i.Deploy(this, (Guid)_bombGuid, _station.currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)(_station.facing+1)%6]), UnitType.Bomb,null,true);
-        //    bomb.currentPathNode.SetNodeColor(playerGuid);
-        //}
     }
 }

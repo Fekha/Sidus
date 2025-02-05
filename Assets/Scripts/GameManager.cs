@@ -271,11 +271,11 @@ public class GameManager : MonoBehaviour
                     var readyState = TurnOrderObjects[i]?.transform?.Find("ReadyState")?.gameObject;
                     if (readyState != null)
                     {
-                        if (Globals.GameMatch.MaxPlayers > 1 && turn != null)
+                        if (!Globals.GameMatch.GameSettings.Contains("PracticeGame") && turn != null)
                         {
                             readyState.SetActive(turn.Players.FirstOrDefault(x => x.PlayerGuid == Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid) != null);
                         }
-                        else if (Globals.GameMatch.MaxPlayers == 1)
+                        else if (Globals.GameMatch.GameSettings.Contains("PracticeGame"))
                         {
                             readyState.SetActive(Stations[(TurnNumber - 1 + i) % Stations.Count].playerGuid != Globals.Account.PlayerGuid);
                         }
@@ -1474,6 +1474,10 @@ public class GameManager : MonoBehaviour
         }
         if (unit.moduleEffects.Contains(ModuleEffect.CombatHeal5))
         {
+            unit.RegenHP(4);
+        }
+        if (unit.moduleEffects.Contains(ModuleEffect.CombatHeal5))
+        {
             unit.RegenHP(5);
         }
         if (unit.moduleEffects.Contains(ModuleEffect.CombatKinetic1))
@@ -1758,6 +1762,13 @@ public class GameManager : MonoBehaviour
                 {
                     PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);
                 }
+                //Decide on CPU actions
+                if (Globals.GameMatch.GameSettings.Contains("PracticeGame"))
+                {
+                    var selectedUnit = AllUnits.FirstOrDefault(x => x.unitGuid == Constants.CPU1Guid);
+                    Stations[1].actions.Add(new Action(ActionType.ResearchKinetic, selectedUnit));
+                    Stations[1].actions.Add(new Action(ActionType.ResearchExplosive, selectedUnit));
+                }
                 List<int> actionOrders = new List<int>();
                 for (int i = 0; i <= Stations.Count * 5; i += Stations.Count)
                 {
@@ -1768,6 +1779,7 @@ public class GameManager : MonoBehaviour
                             actionOrders.Add(i+j+1);
                     }
                 }
+                //Send turn data to server
                 GameTurn gameTurn = new GameTurn()
                 {
                     GameGuid = Globals.GameMatch.GameGuid,
@@ -1814,6 +1826,44 @@ public class GameManager : MonoBehaviour
                         }
                     }
                 };
+                //CPU Turn
+                if (Globals.GameMatch.GameSettings.Contains("PracticeGame"))
+                {
+                    gameTurn.Players.Add(new GamePlayer()
+                    {
+                        GameGuid = Globals.GameMatch.GameGuid,
+                        TurnNumber = TurnNumber,
+                        PlayerColor = 1,
+                        PlayerGuid = Constants.CPU1Guid,
+                        PlayerName = "CPU",
+                        Actions = Stations[1].actions.Select((x, j) =>
+                            new ServerAction()
+                            {
+                                GameGuid = Globals.GameMatch.GameGuid,
+                                TurnNumber = TurnNumber,
+                                PlayerGuid = Constants.CPU1Guid,
+                                ActionOrder = actionOrders[j],
+                                ActionTypeId = (int)x.actionType,
+                                GeneratedGuid = x.generatedGuid,
+                                XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
+                                YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
+                                SelectedModuleGuid = x.selectedModuleGuid,
+                                SelectedUnitGuid = x.selectedUnit?.unitGuid,
+                                PlayerBid = x.playerBid,
+                            }).ToList(),
+                        Technology = Stations[1].technology.Select(x => x.ToServerTechnology()).ToList(),
+                        Units = Stations[1].GetServerUnits(),
+                        ModulesGuids = String.Join(",", Stations[1].modules.Select(x => x.moduleGuid)),
+                        Credits = Stations[1].credits,
+                        BonusKinetic = Stations[1].bonusKinetic,
+                        //BonusThermal = MyStation.bonusThermal,
+                        BonusExplosive = Stations[1].bonusExplosive,
+                        BonusMining = Stations[1].bonusMining,
+                        Score = Stations[1].score,
+                        FleetCount = Stations[1].fleetCount,
+                        MaxActions = Stations[1].maxActions
+                    });
+                }
                 //add effects back in case player wants to resubmit their turn
                 for (int i = 0; i < lastSubmittedTurn.Count(); i++)
                 {
@@ -2465,7 +2515,7 @@ public class GameManager : MonoBehaviour
         isEndingTurn = false;
         customAlertPanel.SetActive(false);
         customAttackPanel.SetActive(false);
-        if (Globals.GameMatch.MaxPlayers == 1) { UpdateGameTurnStatus(null,""); }
+        if (Globals.GameMatch.GameSettings.Contains("PracticeGame")) { UpdateGameTurnStatus(null,""); }
         Debug.Log($"New Turn {TurnNumber} Starting");
     }
 

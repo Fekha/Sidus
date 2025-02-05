@@ -55,7 +55,12 @@ public class GridManager : MonoBehaviour
         cellPrefabSize = nodePrefab.GetComponent<Renderer>().bounds.size;
         string jsonString = Globals.GameMatch.ModuleJson.Replace("\\\"", "\"").Trim('"');
         GameManager.i.AllModulesStats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ModuleStats>>(jsonString);
-        var currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.Count() == Globals.GameMatch.MaxPlayers).Last();
+        GameTurn currentGameTurn = currentGameTurn = Globals.GameMatch.GameTurns.LastOrDefault();
+        // I think this bad logic is so that if a player dies we want to show the turn before that
+        if (!Globals.GameMatch.GameSettings.Contains("PracticeGame"))
+        {
+            currentGameTurn = Globals.GameMatch.GameTurns.Where(x => x.Players.Count() == Globals.GameMatch.MaxPlayers).Last();
+        }
         if (currentGameTurn.TurnNumber > 0)
         {
             GameManager.i.TurnNumber = currentGameTurn.TurnNumber;
@@ -63,19 +68,9 @@ public class GridManager : MonoBehaviour
         }
         CreateGrid(currentGameTurn);
         characterParent = GameObject.Find("Nodes/Characters").transform;
-        if (Globals.GameMatch.MaxPlayers == 1)
+        foreach(var station in currentGameTurn.Players.OrderBy(x=>x.PlayerColor))
         {
-            for (int i = 0; i < Constants.MaxPlayers; i++)
-            {
-                CreateStation(i, currentGameTurn);
-            }
-        }
-        else
-        {
-            foreach(var station in currentGameTurn.Players.OrderBy(x=>x.PlayerColor))
-            {
-                CreateStation(station.PlayerColor, currentGameTurn);
-            }
+            CreateStation(station.PlayerColor, currentGameTurn);
         }
         GameManager.i.Stations = GameManager.i.Stations.OrderBy(x => x.playerColor).ToList();
         scoreToWin = GetScoreToWin();
@@ -222,14 +217,11 @@ public class GridManager : MonoBehaviour
         GamePlayer serverPlayer = null;
         Guid stationGuid = Guid.NewGuid();
         Guid fleetGuid = Guid.NewGuid();
-        Guid bombGuid = Guid.NewGuid();
-        if (Globals.GameMatch.MaxPlayers != 1 || stationColor == 0)
-        {
-            serverPlayer = currentGameTurn.Players.FirstOrDefault(x=>x.PlayerColor == stationColor);
-            stationGuid = (Guid)serverPlayer.PlayerGuid;
-            fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomber).UnitGuid;
-            bombGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomb).UnitGuid;
-        }
+        //Guid bombGuid = Guid.NewGuid();
+        serverPlayer = currentGameTurn.Players.FirstOrDefault(x=>x.PlayerColor == stationColor);
+        stationGuid = (Guid)serverPlayer.PlayerGuid;
+        fleetGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomber).UnitGuid;
+        //bombGuid = (Guid)serverPlayer.Units.FirstOrDefault(x => x.UnitType == (int)UnitType.Bomb).UnitGuid;
         var station = Instantiate(stationPrefab);
         station.transform.SetParent(characterParent);
         var stationNode = station.AddComponent<Station>();
@@ -260,11 +252,11 @@ public class GridManager : MonoBehaviour
                 spawnY = 1;
                 facing = Direction.Right;
             }
-            stationNode.InitializeStation(spawnX, spawnY, stationColor, 10, 1, 7, 6, 5, stationGuid, facing, fleetGuid,bombGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
+            stationNode.InitializeStation(spawnX, spawnY, stationColor, 10, 1, 7, 6, 5, stationGuid, facing, fleetGuid, serverPlayer?.Credits ?? Constants.StartingCredits);
         }
     }
 
-    public Unit Deploy(Unit unitNode, Guid fleetGuid, Coords coords, UnitType unitType, Guid? _bombGuid = null, bool initialSpawn = false)
+    public Unit Deploy(Unit unitNode, Guid fleetGuid, Coords coords, UnitType unitType, bool initialSpawn = false)
     {
         Station station = GameManager.i.Stations.FirstOrDefault(x => x.playerGuid == unitNode.playerGuid);
         var hexesNearby = GameManager.i.GetNodesForDeploy(unitNode,false);
@@ -285,7 +277,7 @@ public class GridManager : MonoBehaviour
                         fleet.transform.SetParent(characterParent);
                         var fleetNode = fleet.AddComponent<Bomber>();
                         //station.bonusThermal + station.thermalDeployPower
-                        fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 6 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, 0,station.bonusExplosive + station.explosiveDeployPower, fleetGuid, _bombGuid);
+                        fleetNode.InitializeFleet(hexesNearby[j].actualCoords.x, hexesNearby[j].actualCoords.y, station, (int)unitNode.playerColor, 6 + station.bonusHP, 2, 1 + station.bonusMining, station.bonusKinetic + station.kineticDeployPower, 0,station.bonusExplosive + station.explosiveDeployPower, fleetGuid);
                         return fleetNode;
                     }
                 }

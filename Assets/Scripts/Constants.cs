@@ -21,4 +21,7 @@ public static class Constants{
     internal static float MovementSpeed = .8f;
     internal static int HPGain = 2;
     internal static int NumberHelpPages = 9;
+    internal static Guid CPU1Guid = Guid.NewGuid();
+    internal static Guid CPU2Guid = Guid.NewGuid();
+    internal static Guid CPU3Guid = Guid.NewGuid();
 }

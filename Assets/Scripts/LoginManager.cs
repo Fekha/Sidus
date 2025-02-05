@@ -90,15 +90,21 @@ public class LoginManager : MonoBehaviour
     }
     public void CreateGame(bool cpuGame)
     {
+        var gameGuid = Guid.NewGuid();
+        var players = new List<GamePlayer>();
         GameSettings.Clear();
         if (teamToggle.isOn && MaxPlayers == 4 && !cpuGame)
             GameSettings.Add(GameSettingType.Teams.ToString());
         if (toggle1.isOn)
             GameSettings.Add(GameSettingType.TakeoverCosts2.ToString());
         if (cpuGame)
-            MaxPlayers = 1;
-        var gameGuid = Guid.NewGuid();
-        var players = new List<GamePlayer>();
+        {
+            GameSettings.Add(GameSettingType.PracticeGame.ToString());
+            MaxPlayers = 2;
+            players.Add(GetNewPlayer(gameGuid, 1, Constants.CPU1Guid));
+            //players.Add(GetNewPlayer(gameGuid, 2, Constants.CPU2Guid));
+            //players.Add(GetNewPlayer(gameGuid, 3, Constants.CPU3Guid));
+        }
         GameSettings.Add(((GameSettingType)(UnityEngine.Random.Range((int)GameSettingType.Map1, (int)GameSettingType.Map3+1))).ToString());
         players.Add(GetNewPlayer(gameGuid,0));
         var gameMatch = new GameMatch()
@@ -189,15 +195,17 @@ public class LoginManager : MonoBehaviour
         var stringToPost = Newtonsoft.Json.JsonConvert.SerializeObject(gameMatch);
         StartCoroutine(sql.PostRoutine<GameMatch>($"Game/JoinGame?clientVersion={Constants.ClientVersion}", stringToPost, SetMatchGuid));
     }
-    private GamePlayer GetNewPlayer(Guid gameGuid, int playerId)
+    private GamePlayer GetNewPlayer(Guid gameGuid, int playerId, Guid? playerGuid = null)
     {
+        if(playerGuid == null) 
+            playerGuid = Globals.Account.PlayerGuid;
         return new GamePlayer()
         {
             GameGuid = gameGuid,
             TurnNumber = 0,
             PlayerColor = playerId,
             PlayerName = Globals.Account.Username.Split(' ')[0],
-            PlayerGuid = Globals.Account.PlayerGuid,
+            PlayerGuid = (Guid)playerGuid,
             Units = new List<ServerUnit>()
             {
                 new ServerUnit()
@@ -265,7 +273,7 @@ public class LoginManager : MonoBehaviour
         else
         {
             ClearOpenGames();
-            foreach (var newGame in newGames.Where(x => x.MaxPlayers > 1))
+            foreach (var newGame in newGames.Where(x => !x.GameSettings.Contains("PracticeGame")))
             {
                 var game = newGame;
                 var prefab = Instantiate(openGamePrefab, activeContent);
