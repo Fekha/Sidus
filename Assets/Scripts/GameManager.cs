@@ -6,15 +6,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Collections.Specialized.BitVector32;
-using static UnityEngine.UI.CanvasScaler;
 
 public class GameManager : MonoBehaviour
 {
@@ -113,6 +110,7 @@ public class GameManager : MonoBehaviour
     private TextMeshProUGUI ExplosiveTakenValueText;
     private TextMeshProUGUI ModuleEffectText;
     private TextMeshProUGUI DeployRangeValueText;
+    internal TextMeshProUGUI actionValue;
     internal TextMeshProUGUI turnValue;
     private TextMeshProUGUI phaseText;
     private TextMeshProUGUI moduleInfoValue;
@@ -141,6 +139,7 @@ public class GameManager : MonoBehaviour
     private bool lastToSubmitTurn = false;
     internal Station MyStation {get {return Stations.FirstOrDefault(x=>x.playerGuid == Globals.Account.PlayerGuid);}}
     public GameObject turnLabel;
+    public GameObject actionLabel;
     private SqlManager sql;
     internal int TurnNumber = 0;
     private bool audioToggleOn = true;
@@ -226,6 +225,7 @@ public class GameManager : MonoBehaviour
         canvas.Find("AreYouSurePanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("HelpPanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("TurnLabel").GetComponent<Image>().color = uiColor;
+        canvas.Find("ActionLabel").GetComponent<Image>().color = uiColor;
         canvas.Find("ActionPanel/ModulePanel").GetComponent<Image>().color = uiColor;
         canvas.Find("UnitPanel/Background").GetComponent<Image>().color = uiColor;
         canvas.Find("MarketPanel/MarketBar").GetComponent<Image>().color = uiColor;
@@ -309,6 +309,7 @@ public class GameManager : MonoBehaviour
         ExplosiveTakenValueText = infoPanel.transform.Find("S/V/C/ExplosiveTakenValue").GetComponent<TextMeshProUGUI>();
         ModuleEffectText = infoPanel.transform.Find("S/V/C/ModuleInformation").GetComponent<TextMeshProUGUI>();
         DeployRangeValueText = infoPanel.transform.Find("S/V/C/DeployRangeValue").GetComponent<TextMeshProUGUI>();
+        actionValue = actionLabel.transform.Find("ActionValue").GetComponent<TextMeshProUGUI>();
         turnValue = turnLabel.transform.Find("TurnValue").GetComponent<TextMeshProUGUI>();
         phaseText = turnLabel.transform.Find("PhaseText").GetComponent<TextMeshProUGUI>();
         moduleInfoValue = moduleInfoPanel.transform.Find("ModuleInfoText").GetComponent<TextMeshProUGUI>();
@@ -1788,7 +1789,7 @@ public class GameManager : MonoBehaviour
                             }
                             cpuStation.actions.Add(new Action(ActionType.MoveUnit, otherUnit, null, selectedUnitPath));
                         }
-                        if (cpuStation.unlockedActions > cpuStation.actions.Count)
+                        while (cpuStation.unlockedActions > cpuStation.actions.Count)
                         {
                             if (cpuStation.technology[(int)TechnologyType.ResearchKinetic].level <= cpuStation.technology[(int)TechnologyType.ResearchExplosive].level)
                                 cpuStation.actions.Add(new Action(ActionType.ResearchKinetic, cpuStation));
@@ -1961,6 +1962,7 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(.1f);
         }
+        actionLabel.SetActive(true);
         nextActionButton.SetActive(false);
         var turnsFromServer = Globals.GameMatch.GameTurns.FirstOrDefault(x => x.TurnNumber == TurnNumber)?.Players;
         if (turnsFromServer != null)
@@ -1995,6 +1997,7 @@ public class GameManager : MonoBehaviour
                 if (Winner != Guid.Empty){ break; }
                 yield return StartCoroutine(PerformAction(new Action(serverAction)));
             }
+            actionLabel.SetActive(false);
             if (Winner == Guid.Empty)
             {
                 turnValue.text = $"Generate credit phase.\n\n+1 Credit per un-used action.";
@@ -2561,6 +2564,7 @@ public class GameManager : MonoBehaviour
             unit.HP = Mathf.Min(unit.maxHP, unit.HP);
         }
         turnLabel.SetActive(false);
+        actionLabel.SetActive(false);
         ClearActionBar();
         GridManager.i.GetScores();
         moduleMarket.SetActive(false);
