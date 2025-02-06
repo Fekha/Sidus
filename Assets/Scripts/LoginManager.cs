@@ -100,10 +100,11 @@ public class LoginManager : MonoBehaviour
         if (cpuGame)
         {
             GameSettings.Add(GameSettingType.PracticeGame.ToString());
-            MaxPlayers = 2;
-            players.Add(GetNewPlayer(gameGuid, 1, Constants.CPU1Guid));
-            //players.Add(GetNewPlayer(gameGuid, 2, Constants.CPU2Guid));
-            //players.Add(GetNewPlayer(gameGuid, 3, Constants.CPU3Guid));
+            MaxPlayers = 4;
+            for (int i = 1; i < MaxPlayers; i++)
+            {
+                players.Add(GetNewPlayer(gameGuid, i, Constants.CPUGuids[i-1]));
+            }
         }
         GameSettings.Add(((GameSettingType)(UnityEngine.Random.Range((int)GameSettingType.Map1, (int)GameSettingType.Map3+1))).ToString());
         players.Add(GetNewPlayer(gameGuid,0));

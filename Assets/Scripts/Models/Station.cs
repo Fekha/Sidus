@@ -10,7 +10,7 @@ public class Station : Unit
     internal List<Bomb> bombs = new List<Bomb>();
     internal List<Module> modules = new List<Module>();
     internal List<Technology> technology = new List<Technology>();
-    internal int maxActions;
+    internal int unlockedActions;
     internal int credits;
     internal int fleetCount;
     internal int bonusKinetic;
@@ -46,7 +46,7 @@ public class Station : Unit
         GameManager.i.Stations.Add(this);
         technology = player.Technology.Select(x => new Technology(x)).ToList();
         modules = GameManager.i.AllModules.Where(x => player.ModulesGuids.Contains(x.moduleGuid.ToString())).ToList();
-        maxActions = player.MaxActions;
+        unlockedActions = player.MaxActions;
         credits = player.Credits;
         fleetCount = player.FleetCount;
         bonusKinetic = player.BonusKinetic;

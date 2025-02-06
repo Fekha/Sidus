@@ -48,6 +48,7 @@ public class Unit : Node
     internal List<Tuple<int, int>> _minedPath = new List<Tuple<int, int>>();
     internal List<PathNode> _selectedPath = new List<PathNode>();
     internal bool hasMoved = false;
+    internal bool hasMined = false;
     internal bool hasTakenDamage = false;
 
     public void InitializeUnit(int _x, int _y, int _color, int _hp, int _range, int _electricAttack, int _thermalAttack, int _voidAttack, Guid _unitGuid, int _mining, Direction _direction, UnitType _unitType)

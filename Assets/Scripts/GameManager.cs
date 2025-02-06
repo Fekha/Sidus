@@ -6,12 +6,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static System.Collections.Specialized.BitVector32;
+using static UnityEngine.UI.CanvasScaler;
 
 public class GameManager : MonoBehaviour
 {
@@ -710,7 +713,7 @@ public class GameManager : MonoBehaviour
     private void Research(int i)
     {
         QueueAction(new Action((ActionType)i+Constants.MinTech));
-        if (MyStation.actions.Count == MyStation.maxActions)
+        if (MyStation.actions.Count == MyStation.unlockedActions)
         {
             technologyPanel.SetActive(false);
         }
@@ -861,7 +864,7 @@ public class GameManager : MonoBehaviour
         {
             ShowCustomAlertPanel("No unit selected.");
         }
-        else if (MyStation.actions.Count >= MyStation.maxActions)
+        else if (MyStation.actions.Count >= MyStation.unlockedActions)
         {
             ShowCustomAlertPanel("No action slots available to queue this action.");
         }
@@ -987,9 +990,10 @@ public class GameManager : MonoBehaviour
         {
             if (!requeing) ShowCustomAlertPanel("Selected node not within deploy range");
         }
-        else if (action.actionType != ActionType.UnlockAction && MyStation.actions.Count >= MyStation.maxActions)
+        else if (action.actionType != ActionType.UnlockAction && MyStation.actions.Count >= MyStation.unlockedActions)
         {
             if (!requeing) ShowCustomAlertPanel($"No action slots available to queue action: {GetDescription(action.actionType)}.");
+            ResetAfterSelection();
         }
         else if (TechActions.Contains(action.actionType) && !MyStation.technology[(int)action.actionType - Constants.MinTech].GetCanQueueTech()) {
             if (!requeing) ShowCustomAlertPanel($"Missing required tech to queue action: {GetDescription(action.actionType)}.");
@@ -1140,7 +1144,7 @@ public class GameManager : MonoBehaviour
         }
         else if (actionType == ActionType.UnlockAction)
         {
-            return GetUnlockCost(station.maxActions + 1);
+            return GetUnlockCost(station.unlockedActions + 1);
         }
         else
         {
@@ -1753,7 +1757,7 @@ public class GameManager : MonoBehaviour
         GridManager.i.CloseBurger();
         if (!isEndingTurn)
         {
-            if (theyAreSure || MyStation.actions.Count == MyStation.maxActions)
+            if (theyAreSure || MyStation.actions.Count == MyStation.unlockedActions)
             {
                 ShowAreYouSurePanel(false);
                 //Remove effects for game save
@@ -1765,9 +1769,37 @@ public class GameManager : MonoBehaviour
                 //Decide on CPU actions
                 if (Globals.GameMatch.GameSettings.Contains("PracticeGame"))
                 {
-                    var selectedUnit = AllUnits.FirstOrDefault(x => x.unitGuid == Constants.CPU1Guid);
-                    Stations[1].actions.Add(new Action(ActionType.ResearchKinetic, selectedUnit));
-                    Stations[1].actions.Add(new Action(ActionType.ResearchExplosive, selectedUnit));
+                    for (int i = 1; i < Globals.GameMatch.MaxPlayers; i++)
+                    {
+                        var cpuStation = GetStationByGuid(Constants.CPUGuids[i-1]);
+                        var selectedStationPath = new List<PathNode>();
+                        for (int j = 0; j < cpuStation.movementLeft; j++)
+                        {
+                            selectedStationPath.Add(GetNextCPUMove(cpuStation, j == 0 ? cpuStation.currentPathNode : selectedStationPath.LastOrDefault()));
+                        }
+                        cpuStation.actions.Add(new Action(ActionType.MoveUnit, cpuStation, null, selectedStationPath));
+                        var selectedUnitPath = new List<PathNode>();
+                        var otherUnit = AllUnits.FirstOrDefault(x => x.playerGuid == cpuStation.playerGuid && x.unitGuid != cpuStation.unitGuid);
+                        if (otherUnit != null)
+                        {
+                            for (int j = 0; j < otherUnit.movementLeft; j++)
+                            {
+                                selectedUnitPath.Add(GetNextCPUMove(otherUnit, j == 0 ? otherUnit.currentPathNode : selectedUnitPath.LastOrDefault()));
+                            }
+                            cpuStation.actions.Add(new Action(ActionType.MoveUnit, otherUnit, null, selectedUnitPath));
+                        }
+                        if (cpuStation.unlockedActions > cpuStation.actions.Count)
+                        {
+                            if (cpuStation.technology[(int)TechnologyType.ResearchKinetic].level <= cpuStation.technology[(int)TechnologyType.ResearchExplosive].level)
+                                cpuStation.actions.Add(new Action(ActionType.ResearchKinetic, cpuStation));
+                            else
+                                cpuStation.actions.Add(new Action(ActionType.ResearchExplosive, cpuStation));
+                        }
+                        if (cpuStation.credits >= GetCostOfAction(ActionType.UnlockAction, cpuStation, true))
+                        {
+                            cpuStation.actions.Add(new Action(ActionType.UnlockAction, cpuStation));
+                        }
+                    }
                 }
                 List<int> actionOrders = new List<int>();
                 for (int i = 0; i <= Stations.Count * 5; i += Stations.Count)
@@ -1822,47 +1854,50 @@ public class GameManager : MonoBehaviour
                             BonusMining = MyStation.bonusMining,
                             Score = MyStation.score,
                             FleetCount = MyStation.fleetCount,
-                            MaxActions = MyStation.maxActions
+                            MaxActions = MyStation.unlockedActions
                         }
                     }
                 };
                 //CPU Turn
                 if (Globals.GameMatch.GameSettings.Contains("PracticeGame"))
                 {
-                    gameTurn.Players.Add(new GamePlayer()
+                    for (int i = 1; i < Globals.GameMatch.MaxPlayers; i++)
                     {
-                        GameGuid = Globals.GameMatch.GameGuid,
-                        TurnNumber = TurnNumber,
-                        PlayerColor = 1,
-                        PlayerGuid = Constants.CPU1Guid,
-                        PlayerName = "CPU",
-                        Actions = Stations[1].actions.Select((x, j) =>
-                            new ServerAction()
-                            {
-                                GameGuid = Globals.GameMatch.GameGuid,
-                                TurnNumber = TurnNumber,
-                                PlayerGuid = Constants.CPU1Guid,
-                                ActionOrder = actionOrders[j],
-                                ActionTypeId = (int)x.actionType,
-                                GeneratedGuid = x.generatedGuid,
-                                XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
-                                YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
-                                SelectedModuleGuid = x.selectedModuleGuid,
-                                SelectedUnitGuid = x.selectedUnit?.unitGuid,
-                                PlayerBid = x.playerBid,
-                            }).ToList(),
-                        Technology = Stations[1].technology.Select(x => x.ToServerTechnology()).ToList(),
-                        Units = Stations[1].GetServerUnits(),
-                        ModulesGuids = String.Join(",", Stations[1].modules.Select(x => x.moduleGuid)),
-                        Credits = Stations[1].credits,
-                        BonusKinetic = Stations[1].bonusKinetic,
-                        //BonusThermal = MyStation.bonusThermal,
-                        BonusExplosive = Stations[1].bonusExplosive,
-                        BonusMining = Stations[1].bonusMining,
-                        Score = Stations[1].score,
-                        FleetCount = Stations[1].fleetCount,
-                        MaxActions = Stations[1].maxActions
-                    });
+                        var cpuStation = GetStationByGuid(Constants.CPUGuids[i-1]);
+                        gameTurn.Players.Add(new GamePlayer()
+                        {
+                            GameGuid = Globals.GameMatch.GameGuid,
+                            TurnNumber = TurnNumber,
+                            PlayerColor = i,
+                            PlayerGuid = cpuStation.playerGuid,
+                            PlayerName = "CPU",
+                            Actions = cpuStation.actions.Select((x, j) =>
+                                new ServerAction()
+                                {
+                                    GameGuid = Globals.GameMatch.GameGuid,
+                                    TurnNumber = TurnNumber,
+                                    PlayerGuid = cpuStation.playerGuid,
+                                    ActionOrder = actionOrders[j],
+                                    ActionTypeId = (int)x.actionType,
+                                    GeneratedGuid = x.generatedGuid,
+                                    XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
+                                    YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
+                                    SelectedModuleGuid = x.selectedModuleGuid,
+                                    SelectedUnitGuid = x.selectedUnit?.unitGuid,
+                                    PlayerBid = x.playerBid,
+                                }).ToList(),
+                            Technology = cpuStation.technology.Select(x => x.ToServerTechnology()).ToList(),
+                            Units = cpuStation.GetServerUnits(),
+                            ModulesGuids = String.Join(",", cpuStation.modules.Select(x => x.moduleGuid)),
+                            Credits = cpuStation.credits,
+                            BonusKinetic = cpuStation.bonusKinetic,
+                            BonusExplosive = cpuStation.bonusExplosive,
+                            BonusMining = cpuStation.bonusMining,
+                            Score = cpuStation.score,
+                            FleetCount = cpuStation.fleetCount,
+                            MaxActions = cpuStation.unlockedActions
+                        });
+                    }
                 }
                 //add effects back in case player wants to resubmit their turn
                 for (int i = 0; i < lastSubmittedTurn.Count(); i++)
@@ -1880,6 +1915,27 @@ public class GameManager : MonoBehaviour
                 ShowAreYouSurePanel(true);
             }
         }
+    }
+
+    private PathNode GetNextCPUMove(Unit cpuUnit, PathNode projectedPathNode)
+    {
+        var nodesInRange = GridManager.i.GetNodesWithinRange(projectedPathNode, 1, cpuUnit.miningLeft).Where(x => x.unitOnPath == null || x.unitOnPath.teamId != cpuUnit.teamId);
+        if (cpuUnit.hasMined == false && cpuUnit is Station)
+        {
+            var asteroidInRange = nodesInRange.FirstOrDefault(x => x.isAsteroid);
+            if (asteroidInRange != null) {
+                cpuUnit.hasMined = true;
+                return asteroidInRange; 
+            }
+        }
+        if (cpuUnit.movementLeft == 1)
+        {
+            var claimedHex = nodesInRange.FirstOrDefault(x => x.ownedByGuid != Guid.Empty);
+            if(claimedHex != null) return claimedHex;
+        }
+        var unclaimedHex = nodesInRange.Where(x=>x.isAsteroid == false).FirstOrDefault(x => x.ownedByGuid == Guid.Empty);
+        if (unclaimedHex != null) return unclaimedHex;
+        return nodesInRange.FirstOrDefault();
     }
 
     private IEnumerator DoEndTurn()
@@ -1931,7 +1987,7 @@ public class GameManager : MonoBehaviour
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusMining = player.BonusMining;
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).score = player.Score;
                 Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).fleetCount = player.FleetCount;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).maxActions = player.MaxActions;
+                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).unlockedActions = player.MaxActions;
             }
             var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
@@ -2107,7 +2163,7 @@ public class GameManager : MonoBehaviour
             action.selectedUnit.RegenHP(5 * modifier, queued);
         } else if (action.actionType == ActionType.UnlockAction) 
         {
-            station.maxActions += modifier;
+            station.unlockedActions += modifier;
             ClearActionBar();
         }
         UpdateCreditsAndHexesText();
@@ -2488,12 +2544,13 @@ public class GameManager : MonoBehaviour
                         int unlockCost = GetUnlockCost(i);
                         if (unlockCost < 0)
                         {
-                            station.maxActions = Math.Max(station.maxActions, i);
+                            station.unlockedActions = Math.Max(station.unlockedActions, i);
                         }
                     }
                 }
                 unit.trail.enabled = false;
                 unit.hasMoved = false;
+                unit.hasMined = false;
                 unit.hasTakenDamage = false;
                 GetStationByGuid(unit.playerGuid).GainCredits(unit.globalCreditGain, unit, TurnNumber == 1);
                 unit.resetMining();
@@ -2663,7 +2720,7 @@ public class GameManager : MonoBehaviour
             ActionBar.Find($"Action{i}/Remove").gameObject.SetActive(false);
             if (i < MyStation.actions.Count)
                 AddActionBarImage(MyStation.actions[i].actionType, i);
-            else if (i < MyStation.maxActions)
+            else if (i < MyStation.unlockedActions)
                 ActionBar.Find($"Action{i}/Image").GetComponent<Image>().sprite = emptyModuleBar[i];
             else
             {
