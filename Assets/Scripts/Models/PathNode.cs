@@ -199,13 +199,15 @@ public class PathNode : MonoBehaviour
     }
     public void SetNodeColor(Guid _ownedByGuid, Unit unit = null, bool startOfGame = false)
     {
-        ownedByGuid = _ownedByGuid;
         if (unit != null)
         {
             transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[(int)unit.playerColor];
-            if(!startOfGame)
-                StartCoroutine(GameManager.i.FloatingTextAnimation($"Claimed!", unit.transform, unit));
+            if (!startOfGame && ownedByGuid != _ownedByGuid)
+            {
+                StartCoroutine(GameManager.i.FloatingTextAnimation(ownedByGuid == Guid.Empty ? "Claimed!" : "Captured!", unit.transform, unit));
+            }
         }
+        ownedByGuid = _ownedByGuid;
     }
     internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)
     {

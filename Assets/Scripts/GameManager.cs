@@ -9,6 +9,7 @@ using TMPro;
 using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -1224,6 +1225,7 @@ public class GameManager : MonoBehaviour
                 }
                 if (!nextNode.isAsteroid)
                 {
+                    nextNode.ShowMineralText(false);
                     yield return StartCoroutine(MoveDirectly(unitMoving, nextNode.transform.position, Constants.MovementSpeed/2));
                     CheckDestroyAsteroidModules(unitMoving);
                 }
@@ -1236,9 +1238,7 @@ public class GameManager : MonoBehaviour
                 //if enemy, attack, if you didn't destroy them, stay blocked and move back
                 if (nextNode.unitOnPath.teamId != unitMoving.teamId)
                 {
-                    ToggleHPText(true);
                     yield return StartCoroutine(DoCombat(unitMoving, nextNode));
-                    ToggleHPText(false);
                     didFightLastMove = true;
                     if (unitMoving == null || !AllUnits.Contains(unitMoving))
                         break;
@@ -1451,11 +1451,11 @@ public class GameManager : MonoBehaviour
                 if (unitMoving.HP > 0 && unitOnPath.HP > 0)
                 {
                     turnValue.text = PrintCombat(unitMoving, unitOnPath, (AttackType)attackType);
+                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 }
                 tapped = false;
             }
         }
-        yield return StartCoroutine(WaitforSecondsOrTap(1f));
         phaseText.gameObject.SetActive(false);
         unitMoving.CheckDestruction(unitOnPath);
     }
@@ -2329,7 +2329,7 @@ public class GameManager : MonoBehaviour
                         if (newFleet != null)
                         {
                             currentStation.GainCredits(-1 * action.costOfAction, currentStation);
-                            StartCoroutine(FloatingTextAnimation($"New Fleet", newFleet.transform, newFleet));
+                            StartCoroutine(FloatingTextAnimation($"Bomber Deployed", newFleet.transform, newFleet));
                         }
                         else
                         {
@@ -2354,7 +2354,7 @@ public class GameManager : MonoBehaviour
                         if (newBomb != null)
                         {
                             PerformUpdates(action, Constants.Create);
-                            StartCoroutine(FloatingTextAnimation($"New Bomb", newBomb.transform, newBomb));
+                            StartCoroutine(FloatingTextAnimation($"Bomb Deployed", newBomb.transform, newBomb));
                             unit.selectIcon.SetActive(true);
                             yield return StartCoroutine(WaitforSecondsOrTap(1f));
                             unit.selectIcon.SetActive(false);
@@ -2382,8 +2382,8 @@ public class GameManager : MonoBehaviour
                     if (CanLevelUp(unit, action.actionType, false))
                     {
                         turnValue.text += $"{GetDescription(action.actionType)}";
-                        StartCoroutine(FloatingTextAnimation($"Upgraded", unit.transform, unit));
                         PerformUpdates(action, Constants.Create);
+                        StartCoroutine(FloatingTextAnimation($"Level {unit.level}!", unit.transform, unit));
                     }
                     else
                     {
@@ -2490,9 +2490,19 @@ public class GameManager : MonoBehaviour
                 }
                 else if (TechActions.Contains(action.actionType))
                 {
-                    var tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
+                    Technology tech = currentStation.technology[(int)action.actionType - Constants.MinTech];
                     turnValue.text += $"{GetDescription(action.actionType)}\n\n{tech.effectText}";// ({tech.currentAmount + 1}/{tech.neededAmount})"
-                    StartCoroutine(FloatingTextAnimation($"+Tech", unit.transform, unit));
+                    if (tech.researchId == TechnologyType.ResearchFleetLvl || tech.researchId == TechnologyType.ResearchMaxFleets || tech.researchId == TechnologyType.ResearchStationLvl)
+                    {
+                        StartCoroutine(FloatingTextAnimation($"{GetDescription(tech.researchId)}", currentStation.transform, currentStation));
+                    }
+                    else
+                    {
+                        foreach (var researchUnit in AllUnits.Where(x => x.playerGuid == currentStation.playerGuid))
+                        {
+                            StartCoroutine(FloatingTextAnimation($"{GetDescription(tech.researchId)}", researchUnit.transform, researchUnit));
+                        }
+                    }
                     PerformUpdates(action, Constants.Create);
                     unit.selectIcon.SetActive(true);
                     yield return StartCoroutine(WaitforSecondsOrTap(1f));
@@ -2535,10 +2545,18 @@ public class GameManager : MonoBehaviour
         if (!skipTurn) //&& !tapped
             yield return new WaitForSeconds(time);
     }
+    public string GetDescription(TechnologyType value)
+    {
+        Type type = value.GetType();
+        return GetDescription(Enum.GetName(type, value), type);
+    }
     public string GetDescription(ActionType value)
     {
         Type type = value.GetType();
-        string name = Enum.GetName(type, value);
+        return GetDescription(Enum.GetName(type, value), type);
+    }
+    public string GetDescription(string name, Type type)
+    {
         if (name != null)
         {
             FieldInfo field = type.GetField(name);

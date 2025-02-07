@@ -136,7 +136,7 @@ public class GridManager : MonoBehaviour
                 Animator animator = null;
                 if (grid[x, y].isRift)
                 {
-                    cell.transform.Find("Nebula").GetComponent<SpriteRenderer>().sprite = nebulaSprite[riftCount + Constants.rnd.Next(nebulaSprite.Count) % nebulaSprite.Count];
+                    cell.transform.Find("Nebula").GetComponent<SpriteRenderer>().sprite = nebulaSprite[(riftCount + Constants.rnd.Next(nebulaSprite.Count)) % nebulaSprite.Count];
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -4;
                     cell.transform.Find("Node/Background").gameObject.SetActive(false);
@@ -145,7 +145,7 @@ public class GridManager : MonoBehaviour
                 }
                 if (grid[x, y].isAsteroid)
                 {
-                    cell.transform.Find("Asteroid").GetComponent<SpriteRenderer>().sprite = asteroidSprite[asteroidCount+Constants.rnd.Next(asteroidSprite.Count) % asteroidSprite.Count];
+                    cell.transform.Find("Asteroid").GetComponent<SpriteRenderer>().sprite = asteroidSprite[(asteroidCount+Constants.rnd.Next(asteroidSprite.Count)) % asteroidSprite.Count];
                     animator = cell.transform.Find("Asteroid").gameObject.AddComponent<Animator>();
                     asteroidCount++;
                 }
