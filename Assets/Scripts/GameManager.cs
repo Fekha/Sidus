@@ -6,10 +6,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -1963,7 +1961,7 @@ public class GameManager : MonoBehaviour
         submitTurnPanel.SetActive(false);
         ToggleMineralText(false);
         ToggleHPText(false);
-        turnValue.text = $"Turn #{TurnNumber} Complete!";
+        turnValue.text = $"All actions for Turn #{TurnNumber} Submitted!\n\nEach players first action will be executed based on the turn order above from left to right, followed by each player's second action, and so on. ";
         for(int i=0;i<Stations.Count;i++)
         {
             TurnOrderObjects[i].transform.Find("ReadyState").gameObject.SetActive(false);
@@ -2010,15 +2008,14 @@ public class GameManager : MonoBehaviour
                 if (Winner != Guid.Empty){ break; }
                 yield return StartCoroutine(PerformAction(new Action(serverAction)));
             }
-            actionLabel.SetActive(false);
             if (Winner == Guid.Empty)
             {
                 turnValue.text = $"Generate credit phase.\n\n+1 Credit per un-used action.";
                 for (int i = 0; i < turnsFromServer.Count(); i++)
                 {
                     Stations[i].GainCredits(Constants.MaxActions - turnsFromServer.FirstOrDefault(x=>x.PlayerColor == i).Actions.Count(), Stations[i], false, false);
+                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
                 }
-                yield return StartCoroutine(WaitforSecondsOrTap(2f));
                 turnValue.text = $"Repair Phase.\n\n+{Constants.HPGain} HP per unused movement.";
                 foreach (var unit in AllUnits)
                 {
@@ -2033,7 +2030,7 @@ public class GameManager : MonoBehaviour
                         yield return StartCoroutine(WaitforSecondsOrTap(.5f));
                     }
                 }
-                yield return StartCoroutine(WaitforSecondsOrTap(1f));
+                //yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 foreach (var asteroid in GridManager.i.AllNodes)
                 {
                     asteroid.ReginCredits();
@@ -2050,6 +2047,7 @@ public class GameManager : MonoBehaviour
                 }
                 Winner = GridManager.i.CheckForWin();
             }
+            actionLabel.SetActive(false);
             turnLabel.SetActive(false);
             yield return StartCoroutine(sql.GetRoutine<Guid>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}&clientVersion={Constants.ClientVersion}", GetWinner));
         }
