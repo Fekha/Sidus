@@ -70,7 +70,7 @@ public class PathNode : MonoBehaviour
         asteriodSprite = transform.Find("Asteroid").GetComponent<SpriteRenderer>();
         asteriodSprite.gameObject.SetActive(isAsteroid);
         mineIcon = transform.Find("Asteroid/Mine").gameObject;
-        mineralText = transform.Find("Asteroid/Minerals").GetComponent<TextMeshPro>();
+        mineralText = transform.Find("AsteroidMinerals").GetComponent<TextMeshPro>();
         coordsText = transform.Find("Coords").GetComponent<TextMeshPro>();
         coordsText.text = $"{actualCoords.x},{actualCoords.y}";
         SetNodeColor(ownedByGuid);
@@ -171,9 +171,11 @@ public class PathNode : MonoBehaviour
     {
         if (minerals < maxCredits && !hasBeenMinedThisTurn && isAsteroid)
         {
-            minerals = Mathf.Min(minerals + creditRegin, maxCredits);
+            var newMax = Mathf.Min(minerals + creditRegin, maxCredits);
+            var creditsRegin = newMax - minerals;
+            minerals = newMax;
             mineralText.text = $"{minerals}";
-            //StartCoroutine(GameManager.i.FloatingTextAnimation($"+{creditsRegin} Credit", transform, null));
+            StartCoroutine(GameManager.i.FloatingTextAnimation($"+{creditsRegin}", transform, null));
         }
         hasBeenMinedThisTurn = false;
     }
@@ -195,17 +197,14 @@ public class PathNode : MonoBehaviour
         AwardCredits(unit, minedAmount, isQueuing);
         return minedAmount;
     }
-    public void SetNodeColor(Guid _ownedByGuid)
+    public void SetNodeColor(Guid _ownedByGuid, Unit unit = null, bool startOfGame = false)
     {
         ownedByGuid = _ownedByGuid;
-        if (ownedByGuid != Guid.Empty)
+        if (unit != null)
         {
-            int? playerColor = Globals.GameMatch.GameTurns.FirstOrDefault().Players.FirstOrDefault(x => x.PlayerGuid == ownedByGuid)?.PlayerColor;
-            //For Practice Games
-            if (playerColor == null) {
-                playerColor = (int)GameManager.i.GetStationByGuid(ownedByGuid).playerColor;
-            }
-            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[(int)playerColor];
+            transform.Find("Node").GetComponent<SpriteRenderer>().material.color = GridManager.i.tileColors[(int)unit.playerColor];
+            if(!startOfGame)
+                StartCoroutine(GameManager.i.FloatingTextAnimation($"Claimed!", unit.transform, unit));
         }
     }
     internal void AwardCredits(Unit unit, int minedAmount, bool isQueuing)

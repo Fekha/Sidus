@@ -324,7 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -20430,6 +20430,15 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0beef3fa4d51ca341a58d2ecf89a0040, type: 3}
   - {fileID: 21300000, guid: fb810faeb3d0b704c9a69dd9c2555ed6, type: 3}
   - {fileID: 21300000, guid: 95588603cd87dce468633b737b009295, type: 3}
+  asteroidSprite:
+  - {fileID: 21300000, guid: e5bc8693f47dbbf4ab616326885d4cfb, type: 3}
+  - {fileID: 21300000, guid: f450d835a6b0b3f46b4742096aced688, type: 3}
+  - {fileID: 21300000, guid: 2803e79741740354eacf5ebf0366757c, type: 3}
+  - {fileID: 21300000, guid: 45f946d0405085d4da4147653201c64d, type: 3}
+  - {fileID: 21300000, guid: 385a11f7b9ba71542a9d0926411d38c9, type: 3}
+  - {fileID: 21300000, guid: 23b280738d98cc34590bfc5c0261f03b, type: 3}
+  - {fileID: 21300000, guid: 7314eabc59b321840934cfeb8f190d37, type: 3}
+  - {fileID: 21300000, guid: b6419e140b6d269408225b1794e7ec1e, type: 3}
   nodeController: {fileID: 9100000, guid: 08ff2c8e98985a841a1abdbc80831c50, type: 2}
   nebulaRotationClip: {fileID: 7400000, guid: 30695f588c0dfb6438ee70681cfcf60d, type: 2}
   burgerList: {fileID: 1617389285}
@@ -22406,7 +22415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -25563,7 +25572,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

@@ -22,4 +22,5 @@ public static class Constants{
     internal static int HPGain = 2;
     internal static int NumberHelpPages = 9;
     internal static List<Guid> CPUGuids = new List<Guid>() { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+    internal static Random rnd = new Random();
 }

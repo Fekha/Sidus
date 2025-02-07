@@ -37,9 +37,9 @@ public class Station : Unit
         explosiveDeployPower = 5;
         deployRange = 1;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _stationGuid, 2, _direction, UnitType.Station);
-        currentPathNode.SetNodeColor(playerGuid);
+        currentPathNode.SetNodeColor(playerGuid,this,true);
         var fleet = GridManager.i.Deploy(this, _fleetGuid, currentPathNode.actualCoords.AddCoords(currentPathNode.offSet[(int)facing]), UnitType.Bomber);
-        fleet.currentPathNode.SetNodeColor(playerGuid);
+        fleet.currentPathNode.SetNodeColor(playerGuid,fleet,true);
     }
     public void InitializeStation(GamePlayer player)
     {

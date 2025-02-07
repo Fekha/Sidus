@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -713,7 +714,7 @@ public class GameManager : MonoBehaviour
 
     private void Research(int i)
     {
-        QueueAction(new Action((ActionType)i+Constants.MinTech));
+        QueueAction(new Action((ActionType)i+Constants.MinTech,MyStation));
         if (MyStation.actions.Count == MyStation.unlockedActions)
         {
             technologyPanel.SetActive(false);
@@ -775,7 +776,7 @@ public class GameManager : MonoBehaviour
     private void BidOn(int index, int currentBid)
     {
         moduleMarket.SetActive(false);
-        QueueAction(new Action(ActionType.BidOnModule, null, AuctionModules[index].moduleGuid,null,null,currentBid));
+        QueueAction(new Action(ActionType.BidOnModule, MyStation, AuctionModules[index].moduleGuid,null,null,currentBid));
     }
 
     public void ViewHelpPanel(bool active)
@@ -1264,7 +1265,7 @@ public class GameManager : MonoBehaviour
             if(isValidHex)
                 unitMoving.currentPathNode = nextNode;
             if (!nextNode.isAsteroid && nextNode.ownedByGuid == Guid.Empty)
-                unitMoving.currentPathNode.SetNodeColor(unitMoving.playerGuid);
+                unitMoving.currentPathNode.SetNodeColor(unitMoving.playerGuid, unitMoving);
             if (blockedMovement || (!isValidHex && i == path.Count()))
             {
                 var pathBack = GridManager.i.FindPath(nextNode, unitMoving.currentPathNode, null, false);
@@ -1290,7 +1291,7 @@ public class GameManager : MonoBehaviour
             unitMoving.transform.position = unitMoving.currentPathNode.transform.position;
             unitMoving.currentPathNode.unitOnPath = unitMoving;
             if(GridManager.i.GetNeighbors(unitMoving.currentPathNode).Any(x => x.ownedByGuid == unitMoving.playerGuid))
-                unitMoving.currentPathNode.SetNodeColor(unitMoving.playerGuid);
+                unitMoving.currentPathNode.SetNodeColor(unitMoving.playerGuid, unitMoving);
         }
         if (!didFightLastMove)
         {
@@ -1323,7 +1324,7 @@ public class GameManager : MonoBehaviour
 
             // Move to intermediate position
             totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped && !skipTurn)
+            while (elapsedTime <= totalTime /*&& !tapped*/ && !skipTurn)
             {
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
                 unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosX, elapsedTime / totalTime);
@@ -1356,7 +1357,7 @@ public class GameManager : MonoBehaviour
                 startPos.z);
             // Move to intermediate position
             totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped && !skipTurn)
+            while (elapsedTime <= totalTime /*&& !tapped*/ && !skipTurn)
             {
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
                 unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
@@ -1388,7 +1389,7 @@ public class GameManager : MonoBehaviour
                 startPos.z);
             // Move to intermediate position
             totalTime = Constants.MovementSpeed / 2;
-            while (elapsedTime <= totalTime && !tapped && !skipTurn)
+            while (elapsedTime <= totalTime /*&& !tapped*/ && !skipTurn)
             {
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, toRot, elapsedTime / totalTime);
                 unitMoving.transform.position = Vector3.Lerp(startPos, intermediatePosY, elapsedTime / totalTime);
@@ -1417,7 +1418,7 @@ public class GameManager : MonoBehaviour
         float elapsedTime = 0f;
         var startPos = unitMoving.transform.position;
         // Move to final position
-        while (elapsedTime <= totalTime && !tapped && !skipTurn)
+        while (elapsedTime <= totalTime /*&& !tapped*/ && !skipTurn)
         {
             if(toRot != null)
                 unitMoving.unitImage.rotation = Quaternion.Lerp(unitMoving.unitImage.rotation, (Quaternion)toRot, elapsedTime / totalTime);
@@ -1441,7 +1442,6 @@ public class GameManager : MonoBehaviour
         if (unitMoving.unitType == UnitType.Bomb || unitOnPath.unitType == UnitType.Bomb)
         {
             turnValue.text = PrintCombat(unitMoving, unitOnPath, AttackType.Explosive);
-            yield return StartCoroutine(WaitforSecondsOrTap(1f));
         }
         else
         {
@@ -1451,11 +1451,11 @@ public class GameManager : MonoBehaviour
                 if (unitMoving.HP > 0 && unitOnPath.HP > 0)
                 {
                     turnValue.text = PrintCombat(unitMoving, unitOnPath, (AttackType)attackType);
-                    yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 }
                 tapped = false;
             }
         }
+        yield return StartCoroutine(WaitforSecondsOrTap(1f));
         phaseText.gameObject.SetActive(false);
         unitMoving.CheckDestruction(unitOnPath);
     }
@@ -1652,14 +1652,18 @@ public class GameManager : MonoBehaviour
             if (s1.unitType == UnitType.Bomb)
             {
                 returnText += $"<b>{s2.playerColor.ToString()} <u>resisted the bombs damage</u></b>";
+                StartCoroutine(FloatingTextAnimation($"-0 HP", s2.transform, s2));
             }
             else if (s2.unitType == UnitType.Bomb)
             {
                 returnText += $"<b>{s1.playerColor.ToString()} <u>resisted the bombs damage</u></b>";
+                StartCoroutine(FloatingTextAnimation($"-0 HP", s1.transform, s1));
             }
             else
             {
                 returnText += $"<u><b>No damage taken.</u></b>";
+                StartCoroutine(FloatingTextAnimation($"-0 HP", s1.transform, s1));
+                StartCoroutine(FloatingTextAnimation($"-0 HP", s2.transform, s2));
             }
         }
         returnText += $"\n\n{s1.playerColor.ToString()} had {power1Text}{support1Text} Power.\n{s2.playerColor.ToString()} had {power2Text}{support2Text} Power.\n";
@@ -1770,47 +1774,7 @@ public class GameManager : MonoBehaviour
                 //Decide on CPU actions
                 if (Globals.GameMatch.GameSettings.Contains("PracticeGame"))
                 {
-                    for (int i = 1; i < Globals.GameMatch.MaxPlayers; i++)
-                    {
-                        var cpuStation = GetStationByGuid(Constants.CPUGuids[i-1]);
-                        var selectedStationPath = new List<PathNode>();
-                        for (int j = 0; j < cpuStation.movementLeft; j++)
-                        {
-                            selectedStationPath.Add(GetNextCPUMove(cpuStation, j == 0 ? cpuStation.currentPathNode : selectedStationPath.LastOrDefault()));
-                        }
-                        cpuStation.actions.Add(new Action(ActionType.MoveUnit, cpuStation, null, selectedStationPath));
-                        var selectedUnitPath = new List<PathNode>();
-                        var otherUnit = AllUnits.FirstOrDefault(x => x.playerGuid == cpuStation.playerGuid && x.unitGuid != cpuStation.unitGuid);
-                        if (otherUnit != null)
-                        {
-                            for (int j = 0; j < otherUnit.movementLeft; j++)
-                            {
-                                selectedUnitPath.Add(GetNextCPUMove(otherUnit, j == 0 ? otherUnit.currentPathNode : selectedUnitPath.LastOrDefault()));
-                            }
-                            cpuStation.actions.Add(new Action(ActionType.MoveUnit, otherUnit, null, selectedUnitPath));
-                        }
-                        while (cpuStation.unlockedActions > cpuStation.actions.Count)
-                        {
-                            if (cpuStation.technology[(int)TechnologyType.ResearchKinetic].level <= cpuStation.technology[(int)TechnologyType.ResearchExplosive].level)
-                                cpuStation.actions.Add(new Action(ActionType.ResearchKinetic, cpuStation));
-                            else
-                                cpuStation.actions.Add(new Action(ActionType.ResearchExplosive, cpuStation));
-                        }
-                        if (cpuStation.credits >= GetCostOfAction(ActionType.UnlockAction, cpuStation, true))
-                        {
-                            cpuStation.actions.Add(new Action(ActionType.UnlockAction, cpuStation));
-                        }
-                    }
-                }
-                List<int> actionOrders = new List<int>();
-                for (int i = 0; i <= Stations.Count * 5; i += Stations.Count)
-                {
-                    for (int j = 0; j < Stations.Count; j++)
-                    {
-                        int k = (TurnNumber-1 + j) % Stations.Count;
-                        if (k == Globals.localStationColor)
-                            actionOrders.Add(i+j+1);
-                    }
+                    CPUTakeTurn();
                 }
                 //Send turn data to server
                 GameTurn gameTurn = new GameTurn()
@@ -1823,40 +1787,7 @@ public class GameManager : MonoBehaviour
                     AllNodes = GridManager.i.AllNodes.Select(x => x.ToServerNode()).ToList(),
                     Players = new List<GamePlayer>()
                     {
-                        new GamePlayer()
-                        {
-                            GameGuid = Globals.GameMatch.GameGuid,
-                            TurnNumber = TurnNumber,
-                            PlayerColor = Globals.localStationColor,
-                            PlayerGuid = Globals.Account.PlayerGuid,
-                            PlayerName = Globals.Account.Username.Split(' ')[0],
-                            Actions = MyStation.actions.Select((x, j) =>
-                                new ServerAction()
-                                {
-                                    GameGuid = Globals.GameMatch.GameGuid,
-                                    TurnNumber = TurnNumber,
-                                    PlayerGuid = Globals.Account.PlayerGuid,
-                                    ActionOrder = actionOrders[j],
-                                    ActionTypeId = (int)x.actionType,
-                                    GeneratedGuid = x.generatedGuid,
-                                    XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
-                                    YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
-                                    SelectedModuleGuid = x.selectedModuleGuid,
-                                    SelectedUnitGuid = x.selectedUnit?.unitGuid,
-                                    PlayerBid = x.playerBid,
-                                }).ToList(),
-                            Technology = MyStation.technology.Select(x => x.ToServerTechnology()).ToList(),
-                            Units = MyStation.GetServerUnits(),
-                            ModulesGuids = String.Join(",", MyStation.modules.Select(x => x.moduleGuid)),
-                            Credits = MyStation.credits,
-                            BonusKinetic = MyStation.bonusKinetic,
-                            //BonusThermal = MyStation.bonusThermal,
-                            BonusExplosive = MyStation.bonusExplosive,
-                            BonusMining = MyStation.bonusMining,
-                            Score = MyStation.score,
-                            FleetCount = MyStation.fleetCount,
-                            MaxActions = MyStation.unlockedActions
-                        }
+                        SubmitPlayerTurnToServer(MyStation, Globals.Account.Username.Split(' ')[0])
                     }
                 };
                 //CPU Turn
@@ -1864,40 +1795,7 @@ public class GameManager : MonoBehaviour
                 {
                     for (int i = 1; i < Globals.GameMatch.MaxPlayers; i++)
                     {
-                        var cpuStation = GetStationByGuid(Constants.CPUGuids[i-1]);
-                        gameTurn.Players.Add(new GamePlayer()
-                        {
-                            GameGuid = Globals.GameMatch.GameGuid,
-                            TurnNumber = TurnNumber,
-                            PlayerColor = i,
-                            PlayerGuid = cpuStation.playerGuid,
-                            PlayerName = "CPU",
-                            Actions = cpuStation.actions.Select((x, j) =>
-                                new ServerAction()
-                                {
-                                    GameGuid = Globals.GameMatch.GameGuid,
-                                    TurnNumber = TurnNumber,
-                                    PlayerGuid = cpuStation.playerGuid,
-                                    ActionOrder = actionOrders[j],
-                                    ActionTypeId = (int)x.actionType,
-                                    GeneratedGuid = x.generatedGuid,
-                                    XList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.x)),
-                                    YList = String.Join(",", x.selectedPath?.Select(x => x.actualCoords.y)),
-                                    SelectedModuleGuid = x.selectedModuleGuid,
-                                    SelectedUnitGuid = x.selectedUnit?.unitGuid,
-                                    PlayerBid = x.playerBid,
-                                }).ToList(),
-                            Technology = cpuStation.technology.Select(x => x.ToServerTechnology()).ToList(),
-                            Units = cpuStation.GetServerUnits(),
-                            ModulesGuids = String.Join(",", cpuStation.modules.Select(x => x.moduleGuid)),
-                            Credits = cpuStation.credits,
-                            BonusKinetic = cpuStation.bonusKinetic,
-                            BonusExplosive = cpuStation.bonusExplosive,
-                            BonusMining = cpuStation.bonusMining,
-                            Score = cpuStation.score,
-                            FleetCount = cpuStation.fleetCount,
-                            MaxActions = cpuStation.unlockedActions
-                        });
+                        gameTurn.Players.Add(SubmitPlayerTurnToServer(GetStationByGuid(Constants.CPUGuids[i - 1]), $"CPU {i}"));
                     }
                 }
                 //add effects back in case player wants to resubmit their turn
@@ -1918,6 +1816,97 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private GamePlayer SubmitPlayerTurnToServer(Station playerStation, string playerName)
+    {
+        //Order all player actions
+        List<int> actionOrders = new List<int>();
+        for (int i = 0; i <= Stations.Count * 5; i += Stations.Count)
+        {
+            for (int j = 0; j < Stations.Count; j++)
+            {
+                int k = (TurnNumber - 1 + j) % Stations.Count;
+                if (k == (int)playerStation.playerColor)
+                    actionOrders.Add(i + j + 1);
+            }
+        }
+        //Create server action
+        var player = new GamePlayer(); 
+        player.GameGuid = Globals.GameMatch.GameGuid;
+        player.TurnNumber = TurnNumber;
+        player.PlayerColor = (int)playerStation.playerColor;
+        player.PlayerGuid = playerStation.playerGuid;
+        player.PlayerName = playerName;
+        player.Actions = new List<ServerAction>();
+        for (int i = 0; i < playerStation.actions.Count; i++)
+        {
+            var serverAction = new ServerAction();
+            serverAction.GameGuid = Globals.GameMatch.GameGuid;
+            serverAction.TurnNumber = TurnNumber;
+            serverAction.PlayerGuid = playerStation.playerGuid;
+            serverAction.ActionOrder = actionOrders[i];
+            serverAction.ActionTypeId = (int)playerStation.actions[i].actionType;
+            serverAction.GeneratedGuid = playerStation.actions[i].generatedGuid;
+            serverAction.XList = String.Join(",", playerStation.actions[i].selectedPath?.Select(x => x.actualCoords?.x));
+            serverAction.YList = String.Join(",", playerStation.actions[i].selectedPath?.Select(x => x.actualCoords?.y));
+            serverAction.SelectedModuleGuid = playerStation.actions[i].selectedModuleGuid;
+            serverAction.SelectedUnitGuid = playerStation.actions[i].selectedUnit?.unitGuid;
+            serverAction.PlayerBid = playerStation.actions[i].playerBid;
+            player.Actions.Add(serverAction);
+        }
+        player.Technology = playerStation.technology.Select(x => x.ToServerTechnology()).ToList();
+        player.Units = playerStation.GetServerUnits();
+        player.ModulesGuids = String.Join(",", playerStation.modules.Select(x => x.moduleGuid));
+        player.Credits = playerStation.credits;
+        player.BonusKinetic = playerStation.bonusKinetic;
+        player.BonusExplosive = playerStation.bonusExplosive;
+        player.BonusMining = playerStation.bonusMining;
+        player.Score = playerStation.score;
+        player.FleetCount = playerStation.fleetCount;
+        player.MaxActions = playerStation.unlockedActions;
+        return player;
+    }
+
+    private void CPUTakeTurn()
+    {
+        for (int i = 1; i < Globals.GameMatch.MaxPlayers; i++)
+        {
+            var cpuStation = GetStationByGuid(Constants.CPUGuids[i - 1]);
+            if (cpuStation.unlockedActions > cpuStation.actions.Count) {
+                var selectedStationPath = new List<PathNode>();
+                for (int j = 0; j < cpuStation.movementLeft; j++)
+                {
+                    selectedStationPath.Add(GetNextCPUMove(cpuStation, j == 0 ? cpuStation.currentPathNode : selectedStationPath.LastOrDefault()));
+                }
+                if (!selectedStationPath.Contains(null))
+                    cpuStation.actions.Add(new Action(ActionType.MoveUnit, cpuStation, null, selectedStationPath));
+            }
+            if (cpuStation.unlockedActions > cpuStation.actions.Count) {
+                var selectedUnitPath = new List<PathNode>();
+                var otherUnit = AllUnits.FirstOrDefault(x => x.playerGuid == cpuStation.playerGuid && x.unitGuid != cpuStation.unitGuid);
+                if (otherUnit != null)
+                {
+                    for (int j = 0; j < otherUnit.movementLeft; j++)
+                    {
+                        selectedUnitPath.Add(GetNextCPUMove(otherUnit, j == 0 ? otherUnit.currentPathNode : selectedUnitPath.LastOrDefault()));
+                    }
+                    if (!selectedUnitPath.Contains(null))
+                        cpuStation.actions.Add(new Action(ActionType.MoveUnit, otherUnit, null, selectedUnitPath));
+                }
+            }
+            while (cpuStation.unlockedActions > cpuStation.actions.Count)
+            {
+                if (cpuStation.technology[(int)TechnologyType.ResearchKinetic].level <= cpuStation.technology[(int)TechnologyType.ResearchExplosive].level)
+                    cpuStation.actions.Add(new Action(ActionType.ResearchKinetic, cpuStation));
+                else
+                    cpuStation.actions.Add(new Action(ActionType.ResearchExplosive, cpuStation));
+            }
+            if (cpuStation.credits >= GetCostOfAction(ActionType.UnlockAction, cpuStation, true) && cpuStation.unlockedActions >= cpuStation.actions.Count)
+            {
+                cpuStation.actions.Add(new Action(ActionType.UnlockAction, cpuStation));
+            }
+        }
+    }
+
     private PathNode GetNextCPUMove(Unit cpuUnit, PathNode projectedPathNode)
     {
         var nodesInRange = GridManager.i.GetNodesWithinRange(projectedPathNode, 1, cpuUnit.miningLeft).Where(x => x.unitOnPath == null || x.unitOnPath.teamId != cpuUnit.teamId);
@@ -1931,11 +1920,35 @@ public class GameManager : MonoBehaviour
         }
         if (cpuUnit.movementLeft == 1)
         {
-            var claimedHex = nodesInRange.FirstOrDefault(x => x.ownedByGuid != Guid.Empty);
-            if(claimedHex != null) return claimedHex;
+            var claimedHex = nodesInRange.FirstOrDefault(x => x.ownedByGuid != Guid.Empty && x.ownedByGuid != cpuUnit.playerGuid);
+            if (claimedHex != null)
+            {
+                if (claimedHex.unitOnPath != null)
+                {
+                    if (cpuUnit.kineticPower > claimedHex.unitOnPath.kineticPower && cpuUnit.explosiveDeployPower > claimedHex.unitOnPath.explosivePower)
+                    {
+                        return claimedHex;
+                    }
+                }
+                else
+                {
+                    return claimedHex;
+                }
+            }
         }
-        var unclaimedHex = nodesInRange.Where(x=>x.isAsteroid == false).FirstOrDefault(x => x.ownedByGuid == Guid.Empty);
-        if (unclaimedHex != null) return unclaimedHex;
+        var unclaimedHexs = nodesInRange.Where(x=>x.isAsteroid == false).Where(x => x.ownedByGuid == Guid.Empty);
+        if (unclaimedHexs.Count() > 0) {
+            foreach (var unclaimedHex in unclaimedHexs)
+            {
+                //On second+ move, CPU isn't aware that the node they are on is theres
+                if (GridManager.i.GetNodesWithinRange(unclaimedHex, 1, 0).Count(x => x.ownedByGuid == cpuUnit.playerGuid) > 0)
+                {
+                    return unclaimedHex;
+                }
+            }
+            int r = Constants.rnd.Next(unclaimedHexs.Count());
+            return unclaimedHexs.ElementAt(r);
+        };
         return nodesInRange.FirstOrDefault();
     }
 
@@ -1973,23 +1986,23 @@ public class GameManager : MonoBehaviour
                 PerformUpdates(lastSubmittedTurn[i], Constants.Remove, true);
             }
             ClearModules();
-            ToggleMineralText(true);
+            //ToggleMineralText(true);
             ClearTurnArchiveObjects();
             //Resync with Server
             foreach (var player in turnsFromServer)
             {
-                if (Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits != player.Credits)
+                var station = Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid);
+                if (station.credits != player.Credits)
                 {
                     Debug.Log($"Player {player.PlayerName} credits are off by {Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits - player.Credits}");
                 }
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).credits = player.Credits;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusKinetic = player.BonusKinetic;
-                //Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusThermal = player.BonusThermal;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusExplosive = player.BonusExplosive;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).bonusMining = player.BonusMining;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).score = player.Score;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).fleetCount = player.FleetCount;
-                Stations.FirstOrDefault(x => x.playerGuid == player.PlayerGuid).unlockedActions = player.MaxActions;
+                station.credits = player.Credits;
+                station.bonusKinetic = player.BonusKinetic;
+                station.bonusExplosive = player.BonusExplosive;
+                station.bonusMining = player.BonusMining;
+                station.score = player.Score;
+                station.fleetCount = player.FleetCount;
+                station.unlockedActions = player.MaxActions;
             }
             var serverActions = turnsFromServer.SelectMany(x => x.Actions).OrderBy(x => x.ActionOrder);
             foreach (var serverAction in serverActions)
@@ -2004,9 +2017,8 @@ public class GameManager : MonoBehaviour
                 for (int i = 0; i < turnsFromServer.Count(); i++)
                 {
                     Stations[i].GainCredits(Constants.MaxActions - turnsFromServer.FirstOrDefault(x=>x.PlayerColor == i).Actions.Count(), Stations[i], false, false);
-                    yield return StartCoroutine(WaitforSecondsOrTap(.5f));
                 }
-                yield return StartCoroutine(WaitforSecondsOrTap(1f));
+                yield return StartCoroutine(WaitforSecondsOrTap(2f));
                 turnValue.text = $"Repair Phase.\n\n+{Constants.HPGain} HP per unused movement.";
                 foreach (var unit in AllUnits)
                 {
@@ -2022,6 +2034,12 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 yield return StartCoroutine(WaitforSecondsOrTap(1f));
+                foreach (var asteroid in GridManager.i.AllNodes)
+                {
+                    asteroid.ReginCredits();
+                }
+                turnValue.text = $"Asteroid Phase.\n\n+2 Credits to each asteroid that wasn't mined this turn.";
+                yield return StartCoroutine(WaitforSecondsOrTap(1f));
                 foreach (var archive in turnArchive)
                 {
                     var turnArchiveObject = Instantiate(turnArchivePrefab, TurnArchiveList);
@@ -2030,12 +2048,9 @@ public class GameManager : MonoBehaviour
                     turnArchiveObject.GetComponent<Button>().onClick.AddListener(() => ShowCustomAlertPanel(archivePopUpText));
                     TurnArchiveObjects.Add(turnArchiveObject);
                 }
-                foreach (var asteroid in GridManager.i.AllNodes)
-                {
-                    asteroid.ReginCredits();
-                }
                 Winner = GridManager.i.CheckForWin();
             }
+            turnLabel.SetActive(false);
             yield return StartCoroutine(sql.GetRoutine<Guid>($"Game/EndGame?gameGuid={Globals.GameMatch.GameGuid}&winner={Winner}&clientVersion={Constants.ClientVersion}", GetWinner));
         }
     }
@@ -2277,6 +2292,21 @@ public class GameManager : MonoBehaviour
                     isMoving = true;
                     if (unit != null && action.selectedPath != null && action.selectedPath.Count > 0 && action.selectedPath.Count <= unit.getMaxMovementRange())
                     {
+                        if (action.selectedPath.Any(x => x.unitOnPath && x.unitOnPath.teamId != action.selectedUnit.teamId))
+                        {
+                            unit.ShowHPText(true);
+                        }
+                        foreach (var node in action.selectedPath)
+                        {
+                            if (node.unitOnPath)
+                            {
+                                node.unitOnPath.ShowHPText(true);
+                            }
+                            if (node.isAsteroid)
+                            {
+                                node.ShowMineralText(true);
+                            }
+                        }
                         turnValue.text += $"{GetDescription(action.actionType)}";
                         turnArchive.Add(new Tuple<string, string>($"Action {action.actionOrder}({unit.playerColor.ToString()}): {GetDescription(action.actionType)}", turnValue.text));
                         Debug.Log("Moving to position: " + unit.currentPathNode.transform.position);
@@ -2813,6 +2843,6 @@ public class GameManager : MonoBehaviour
 
     public void UnlockActionButton()
     {
-        QueueAction(new Action(ActionType.UnlockAction, null, null));
+        QueueAction(new Action(ActionType.UnlockAction, MyStation));
     }
 }

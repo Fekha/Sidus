@@ -29,6 +29,7 @@ public class GridManager : MonoBehaviour
 
     public GameObject fx_Explosion;
     public List<Sprite> nebulaSprite;
+    public List<Sprite> asteroidSprite;
     public RuntimeAnimatorController nodeController;
     public AnimationClip nebulaRotationClip;
     public GameObject burgerList;
@@ -100,6 +101,7 @@ public class GridManager : MonoBehaviour
         List<Coords> asteroids = GetAsteriodsForMapType(mapType);
         List<Coords> rifts = GetRiftsForMapType(mapType);
         int riftCount = 0;
+        int asteroidCount = 0;
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
@@ -131,14 +133,24 @@ public class GridManager : MonoBehaviour
                     }
                     grid[x, y].InitializeNode(x, y, startCredits, maxCredits, creditRegin, isRift);
                 }
+                Animator animator = null;
                 if (grid[x, y].isRift)
                 {
-                    cell.transform.Find("Nebula").GetComponent<SpriteRenderer>().sprite = nebulaSprite[riftCount % nebulaSprite.Count];
+                    cell.transform.Find("Nebula").GetComponent<SpriteRenderer>().sprite = nebulaSprite[riftCount + Constants.rnd.Next(nebulaSprite.Count) % nebulaSprite.Count];
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
                     cell.transform.Find("Node").GetComponent<SpriteRenderer>().sortingOrder = -4;
                     cell.transform.Find("Node/Background").gameObject.SetActive(false);
                     riftCount++;
-                    Animator animator = cell.AddComponent<Animator>();
+                    animator = cell.AddComponent<Animator>();
+                }
+                if (grid[x, y].isAsteroid)
+                {
+                    cell.transform.Find("Asteroid").GetComponent<SpriteRenderer>().sprite = asteroidSprite[asteroidCount+Constants.rnd.Next(asteroidSprite.Count) % asteroidSprite.Count];
+                    animator = cell.transform.Find("Asteroid").gameObject.AddComponent<Animator>();
+                    asteroidCount++;
+                }
+                if (grid[x, y].isRift || grid[x, y].isAsteroid)
+                {
                     animator.runtimeAnimatorController = nodeController;
                     AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
                     overrideController["DefaultAnimation"] = nebulaRotationClip; // Replace "DefaultAnimation" with the actual animation state name if needed

@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 9090845406688128485}
   - component: {fileID: 5106845728004058724}
   m_Layer: 5
-  m_Name: Minerals
+  m_Name: AsteroidMinerals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -283,14 +283,14 @@ RectTransform:
   m_GameObject: {fileID: 1403906865898033299}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2334259, y: 1.2334259, z: 1.2219633}
+  m_LocalScale: {x: 0.17267962, y: 0.17267962, z: 0.17267965}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7289775040872278361}
+  m_Father: {fileID: 7463334349724547658}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.083000004, y: 0.058000013}
+  m_AnchoredPosition: {x: 0.0043800026, y: 0.013120003}
   m_SizeDelta: {x: 4.813, y: 4.327}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &9090845406688128485
@@ -1132,7 +1132,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4597720129681069033}
-  - {fileID: 3792857339698240795}
   m_Father: {fileID: 7463334349724547658}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2856037172422388795
@@ -1226,6 +1225,7 @@ RectTransform:
   - {fileID: 6587589261704675788}
   - {fileID: 4681796710573225282}
   - {fileID: 5755903951175480462}
+  - {fileID: 3792857339698240795}
   - {fileID: 7289775040872278361}
   - {fileID: 4180595478561288750}
   m_Father: {fileID: 0}

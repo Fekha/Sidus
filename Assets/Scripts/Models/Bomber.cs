@@ -17,6 +17,6 @@ public class Bomber : Unit
         deployRange = 2;
         unitType = UnitType.Bomber;
         InitializeUnit(_x, _y, _color, _hp, _range, _electricAttack, _thermalAttack, _voidAttack, _unitGuid, _mining, _station.facing, UnitType.Bomber);
-        currentPathNode.SetNodeColor(playerGuid);
+        currentPathNode.SetNodeColor(playerGuid,this,true);
     }
 }

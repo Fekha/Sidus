@@ -10,7 +10,7 @@ public class SqlManager
     {
         apiUrl = "https://sydus-game.net/api/";
 #if UNITY_EDITOR
-        apiUrl = "https://localhost:7002/api/";
+        //apiUrl = "https://localhost:7002/api/";
 #endif
     }
     public IEnumerator GetRoutine<T>(string url, Action<T,string> callback = null)
