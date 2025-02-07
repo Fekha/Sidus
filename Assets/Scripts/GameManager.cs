@@ -2264,6 +2264,7 @@ public class GameManager : MonoBehaviour
                 nextActionButton.SetActive(false);
                 skipActionsButton.SetActive(false);
                 ToggleHPText(true);
+                turnLabel.SetActive(true);
                 turnValue.text = $"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns";
                 Debug.Log($"{GetStationByGuid(Winner).playerColor.ToString()} player won after {TurnNumber} turns");
                 //Add EOG Stats
